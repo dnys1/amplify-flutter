@@ -15,6 +15,7 @@ dependencies:
   amplify_core: 0.2.0-nullsafety.0
 
 dev_dependencies:
+  amplify_lints: 0.2.0
   flutter_test:
     sdk: flutter
 

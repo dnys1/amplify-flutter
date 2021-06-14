@@ -15,6 +15,7 @@ dependencies:
   plugin_platform_interface: ^2.0.0
 
 dev_dependencies:
+  amplify_lints: 0.2.0
   flutter_test:
     sdk: flutter
 

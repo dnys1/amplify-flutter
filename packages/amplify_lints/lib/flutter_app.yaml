@@ -1,0 +1,19 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  strong-mode:
+    implicit-dynamic: false
+
+linter:
+  rules:
+    - avoid_catches_without_on_clauses
+    - avoid_catching_errors
+    - cancel_subscriptions
+    - close_sinks
+    - directives_ordering
+    - only_throw_errors
+    - prefer_if_elements_to_conditional_expressions
+    - prefer_single_quotes
+    - sort_pub_dependencies
+    - unnecessary_await_in_return
+    - unnecessary_lambdas

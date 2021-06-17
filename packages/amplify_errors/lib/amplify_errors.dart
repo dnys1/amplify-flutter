@@ -1,7 +1,18 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
 library amplify_errors;
 
-export 'src/amplify_exception.dart';
-export 'src/amplify_already_configured_exception.dart';
+import 'package:flutter/services.dart';
+import 'exceptions.dart';
+
+export 'exceptions.dart';
+
+part 'src/lookup.dart';
+
+typedef AmplifyExceptionFactory = AmplifyException Function(Map);
+
+AmplifyException parsePlatformException(PlatformException e) {
+  AmplifyExceptionFactory? res = _lookupTable[e.code];
+  if (res != null) {
+    return res(e.details as Map);
+  }
+  return AmplifyException.unknown(e.details as Map?);
+}

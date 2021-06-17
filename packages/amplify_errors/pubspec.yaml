@@ -1,0 +1,9 @@
+name: amplify_errors
+description: Common package for AmplifyException types.
+version: 0.1.5
+
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+
+dev_dependencies:
+  test: ^1.16.0

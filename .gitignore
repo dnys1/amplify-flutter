@@ -24,6 +24,7 @@ Podfile.lock
 
 # amplify resources from example apps
 amplify/
+!**/android/**/amplify
 
 dist/
 node_modules/

@@ -1,0 +1,6 @@
+errors:
+  - ios: ConfigurationError.amplifyAlreadyConfigured
+    android: com.amplifyframework.core.Amplify$AlreadyConfiguredException
+    dart: 
+      class: AmplifyAlreadyConfiguredException
+      factory: fromJson # (default)

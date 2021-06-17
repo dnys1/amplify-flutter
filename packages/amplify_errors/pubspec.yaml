@@ -36,9 +36,9 @@ flutter:
     platforms:
       android:
         package: com.amazonaws.amplify.amplify_errors
-        pluginClass: AmplifyErrorsFlutterPlugin
+        pluginClass: AmplifyErrorsPlugin
       ios:
-        pluginClass: AmplifyErrorsFlutterPlugin
+        pluginClass: AmplifyErrorsPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

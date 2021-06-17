@@ -1,9 +1,10 @@
-import 'package:amplify_errors_example/amplifyconfiguration.dart';
-import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:amplify_errors/amplify_errors.dart';
+
+import 'amplifyconfiguration.dart';
 
 void main() {
   runApp(MyApp());

@@ -1,4 +1,4 @@
-#import "AmplifyErrorsFlutterPlugin.h"
+#import "AmplifyErrorsPlugin.h"
 #if __has_include(<amplify_errors/amplify_errors-Swift.h>)
 #import <amplify_errors/amplify_errors-Swift.h>
 #else
@@ -8,8 +8,8 @@
 #import "amplify_errors-Swift.h"
 #endif
 
-@implementation AmplifyErrorsFlutterPlugin
+@implementation AmplifyErrorsPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftAmplifyErrorsFlutterPlugin registerWithRegistrar:registrar];
+  [SwiftAmplifyErrorsPlugin registerWithRegistrar:registrar];
 }
 @end

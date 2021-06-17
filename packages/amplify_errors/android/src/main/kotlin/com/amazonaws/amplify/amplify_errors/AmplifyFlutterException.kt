@@ -6,7 +6,7 @@ import io.flutter.plugin.common.MethodChannel
 
 class AmplifyFlutterException(e: Exception): Exception(
     e.message,
-    if (e is AmplifyException) e.cause else e
+    if (e is AmplifyFlutterException || e is AmplifyException) e.cause else e
 ) {
     companion object {
         const val unknown = "unknown"
@@ -26,12 +26,19 @@ class AmplifyFlutterException(e: Exception): Exception(
     val recoverySuggestion: String?
 
     init {
-        if (e is AmplifyException) {
-            code = errorCode(e)
-            recoverySuggestion = e.recoverySuggestion
-        } else {
-            code = unknown
-            recoverySuggestion = null
+        when (e) {
+            is AmplifyFlutterException -> {
+                code = e.code
+                recoverySuggestion = e.recoverySuggestion
+            }
+            is AmplifyException -> {
+                code = errorCode(e)
+                recoverySuggestion = e.recoverySuggestion
+            }
+            else -> {
+                code = unknown
+                recoverySuggestion = null
+            }
         }
     }
 

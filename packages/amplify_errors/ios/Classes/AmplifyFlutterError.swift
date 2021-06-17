@@ -9,6 +9,7 @@ import Amplify
 import Flutter
 
 extension Mirror {
+    /// Retrieve's an enum's `case` name.
     var enumCase: String? {
         guard displayStyle == .enum else { return nil }
         return children.first?.label
@@ -45,19 +46,20 @@ public struct AmplifyFlutterError: Error {
     public let underlyingError: Error?
     
     public init(_ error: Error) {
-        if !(error is AmplifyError) {
+        switch error {
+        case let error as AmplifyFlutterError:
+            self = error
+        case let error as AmplifyError:
+            self.code = AmplifyFlutterError.codeFor(error: error)
+            self.message = error.errorDescription
+            self.recoverySuggestion = error.recoverySuggestion
+            self.underlyingError = error.underlyingError
+        default:
             self.code = AmplifyFlutterError.unknown
             self.message = error.localizedDescription
             self.recoverySuggestion = nil
             self.underlyingError = error
-            return
         }
-        
-        let amplifyError = error as! AmplifyError
-        self.code = AmplifyFlutterError.codeFor(error: amplifyError)
-        self.message = amplifyError.errorDescription
-        self.recoverySuggestion = amplifyError.recoverySuggestion
-        self.underlyingError = amplifyError.underlyingError
     }
     
     public func post(to result: FlutterResult) {

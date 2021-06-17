@@ -68,9 +68,29 @@ class TestAmplifyFlutterError: XCTestCase {
     private let nestedMessage = "Nested message"
     private let dummyRecoverySuggestion = "Dummy recovery suggestion"
     private let nestedRecoverySuggestion = "Nested recovery suggestion"
+    private let dummyCode = "dummy_code"
+    
     private var dummyError: DummyError { DummyError(message: dummyMessage) }
     private var dummyAmplifyError: DummyAmplifyError {
         DummyAmplifyError.caseA(dummyMessage, dummyRecoverySuggestion, nil)
+    }
+    private var dummyConstructedError: AmplifyFlutterError {
+        AmplifyFlutterError(code: dummyCode, message: dummyMessage, recoverySuggestion: dummyRecoverySuggestion, underlyingError: dummyError)
+    }
+    
+    func testConstructor() {
+        XCTAssertEqual(dummyConstructedError.code, dummyCode)
+        XCTAssertEqual(dummyConstructedError.message, dummyMessage)
+        XCTAssertEqual(dummyConstructedError.recoverySuggestion, dummyRecoverySuggestion)
+        XCTAssertNotNil(dummyConstructedError.underlyingError)
+    }
+    
+    func testWrappedConstructed() {
+        let wrappedError = AmplifyFlutterError(dummyConstructedError)
+        XCTAssertEqual(wrappedError.code, dummyCode)
+        XCTAssertEqual(wrappedError.message, dummyMessage)
+        XCTAssertEqual(wrappedError.recoverySuggestion, dummyRecoverySuggestion)
+        XCTAssertNotNil(wrappedError.underlyingError)
     }
     
     func testAmplifyError() {

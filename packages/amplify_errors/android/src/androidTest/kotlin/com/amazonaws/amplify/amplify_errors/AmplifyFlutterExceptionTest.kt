@@ -27,10 +27,12 @@ class AmplifyFlutterExceptionTest {
     private companion object {
         const val dummyMessage = "Dummy message"
         const val dummyRecoverySuggestion = "Dummy recovery suggestion"
+        const val dummyCode = "dummy_code"
 
         val dummyException = Exception(dummyMessage)
         val dummyAmplifyException = DummyAmplifyException(dummyMessage, dummyRecoverySuggestion)
         val dummyAmazonException = DummyAmazonClientException(dummyMessage)
+        val dummyConstructedException = AmplifyFlutterException(dummyCode, dummyMessage, dummyRecoverySuggestion, dummyException)
     }
 
     @RunWith(AndroidJUnit4::class)
@@ -44,6 +46,23 @@ class AmplifyFlutterExceptionTest {
                 AmplifyFlutterException.errorCode(dummyAmplifyException)
             }
         }
+    }
+
+    @Test
+    fun test_constructor() {
+        assertEquals(dummyConstructedException.code, dummyCode)
+        assertEquals(dummyConstructedException.message, dummyMessage)
+        assertEquals(dummyConstructedException.recoverySuggestion, dummyRecoverySuggestion)
+        assertEquals(dummyConstructedException.cause, dummyException)
+    }
+
+    @Test
+    fun test_wrapped_constructed() {
+        val flutterException = AmplifyFlutterException(dummyConstructedException)
+        assertEquals(flutterException.code, dummyCode)
+        assertEquals(flutterException.message, dummyMessage)
+        assertEquals(flutterException.recoverySuggestion, dummyRecoverySuggestion)
+        assertEquals(flutterException.cause, dummyException)
     }
 
     @Test

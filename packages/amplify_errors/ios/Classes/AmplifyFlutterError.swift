@@ -45,6 +45,13 @@ public struct AmplifyFlutterError: Error {
     public let recoverySuggestion: String?
     public let underlyingError: Error?
     
+    public init(code: String = unknown, message: String, recoverySuggestion: String, underlyingError: Error? = nil) {
+        self.code = code
+        self.message = message
+        self.recoverySuggestion = recoverySuggestion
+        self.underlyingError = underlyingError
+    }
+    
     public init(_ error: Error) {
         switch error {
         case let error as AmplifyFlutterError:

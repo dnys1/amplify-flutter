@@ -4,10 +4,7 @@ import com.amazonaws.AmazonClientException
 import com.amplifyframework.AmplifyException
 import io.flutter.plugin.common.MethodChannel
 
-class AmplifyFlutterException(e: Exception): Exception(
-    e.message,
-    if (e is AmplifyFlutterException || e is AmplifyException) e.cause else e
-) {
+class AmplifyFlutterException : Exception {
     companion object {
         const val unknown = "unknown"
 
@@ -25,7 +22,10 @@ class AmplifyFlutterException(e: Exception): Exception(
     val code: String
     val recoverySuggestion: String?
 
-    init {
+    constructor(e: Exception) : super(
+        e.message,
+        if (e is AmplifyException || e is AmplifyFlutterException) e.cause else e
+    ) {
         when (e) {
             is AmplifyFlutterException -> {
                 code = e.code
@@ -42,11 +42,23 @@ class AmplifyFlutterException(e: Exception): Exception(
         }
     }
 
+    constructor(
+        code: String,
+        message: String,
+        recoverySuggestion: String?,
+        cause: Throwable? = null
+    ) : super(message, cause) {
+        this.code = code
+        this.recoverySuggestion = recoverySuggestion
+    }
+
     fun postTo(result: MethodChannel.Result) {
-        result.error(code, message, mapOf(
-            "message" to message,
-            "recoverySuggestion" to recoverySuggestion,
-            "underlyingException" to cause?.message
-        ))
+        result.error(
+            code, message, mapOf(
+                "message" to message,
+                "recoverySuggestion" to recoverySuggestion,
+                "underlyingException" to cause?.message
+            )
+        )
     }
 }

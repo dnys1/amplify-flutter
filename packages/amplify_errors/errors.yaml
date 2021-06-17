@@ -3,4 +3,4 @@ errors:
     android: com.amplifyframework.core.Amplify$AlreadyConfiguredException
     dart: 
       class: AmplifyAlreadyConfiguredException
-      factory: fromJson # (default)
+      factory: fromMap # (default)

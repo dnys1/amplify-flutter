@@ -16,7 +16,7 @@ class AmplifyAlreadyConfiguredException extends AmplifyException {
           underlyingException: underlyingException,
         );
 
-  static AmplifyAlreadyConfiguredException fromJson(Map details) {
+  static AmplifyAlreadyConfiguredException fromMap(Map details) {
     return AmplifyAlreadyConfiguredException(
       details['message'] as String,
       recoverySuggestion: details['recoverySuggestion'] as String,

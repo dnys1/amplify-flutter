@@ -15,7 +15,7 @@ abstract class AmplifyException implements Exception {
   });
 
   factory AmplifyException.unknown([Map? details]) =
-      AmplifyUnknownException.fromJson;
+      AmplifyUnknownException.fromMap;
 
   @override
   String toString() {
@@ -46,7 +46,7 @@ class AmplifyUnknownException extends AmplifyException {
           underlyingException: underlyingException,
         );
 
-  AmplifyUnknownException.fromJson([Map? details])
+  AmplifyUnknownException.fromMap([Map? details])
       : this(
           message: details?['message'] as String?,
           recoverySuggestion: details?['recoverySuggestion'] as String?,

@@ -4,7 +4,7 @@ part of amplify_errors;
 
 final Map<String, AmplifyExceptionFactory> _lookupTable = {
   r'com.amplifyframework.core.Amplify$AlreadyConfiguredException':
-      AmplifyAlreadyConfiguredException.fromJson,
+      AmplifyAlreadyConfiguredException.fromMap,
   r'ConfigurationError.amplifyAlreadyConfigured':
-      AmplifyAlreadyConfiguredException.fromJson,
+      AmplifyAlreadyConfiguredException.fromMap,
 };

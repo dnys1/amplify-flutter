@@ -13,6 +13,7 @@
  * permissions and limitations under the License.
  */
 
+import 'package:amplify_auth_cognito/src/CognitoSignUp/cognito_user_attributes.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -58,7 +59,7 @@ void main() {
     testCode = 1;
     var res = await auth.updateUserAttribute(
       request: UpdateUserAttributeRequest(
-        userAttributeKey: 'email',
+        userAttributeKey: CognitoUserAttributes.email,
         value: 'test@test.com',
       ),
     );
@@ -71,7 +72,7 @@ void main() {
     testCode = 1;
     var res = await auth.updateUserAttribute(
       request: UpdateUserAttributeRequest(
-        userAttributeKey: 'email',
+        userAttributeKey: CognitoUserAttributes.email,
         value: 'test@test.com',
       ),
     );
@@ -86,7 +87,7 @@ void main() {
     try {
       await auth.updateUserAttribute(
         request: UpdateUserAttributeRequest(
-          userAttributeKey: 'email',
+          userAttributeKey: CognitoUserAttributes.email,
           value: 'test@test.com',
         ),
       );

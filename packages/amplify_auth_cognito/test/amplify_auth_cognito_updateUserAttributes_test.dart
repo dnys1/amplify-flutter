@@ -13,6 +13,7 @@
  * permissions and limitations under the License.
  */
 
+import 'package:amplify_auth_cognito/src/CognitoSignUp/cognito_user_attributes.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -69,8 +70,11 @@ void main() {
     testCode = 1;
     var res = await auth.updateUserAttributes(
       request: UpdateUserAttributesRequest(attributes: [
-        AuthUserAttribute(userAttributeKey: "email", value: "email@email.com"),
-        AuthUserAttribute(userAttributeKey: "name", value: "testname")
+        AuthUserAttribute(
+            userAttributeKey: CognitoUserAttributes.email,
+            value: "email@email.com"),
+        AuthUserAttribute(
+            userAttributeKey: CognitoUserAttributes.name, value: "testname")
       ]),
     );
     expect(res, isInstanceOf<Map<String, UpdateUserAttributeResult>>());
@@ -82,11 +86,15 @@ void main() {
     testCode = 1;
     var res = await auth.updateUserAttributes(
       request: UpdateUserAttributesRequest(attributes: [
-        AuthUserAttribute(userAttributeKey: "email", value: "email@email.com"),
-        AuthUserAttribute(userAttributeKey: "name", value: "testname")
+        AuthUserAttribute(
+            userAttributeKey: CognitoUserAttributes.email,
+            value: "email@email.com"),
+        AuthUserAttribute(
+            userAttributeKey: CognitoUserAttributes.name, value: "testname")
       ]),
     );
-    expect(res["email"].nextStep, isInstanceOf<AuthNextUpdateAttributeStep>());
+    expect(res[CognitoUserAttributes.email].nextStep,
+        isInstanceOf<AuthNextUpdateAttributeStep>());
   });
 
   test('updateUserAttributes thrown PlatFormException results in AuthError',
@@ -97,8 +105,10 @@ void main() {
       await auth.updateUserAttributes(
         request: UpdateUserAttributesRequest(attributes: [
           AuthUserAttribute(
-              userAttributeKey: "email", value: "email@email.com"),
-          AuthUserAttribute(userAttributeKey: "name", value: "testname")
+              userAttributeKey: CognitoUserAttributes.email,
+              value: "email@email.com"),
+          AuthUserAttribute(
+              userAttributeKey: CognitoUserAttributes.name, value: "testname")
         ]),
       );
     } on AuthException catch (e) {

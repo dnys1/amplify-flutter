@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import 'package:amplify_auth_cognito/src/CognitoSignUp/cognito_user_attributes.dart';
+import 'package:amplify_auth_cognito/src/CognitoSignUp/cognito_user_attribute.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -40,7 +40,7 @@ void main() {
 
   AmplifyAuthCognito auth = AmplifyAuthCognito();
   TestWidgetsFlutterBinding.ensureInitialized();
-  const testAttributeKey = CognitoUserAttributes.email;
+  const testAttribute = CognitoUserAttribute.email;
   const testEmailValue = 'test@test.test';
   const testMetadataKey = 'key';
   const testMetaDataAttribute = 'val';
@@ -61,7 +61,7 @@ void main() {
             "signInStep": "DONE",
             "codeDeliveryDetails": {
               "deliveryMedium": "EMAIL",
-              "attributeName": testAttributeKey,
+              "attributeName": testAttribute.key,
               "destination": testEmailValue
             }
           }
@@ -76,7 +76,7 @@ void main() {
         nextStep: AuthNextSignInStep(
           codeDeliveryDetails: AuthCodeDeliveryDetails(
               deliveryMedium: "EMAIL",
-              attributeName: testAttributeKey,
+              attributeName: testAttribute.key,
               destination: testEmailValue),
           signInStep: "DONE",
         ));
@@ -88,7 +88,7 @@ void main() {
   test('confirmSignIn request accepts and serializes options', () async {
     var options = CognitoConfirmSignInOptions(
         clientMetadata: {testMetadataKey: testMetaDataAttribute},
-        userAttributes: {testAttributeKey: testEmailValue});
+        userAttributes: {testAttribute.key: testEmailValue});
     var req = ConfirmSignInRequest(confirmationValue: '1233', options: options)
         .serializeAsMap();
     expect(req['options'], isInstanceOf<Map>());
@@ -96,7 +96,7 @@ void main() {
     expect(req['options']['clientMetadata'][testMetadataKey],
         equals(testMetaDataAttribute));
     expect(req['options']['userAttributes'], isInstanceOf<Map>());
-    expect(req['options']['userAttributes'][testAttributeKey],
+    expect(req['options']['userAttributes'][testAttribute.key],
         equals(testEmailValue));
   });
 

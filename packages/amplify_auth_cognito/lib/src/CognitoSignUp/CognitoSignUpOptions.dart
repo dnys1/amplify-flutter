@@ -13,6 +13,7 @@
  * permissions and limitations under the License.
  */
 
+import 'package:amplify_auth_cognito/src/CognitoSignUp/cognito_user_attribute.dart';
 import 'package:amplify_auth_plugin_interface/amplify_auth_plugin_interface.dart';
 
 class CognitoSignUpOptions extends SignUpOptions {
@@ -26,15 +27,15 @@ class CognitoSignUpOptions extends SignUpOptions {
   /// Creates a sign up configuration with the given user attributes and validation data.
   ///
   /// [userAttributes] is a map of key-value pairs, where the key is one of the standard
-  /// attributes, found under [CognitoUserAttributes], or a custom attribute, prefixed
+  /// attributes, found under [CognitoUserAttribute], or a custom attribute, prefixed
   /// with `custom:`
   ///
   /// For example:
   /// ```dart
-  /// var userAttributes = <String, String>{
-  ///   CognitoUserAttributes.email: 'test@example.com',
-  ///   CognitoUserAttributes.phoneNumber: '+18885551234',
-  ///   'custom:my_attribute': 'my_value',
+  /// var userAttributes = <CognitoUserAttribute, String>{
+  ///   CognitoUserAttribute.email: 'test@example.com',
+  ///   CognitoUserAttribute.phoneNumber: '+18885551234',
+  ///   CognitoUserAttribute.custom('my_attribute'): 'my_value',
   /// };
   /// var options = CognitoSignUpOptions(userAttributes: userAttributes);
   /// ```
@@ -43,21 +44,26 @@ class CognitoSignUpOptions extends SignUpOptions {
   /// When using email or phone verification and not using the same field for the user's login,
   /// that field is required to be included in [userAttributes].
   ///
-  /// - [CognitoUserAttributes.email] is **required** if:
+  /// - [CognitoUserAttribute.email] is **required** if:
   ///   - One of the following are true:
   ///     - Email verification is enabled (default)
   ///     - Email was marked as a required attribute (default)
   ///   - **and** users sign up with a chosen username or phone number
-  /// - [CognitoUserAttributes.phoneNumber] is **required** if:
+  /// - [CognitoUserAttribute.phoneNumber] is **required** if:
   ///   - One of the following are true:
   ///     - MFA is ON, or manually enabled for the user
   ///     - Phone number verification is enabled
   ///     - Phone number was marked as a required attribute
   ///   - **and** users sign up with a chosen username or email
-  const CognitoSignUpOptions({
-    Map<String, String> userAttributes = const {},
+  CognitoSignUpOptions({
+    Map<CognitoUserAttribute, String> userAttributes = const {},
     this.validationData,
-  }) : super(userAttributes: userAttributes);
+  }) : super(
+          userAttributes: Map.fromIterables(
+            userAttributes.keys.map((attr) => attr.key),
+            userAttributes.values,
+          ),
+        );
 
   @override
   Map<String, dynamic> serializeAsMap() {

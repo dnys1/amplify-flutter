@@ -41,8 +41,9 @@ void main() {
           username: username,
           password: password,
           options: CognitoSignUpOptions(userAttributes: {
-            'email': 'test-amplify-flutter-${uuid.v4()}@test${uuid.v4()}.com',
-            'phone_number': '+15555551234'
+            CognitoUserAttribute.email:
+                'test-amplify-flutter-${uuid.v4()}@test${uuid.v4()}.com',
+            CognitoUserAttribute.phoneNumber: '+15555551234'
           }));
 
       // ensure no user is currently signed in

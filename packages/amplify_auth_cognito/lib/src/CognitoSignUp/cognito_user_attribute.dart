@@ -30,5 +30,5 @@ class CognitoUserAttribute {
   static const zoneinfo = CognitoUserAttribute._('zoneinfo');
 
   @override
-  String toString() => key;
+  String toString() => 'CognitoUserAttribute.$key';
 }

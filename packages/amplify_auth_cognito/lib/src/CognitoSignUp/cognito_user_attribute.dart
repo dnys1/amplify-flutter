@@ -1,9 +1,11 @@
-/// Standard user attributes available for configuring via `Amplify.Auth.signUp`,
+/// User attributes available for configuring via `Amplify.Auth.signUp`,
 /// or updating via `Amplify.Auth.updateUserAttribute` and
 /// `Amplify.Auth.updateUserAttributes`.
 ///
-/// More information about these attributes can be found
+/// More information about the standard attributes can be found
 /// [here](https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-attributes.html).
+///
+/// Custom attributes can be created using [CognitoUserAttribute.custom()].
 class CognitoUserAttribute {
   final String key;
 

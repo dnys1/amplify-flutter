@@ -27,8 +27,8 @@ class CognitoSignUpOptions extends SignUpOptions {
   /// Creates a sign up configuration with the given user attributes and validation data.
   ///
   /// [userAttributes] is a map of key-value pairs, where the key is one of the standard
-  /// attributes, found under [CognitoUserAttribute], or a custom attribute, prefixed
-  /// with `custom:`
+  /// attributes, found under [CognitoUserAttribute], or a custom attribute, created using
+  /// [CognitoUserAttribute.custom()].
   ///
   /// For example:
   /// ```dart

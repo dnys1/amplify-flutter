@@ -14,9 +14,13 @@
  */
 
 import 'package:amplify_flutter/amplify.dart';
+import 'package:amplify_core/amplify_core.dart';
+import 'package:amplify_flutter_example/amplifyconfiguration.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Amplify.logLevel = LogLevel.debug;
   runApp(MyApp());
 }
 
@@ -28,7 +32,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool _amplifyConfigured = false;
-  var amplifyConfig = '''{"foo": "bar"}''';
 
   @override
   void initState() {
@@ -42,8 +45,8 @@ class _MyAppState extends State<MyApp> {
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
     if (!mounted) return;
-    await Amplify.configure(amplifyConfig);
     try {
+      await Amplify.configure(amplifyconfig);
       setState(() {
         _amplifyConfigured = true;
       });
@@ -61,6 +64,10 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Center(
           child: Text('Is Amplify Configured?: $_amplifyConfigured\n'),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.refresh),
+          onPressed: configureAmplify,
         ),
       ),
     );

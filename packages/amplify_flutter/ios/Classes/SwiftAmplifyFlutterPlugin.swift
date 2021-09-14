@@ -20,12 +20,24 @@ import AmplifyPlugins
 import AWSPluginsCore
 import amplify_core
 
-public class SwiftAmplify: NSObject, FlutterPlugin {
+public class SwiftAmplifyFlutterPlugin: NSObject, FlutterPlugin {
+    var configured = false
+    var logger: Logger?
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "com.amazonaws.amplify/amplify", binaryMessenger: registrar.messenger())
-        let instance = SwiftAmplify()
+        let instance = SwiftAmplifyFlutterPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
+        
+        let loggingEventChannel = FlutterEventChannel(
+            name: "com.amazonaws.amplify/flutter/logging/events",
+            binaryMessenger: registrar.messenger())
+        loggingEventChannel.setStreamHandler(FlutterLogger.shared)
+        
+        let loggingMethodChannel = FlutterMethodChannel(
+            name: "com.amazonaws.amplify/flutter/logging",
+            binaryMessenger: registrar.messenger())
+        registrar.addMethodCallDelegate(instance, channel: loggingMethodChannel)
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -35,17 +47,26 @@ public class SwiftAmplify: NSObject, FlutterPlugin {
             let version = arguments["version"] as! String
             let configuration = arguments["configuration"] as! String
             onConfigure(result: result, version: version, configuration: configuration)
+        case "setLogLevel":
+            result(FlutterLogger.shared.configureLogLevel(level: call.arguments))
         default:
             result(FlutterMethodNotImplemented)
-        }
+        }   
     }
 
     private func onConfigure(result: FlutterResult, version: String, configuration: String) {
-
+        if configured {
+            logger?.info("Amplify has already been configured")
+            result(true)
+            return
+        }
         do {
             let amplifyConfiguration = try JSONDecoder().decode(AmplifyConfiguration.self, from: configuration.data(using: .utf8)!)
             AmplifyAWSServiceConfiguration.addUserAgentPlatform(.flutter, version: version)
+            try Amplify.add(plugin: AmplifyFlutterLoggingPlugin())
             try Amplify.configure(amplifyConfiguration)
+            logger = Amplify.Logging.default
+            configured = true
             result(true)
         } catch let error as AnalyticsError {
             ErrorUtil.postErrorToFlutterChannel(

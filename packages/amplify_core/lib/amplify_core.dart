@@ -5,6 +5,9 @@ import 'package:amplify_core/types/exception/AmplifyExceptionMessages.dart';
 import 'package:flutter/services.dart';
 export './types/index.dart';
 
+export 'src/category_type.dart';
+export 'src/logging/logger.dart';
+
 class AmplifyCore {
   static const MethodChannel _channel = const MethodChannel('amplify_core');
 

@@ -18,6 +18,9 @@ library amplify;
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:amplify_core/amplify_core.dart';
+import 'package:amplify_flutter/src/logging/default_logger.dart';
+import 'package:amplify_flutter/src/logging/native_logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -43,7 +46,7 @@ final AmplifyClass Amplify = new AmplifyClass.protected();
 /// This is a private class and customers are not expected to
 /// instantiate an object of this class. Please use top level
 /// `Amplify` singleton object for making calls to methods of this class.
-class AmplifyClass extends PlatformInterface {
+class AmplifyClass extends PlatformInterface with _LoggerMixin {
   // ignore: public_member_api_docs
   AuthCategory Auth = const AuthCategory();
   // ignore: public_member_api_docs
@@ -139,6 +142,9 @@ class AmplifyClass extends PlatformInterface {
   /// Throws AmplifyAlreadyConfiguredException if
   /// this method is called again (e.g. during hot reload).
   Future<void> configure(String configuration) async {
+    // Configures the native logger.
+    NativeLogger.configure(logLevel);
+
     // Validation #1
     if (isConfigured) {
       throw AmplifyAlreadyConfiguredException(
@@ -211,4 +217,49 @@ class AmplifyClass extends PlatformInterface {
     PlatformInterface.verifyToken(instance, _token);
     _instance = instance;
   }
+}
+
+/// Default logging utilities.
+abstract class _LoggerMixin implements Logger {
+  /// Logger used throughout Amplify. See [Logger] and [LogLevel] for details.
+  /// If using the default logger, the log level can be changed by setting
+  /// [logLevel].
+  Logger logger = DefaultLogger();
+
+  /// {@template log_level}
+  /// The current global log level across Flutter + Native. Logs emitted
+  /// below this level will not be sent from the Native side, and will not be
+  /// printed to the console, when using the default logger.
+  /// {@endtemplate}
+  LogLevel _logLevel = kDefaultLogLevel;
+
+  /// {@macro log_level}
+  LogLevel get logLevel => _logLevel;
+
+  /// Sets the log level.
+  set logLevel(LogLevel newLevel) {
+    _logLevel = newLevel;
+    NativeLogger.setLogLevel(newLevel);
+  }
+
+  // Logger methods for shorter logging statements,
+  // i.e. Amplify.d instead of Amplify.logger.d.
+  @override
+  void log(LogLevel level, String log, [CategoryType? category]) =>
+      logger.log(level, log, category);
+
+  @override
+  void v(String log, [CategoryType? category]) => logger.v(log, category);
+
+  @override
+  void d(String log, [CategoryType? category]) => logger.d(log, category);
+
+  @override
+  void i(String log, [CategoryType? category]) => logger.i(log, category);
+
+  @override
+  void w(String log, [CategoryType? category]) => logger.w(log, category);
+
+  @override
+  void e(String log, [CategoryType? category]) => logger.e(log, category);
 }

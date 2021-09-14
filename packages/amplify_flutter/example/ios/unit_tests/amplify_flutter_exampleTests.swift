@@ -24,7 +24,7 @@ class amplify_flutter_exampleTests: XCTestCase {
         Amplify.reset()
     }
 
-    var plugin: SwiftAmplify = SwiftAmplify()
+    let plugin = SwiftAmplifyFlutterPlugin()
 
     func test_configuring_multiple_times_throws() throws {
         let _args = ["version": "1", "configuration": "{}"]

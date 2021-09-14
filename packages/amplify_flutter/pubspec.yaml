@@ -34,4 +34,4 @@ flutter:
         package: com.amazonaws.amplify
         pluginClass: Amplify
       ios:
-        pluginClass: Amplify
+        pluginClass: AmplifyFlutterPlugin

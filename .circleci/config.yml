@@ -196,6 +196,7 @@ jobs:
 
   release_verification_ios:
     executor: macos-executor
+    working_directory: ~/amplify-flutter
     steps:
       - install_flutter
       - checkout

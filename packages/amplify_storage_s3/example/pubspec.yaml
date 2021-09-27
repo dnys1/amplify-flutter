@@ -1,35 +1,33 @@
 name: amplify_storage_s3_example
 description: Demonstrates how to use the amplify_storage_s3 plugin.
-
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-
 environment:
   sdk: ">=2.12.0 <3.0.0"
   flutter: ">=2.2.0"
-
 dependencies:
   flutter:
     sdk: flutter
   file_picker: ^3.0.3
   amplify_flutter:
-    path: ../../amplify_flutter
+    hosted:
+      url: http://localhost:8000
+      name: amplify_flutter
+    version: any
   amplify_auth_cognito:
-    path: ../../amplify_auth_cognito
-
+    hosted:
+      url: http://localhost:8000
+      name: amplify_auth_cognito
+    version: any
   amplify_storage_s3:
-    # When depending on this package from a real application you should use:
-    #   amplify_storage_s3: ^x.y.z
-    # See https://dart.dev/tools/pub/dependencies#version-constraints
-    # The example app is bundled with the plugin so we use a path dependency on
-    # the parent directory to use the current plugin's version.
-    path: ../
-
+    hosted:
+      url: http://localhost:8000
+      name: amplify_storage_s3
+    version: any
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -38,8 +36,6 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   path_provider: ^2.0.2
-
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

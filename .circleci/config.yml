@@ -234,3 +234,4 @@ workflows:
       - unit_test_android
       - unit_test_ios
       - release_verification_android
+      - release_verification_ios

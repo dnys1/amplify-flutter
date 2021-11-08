@@ -449,7 +449,7 @@ class AmplifyAuthCognitoMethodChannel extends AmplifyAuthCognito {
     List<AuthUserAttribute> attributes = [];
     attributeResponse.forEach((element) {
       attributes.add(AuthUserAttribute(
-        userAttributeKey: CognitoUserAttributes.parse(element["key"]),
+        userAttributeKey: CognitoUserAttributeKey.parse(element["key"]),
         value: element["value"],
       ));
     });
@@ -499,7 +499,7 @@ class AmplifyAuthCognitoMethodChannel extends AmplifyAuthCognito {
 
   Map<UserAttributeKey, UpdateUserAttributeResult>
       _formatUpdateUserAttributesResponse(Map<String, dynamic> res) {
-    return res.map((key, value) => MapEntry(CognitoUserAttributes.parse(key),
+    return res.map((key, value) => MapEntry(CognitoUserAttributeKey.parse(key),
         _formatUpdateUserAttributeResponse(Map<String, dynamic>.from(value))));
   }
 

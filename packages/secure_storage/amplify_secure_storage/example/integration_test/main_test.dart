@@ -22,7 +22,14 @@ AmplifySecureStorage storageFactory({
   return AmplifySecureStorage(config: config);
 }
 
+AmplifySecureStorageInterface remoteStorageFactory({
+  required AmplifySecureStorageConfig config,
+}) {
+  return AmplifySecureStorageWorker(config: config);
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  runTests(storageFactory);
+  group('local', () => runTests(storageFactory));
+  group('remote', () => runTests(remoteStorageFactory));
 }

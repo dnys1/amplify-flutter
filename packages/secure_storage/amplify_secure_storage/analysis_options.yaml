@@ -1,4 +1,4 @@
-include: package:amplify_lints/flutter_lib.yaml
+include: package:amplify_lints/library.yaml
 linter:
   rules:
     public_member_api_docs: false

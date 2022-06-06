@@ -30,7 +30,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final storage = AmplifySecureStorage(
-    config: const AmplifySecureStorageConfig(
+    config: AmplifySecureStorageConfig(
       packageId: 'com.example.test',
       scope: 'test',
     ),

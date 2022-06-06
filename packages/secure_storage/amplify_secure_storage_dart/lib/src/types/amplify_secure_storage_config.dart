@@ -12,15 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:built_value/built_value.dart';
+import 'package:built_value/serializer.dart';
+
+part 'amplify_secure_storage_config.g.dart';
+
 /// {@template amplify_secure_storage_dart.amplify_secure_storage_config}
 /// Configuration options for Amplify Secure Storage.
 /// {@endtemplate}
-class AmplifySecureStorageConfig {
+abstract class AmplifySecureStorageConfig
+    implements
+        Built<AmplifySecureStorageConfig, AmplifySecureStorageConfigBuilder> {
   /// {@macro amplify_secure_storage_dart.amplify_secure_storage_config}
-  const AmplifySecureStorageConfig({
-    required this.packageId,
-    required this.scope,
-  });
+  factory AmplifySecureStorageConfig({
+    required String packageId,
+    required String scope,
+  }) = _$AmplifySecureStorageConfig._;
+
+  const AmplifySecureStorageConfig._();
 
   /// A unique package identifier such as a bundle ID.
   ///
@@ -29,7 +38,7 @@ class AmplifySecureStorageConfig {
   /// This value will be used with the [scope] and key to for a unique
   /// identifier for the secret. Saving two values under unique packageIds will
   /// prevent collisions even if the key & scope overlap.
-  final String packageId;
+  String get packageId;
 
   /// The scope of the secrets to be stored.
   ///
@@ -38,5 +47,8 @@ class AmplifySecureStorageConfig {
   /// This value will be used with the [packageId] and key to for a unique
   /// identifier for the secret. Saving two values under unique scopes will
   /// prevent collisions even if the key & packageId overlap.
-  final String scope;
+  String get scope;
+
+  static Serializer<AmplifySecureStorageConfig> get serializer =>
+      _$amplifySecureStorageConfigSerializer;
 }

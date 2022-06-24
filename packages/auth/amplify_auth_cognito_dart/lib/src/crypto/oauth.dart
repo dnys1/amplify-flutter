@@ -19,7 +19,8 @@ library amplify_auth_cognito.crypto.oauth;
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:amplify_auth_cognito_dart/src/crypto/crypto.dart';
+// ignore: implementation_imports
+import 'package:amplify_auth_cognito_common/src/crypto/crypto.dart';
 import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_config.dart';
 import 'package:amplify_auth_cognito_dart/src/jwt/jwt.dart';
 import 'package:amplify_core/amplify_core.dart';

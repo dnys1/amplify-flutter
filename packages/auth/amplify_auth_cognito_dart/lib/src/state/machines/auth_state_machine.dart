@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ignore_for_file: implementation_imports
+
 import 'dart:async';
 
+import 'package:amplify_auth_cognito_common/src/sdk/cognito_identity.dart';
+import 'package:amplify_auth_cognito_common/src/sdk/cognito_identity_provider.dart';
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:amplify_auth_cognito_dart/src/credentials/auth_plugin_credentials_provider.dart';
 import 'package:amplify_auth_cognito_dart/src/model/auth_configuration.dart';
-import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity.dart';
-import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/sdk_bridge.dart';
 import 'package:amplify_auth_cognito_dart/src/state/machines/generated/auth_state_machine_base.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';

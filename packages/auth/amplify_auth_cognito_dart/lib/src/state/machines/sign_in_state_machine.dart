@@ -12,29 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ignore_for_file: implementation_imports
+
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:amplify_auth_cognito_common/amplify_auth_cognito_common.dart';
+import 'package:amplify_auth_cognito_common/src/sdk/cognito_identity_provider.dart';
+import 'package:amplify_auth_cognito_common/src/workers.debug.compiled.dart'
+    deferred as workers_debug;
+import 'package:amplify_auth_cognito_common/src/workers.release.compiled.dart'
+    deferred as workers_release;
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart'
     hide UpdateUserAttributesRequest;
 import 'package:amplify_auth_cognito_dart/src/credentials/cognito_keys.dart';
-import 'package:amplify_auth_cognito_dart/src/flows/constants.dart';
-import 'package:amplify_auth_cognito_dart/src/flows/device/confirm_device_worker.dart';
-import 'package:amplify_auth_cognito_dart/src/flows/helpers.dart';
-import 'package:amplify_auth_cognito_dart/src/flows/srp/srp_device_password_verifier_worker.dart';
-import 'package:amplify_auth_cognito_dart/src/flows/srp/srp_init_result.dart';
-import 'package:amplify_auth_cognito_dart/src/flows/srp/srp_init_worker.dart';
-import 'package:amplify_auth_cognito_dart/src/flows/srp/srp_password_verifier_worker.dart';
 import 'package:amplify_auth_cognito_dart/src/jwt/jwt.dart';
 import 'package:amplify_auth_cognito_dart/src/model/cognito_user.dart';
-import 'package:amplify_auth_cognito_dart/src/model/sign_in_parameters.dart';
-import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart'
     hide UpdateUserAttributesRequest;
 import 'package:async/async.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:meta/meta.dart';
+
+Future<String> _loadWorkers() => zDebugMode
+    ? () async {
+        await workers_debug.loadLibrary();
+        return workers_debug.workerJs;
+      }()
+    : () async {
+        await workers_release.loadLibrary();
+        return workers_release.workerJs;
+      }();
 
 /// {@template amplify_auth_cognito.sign_in_state_machine}
 /// Base class for state machines which perform some auth flow. These all follow
@@ -111,9 +120,7 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
         }
         worker = SrpInitWorker.create();
         worker.logs.listen(safePrint);
-        await worker.spawn(
-          jsEntrypoint: 'packages/amplify_auth_cognito/workers.dart.js',
-        );
+        await worker.spawn(loadJsEntrypoint: _loadWorkers);
         addInstance<SrpInitWorker>(worker);
         return worker;
       });
@@ -127,9 +134,7 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
         }
         worker = SrpPasswordVerifierWorker.create();
         worker.logs.listen(safePrint);
-        await worker.spawn(
-          jsEntrypoint: 'packages/amplify_auth_cognito/workers.dart.js',
-        );
+        await worker.spawn(loadJsEntrypoint: _loadWorkers);
         addInstance<SrpPasswordVerifierWorker>(worker);
         return worker;
       });
@@ -143,9 +148,7 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
         }
         worker = SrpDevicePasswordVerifierWorker.create();
         worker.logs.listen(safePrint);
-        await worker.spawn(
-          jsEntrypoint: 'packages/amplify_auth_cognito/workers.dart.js',
-        );
+        await worker.spawn(loadJsEntrypoint: _loadWorkers);
         addInstance<SrpDevicePasswordVerifierWorker>(worker);
         return worker;
       });
@@ -159,9 +162,7 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
         }
         worker = ConfirmDeviceWorker.create();
         worker.logs.listen(safePrint);
-        await worker.spawn(
-          jsEntrypoint: 'packages/amplify_auth_cognito/workers.dart.js',
-        );
+        await worker.spawn(loadJsEntrypoint: _loadWorkers);
         addInstance<ConfirmDeviceWorker>(worker);
         return worker;
       });

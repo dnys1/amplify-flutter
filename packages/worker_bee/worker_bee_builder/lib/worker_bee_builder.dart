@@ -18,7 +18,9 @@ library worker_bee_builder.builder;
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:worker_bee/worker_bee.dart';
+import 'package:worker_bee_builder/src/copy_builder.dart';
 import 'package:worker_bee_builder/src/hive_generator.dart';
+import 'package:worker_bee_builder/src/library_builder.dart';
 import 'package:worker_bee_builder/src/worker_generator.dart';
 
 /// {@template worker_bee_builder.worker_bee_builder}
@@ -36,7 +38,20 @@ Builder workerBeeBuilder(BuilderOptions options) => LibraryBuilder(
 /// {@template worker_bee_builder.worker_hive_builder}
 /// Generates Hive definitions for packages with multiple worker bee types.
 /// {@endtemplate}
-Builder workerHiveBuilder(BuilderOptions options) => SharedPartBuilder(
-      [WorkerHiveGenerator()],
-      'worker_hive',
+Builder workerHiveBuilder(BuilderOptions options) => LibraryBuilder(
+      WorkerHiveGenerator(),
+      generatedExtension: '.debug.dart',
+      additionalOutputExtensions: [
+        '.release.dart',
+      ],
     );
+
+/// {@template worker_bee_builder.worker_hive_builder}
+/// Generates top level libraries for deferred loading of JS workers.
+/// {@endtemplate}
+Builder workerLibraryBuilder(BuilderOptions options) => WorkerLibraryBuilder();
+
+/// {@template worker_bee_builder.worker_copy_builder}
+///
+/// {@endtemplate}
+Builder workerCopyBuilder(BuilderOptions options) => WorkerCopyBuilder();

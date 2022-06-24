@@ -66,7 +66,10 @@ mixin WorkerBeeImpl<Request extends Object, Response>
   Isolate? _isolate;
 
   @override
-  Future<void> spawn({String? jsEntrypoint}) async {
+  Future<void> spawn({
+    String? jsEntrypoint,
+    EntrypointLoader? loadJsEntrypoint,
+  }) async {
     logger.finest('Starting worker');
     final receivePort = ReceivePort(name);
 

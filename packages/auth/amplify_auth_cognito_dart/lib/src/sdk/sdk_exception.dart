@@ -12,16 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ignore_for_file: deprecated_member_use_from_same_package
+// ignore_for_file: deprecated_member_use_from_same_package, implementation_imports
 
 /// Exception types bridged from generated SDKs to their legacy counterparts.
 library amplify_auth_cognito_dart.sdk.sdk_exception;
 
-import 'package:amplify_core/amplify_core.dart' as core;
-import 'package:meta/meta.dart';
-import 'package:smithy/smithy.dart';
-
-import 'cognito_identity.dart' as cognito_identity
+import 'package:amplify_auth_cognito_common/src/sdk/cognito_identity.dart'
+    as cognito_identity
     show
         InternalErrorException,
         InvalidParameterException,
@@ -29,7 +26,8 @@ import 'cognito_identity.dart' as cognito_identity
         NotAuthorizedException,
         ResourceNotFoundException,
         TooManyRequestsException;
-import 'cognito_identity_provider.dart' as cognito_idp
+import 'package:amplify_auth_cognito_common/src/sdk/cognito_identity_provider.dart'
+    as cognito_idp
     show
         ExpiredCodeException,
         InternalErrorException,
@@ -44,15 +42,18 @@ import 'cognito_identity_provider.dart' as cognito_idp
         TooManyRequestsException,
         UnexpectedLambdaException,
         UserLambdaValidationException;
+import 'package:amplify_core/amplify_core.dart' as core;
+import 'package:meta/meta.dart';
+import 'package:smithy/smithy.dart';
 
-export 'cognito_identity.dart'
+export 'package:amplify_auth_cognito_common/src/sdk/cognito_identity.dart'
     show
         ExternalServiceException,
         InvalidIdentityPoolConfigurationException,
         LimitExceededException,
         ResourceConflictException;
 
-export 'cognito_identity_provider.dart'
+export 'package:amplify_auth_cognito_common/src/sdk/cognito_identity_provider.dart'
     show
         AliasExistsException,
         CodeDeliveryFailureException,

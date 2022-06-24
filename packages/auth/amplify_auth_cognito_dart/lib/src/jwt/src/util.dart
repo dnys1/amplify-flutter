@@ -17,7 +17,8 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:amplify_auth_cognito_dart/src/crypto/crypto.dart';
+// ignore: implementation_imports
+import 'package:amplify_auth_cognito_common/src/crypto/crypto.dart';
 
 /// Decodes [base64] as a JSON-encoded [Map].
 Map<String, Object?> decodeBase64(String base64) {

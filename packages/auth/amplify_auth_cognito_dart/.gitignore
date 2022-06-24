@@ -12,6 +12,7 @@ pubspec.lock
 doc/
 
 # JS outputs
+*.js
 *.js.deps
 *.js.map
 

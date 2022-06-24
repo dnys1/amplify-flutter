@@ -14,23 +14,33 @@
 
 @TestOn('browser')
 
-import 'package:e2e_test/common.dart';
+import 'package:e2e_test/e2e_test.dart';
+import 'package:e2e_test/src/workers.debug.compiled.dart' as debug;
+import 'package:e2e_test/src/workers.release.compiled.dart' as release;
 import 'package:test/test.dart';
 
 void main() {
+  Future<String> loadDebug() async {
+    return debug.workerJs;
+  }
+
+  Future<String> loadRelease() async {
+    return release.workerJs;
+  }
+
   group('WorkerBee', () {
     group('', () {
       test(
         'dart2Js',
         () => testWorker(
-          jsEntrypoint: 'packages/e2e_test/workers.js',
+          jsEntrypoint: 'packages/e2e_test/src/workers.debug.js',
         ),
       );
 
       test(
         'dart2Js (m, O4)',
         () => testWorker(
-          jsEntrypoint: 'packages/e2e_test/workers.min.js',
+          jsEntrypoint: 'packages/e2e_test/src/workers.release.js',
         ),
       );
     });
@@ -38,64 +48,48 @@ void main() {
     group('| no result', () {
       test(
         'dart2Js',
-        () => testWorkerNoResult(
-          jsEntrypoint: 'packages/e2e_test/workers.js',
-        ),
+        () => testWorkerNoResult(loader: loadDebug),
       );
 
       test(
         'dart2Js (m, O4)',
-        () => testWorkerNoResult(
-          jsEntrypoint: 'packages/e2e_test/workers.min.js',
-        ),
+        () => testWorkerNoResult(loader: loadRelease),
       );
     });
 
     group('| void result', () {
       test(
         'dart2Js',
-        () => testWorkerVoidResult(
-          jsEntrypoint: 'packages/e2e_test/workers.js',
-        ),
+        () => testWorkerVoidResult(loader: loadDebug),
       );
 
       test(
         'dart2Js (m, O4)',
-        () => testWorkerVoidResult(
-          jsEntrypoint: 'packages/e2e_test/workers.min.js',
-        ),
+        () => testWorkerVoidResult(loader: loadRelease),
       );
     });
 
     group('| null result', () {
       test(
         'dart2Js',
-        () => testWorkerNullResult(
-          jsEntrypoint: 'packages/e2e_test/workers.js',
-        ),
+        () => testWorkerNullResult(loader: loadDebug),
       );
 
       test(
         'dart2Js (m, O4)',
-        () => testWorkerNullResult(
-          jsEntrypoint: 'packages/e2e_test/workers.min.js',
-        ),
+        () => testWorkerNullResult(loader: loadRelease),
       );
     });
 
     group('| throws', () {
       test(
         'dart2Js',
-        () => testWorkerThrows(
-          jsEntrypoint: 'packages/e2e_test/workers.js',
-        ),
+        () => testWorkerThrows(loader: loadDebug),
       );
 
       test(
         'dart2Js (m, O4)',
-        () => testWorkerThrows(
-          jsEntrypoint: 'packages/e2e_test/workers.min.js',
-        ),
+        () => testWorkerThrows(loader: loadRelease),
       );
     });
   });

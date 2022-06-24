@@ -14,16 +14,9 @@
 
 import 'dart:async';
 
-import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
-import 'package:amplify_auth_cognito_dart/src/flows/constants.dart';
-import 'package:amplify_auth_cognito_dart/src/flows/helpers.dart';
-import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/initial_parameters_stub.dart'
-    if (dart.library.html) 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/initial_parameters_html.dart';
-import 'package:amplify_auth_cognito_dart/src/jwt/jwt.dart';
-import 'package:amplify_auth_cognito_dart/src/model/auth_user_ext.dart';
-import 'package:amplify_auth_cognito_dart/src/model/sign_in_parameters.dart';
-import 'package:amplify_auth_cognito_dart/src/model/sign_up_parameters.dart';
-import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart'
+import 'package:amplify_auth_cognito_common/amplify_auth_cognito_common.dart';
+// ignore: implementation_imports
+import 'package:amplify_auth_cognito_common/src/sdk/cognito_identity_provider.dart'
     as cognito
     show
         AttributeType,
@@ -48,6 +41,11 @@ import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart
         UpdateUserAttributesRequest,
         UserNotConfirmedException,
         VerifyUserAttributeRequest;
+import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
+import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/initial_parameters_stub.dart'
+    if (dart.library.html) 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/initial_parameters_html.dart';
+import 'package:amplify_auth_cognito_dart/src/jwt/jwt.dart';
+import 'package:amplify_auth_cognito_dart/src/model/auth_user_ext.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/sdk_bridge.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart';

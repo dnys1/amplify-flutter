@@ -23,6 +23,9 @@ import 'package:worker_bee/worker_bee.dart';
 Type _typeOf<T>() => T;
 final _voidType = _typeOf<void>();
 
+/// JS entrypoint loader, useful for loading JS workers from deferred libraries.
+typedef EntrypointLoader = Future<String> Function();
+
 /// {@template worker_bee.worker_bee_common}
 /// The common (platform-agnostic) implementations for a worker bee.
 ///
@@ -165,8 +168,12 @@ abstract class WorkerBeeCommon<Request extends Object, Response>
 
   /// Starts a remote worker and waits for it to connect.
   ///
-  /// Optionally, you can override the [jsEntrypoint] for this call.
-  Future<void> spawn({String? jsEntrypoint});
+  /// Optionally, you can override the [jsEntrypoint] or [loadJsEntrypoint]
+  /// for this call.
+  Future<void> spawn({
+    String? jsEntrypoint,
+    EntrypointLoader? loadJsEntrypoint,
+  });
 
   /// Connects to a spawning thread.
   ///

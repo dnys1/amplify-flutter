@@ -12,6 +12,7 @@ dependencies:
   analyzer: ^3.0.0
   async: ^2.8.0
   build: ^2.2.1
+  build_web_compilers: ^3.2.3
   code_builder: ^4.1.0
   collection: ^1.15.0
   dart_style: ^2.2.1

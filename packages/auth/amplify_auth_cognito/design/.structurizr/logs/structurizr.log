@@ -1,0 +1,24 @@
+[INFO ] 2022-06-16 21:06:36.799 [main] Configuration - ***********************************************************************************
+[INFO ] 2022-06-16 21:06:36.807 [main] Configuration -    _____ _                   _              _          
+[INFO ] 2022-06-16 21:06:36.809 [main] Configuration -   / ____| |                 | |            (_)         
+[INFO ] 2022-06-16 21:06:36.813 [main] Configuration -  | (___ | |_ _ __ _   _  ___| |_ _   _ _ __ _ _____ __ 
+[INFO ] 2022-06-16 21:06:36.815 [main] Configuration -   \___ \| __| '__| | | |/ __| __| | | | '__| |_  / '__|
+[INFO ] 2022-06-16 21:06:36.817 [main] Configuration -   ____) | |_| |  | |_| | (__| |_| |_| | |  | |/ /| |   
+[INFO ] 2022-06-16 21:06:36.819 [main] Configuration -  |_____/ \__|_|   \__,_|\___|\__|\__,_|_|  |_/___|_|   
+[INFO ] 2022-06-16 21:06:36.821 [main] Configuration -                                                        
+[INFO ] 2022-06-16 21:06:36.822 [main] Configuration -  Structurizr Lite
+[INFO ] 2022-06-16 21:06:36.826 [main] Configuration -  Build: 2749
+[INFO ] 2022-06-16 21:06:36.830 [main] Configuration -  Built: 2022-06-16T20:06:26Z
+[INFO ] 2022-06-16 21:06:36.862 [main] Configuration -  Structurizr DSL: v1.19.2
+[INFO ] 2022-06-16 21:06:36.864 [main] Configuration - 
+[INFO ] 2022-06-16 21:06:36.865 [main] Configuration -  Workspace path: /usr/local/structurizr
+[INFO ] 2022-06-16 21:06:36.868 [main] Configuration -  URL: 
+[INFO ] 2022-06-16 21:06:36.872 [main] Configuration -  Memory: used=108MB; free=147MB; total=256MB; max=256MB
+[INFO ] 2022-06-16 21:06:36.878 [main] Configuration - ***********************************************************************************
+[ERROR] 2022-06-16 21:19:06.218 [http-nio-8080-exec-1] FileSystemWorkspaceComponent - com.structurizr.dsl.StructurizrDslParserException: Unexpected tokens at line 9: iOSPlatform = container "iOS Platform"
+[ERROR] 2022-06-16 21:19:06.221 [http-nio-8080-exec-1] ApiController - com.structurizr.lite.web.ApiException: workspace.dsl: Unexpected tokens at line 9: iOSPlatform = container "iOS Platform"
+[ERROR] 2022-06-16 21:28:17.829 [http-nio-8080-exec-6] FileSystemWorkspaceComponent - com.structurizr.dsl.StructurizrDslParserException: The element "hostedUI" is not a software system at line 21: container hostedUI "HostedUI" {
+[ERROR] 2022-06-16 21:28:17.831 [http-nio-8080-exec-6] ApiController - com.structurizr.lite.web.ApiException: workspace.dsl: The element "hostedUI" is not a software system at line 21: container hostedUI "HostedUI" {
+[INFO ] 2022-06-16 23:07:36.238 [Thread-2] Configuration - ********************************************************
+[INFO ] 2022-06-16 23:07:36.303 [Thread-2] Configuration -  Stopping Structurizr Lite
+[INFO ] 2022-06-16 23:07:36.346 [Thread-2] Configuration - ********************************************************

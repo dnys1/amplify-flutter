@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:amplify_auth_cognito_dart/src/model/sign_up_parameters.dart';
+import 'package:amplify_auth_cognito_common/amplify_auth_cognito_common.dart';
 import 'package:amplify_core/amplify_core.dart';
 
 /// Discrete event types of the sign up flow.

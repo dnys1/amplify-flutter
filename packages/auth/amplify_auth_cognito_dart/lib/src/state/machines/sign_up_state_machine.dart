@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ignore_for_file: implementation_imports
+
+import 'package:amplify_auth_cognito_common/amplify_auth_cognito_common.dart';
+import 'package:amplify_auth_cognito_common/src/sdk/cognito_identity_provider.dart';
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart'
     hide SignUpRequest, ConfirmSignUpRequest;
-import 'package:amplify_auth_cognito_dart/src/flows/helpers.dart';
-import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
 import 'package:amplify_auth_cognito_dart/src/state/machines/generated/sign_up_state_machine_base.dart';
 import 'package:amplify_core/amplify_core.dart'
     hide SignUpRequest, ConfirmSignUpRequest;

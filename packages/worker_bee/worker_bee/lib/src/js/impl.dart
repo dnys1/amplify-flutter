@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'dart:async';
+import 'dart:js_util' as js_util;
 
 import 'package:built_value/serializer.dart';
 import 'package:meta/meta.dart';
@@ -150,23 +151,41 @@ mixin WorkerBeeImpl<Request extends Object, Response>
     );
   }
 
+  EntrypointLoader _createLoader(Object entrypoint) {
+    if (entrypoint is EntrypointLoader) {
+      return () async {
+        final library = await entrypoint();
+        final blob = Blob(
+          js_util.jsify([library]) as Object,
+          BlobInitOptions(type: 'text/javascript'),
+        );
+        return URL.createObjectURL(blob);
+      };
+    }
+    return () => Future.value(entrypoint as String);
+  }
+
   @override
   @nonVirtual
-  Future<void> spawn({String? jsEntrypoint}) async {
+  Future<void> spawn({
+    String? jsEntrypoint,
+    EntrypointLoader? loadJsEntrypoint,
+  }) async {
     return runTraced(
       () async {
-        for (final entrypoint in [
-          if (jsEntrypoint != null) jsEntrypoint,
-          this.jsEntrypoint,
-          ...fallbackUrls
+        for (final entrypointLoader in [
+          if (jsEntrypoint != null) _createLoader(jsEntrypoint),
+          _createLoader(this.jsEntrypoint),
+          ...fallbackUrls.map(_createLoader),
+          if (loadJsEntrypoint != null) _createLoader(loadJsEntrypoint)
         ]) {
-          logger.finest('Spawning worker at $entrypoint');
-
           // Spawn the worker using the specified script.
           try {
+            final entrypoint = await entrypointLoader();
+            logger.finest('Spawning worker at $entrypoint');
             _worker = Worker(entrypoint);
-          } on Object {
-            logger.finest('Could not launch worker at $entrypoint');
+          } on Object catch (e, st) {
+            logger.severe('Could not launch worker', e, st);
             continue;
           }
 

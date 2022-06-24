@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:amplify_auth_cognito_common/amplify_auth_cognito_common.dart';
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
-import 'package:amplify_auth_cognito_dart/src/model/cognito_device_secrets.dart';
 import 'package:amplify_core/amplify_core.dart';
 
 /// Discrete state types of the credential store state machine.

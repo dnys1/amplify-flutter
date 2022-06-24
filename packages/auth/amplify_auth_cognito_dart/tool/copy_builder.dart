@@ -15,30 +15,45 @@
 import 'package:build/build.dart';
 
 /// Factory for the build script.
-Builder copyBuilder(Object? _) => _CopyBuilder();
+Builder copyBuilder(BuilderOptions options) => _CopyBuilder(options);
 
-/// Copies the [_generatedWorkersJs] file to [_publishedWorkersJs].
+/// Copies the generated workers to [_publishedWorkersJs].
 class _CopyBuilder extends Builder {
+  _CopyBuilder(this.options);
+
+  final BuilderOptions options;
+  bool get isDebug => options.config['debug'] as bool;
+
+  late final _publishedWorkersJs = AssetId(
+    'amplify_auth_cognito_dart',
+    isDebug
+        ? 'lib/src/workers.js.debug.dart'
+        : 'lib/src/workers.js.release.dart',
+  );
+
   @override
-  final Map<String, List<String>> buildExtensions = {
-    _generatedWorkersJs.path: [_publishedWorkersJs.path]
+  late final Map<String, List<String>> buildExtensions = {
+    'lib/src/workers.*.dart.js': [
+      'lib/src/workers.js.debug.dart',
+      'lib/src/workers.js.release.dart'
+    ]
   };
 
   @override
-  void build(BuildStep buildStep) {
-    if (buildStep.inputId != _generatedWorkersJs) {
-      throw StateError(
-        'Unexpected input for `CopyBuilder` expected only $_generatedWorkersJs',
-      );
-    }
-    buildStep.writeAsString(
-      _publishedWorkersJs,
-      buildStep.readAsString(_generatedWorkersJs),
-    );
+  Future<void> build(BuildStep buildStep) async {
+    // if (buildStep.inputId != _generatedWorkersJs) {
+    //   throw StateError(
+    //     'Unexpected input for `CopyBuilder` expected only $_generatedWorkersJs',
+    //   );
+    // }
+    print(buildStep.inputId);
+
+    final library = '''
+/// Compiled workers (${isDebug ? 'Debug' : 'Release'} mode)
+const workerJs = r\'\'\'
+${await buildStep.readAsString(buildStep.inputId)}
+\'\'\';
+''';
+    await buildStep.writeAsString(_publishedWorkersJs, library);
   }
 }
-
-final _generatedWorkersJs =
-    AssetId('amplify_auth_cognito_dart', 'lib/src/workers.dart.js');
-final _publishedWorkersJs =
-    AssetId('amplify_auth_cognito_dart', 'lib/src/workers.js');

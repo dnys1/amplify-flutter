@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:amplify_auth_cognito_common/amplify_auth_cognito_common.dart';
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
-import 'package:amplify_auth_cognito_dart/src/model/cognito_device_secrets.dart';
 import 'package:aws_signature_v4/aws_signature_v4.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';

@@ -321,9 +321,45 @@ extension PropsMessageChannel on MessageChannel {
 
 /// Browser-based JSON utilities.
 @JS()
-class JSON {
+@staticInterop
+abstract class JSON {
   /// Stringifies a JSON-like object.
   external static String stringify(Object? object);
+}
+
+/// The URL interface is used to parse, construct, normalize, and encode URLs.
+@JS()
+@staticInterop
+abstract class URL {
+  /// Creates a string containing a URL representing [o].
+  external static String createObjectURL(Object o);
+}
+
+/// {@template worker_bee.js.blob}
+/// The Blob object represents a blob, which is a file-like object of immutable,
+/// raw data; they can be read as text or binary data, or converted into a
+/// `ReadableStream` so its methods can be used for processing the data.
+/// {@endtemplate}
+@JS()
+@staticInterop
+abstract class Blob {
+  /// {@macro worker_bee.js.blob}
+  external factory Blob(Object /* JSArray */ array, [BlobInitOptions? options]);
+}
+
+/// {@template worker_bee.js.blob_options}
+/// Init options for [Blob].
+/// {@endtemplate}
+@JS()
+@anonymous
+@staticInterop
+abstract class BlobInitOptions {
+  /// {@macro worker_bee.js.blob_options}
+  external factory BlobInitOptions({
+    // The MIME type of the data that will be stored into the blob.
+    // The default value is the empty string, ("").
+    String? type,
+  });
 }
 
 /// {@template worker_bee.js.interop.js_object}

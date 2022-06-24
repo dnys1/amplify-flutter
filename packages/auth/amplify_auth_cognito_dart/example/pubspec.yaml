@@ -17,6 +17,8 @@ dependencies:
     path: ../../../example_common
 
 dependency_overrides:
+  amplify_auth_cognito_common:
+    path: ../../amplify_auth_cognito_common
   amplify_core:
     path: ../../../amplify_core
   amplify_secure_storage_dart:

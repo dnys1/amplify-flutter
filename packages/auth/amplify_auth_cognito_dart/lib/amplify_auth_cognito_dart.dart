@@ -19,8 +19,6 @@ export 'package:amplify_core/src/types/auth/auth_types.dart';
 
 export 'src/auth_plugin_impl.dart';
 
-export 'src/exception/srp_exception.dart';
-
 export 'src/flows/hosted_ui/hosted_ui_platform.dart';
 
 // Models

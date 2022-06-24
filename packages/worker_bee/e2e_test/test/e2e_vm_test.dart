@@ -14,7 +14,7 @@
 
 @TestOn('vm')
 
-import 'package:e2e_test/common.dart';
+import 'package:e2e_test/e2e_test.dart';
 import 'package:test/test.dart';
 
 void main() {

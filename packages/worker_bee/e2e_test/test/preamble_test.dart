@@ -16,6 +16,8 @@
 
 import 'dart:html';
 
+import 'package:e2e_test/src/no_workers.debug.compiled.dart' as debug;
+import 'package:e2e_test/src/no_workers.release.compiled.dart' as release;
 import 'package:test/test.dart';
 
 void main() {
@@ -45,11 +47,25 @@ void main() {
 
   group('preamble', () {
     test('bad assignment', () {
-      badAssignmentTest('packages/e2e_test/no_workers.js');
+      badAssignmentTest(
+        Url.createObjectUrlFromBlob(
+          Blob(
+            [debug.workerJs],
+            'text/javascript',
+          ),
+        ),
+      );
     });
 
     test('bad assignment (m, O4)', () {
-      badAssignmentTest('packages/e2e_test/no_workers.min.js');
+      badAssignmentTest(
+        Url.createObjectUrlFromBlob(
+          Blob(
+            [release.workerJs],
+            'text/javascript',
+          ),
+        ),
+      );
     });
   });
 }

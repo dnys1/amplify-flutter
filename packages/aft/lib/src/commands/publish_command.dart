@@ -132,7 +132,8 @@ class PublishCommand extends AmplifyCommand {
   Future<void> run() async {
     // Gather packages which can be published.
     final publishablePackages = (await Future.wait([
-      for (final package in await allPackages) _checkPublishable(package),
+      for (final package in (await allPackages).values)
+        _checkPublishable(package),
     ]))
         .whereType<PackageInfo>()
         .toList();

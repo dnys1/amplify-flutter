@@ -20,6 +20,7 @@ import 'package:async/async.dart';
 import 'package:aws_common/aws_common.dart';
 import 'package:checked_yaml/checked_yaml.dart';
 import 'package:cli_util/cli_logging.dart';
+import 'package:collection/collection.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
@@ -59,10 +60,10 @@ abstract class AmplifyCommand extends Command<void> implements Closeable {
         );
       });
 
-  final _allPackagesMemo = AsyncMemoizer<List<PackageInfo>>();
+  final _allPackagesMemo = AsyncMemoizer<Map<String, PackageInfo>>();
 
   /// All packages in the Amplify Flutter repo.
-  Future<List<PackageInfo>> get allPackages =>
+  Future<Map<String, PackageInfo>> get allPackages =>
       _allPackagesMemo.runOnce(() async {
         final allDirs = (await rootDir)
             .list(recursive: true, followLinks: false)
@@ -88,7 +89,9 @@ abstract class AmplifyCommand extends Command<void> implements Closeable {
             ),
           );
         }
-        return allPackages..sort();
+        return UnmodifiableMapView({
+          for (final package in allPackages..sort()) package.name: package,
+        });
       });
 
   final _globalDependencyConfigMemo = AsyncMemoizer<GlobalDependencyConfig>();

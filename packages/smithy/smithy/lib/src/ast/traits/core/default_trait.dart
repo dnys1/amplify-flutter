@@ -12,12 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:aws_common/aws_common.dart';
 import 'package:smithy/ast.dart';
 
-class BoxTrait extends AnnotationTrait {
-  const BoxTrait() : super(id);
+class DefaultTrait with AWSSerializable implements Trait<Object> {
+  const DefaultTrait(this.value);
 
-  const BoxTrait.fromJson(Object? json) : super(id);
+  factory DefaultTrait.fromJson(Object? json) => DefaultTrait(json as Object);
 
-  static const id = ShapeId(namespace: 'smithy.api', shape: 'box');
+  static const id = ShapeId.core('default');
+
+  @override
+  final Object value;
+
+  @override
+  bool get isSynthetic => false;
+
+  @override
+  List<Object?> get props => [value];
+
+  @override
+  ShapeId get shapeId => id;
+
+  @override
+  Object toJson() => value;
 }

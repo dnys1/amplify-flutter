@@ -20,8 +20,6 @@ abstract class ShapeVisitor<R> {
 
   R booleanShape(BooleanShape shape, [Shape? parent]);
 
-  R primitiveBooleanShape(PrimitiveBooleanShape shape, [Shape? parent]);
-
   R listShape(ListShape shape, [Shape? parent]);
 
   R setShape(SetShape shape, [Shape? parent]);
@@ -29,8 +27,6 @@ abstract class ShapeVisitor<R> {
   R mapShape(MapShape shape, [Shape? parent]);
 
   R byteShape(ByteShape shape, [Shape? parent]);
-
-  R primitiveByteShape(PrimitiveByteShape shape, [Shape? parent]);
 
   R shortShape(ShortShape shape, [Shape? parent]);
 
@@ -40,19 +36,9 @@ abstract class ShapeVisitor<R> {
 
   R floatShape(FloatShape shape, [Shape? parent]);
 
-  R primitiveShortShape(PrimitiveShortShape shape, [Shape? parent]);
-
-  R primitiveIntegerShape(PrimitiveIntegerShape shape, [Shape? parent]);
-
-  R primitiveLongShape(PrimitiveLongShape shape, [Shape? parent]);
-
-  R primitiveFloatShape(PrimitiveFloatShape shape, [Shape? parent]);
-
   R documentShape(DocumentShape shape, [Shape? parent]);
 
   R doubleShape(DoubleShape shape, [Shape? parent]);
-
-  R primitiveDoubleShape(PrimitiveDoubleShape shape, [Shape? parent]);
 
   R bigIntegerShape(BigIntegerShape shape, [Shape? parent]);
 
@@ -65,6 +51,8 @@ abstract class ShapeVisitor<R> {
   R serviceShape(ServiceShape shape, [Shape? parent]);
 
   R stringShape(StringShape shape, [Shape? parent]);
+
+  R enumShape(EnumShape shape, [Shape? parent]);
 
   R structureShape(StructureShape shape, [Shape? parent]);
 
@@ -126,33 +114,5 @@ abstract class CategoryShapeVisitor<R> implements ShapeVisitor<R> {
 
   @override
   R timestampShape(TimestampShape shape, [Shape? parent]) =>
-      simpleShape(shape, parent);
-
-  @override
-  R primitiveBooleanShape(PrimitiveBooleanShape shape, [Shape? parent]) =>
-      simpleShape(shape, parent);
-
-  @override
-  R primitiveByteShape(PrimitiveByteShape shape, [Shape? parent]) =>
-      simpleShape(shape, parent);
-
-  @override
-  R primitiveDoubleShape(PrimitiveDoubleShape shape, [Shape? parent]) =>
-      simpleShape(shape, parent);
-
-  @override
-  R primitiveFloatShape(PrimitiveFloatShape shape, [Shape? parent]) =>
-      simpleShape(shape, parent);
-
-  @override
-  R primitiveIntegerShape(PrimitiveIntegerShape shape, [Shape? parent]) =>
-      simpleShape(shape, parent);
-
-  @override
-  R primitiveLongShape(PrimitiveLongShape shape, [Shape? parent]) =>
-      simpleShape(shape, parent);
-
-  @override
-  R primitiveShortShape(PrimitiveShortShape shape, [Shape? parent]) =>
       simpleShape(shape, parent);
 }

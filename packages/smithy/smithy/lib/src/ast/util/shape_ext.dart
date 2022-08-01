@@ -39,20 +39,26 @@ extension ShapeExt on Shape {
       case ShapeType.double:
         return true;
       default:
-        return false;
+        return hasTrait<DefaultTrait>();
     }
   }
 
   /// Whether `this` is boxed. This means the shape is optionally present and
   /// has no default value.
-  bool get isBoxed => hasTrait<BoxTrait>();
+  bool get isBoxed {
+    if (hasTrait<DefaultTrait>()) {
+      return false;
+    }
+    return !hasTrait<RequiredTrait>() || hasTrait<ClientOptionalTrait>();
+  }
 
   /// Whether `this` is not boxed. This means the shape is required to be present
   /// with a value.
   bool get isNotBoxed => !isBoxed;
 
   /// Whether `this` is an enum.
-  bool get isEnum => this is StringShape && hasTrait<EnumTrait>();
+  bool get isEnum =>
+      (this is StringShape && hasTrait<EnumTrait>()) || this is EnumShape;
 
   /// Whether `this` is an idempotency token.
   bool get isIdempotencyToken => hasTrait<IdempotencyTokenTrait>();

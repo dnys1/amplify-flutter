@@ -19,7 +19,7 @@ import 'package:test/test.dart';
 
 const playgroundIdl = '''
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "com.test#GetFoo": {
             "type": "operation",
@@ -47,18 +47,20 @@ const playgroundIdl = '''
             }
         },
         "com.test#MyEnum": {
-            "type": "string",
-            "traits": {
-                "smithy.api#enum": [
-                    {
-                        "value": "rawValue1",
-                        "name": "Variant1"
-                    },
-                    {
-                        "value": "rawValue2",
-                        "name": "Variant2"
-                    }
-                ]
+            "type": "enum",
+            "members": {
+              "VARIANT_1": {
+                "target": "smithy.api#Unit",
+                "traits": {
+                  "smithy.api#enumValue": "rawValue1"
+                }
+              },
+              "VARIANT_2": {
+                "target": "smithy.api#Unit",
+                "traits": {
+                  "smithy.api#enumValue": "rawValue2"
+                }
+              }
             }
         },
         "com.test#MyService": {

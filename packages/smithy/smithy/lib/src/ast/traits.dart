@@ -37,13 +37,15 @@ export 'traits/aws/service_trait.dart';
 
 export 'traits/core/auth_definition_trait.dart';
 export 'traits/core/auth_trait.dart';
-export 'traits/core/box_trait.dart';
+export 'traits/core/client_optional_trait.dart';
 export 'traits/core/cors_trait.dart';
+export 'traits/core/default_trait.dart';
 export 'traits/core/deprecated_trait.dart';
 export 'traits/core/documentation_trait.dart';
 export 'traits/core/endpoint_trait.dart';
 export 'traits/core/enum_definition.dart';
 export 'traits/core/enum_trait.dart';
+export 'traits/core/enum_value_trait.dart';
 export 'traits/core/error_trait.dart';
 export 'traits/core/event_header_trait.dart';
 export 'traits/core/event_payload_trait.dart';

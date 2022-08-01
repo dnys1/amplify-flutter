@@ -1,29 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'primitive_short_shape.dart';
+part of 'enum_shape.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
 // **************************************************************************
 
-Serializer<PrimitiveShortShape> _$primitiveShortShapeSerializer =
-    new _$PrimitiveShortShapeSerializer();
+Serializer<EnumShape> _$enumShapeSerializer = new _$EnumShapeSerializer();
 
-class _$PrimitiveShortShapeSerializer
-    implements StructuredSerializer<PrimitiveShortShape> {
+class _$EnumShapeSerializer implements StructuredSerializer<EnumShape> {
   @override
-  final Iterable<Type> types = const [
-    PrimitiveShortShape,
-    _$PrimitiveShortShape
-  ];
+  final Iterable<Type> types = const [EnumShape, _$EnumShape];
   @override
-  final String wireName = 'PrimitiveShortShape';
+  final String wireName = 'EnumShape';
 
   @override
-  Iterable<Object?> serialize(
-      Serializers serializers, PrimitiveShortShape object,
+  Iterable<Object?> serialize(Serializers serializers, EnumShape object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object?>[
+      'members',
+      serializers.serialize(object.members,
+          specifiedType: const FullType(NamedMembersMap)),
       'traits',
       serializers.serialize(object.traits,
           specifiedType: const FullType(TraitMap)),
@@ -33,10 +30,9 @@ class _$PrimitiveShortShapeSerializer
   }
 
   @override
-  PrimitiveShortShape deserialize(
-      Serializers serializers, Iterable<Object?> serialized,
+  EnumShape deserialize(Serializers serializers, Iterable<Object?> serialized,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = new PrimitiveShortShapeBuilder();
+    final result = new EnumShapeBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -44,6 +40,11 @@ class _$PrimitiveShortShapeSerializer
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
+        case 'members':
+          result.members = serializers.deserialize(value,
+                  specifiedType: const FullType(NamedMembersMap))!
+              as NamedMembersMap;
+          break;
         case 'traits':
           result.traits = serializers.deserialize(value,
               specifiedType: const FullType(TraitMap))! as TraitMap;
@@ -55,60 +56,64 @@ class _$PrimitiveShortShapeSerializer
   }
 }
 
-class _$PrimitiveShortShape extends PrimitiveShortShape {
+class _$EnumShape extends EnumShape {
+  @override
+  final NamedMembersMap members;
   @override
   final ShapeId shapeId;
   @override
   final TraitMap traits;
 
-  factory _$PrimitiveShortShape(
-          [void Function(PrimitiveShortShapeBuilder)? updates]) =>
-      (new PrimitiveShortShapeBuilder()..update(updates))._build();
+  factory _$EnumShape([void Function(EnumShapeBuilder)? updates]) =>
+      (new EnumShapeBuilder()..update(updates))._build();
 
-  _$PrimitiveShortShape._({required this.shapeId, required this.traits})
+  _$EnumShape._(
+      {required this.members, required this.shapeId, required this.traits})
       : super._() {
-    BuiltValueNullFieldError.checkNotNull(
-        shapeId, r'PrimitiveShortShape', 'shapeId');
-    BuiltValueNullFieldError.checkNotNull(
-        traits, r'PrimitiveShortShape', 'traits');
+    BuiltValueNullFieldError.checkNotNull(members, r'EnumShape', 'members');
+    BuiltValueNullFieldError.checkNotNull(shapeId, r'EnumShape', 'shapeId');
+    BuiltValueNullFieldError.checkNotNull(traits, r'EnumShape', 'traits');
   }
 
   @override
-  PrimitiveShortShape rebuild(
-          void Function(PrimitiveShortShapeBuilder) updates) =>
+  EnumShape rebuild(void Function(EnumShapeBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  PrimitiveShortShapeBuilder toBuilder() =>
-      new PrimitiveShortShapeBuilder()..replace(this);
+  EnumShapeBuilder toBuilder() => new EnumShapeBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is PrimitiveShortShape &&
+    return other is EnumShape &&
+        members == other.members &&
         shapeId == other.shapeId &&
         traits == other.traits;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, shapeId.hashCode), traits.hashCode));
+    return $jf(
+        $jc($jc($jc(0, members.hashCode), shapeId.hashCode), traits.hashCode));
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper(r'PrimitiveShortShape')
+    return (newBuiltValueToStringHelper(r'EnumShape')
+          ..add('members', members)
           ..add('shapeId', shapeId)
           ..add('traits', traits))
         .toString();
   }
 }
 
-class PrimitiveShortShapeBuilder
-    implements
-        Builder<PrimitiveShortShape, PrimitiveShortShapeBuilder>,
-        SimpleShapeBuilder {
-  _$PrimitiveShortShape? _$v;
+class EnumShapeBuilder
+    implements Builder<EnumShape, EnumShapeBuilder>, NamedMembersShapeBuilder {
+  _$EnumShape? _$v;
+
+  NamedMembersMap? _members;
+  NamedMembersMap? get members => _$this._members;
+  set members(covariant NamedMembersMap? members) => _$this._members = members;
 
   ShapeId? _shapeId;
   ShapeId? get shapeId => _$this._shapeId;
@@ -118,13 +123,14 @@ class PrimitiveShortShapeBuilder
   TraitMap? get traits => _$this._traits;
   set traits(covariant TraitMap? traits) => _$this._traits = traits;
 
-  PrimitiveShortShapeBuilder() {
-    PrimitiveShortShape._init(this);
+  EnumShapeBuilder() {
+    EnumShape._init(this);
   }
 
-  PrimitiveShortShapeBuilder get _$this {
+  EnumShapeBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
+      _members = $v.members;
       _shapeId = $v.shapeId;
       _traits = $v.traits;
       _$v = null;
@@ -133,26 +139,28 @@ class PrimitiveShortShapeBuilder
   }
 
   @override
-  void replace(covariant PrimitiveShortShape other) {
+  void replace(covariant EnumShape other) {
     ArgumentError.checkNotNull(other, 'other');
-    _$v = other as _$PrimitiveShortShape;
+    _$v = other as _$EnumShape;
   }
 
   @override
-  void update(void Function(PrimitiveShortShapeBuilder)? updates) {
+  void update(void Function(EnumShapeBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  PrimitiveShortShape build() => _build();
+  EnumShape build() => _build();
 
-  _$PrimitiveShortShape _build() {
+  _$EnumShape _build() {
     final _$result = _$v ??
-        new _$PrimitiveShortShape._(
+        new _$EnumShape._(
+            members: BuiltValueNullFieldError.checkNotNull(
+                members, r'EnumShape', 'members'),
             shapeId: BuiltValueNullFieldError.checkNotNull(
-                shapeId, r'PrimitiveShortShape', 'shapeId'),
+                shapeId, r'EnumShape', 'shapeId'),
             traits: BuiltValueNullFieldError.checkNotNull(
-                traits, r'PrimitiveShortShape', 'traits'));
+                traits, r'EnumShape', 'traits'));
     replace(_$result);
     return _$result;
   }

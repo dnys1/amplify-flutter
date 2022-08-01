@@ -32,6 +32,25 @@ abstract class StringShape
 
   static const id = ShapeId.core('String');
 
+  EnumShape? get asEnumShape {
+    final enumTrait = getTrait<EnumTrait>();
+    if (enumTrait == null) {
+      return null;
+    }
+    return EnumShape((b) {
+      b.members = NamedMembersMap({
+        for (final definition in enumTrait.definitions)
+          (definition.name ?? definition.value): MemberShape(
+            (b) => b
+              ..target = Shape.unit
+              ..traits = TraitMap({
+                EnumValueTrait.id: EnumValueTrait(definition.value),
+              }),
+          ),
+      });
+    });
+  }
+
   @override
   ShapeType getType() => ShapeType.string;
 

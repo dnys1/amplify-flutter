@@ -16,32 +16,27 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:smithy/ast.dart';
 
-part 'primitive_float_shape.g.dart';
+part 'enum_shape.g.dart';
 
-abstract class PrimitiveFloatShape
-    implements
-        SimpleShape,
-        Built<PrimitiveFloatShape, PrimitiveFloatShapeBuilder> {
-  factory PrimitiveFloatShape(
-          [void Function(PrimitiveFloatShapeBuilder) updates]) =
-      _$PrimitiveFloatShape;
-  PrimitiveFloatShape._();
+abstract class EnumShape
+    implements NamedMembersShape, Built<EnumShape, EnumShapeBuilder> {
+  factory EnumShape([void Function(EnumShapeBuilder) updates]) = _$EnumShape;
+  EnumShape._();
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(PrimitiveFloatShapeBuilder b) {
-    b.shapeId = id;
+  static void _init(EnumShapeBuilder b) {
+    b.shapeId = ShapeId.empty;
     b.traits = TraitMap.empty();
   }
 
-  static const id = ShapeId.core('PrimitiveFloat');
-
   @override
-  ShapeType getType() => ShapeType.float;
+  ShapeType getType() => ShapeType.enum_;
+
+  Iterable<MemberShape> get enumValues => members.values;
 
   @override
   R accept<R>(ShapeVisitor<R> visitor, [Shape? parent]) =>
-      visitor.primitiveFloatShape(this, parent);
+      visitor.enumShape(this, parent);
 
-  static Serializer<PrimitiveFloatShape> get serializer =>
-      _$primitiveFloatShapeSerializer;
+  static Serializer<EnumShape> get serializer => _$enumShapeSerializer;
 }

@@ -48,13 +48,6 @@ abstract class Shape {
     FloatShape.id: FloatShape(),
     IntegerShape.id: IntegerShape(),
     LongShape.id: LongShape(),
-    PrimitiveBooleanShape.id: PrimitiveBooleanShape(),
-    PrimitiveByteShape.id: PrimitiveByteShape(),
-    PrimitiveDoubleShape.id: PrimitiveDoubleShape(),
-    PrimitiveFloatShape.id: PrimitiveFloatShape(),
-    PrimitiveIntegerShape.id: PrimitiveIntegerShape(),
-    PrimitiveLongShape.id: PrimitiveLongShape(),
-    PrimitiveShortShape.id: PrimitiveShortShape(),
     ShortShape.id: ShortShape(),
     StringShape.id: StringShape(),
     TimestampShape.id: TimestampShape(),
@@ -77,7 +70,7 @@ class ShapeSerializer extends StructuredSerializer<Shape> {
       iterator.moveNext();
       final Object? value = iterator.current;
       if (key == 'type') {
-        final type = ShapeType.valueOf(value as String);
+        final type = ShapeType.deserialize(value as String);
         return serializers.deserialize(
           serialized,
           specifiedType: FullType(type.type),

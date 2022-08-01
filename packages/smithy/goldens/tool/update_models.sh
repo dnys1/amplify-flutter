@@ -15,9 +15,9 @@
 
 set -e
 
-if [[ -n "$CI" ]]; then
-    cd packages/smithy/goldens
-fi
+# if [[ -n "$CI" ]]; then
+#     cd packages/smithy/goldens
+# fi
 
 if [[ ! -e smithy ]]; then
     echo "Must be run from goldens/ root" >&2

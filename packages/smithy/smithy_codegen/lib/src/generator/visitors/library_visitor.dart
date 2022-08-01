@@ -179,9 +179,15 @@ class LibraryVisitor extends DefaultVisitor<Iterable<GeneratedLibrary>> {
     }
     seen.add(shape.shapeId);
 
-    if (shape.isEnum) {
-      yield _buildLibrary(shape, EnumGenerator(shape, context).generate());
+    final asEnumShape = shape.asEnumShape;
+    if (asEnumShape != null) {
+      yield* enumShape(asEnumShape, parent);
     }
+  }
+
+  @override
+  Iterable<GeneratedLibrary> enumShape(EnumShape shape, [Shape? parent]) sync* {
+    yield _buildLibrary(shape, EnumGenerator(shape, context).generate());
   }
 
   @override

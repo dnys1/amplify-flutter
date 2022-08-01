@@ -70,7 +70,7 @@ Future<void> _generateFor(FileSystemEntity modelEnt) async {
         '--rm',
         '-v',
         '$modelsPath:/home/$modelsDir',
-        'smithy',
+        'smithy:2',
         'ast',
         '-d',
         '/smithy/lib/traits',

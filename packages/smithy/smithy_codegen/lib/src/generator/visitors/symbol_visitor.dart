@@ -127,8 +127,9 @@ class SymbolVisitor extends CategoryShapeVisitor<Reference> {
 
   @override
   Reference stringShape(StringShape shape, [Shape? parent]) {
-    if (shape.isEnum) {
-      return createSymbol(shape).withBoxed(shape.isNullable(context, parent));
+    final enumShape = shape.asEnumShape;
+    if (enumShape != null) {
+      return this.enumShape(enumShape, parent);
     }
     final mediaType = shape.getTrait<MediaTypeTrait>()?.value;
     if (mediaType != null) {
@@ -166,5 +167,10 @@ class SymbolVisitor extends CategoryShapeVisitor<Reference> {
   @override
   Reference simpleShape(SimpleShape shape, [Shape? parent]) {
     return shape.typeReference.withBoxed(shape.isNullable(context, parent));
+  }
+
+  @override
+  Reference enumShape(EnumShape shape, [Shape? parent]) {
+    return createSymbol(shape).withBoxed(shape.isNullable(context, parent));
   }
 }

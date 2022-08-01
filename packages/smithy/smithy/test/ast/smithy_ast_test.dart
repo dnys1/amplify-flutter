@@ -23,7 +23,7 @@ void main() {
       test('a', () {
         const json = '''
         {
-          "smithy": "1.0",
+          "smithy": "2.0",
           "metadata": {},
           "shapes": {
             "smithy.example#MyString": {
@@ -35,7 +35,7 @@ void main() {
         final ast = SmithyAst.fromJson(map);
         const shapeId = ShapeId(namespace: 'smithy.example', shape: 'MyString');
         final expected = SmithyAst((b) => b
-          ..version = '1.0'
+          ..version = SmithyVersion.v2
           ..shapes = ShapeMap({
             shapeId: StringShape((b) => b..shapeId = shapeId),
           }));
@@ -46,7 +46,7 @@ void main() {
       test('ShapeRef', () {
         const json = '''
         {
-          "smithy": "1.0",
+          "smithy": "2.0",
           "shapes": {
               "smithy.example#Service": {
                   "type": "service",
@@ -68,7 +68,7 @@ void main() {
             ShapeId(namespace: 'smithy.example', shape: 'Operation');
 
         final expected = SmithyAst((b) => b
-          ..version = '1.0'
+          ..version = SmithyVersion.v2
           ..shapes = ShapeMap({
             serviceId: ServiceShape((s) => s
               ..shapeId = serviceId
@@ -83,7 +83,7 @@ void main() {
       test('Member', () {
         const json = '''
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#MyList": {
                     "type": "list",
@@ -111,7 +111,7 @@ void main() {
         });
 
         final expected = SmithyAst((b) => b
-          ..version = '1.0'
+          ..version = SmithyVersion.v2
           ..shapes = ShapeMap({
             listId: ListShape(
               (b) => b
@@ -129,7 +129,7 @@ void main() {
       test('17.7 Map shape', () {
         const json = '''
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#IntegerMap": {
                     "type": "map",
@@ -148,7 +148,7 @@ void main() {
         const integerId = ShapeId(namespace: 'smithy.api', shape: 'Integer');
 
         final expected = SmithyAst((b) => b
-          ..version = '1.0'
+          ..version = SmithyVersion.v2
           ..shapes = ShapeMap({
             mapId: MapShape((b) {
               b
@@ -166,7 +166,7 @@ void main() {
       test('17.7a Structure shape', () {
         const json = '''
         {
-          "smithy": "1.0",
+          "smithy": "2.0",
           "shapes": {
               "smithy.example#MyStructure": {
                   "type": "structure",
@@ -192,7 +192,7 @@ void main() {
         const requiredId = ShapeId(namespace: 'smithy.api', shape: 'required');
 
         final expected = SmithyAst((b) => b
-          ..version = '1.0'
+          ..version = SmithyVersion.v2
           ..shapes = ShapeMap({
             structureId: StructureShape((b) => b
               ..shapeId = structureId
@@ -219,7 +219,7 @@ void main() {
       test('Apply', () {
         const json = r'''
         {
-          "smithy": "1.0",
+          "smithy": "2.0",
           "shapes": {
               "smithy.example#Struct": {
                   "type": "structure",
@@ -242,7 +242,7 @@ void main() {
         final stringId = ShapeId.parse('smithy.api#String');
 
         final expected = SmithyAst((b) => b
-          ..version = '1.0'
+          ..version = SmithyVersion.v2
           ..shapes = ShapeMap({
             structId: StructureShape((b) => b
               ..shapeId = structId

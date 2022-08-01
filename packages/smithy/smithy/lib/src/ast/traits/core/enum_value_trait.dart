@@ -13,18 +13,11 @@
 // limitations under the License.
 
 import 'package:smithy/ast.dart';
-import 'package:smithy_codegen/smithy_codegen.dart';
 
-/// Creates a codegen context for test cases.
-CodegenContext createTestContext(
-  List<Shape> shapes, {
-  String packageName = 'example',
-  String serviceName = 'Test',
-}) {
-  return CodegenContext(
-    smithyVersion: SmithyVersion.v2,
-    shapes: ShapeMap({for (var shape in shapes) shape.shapeId: shape}),
-    packageName: packageName,
-    serviceName: serviceName,
-  );
+class EnumValueTrait extends StringTrait {
+  const EnumValueTrait(String value) : super(id, value);
+
+  const EnumValueTrait.fromJson(Object? json) : super(id, json as String);
+
+  static const id = ShapeId(namespace: 'smithy.api', shape: 'enumValue');
 }

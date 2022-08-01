@@ -51,7 +51,7 @@ class ShapeMapSerializer extends StructuredSerializer<ShapeMap> {
               StandardJsonPlugin()
                   .beforeDeserialize(value, const FullType(Shape)))!
           .rebuild((b) => b.shapeId = shapeId);
-      if (ShapeType.valueOf(type) == ShapeType.apply) {
+      if (ShapeType.deserialize(type) == ShapeType.apply) {
         applyTraits[shapeId] = shape;
       } else {
         // Update members before saving shape.

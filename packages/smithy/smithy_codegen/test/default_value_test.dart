@@ -23,7 +23,7 @@ import 'common.dart';
 void main() {
   test('default value', () {
     const primitiveId = ShapeId(namespace: 'example', shape: 'MyPrimitive');
-    final primitive = PrimitiveDoubleShape((b) => b..shapeId = primitiveId);
+    final primitive = DoubleShape((b) => b..shapeId = primitiveId);
     final struct = StructureShape(
       (b) => b
         ..shapeId = const ShapeId(namespace: 'example', shape: 'MyStruct')
@@ -36,7 +36,8 @@ void main() {
                 shape: 'MyStruct',
                 member: 'defaultValue',
               )
-              ..target = primitiveId,
+              ..target = primitiveId
+              ..traits = TraitMap.fromTraits(const [DefaultTrait(0)]),
           ),
         })
         ..traits = TraitMap.fromTraits(const [InputTrait()]),

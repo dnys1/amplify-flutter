@@ -14,6 +14,8 @@ dependency_overrides:
     path: ../../amplify_auth_cognito_dart
   amplify_auth_cognito_ios:
     path: ../../amplify_auth_cognito_ios
+  amplify_auth_cognito_web:
+    path: ../../amplify_auth_cognito_web
   amplify_authenticator:
     path: ../../../amplify_authenticator
   amplify_core:
@@ -32,6 +34,8 @@ dependency_overrides:
     path: ../../../secure_storage/amplify_secure_storage
   amplify_secure_storage_dart:
     path: ../../../secure_storage/amplify_secure_storage_dart
+  amplify_secure_storage_web:
+    path: ../../../secure_storage/amplify_secure_storage_web
   amplify_test:
     path: ../../../amplify_test
   aws_common:

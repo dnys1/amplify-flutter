@@ -1,3 +1,7 @@
+## 0.1.6
+
+- Moved workers to separate web package so they would not be bundled into non-Web release builds.
+
 ## 0.1.5
 
 - fix: CognitoDeviceSecrets attempts to build without secrets ([#2021](https://github.com/aws-amplify/amplify-flutter/pull/2021))

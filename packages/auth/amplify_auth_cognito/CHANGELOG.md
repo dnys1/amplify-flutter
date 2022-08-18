@@ -1,3 +1,8 @@
+## 1.0.0-next.0+5
+
+- Bump `amplify_auth_cognito_dart` dependency
+- Added dependency on `amplify_auth_cognito_web` which now vends the compiled Web workers in order to decrease bundle size on non-Web platforms.
+
 ## 1.0.0-next.0+4
 
 - Bump `amplify_auth_cognito_dart` dependency

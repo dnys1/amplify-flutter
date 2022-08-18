@@ -1,8 +1,5 @@
 targets:
   $default:
-    sources:
-      exclude:
-        - example/**
     builders:
       build_web_compilers:dart2js_archive_extractor:
         enabled: true
@@ -46,5 +43,5 @@ targets:
           - lib/src/workers/*.release.dart.js
           - lib/src/workers/*.release.dart.js.map
     dependencies:
-      - amplify_auth_cognito_dart:debug
-      - amplify_auth_cognito_dart:release
+      - amplify_auth_cognito_web:debug
+      - amplify_auth_cognito_web:release

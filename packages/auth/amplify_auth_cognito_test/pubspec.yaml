@@ -5,27 +5,23 @@ publish_to: none
 environment:
   sdk: '>=2.17.0 <3.0.0'
 
-dependency_overrides:
-  amplify_core:
-    path: ../../amplify_core
-  amplify_secure_storage_dart:
-    path: ../../secure_storage/amplify_secure_storage_dart
-  aws_common:
-    path: ../../aws_common
-  aws_signature_v4:
-    path: ../../aws_signature_v4
-  worker_bee:
-    path: ../../worker_bee/worker_bee
-
-dev_dependencies:
+dependencies:
   amplify_auth_cognito_dart:
     path: ../amplify_auth_cognito_dart
   amplify_core:
     path: ../../amplify_core
-  amplify_lints:
-    path: ../../amplify_lints
   amplify_secure_storage_dart:
     path: ../../secure_storage/amplify_secure_storage_dart
+  smithy:
+    path: ../../smithy/smithy
+  smithy_aws: 
+    path: ../../smithy/smithy_aws
+  worker_bee:
+    path: ../../worker_bee/worker_bee
+
+dev_dependencies:
+  amplify_lints:
+    path: ../../amplify_lints
   build_runner: ^2.0.0
   build_test: ^2.0.0
   build_web_compilers: ^3.2.2
@@ -34,13 +30,5 @@ dev_dependencies:
   convert: ^3.0.0
   http: ^0.13.0
   mockito: ^5.0.0
-  smithy:
-    hosted: https://pub.dillonnys.com
-    version: ^0.5.0
-  smithy_aws:
-    hosted: https://pub.dillonnys.com
-    version: ^0.5.0
   stream_transform: ^2.0.0
   test: ^1.16.0
-  worker_bee:
-    path: ../../worker_bee/worker_bee

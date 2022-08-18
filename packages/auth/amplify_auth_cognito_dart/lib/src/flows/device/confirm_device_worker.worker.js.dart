@@ -11,12 +11,12 @@ class ConfirmDeviceWorkerImpl extends ConfirmDeviceWorker {
   String get jsEntrypoint {
     // Flutter web release builds must use the bundled asset.
     if (zIsFlutter && !zDebugMode) {
-      return 'assets/packages/amplify_auth_cognito_dart/lib/src/workers/workers.min.js';
+      return 'assets/packages/amplify_auth_cognito_web/lib/src/workers/workers.min.js';
     }
     // Default to the compiled, published worker.
     return zDebugMode
-        ? 'packages/amplify_auth_cognito_dart/src/workers/workers.js'
-        : 'packages/amplify_auth_cognito_dart/src/workers/workers.min.js';
+        ? 'packages/amplify_auth_cognito_web/src/workers/workers.js'
+        : 'packages/amplify_auth_cognito_web/src/workers/workers.min.js';
   }
 
   @override
@@ -35,8 +35,8 @@ class ConfirmDeviceWorkerImpl extends ConfirmDeviceWorker {
       path: '$basePath/test',
     );
     const relativePath = zDebugMode
-        ? 'packages/amplify_auth_cognito_dart/src/workers/workers.debug.dart.js'
-        : 'packages/amplify_auth_cognito_dart/src/workers/workers.release.dart.js';
+        ? 'packages/amplify_auth_cognito_web/src/workers/workers.debug.dart.js'
+        : 'packages/amplify_auth_cognito_web/src/workers/workers.release.dart.js';
     return [relativePath, testDir.resolve(relativePath).toString()];
   }
 }

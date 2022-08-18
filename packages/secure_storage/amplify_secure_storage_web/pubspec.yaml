@@ -1,0 +1,27 @@
+name: amplify_secure_storage_web
+description: Web helpers and worker definitions for the amplify_secure_storage package.
+version: 0.1.0
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+  flutter: ">=3.0.0"
+
+dependencies:
+  amplify_secure_storage_dart: ^0.1.5
+  aws_common: ^0.1.0
+  worker_bee: ^0.1.0
+
+dev_dependencies:
+  amplify_lints: ^2.0.0
+  build_runner: ^2.0.0
+  build_web_compilers: ^3.2.5
+  lints: ^2.0.0
+  worker_bee_builder: ^0.1.0
+
+flutter:
+  assets:
+    - lib/src/workers/workers.min.js
+    - lib/src/workers/workers.min.js.map
+  plugin:
+    platforms:
+      web:

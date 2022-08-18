@@ -11,12 +11,12 @@ class SecureStorageWorkerImpl extends SecureStorageWorker {
   String get jsEntrypoint {
     // Flutter web release builds must use the bundled asset.
     if (zIsFlutter && !zDebugMode) {
-      return 'assets/packages/amplify_secure_storage_dart/lib/src/worker/workers.min.js';
+      return 'assets/packages/amplify_secure_storage_web/lib/src/workers/workers.min.js';
     }
     // Default to the compiled, published worker.
     return zDebugMode
-        ? 'packages/amplify_secure_storage_dart/src/worker/workers.js'
-        : 'packages/amplify_secure_storage_dart/src/worker/workers.min.js';
+        ? 'packages/amplify_secure_storage_web/src/workers/workers.js'
+        : 'packages/amplify_secure_storage_web/src/workers/workers.min.js';
   }
 
   @override
@@ -35,8 +35,8 @@ class SecureStorageWorkerImpl extends SecureStorageWorker {
       path: '$basePath/test',
     );
     const relativePath = zDebugMode
-        ? 'packages/amplify_secure_storage_dart/src/worker/workers.debug.dart.js'
-        : 'packages/amplify_secure_storage_dart/src/worker/workers.release.dart.js';
+        ? 'packages/amplify_secure_storage_web/src/workers/workers.debug.dart.js'
+        : 'packages/amplify_secure_storage_web/src/workers/workers.release.dart.js';
     return [relativePath, testDir.resolve(relativePath).toString()];
   }
 }

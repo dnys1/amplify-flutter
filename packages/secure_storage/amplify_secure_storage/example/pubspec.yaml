@@ -10,6 +10,7 @@ environment:
 dependencies:
   amplify_secure_storage:
     path: ../
+  aws_common: ^0.1.0
   flutter:
     sdk: flutter
 

@@ -73,7 +73,7 @@ abstract class ConfirmDeviceResponse
 /// Worker bee for handling the device verifier computations needed to call
 /// `ConfirmDevice` with Cognito.
 /// {@endtemplate}
-@WorkerBee('lib/src/workers/workers.dart')
+@WorkerBee('package:amplify_auth_cognito_web/src/workers/workers.dart')
 abstract class ConfirmDeviceWorker
     extends WorkerBeeBase<ConfirmDeviceMessage, ConfirmDeviceResponse> {
   /// {@macro amplify_auth_cognito.confirm_device_worker}

@@ -80,10 +80,8 @@ class WorkerBeeGenerator extends GeneratorForAnnotation<WorkerBee> {
       (el) => el.name == 'fallbackUrls' && !el.isAbstract,
     );
 
-    final packageName = buildStep.inputId.package;
-    final hiveId = AssetId(
-      packageName,
-      annotation.read('hivePath').stringValue,
+    final hiveId = AssetId.resolve(
+      Uri.parse(annotation.read('hiveUri').stringValue),
     );
 
     final workerImpls = _generateWorkerImpls(

@@ -49,10 +49,11 @@ export 'package:worker_bee/src/worker_bee_vm.dart'
 /// {@endtemplate}
 class WorkerBee {
   /// {@macro worker_bee.worker_bee}
-  const WorkerBee(this.hivePath);
+  const WorkerBee(this.hiveUri);
 
-  /// The path to the hive containing this worker, relative to the package root.
-  final String hivePath;
+  /// The `package:` URI of the hive containing this worker, e.g.
+  /// `package:my_workers/src/workers.dart`.
+  final String hiveUri;
 }
 
 /// {@template worker_bee.worker_hive}

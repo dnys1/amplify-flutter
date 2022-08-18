@@ -26,7 +26,7 @@ part 'secure_storage_worker.g.dart';
 /// {@template amplify_secure_storage_dart.secure_storage_worker}
 /// A remote worker which can handle secure storage requests.
 /// {@endtemplate}
-@WorkerBee('lib/src/worker/workers.dart')
+@WorkerBee('package:amplify_secure_storage_web/src/workers/workers.dart')
 abstract class SecureStorageWorker
     extends WorkerBeeBase<SecureStorageRequest, SecureStorageRequest> {
   /// {@macro amplify_secure_storage_dart.secure_storage_worker}

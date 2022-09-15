@@ -16,6 +16,7 @@ import 'package:built_value/serializer.dart';
 import 'package:meta/meta.dart';
 import 'package:worker_bee/src/exception/worker_bee_exception.dart';
 import 'package:worker_bee/src/logging/log_serializers.dart';
+import 'package:worker_bee/src/serializers/blob_serializer.dart';
 import 'package:worker_bee/src/serializers/stack_trace_serializer.dart';
 
 part 'serializers.g.dart';
@@ -27,5 +28,6 @@ part 'serializers.g.dart';
 ])
 final Serializers workerBeeSerializers = (_$workerBeeSerializers.toBuilder()
       ..add(const LogEntrySerializer())
-      ..add(const StackTraceSerializer()))
+      ..add(const StackTraceSerializer())
+      ..add(const BlobSerializer()))
     .build();

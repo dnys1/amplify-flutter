@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concurrent Workers</title>
+    <style>
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin: 10px;
+        }
+        input, span {
+            margin: 0px 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Concurrent Workers</h2>
+    <p>Encode text as base64 in worker</p>
+    <div class="row">
+        <input id="encodeText" type="text">
+        <input id="submit" type="submit">
+    </div>
+    <div class="row">
+        <h3>Output: </h3>
+        <span id="out"></span>
+    </div>
+    <script defer src="main.dart.js"></script>
+</body>
+</html>

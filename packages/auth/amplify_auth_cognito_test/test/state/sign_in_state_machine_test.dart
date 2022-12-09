@@ -169,7 +169,7 @@ void main() {
             isA<SignInFailure>().having(
               (s) => s.exception,
               'exception',
-              isA<InvalidParameterException>(),
+              isA<ValidationException>(),
             ),
           ]),
         );
@@ -202,7 +202,7 @@ void main() {
             isA<SignInFailure>().having(
               (s) => s.exception,
               'exception',
-              isA<InvalidParameterException>(),
+              isA<ValidationException>(),
             ),
           ]),
         );

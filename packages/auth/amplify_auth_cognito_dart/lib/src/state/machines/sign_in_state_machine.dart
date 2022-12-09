@@ -484,7 +484,7 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
     switch (event.authFlowType) {
       case AuthenticationFlowType.customAuthWithSrp:
         if (password == null) {
-          throw const InvalidParameterException(
+          throw const ValidationException(
             'No password was given but customAuthWithSrp was chosen for '
             'authentication flow',
             recoverySuggestion:
@@ -494,7 +494,7 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
         break;
       case AuthenticationFlowType.customAuthWithoutSrp:
         if (password != null) {
-          throw const InvalidParameterException(
+          throw const ValidationException(
             'A password was given but customAuthWithoutSrp was chosen for '
             'authentication flow',
             recoverySuggestion:

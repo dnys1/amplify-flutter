@@ -566,7 +566,7 @@ class AmplifyAuthCognitoDart extends AuthPluginInterface<
     final codeDeliveryDetails =
         result.codeDeliveryDetails?.asAuthCodeDeliveryDetails;
     if (codeDeliveryDetails == null) {
-      throw CodeDeliveryFailureException(message: 'Could not deliver code');
+      throw const CodeDeliveryFailureException('Could not deliver code');
     }
     return CognitoResendSignUpCodeResult(codeDeliveryDetails);
   }
@@ -871,7 +871,7 @@ class AmplifyAuthCognitoDart extends AuthPluginInterface<
     final codeDeliveryDetails =
         result.codeDeliveryDetails?.asAuthCodeDeliveryDetails;
     if (codeDeliveryDetails == null) {
-      throw CodeDeliveryFailureException(message: 'Could not deliver code');
+      throw const CodeDeliveryFailureException('Could not deliver code');
     }
 
     return CognitoResetPasswordResult(

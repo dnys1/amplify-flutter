@@ -234,12 +234,12 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
     final username = parameters.username;
     final password = parameters.password;
     if (password == null || password.isEmpty) {
-      throw const SrpSignInInputValidationException('No password given');
+      throw const ValidationException('No password given');
     }
 
     final initResult = _initResult;
     if (initResult == null) {
-      throw const SrpSignInCalculationException('Must call init first');
+      throw const ValidationException('Must call init first');
     }
 
     final worker = await passwordVerifierWorker;
@@ -266,7 +266,7 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
   Future<RespondToAuthChallengeRequest> createDeviceSrpAuthRequest() async {
     final initResult = _initResult;
     if (initResult == null) {
-      throw const SrpSignInCalculationException('Must call init first');
+      throw StateError('Must call init first');
     }
     return RespondToAuthChallengeRequest.build((b) {
       b
@@ -299,7 +299,7 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
     final username = parameters.username;
     final password = parameters.password;
     if (password == null || password.isEmpty) {
-      throw const SrpSignInInputValidationException('No password given');
+      throw const ValidationException('No password given');
     }
 
     final worker = await devicePasswordVerifierWorker;

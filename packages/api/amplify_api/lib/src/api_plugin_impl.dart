@@ -163,7 +163,10 @@ class AmplifyAPIDart extends AmplifyAPI {
               AmplifyExceptionMessages.alreadyConfiguredDefaultSuggestion,
         );
       }
-      throw AmplifyException.fromMap((e.details as Map).cast());
+      throw ConfigurationError(
+        e.message ?? 'An unknown error occurred',
+        underlyingException: e,
+      );
     }
   }
 

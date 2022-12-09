@@ -44,10 +44,11 @@ void main() {
           recoverySuggestion:
               'Check if Amplify is already configured using Amplify.isConfigured.');
 
-  const pluginNotAddedException = AmplifyException(
-      'Auth plugin has not been added to Amplify',
-      recoverySuggestion:
-          'Add Auth plugin to Amplify and call configure before calling Auth related APIs');
+  final pluginNotAddedException = PluginError(
+    'Auth plugin has not been added to Amplify',
+    recoverySuggestion:
+        'Add Auth plugin to Amplify and call configure before calling Auth related APIs',
+  );
 
   // Class under test
   late AmplifyClass amplify;

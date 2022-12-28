@@ -24,6 +24,7 @@ const falsePositiveExamples = [
   'amplify_secure_storage_test',
 
   // Smithy Golden packages
+  'goldens',
   'aws_json1_0_v1',
   'aws_json1_1_v1',
   'rest_json1_v1',

@@ -43,3 +43,9 @@ amplifytools.xcconfig
 
 # git-spr
 .spr.yml
+
+# Rust
+Cargo.lock
+debug/
+target/
+**/*.rs.bk

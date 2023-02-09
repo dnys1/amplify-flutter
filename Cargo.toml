@@ -1,0 +1,4 @@
+[workspace]
+members = [
+    "packages/datastore/amplify_test_schemas"
+]

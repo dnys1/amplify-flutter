@@ -23,3 +23,4 @@
 library amplify_datastore_dart;
 
 export 'src/datastore_plugin_impl.dart';
+export 'src/storage/storage_engine.dart';

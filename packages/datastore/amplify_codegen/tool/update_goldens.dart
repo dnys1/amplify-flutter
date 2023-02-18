@@ -28,6 +28,8 @@ void main() {
     goldensDir.deleteSync(recursive: true);
   }
   for (final entity in schemaDir.listSync(recursive: true).whereType<File>()) {
+    final ext = path.extension(entity.path);
+    if (ext != '.graphql' && ext != '.gql') continue;
     final schema = File(entity.path).readAsStringSync();
     final schemaName = path.basenameWithoutExtension(entity.path);
     stdout.writeln('Generating schema for $schemaName');

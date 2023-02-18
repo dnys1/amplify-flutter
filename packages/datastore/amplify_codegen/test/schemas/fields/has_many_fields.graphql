@@ -1,0 +1,11 @@
+type Blog @model {
+    id: ID!
+    title: String!
+    posts: [Post!] @hasMany(indexName: "postsByBlog", fields: ["id"])
+}
+
+type Post @model {
+    id: ID!
+    blogID: ID! @index(name: "postsByBlog")
+    blog: Blog! @belongsTo
+}

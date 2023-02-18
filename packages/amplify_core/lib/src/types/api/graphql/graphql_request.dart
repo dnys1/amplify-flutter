@@ -18,9 +18,9 @@ abstract class GraphQLRequest<T>
   /// Creates a "raw" GraphQL request which returns the data received from
   /// the server without any additional processing.
   ///
-  /// If [decodePath] is specified, the [Map] returned is the one located at
+  /// If [decodePath] is specified, the object returned is the one located at
   /// the JSON key given by [decodePath].
-  static GraphQLRequest<Map<String, Object?>> raw({
+  static GraphQLRequest<Object?> raw({
     String? apiName,
     required String document,
     Map<String, Object?> variables = const {},
@@ -149,7 +149,7 @@ abstract class GraphQLRequest<T>
       };
 }
 
-class _RawGraphQLRequest extends GraphQLRequest<Map<String, Object?>> {
+class _RawGraphQLRequest extends GraphQLRequest<Object?> {
   _RawGraphQLRequest({
     super.apiName,
     required super.document,
@@ -160,9 +160,9 @@ class _RawGraphQLRequest extends GraphQLRequest<Map<String, Object?>> {
   });
 
   @override
-  Map<String, Object?> decode(Map<String, Object?> json) {
+  Object? decode(Map<String, Object?> json) {
     if (decodePath != null) {
-      return (json[decodePath] as Map).cast();
+      return json[decodePath];
     }
     return json;
   }

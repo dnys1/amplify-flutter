@@ -16,7 +16,7 @@ import 'dart:async';
 
 import 'package:amplify_core/amplify_core.dart';
 
-typedef DataStoreErrorHandler = void Function(Exception);
+typedef DataStoreErrorHandler = void Function(DataStoreException);
 typedef DataStoreConflictHandler = ConflictResolutionDecision Function(
   ConflictData,
 );
@@ -86,7 +86,7 @@ class AmplifyDataStoreDart extends DataStorePluginInterface {
   }
 
   @override
-  Future<void>
+  Future<M>
       save<ModelIdentifier extends Object, M extends Model<ModelIdentifier, M>>(
     M model, {
     QueryPredicate<ModelIdentifier, M>? where,

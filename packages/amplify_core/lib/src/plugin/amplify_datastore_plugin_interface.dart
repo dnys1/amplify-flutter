@@ -43,7 +43,7 @@ abstract class DataStorePluginInterface extends AmplifyPluginInterface {
     throw UnimplementedError('delete() has not been implemented.');
   }
 
-  Future<void>
+  Future<M>
       save<ModelIdentifier extends Object, M extends Model<ModelIdentifier, M>>(
     M model, {
     QueryPredicate<ModelIdentifier, M>? where,

@@ -106,8 +106,8 @@ class AmplifyAuthCognito extends AmplifyAuthCognitoDart with AWSDebuggable {
     try {
       await nativeBridge.addPlugin();
     } on PlatformException catch (e) {
-      if (e.code == 'AmplifyAlreadyConfiguredException' ||
-          e.code == 'AlreadyConfiguredException') {
+      if (e.code.contains('AmplifyAlreadyConfiguredException') ||
+          e.code.contains('AlreadyConfiguredException')) {
         throw const AmplifyAlreadyConfiguredException(
           AmplifyExceptionMessages.alreadyConfiguredDefaultMessage,
           recoverySuggestion:
@@ -233,7 +233,7 @@ class _NativeAmplifyAuthCognito
     final oauthParameters = OAuthParameters.fromJson(params.cast());
     final hostedUiStateMachine = _stateMachine.get(HostedUiStateMachine.type);
     if (hostedUiStateMachine != null) {
-      _stateMachine.dispatch(HostedUiEvent.exchange(oauthParameters));
+      _stateMachine.accept(HostedUiEvent.exchange(oauthParameters));
     } else {
       // Cache them as initial route parameters.
       _stateMachine.addInstance(oauthParameters);

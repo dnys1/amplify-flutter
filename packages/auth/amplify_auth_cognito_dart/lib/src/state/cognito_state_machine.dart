@@ -13,8 +13,8 @@ import 'package:meta/meta.dart';
 
 /// Default state machine builders for [CognitoAuthStateMachine].
 @visibleForTesting
-final stateMachineBuilders = <StateMachineToken, StateMachineBuilder>{
-  AuthStateMachine.type: AuthStateMachine.new,
+final stateMachineBuilders = <StateMachineToken, Function>{
+  ConfigurationStateMachine.type: ConfigurationStateMachine.new,
   CredentialStoreStateMachine.type: CredentialStoreStateMachine.new,
   FetchAuthSessionStateMachine.type: FetchAuthSessionStateMachine.new,
   HostedUiStateMachine.type: HostedUiStateMachine.new,
@@ -38,7 +38,8 @@ final defaultDependencies = <Token, DependencyBuilder>{
 /// {@template amplify_auth_cognito.cognito_auth_state_machine}
 /// The state machine for managing auth state and relevant work.
 /// {@endtemplate}
-class CognitoAuthStateMachine extends StateMachineManager {
+class CognitoAuthStateMachine
+    extends StateMachineManager<AuthEvent, AuthState, CognitoAuthStateMachine> {
   /// {@macro amplify_auth_cognito.cognito_auth_state_machine}
   CognitoAuthStateMachine({
     DependencyManager? dependencyManager,
@@ -48,25 +49,60 @@ class CognitoAuthStateMachine extends StateMachineManager {
         );
 
   @override
-  FutureOr<void> dispatch(StateMachineEvent<dynamic, dynamic> event) async {
-    try {
-      if (event is AuthEvent) {
-        return getOrCreate(AuthStateMachine.type).add(event);
-      } else if (event is CredentialStoreEvent) {
-        return getOrCreate(CredentialStoreStateMachine.type).add(event);
-      } else if (event is FetchAuthSessionEvent) {
-        return getOrCreate(FetchAuthSessionStateMachine.type).add(event);
-      } else if (event is HostedUiEvent) {
-        return getOrCreate(HostedUiStateMachine.type).add(event);
-      } else if (event is SignUpEvent) {
-        return getOrCreate(SignUpStateMachine.type).add(event);
-      } else if (event is SignInEvent) {
-        return getOrCreate(SignInStateMachine.type).add(event);
-      }
-      throw StateError('Unhandled event: $event');
-    } finally {
-      // Allow propogation of event
-      await Future<void>.delayed(Duration.zero);
+  StateMachineToken mapEventToMachine(AuthEvent event) {
+    if (event is ConfigurationEvent) {
+      return ConfigurationStateMachine.type;
+    } else if (event is CredentialStoreEvent) {
+      return CredentialStoreStateMachine.type;
+    } else if (event is FetchAuthSessionEvent) {
+      return FetchAuthSessionStateMachine.type;
+    } else if (event is HostedUiEvent) {
+      return HostedUiStateMachine.type;
+    } else if (event is SignUpEvent) {
+      return SignUpStateMachine.type;
+    } else if (event is SignInEvent) {
+      return SignInStateMachine.type;
     }
+    throw StateError('Unhandled event: $event');
+  }
+
+  /// Loads credentials from the credential store (which may be
+  /// outdated or expired).
+  Future<CredentialStoreData> loadCredentials() async {
+    final credentialsState = await dispatchAndComplete<CredentialStoreSuccess>(
+      const CredentialStoreEvent.loadCredentialStore(),
+    );
+    return credentialsState.data;
+  }
+
+  /// Stores [credentials] in the credential store.
+  Future<void> storeCredentials(CredentialStoreData credentials) async {
+    await dispatchAndComplete(
+      CredentialStoreEvent.storeCredentials(credentials),
+    );
+  }
+
+  /// Clears [keys] from the credential store, or all keys if unspecified.
+  Future<void> clearCredentials([Iterable<String> keys = const []]) async {
+    await dispatchAndComplete(CredentialStoreEvent.clearCredentials(keys));
+  }
+
+  /// Loads the user's current session.
+  Future<CognitoAuthSession> loadSession() async {
+    final sessionState = await dispatchAndComplete<FetchAuthSessionSuccess>(
+      const FetchAuthSessionEvent.fetch(),
+    );
+    return sessionState.session;
+  }
+
+  /// Configures the Hosted UI state machine.
+  Future<void> configureHostedUI() async {
+    await dispatchAndComplete(const HostedUiEvent.configure());
+  }
+
+  /// Signs out using the Hosted UI state machine.
+  Future<HostedUiState> signOutHostedUI() async {
+    return await dispatch(const HostedUiEvent.signOut()).completed
+        as HostedUiState;
   }
 }

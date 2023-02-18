@@ -28,7 +28,8 @@ export 'src/model/password/cognito_update_password_options.dart';
 export 'src/model/session/cognito_auth_session.dart';
 export 'src/model/session/cognito_auth_user.dart';
 export 'src/model/session/cognito_session_options.dart';
-export 'src/model/session/cognito_sign_in_details.dart';
+export 'src/model/session/cognito_sign_in_details.dart'
+    hide CognitoSignInDetailsFederated;
 export 'src/model/session/cognito_user_pool_tokens.dart';
 export 'src/model/session/federate_to_identity_pool_options.dart';
 export 'src/model/session/federate_to_identity_pool_request.dart';
@@ -49,13 +50,13 @@ export 'src/model/signup/cognito_sign_up_step.dart';
 export 'src/sdk/sdk_exception.dart' hide transformSdkException;
 export 'src/state/cognito_state_machine.dart';
 // State Machine
-export 'src/state/event/auth_event.dart';
+export 'src/state/event/configuration_event.dart';
 export 'src/state/event/credential_store_event.dart';
 export 'src/state/event/fetch_auth_session_event.dart';
 export 'src/state/event/hosted_ui_event.dart';
 export 'src/state/event/sign_in_event.dart';
 export 'src/state/event/sign_up_event.dart';
-export 'src/state/state/auth_state.dart';
+export 'src/state/state/configuration_state.dart';
 export 'src/state/state/credential_store_state.dart';
 export 'src/state/state/fetch_auth_session_state.dart';
 export 'src/state/state/hosted_ui_state.dart';

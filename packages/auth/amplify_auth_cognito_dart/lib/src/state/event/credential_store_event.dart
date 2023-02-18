@@ -11,9 +11,6 @@ enum CredentialStoreEventType {
   /// {@macro amplify_auth_cognito.credential_store_load}
   loadCredentialStore,
 
-  /// {@macro amplify_auth_cognito.migrate_legacy_credential_store}
-  migrateLegacyCredentialStore,
-
   /// {@macro amplify_auth_cognito.store_credentials}
   storeCredentials,
 
@@ -30,18 +27,14 @@ enum CredentialStoreEventType {
 /// {@template amplify_auth_cognito.credential_store_event}
 /// Discrete events of the credential store state machine.
 /// {@endtemplate}
-abstract class CredentialStoreEvent extends StateMachineEvent<
-    CredentialStoreEventType, CredentialStoreStateType> {
+abstract class CredentialStoreEvent
+    extends AuthEvent<CredentialStoreEventType, CredentialStoreStateType> {
   /// {@macro amplify_auth_cognito.credential_store_event}
   const CredentialStoreEvent._();
 
   /// {@macro amplify_auth_cognito.credential_store_load}
   const factory CredentialStoreEvent.loadCredentialStore() =
       CredentialStoreLoadCredentialStore;
-
-  /// {@macro amplify_auth_cognito.migrate_legacy_credential_store}
-  const factory CredentialStoreEvent.migrateLegacyCredentialStore() =
-      CredentialStoreMigrateLegacyCredentialStore;
 
   /// {@macro amplify_auth_cognito.store_credentials}
   const factory CredentialStoreEvent.storeCredentials(
@@ -89,39 +82,11 @@ class CredentialStoreLoadCredentialStore extends CredentialStoreEvent {
   PreconditionException? checkPrecondition(
     CredentialStoreState currentState,
   ) {
-    if (currentState.type != CredentialStoreStateType.migratingLegacyStore &&
+    if (currentState.type != CredentialStoreStateType.notConfigured &&
         currentState.type != CredentialStoreStateType.failure) {
       return const AuthPreconditionException(
         'Credential store already configured',
         shouldEmit: false,
-      );
-    }
-    return null;
-  }
-}
-
-/// {@template amplify_auth_cognito.migrate_legacy_credential_store}
-/// Initiates migration of a legacy credential store (pre-vNext) to the updated
-/// structure.
-/// {@endtemplate}
-class CredentialStoreMigrateLegacyCredentialStore extends CredentialStoreEvent {
-  /// {@macro amplify_auth_cognito.migrate_legacy_credential_store}
-  const CredentialStoreMigrateLegacyCredentialStore() : super._();
-
-  @override
-  CredentialStoreEventType get type =>
-      CredentialStoreEventType.migrateLegacyCredentialStore;
-
-  @override
-  List<Object?> get props => [type];
-
-  @override
-  PreconditionException? checkPrecondition(
-    CredentialStoreState currentState,
-  ) {
-    if (currentState.type != CredentialStoreStateType.notConfigured) {
-      return const AuthPreconditionException(
-        'Credential store cannot be migrated in current state',
       );
     }
     return null;

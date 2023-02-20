@@ -20,7 +20,7 @@ abstract class GraphQLRequest<T>
   ///
   /// If [decodePath] is specified, the object returned is the one located at
   /// the JSON key given by [decodePath].
-  static GraphQLRequest<Object?> raw({
+  static GraphQLRequest<T> raw<T extends Object?>({
     String? apiName,
     required String document,
     Map<String, Object?> variables = const {},
@@ -149,7 +149,7 @@ abstract class GraphQLRequest<T>
       };
 }
 
-class _RawGraphQLRequest extends GraphQLRequest<Object?> {
+class _RawGraphQLRequest<T extends Object?> extends GraphQLRequest<T> {
   _RawGraphQLRequest({
     super.apiName,
     required super.document,
@@ -160,11 +160,15 @@ class _RawGraphQLRequest extends GraphQLRequest<Object?> {
   });
 
   @override
-  Object? decode(Map<String, Object?> json) {
-    if (decodePath != null) {
-      return json[decodePath];
+  T decode(Map<String, Object?> json) {
+    final value = decodePath == null ? json : json[decodePath];
+    if (value is! T) {
+      throw ApiException(
+        'Expected a value of type $T but received $value',
+        recoverySuggestion: 'Check the value of decodePath',
+      );
     }
-    return json;
+    return value;
   }
 }
 

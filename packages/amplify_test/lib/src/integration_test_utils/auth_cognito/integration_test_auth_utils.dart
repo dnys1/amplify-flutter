@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:stream_transform/stream_transform.dart';

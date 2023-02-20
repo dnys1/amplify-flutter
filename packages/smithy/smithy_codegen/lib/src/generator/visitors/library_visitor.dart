@@ -106,22 +106,14 @@ class LibraryVisitor extends DefaultVisitor<Iterable<GeneratedLibrary>> {
     // Build service client
     yield GeneratedLibrary(
       context.serviceClientLibrary,
-      ServiceClientGenerator(
-        shape,
-        context,
-        smithyLibrary: context.serviceClientLibrary,
-      ).generate(),
+      ServiceClientGenerator(shape, context).generate(),
     );
 
     if (context.generateServer) {
       // Build service server
       yield GeneratedLibrary(
         context.serviceServerLibrary,
-        ServiceServerGenerator(
-          shape,
-          context,
-          smithyLibrary: context.serviceServerLibrary,
-        ).generate(),
+        ServiceServerGenerator(shape, context).generate(),
       );
     }
 

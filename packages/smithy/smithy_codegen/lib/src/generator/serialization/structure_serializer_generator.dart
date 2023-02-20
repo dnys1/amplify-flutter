@@ -122,7 +122,7 @@ class StructureSerializerGenerator extends SerializerGenerator<StructureShape>
     }
 
     // Tracks the generated type.
-    context.generatedTypes[symbol] ??= {};
+    context.generatedTypes[symbol] ??= GeneratedType(symbol);
 
     return Class(
       (c) => c

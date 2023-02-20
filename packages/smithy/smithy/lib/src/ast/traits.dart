@@ -47,6 +47,7 @@ export 'traits/core/internal_trait.dart';
 export 'traits/core/json_name_trait.dart';
 export 'traits/core/length_trait.dart';
 export 'traits/core/media_type_trait.dart';
+export 'traits/core/mixin_trait.dart';
 export 'traits/core/no_replace_trait.dart';
 export 'traits/core/optional_auth_trait.dart';
 export 'traits/core/output_trait.dart';

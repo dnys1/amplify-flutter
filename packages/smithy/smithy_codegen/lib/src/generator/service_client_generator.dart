@@ -16,12 +16,11 @@ import 'package:smithy_codegen/src/util/symbol_ext.dart';
 class ServiceClientGenerator extends LibraryGenerator<ServiceShape> {
   ServiceClientGenerator(
     ServiceShape shape,
-    CodegenContext context, {
-    SmithyLibrary? smithyLibrary,
-  }) : super(
+    CodegenContext context,
+  ) : super(
           shape,
           context: context,
-          smithyLibrary: smithyLibrary,
+          smithyLibrary: context.serviceClientLibrary,
         );
 
   late final List<OperationShape> _operations =

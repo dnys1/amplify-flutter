@@ -92,6 +92,7 @@ abstract class Trait<TraitValue extends Object>
     JsonNameTrait.id: JsonNameTrait.fromJson,
     LengthTrait.id: LengthTrait.fromJson,
     MediaTypeTrait.id: MediaTypeTrait.fromJson,
+    MixinTrait.id: MixinTrait.fromJson,
     NoReplaceTrait.id: NoReplaceTrait.fromJson,
     OptionalAuthTrait.id: OptionalAuthTrait.fromJson,
     OutputTrait.id: OutputTrait.fromJson,

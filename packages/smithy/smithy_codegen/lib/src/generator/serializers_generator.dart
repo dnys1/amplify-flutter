@@ -26,16 +26,19 @@ class SerializersGenerator extends Generator<Library> {
 
   /// The `serializers` field which aggregates all serializers across the
   /// service's generated shapes.
-  Field get _serializers => Field(
-        (f) => f
+  Field get _serializers => Field((f) {
+        final serializableTypes = context.generatedTypes.values
+            .where((type) => type.hasSerializers)
+            .toList();
+        f
           ..modifier = FieldModifier.constant
           ..type = DartTypes.core.list(DartTypes.smithy.smithySerializer())
           ..name = 'serializers'
           ..assignment = literalConstList([
-            for (final type in context.generatedTypes.keys)
-              type.property('serializers').spread,
-          ]).code,
-      );
+            for (final type in serializableTypes)
+              type.symbol.property('serializers').spread,
+          ]).code;
+      });
 
   /// The `builderFactories` field which is filled in with all the builder
   /// factories necessary for built collection types throughout the service's

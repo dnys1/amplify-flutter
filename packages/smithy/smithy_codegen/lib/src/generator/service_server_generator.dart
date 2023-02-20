@@ -25,17 +25,16 @@ class ServiceServerGenerator extends LibraryGenerator<ServiceShape> {
   /// {@macro smithy.generator.service_server_generator}
   ServiceServerGenerator(
     ServiceShape shape,
-    CodegenContext context, {
-    SmithyLibrary? smithyLibrary,
-  }) : super(
+    CodegenContext context,
+  ) : super(
           shape,
           context: context,
-          smithyLibrary: smithyLibrary,
+          smithyLibrary: context.serviceServerLibrary,
         );
 
   late final List<OperationShape> _httpOperations = context.shapes.values
       .whereType<OperationShape>()
-      .where((shape) => shape.httpTrait(context) != null)
+      .where((shape) => shape.hasTrait<HttpTrait>())
       .toList();
 
   bool get isAwsService => shape.hasTrait<ServiceTrait>();
@@ -51,12 +50,10 @@ class ServiceServerGenerator extends LibraryGenerator<ServiceShape> {
   @override
   Library generate() {
     if (_httpOperations.isNotEmpty) {
-      builder
-        ..name = context.serviceClientLibrary.libraryName
-        ..body.addAll([
-          _baseClass,
-          _serviceClass,
-        ]);
+      builder.body.addAll([
+        _baseClass,
+        _serviceClass,
+      ]);
     }
     return builder.build();
   }
@@ -153,7 +150,14 @@ class ServiceServerGenerator extends LibraryGenerator<ServiceShape> {
       refer('input'),
       refer('context'),
     ]).awaited;
-    yield declareFinal('output').assign(output).statement;
+
+    final outputSymbol = operation.outputSymbol(context);
+    final outputIsVoid = outputSymbol == DartTypes.smithy.unit;
+    if (outputIsVoid) {
+      yield output.statement;
+    } else {
+      yield declareFinal('output').assign(output).statement;
+    }
 
     final httpHeaders = outputTraits?.httpHeaders ?? BuiltMap();
     for (final entry in httpHeaders.entries) {
@@ -190,9 +194,11 @@ class ServiceServerGenerator extends LibraryGenerator<ServiceShape> {
     yield declareFinal('body')
         .assign(
           refer(operation.protocolField).property('serialize').call([
-            refer('output')
+            outputIsVoid
+                ? DartTypes.smithy.unit.constInstance([])
+                : refer('output')
           ], {
-            'specifiedType': operation.outputSymbol(context).fullType([
+            'specifiedType': outputSymbol.fullType([
               operation.outputShape(context).httpPayload(context).symbol,
             ]),
           }),
@@ -326,8 +332,13 @@ class ServiceServerGenerator extends LibraryGenerator<ServiceShape> {
 
   Iterable<Method> get _baseMethods sync* {
     for (final operation in _httpOperations) {
+      var outputSymbol = operation
+          .outputSymbol(context); // Replace Unit with void for nicer DX
+      if (outputSymbol == DartTypes.smithy.unit) {
+        outputSymbol = DartTypes.core.void$;
+      }
       yield Method((m) => m
-        ..returns = DartTypes.async.future(operation.outputSymbol(context))
+        ..returns = DartTypes.async.future(outputSymbol)
         ..name = operation.methodName
         ..requiredParameters.addAll([
           Parameter(

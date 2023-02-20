@@ -79,7 +79,7 @@ class TestOp1 extends HttpOperation<Unit, Unit, Unit, Unit> {
   String get runtimeTypeName => 'TestOp1';
 }
 
-class TestOp2Input with HasLabel {
+class TestOp2Input implements HasLabel {
   const TestOp2Input();
 
   @override

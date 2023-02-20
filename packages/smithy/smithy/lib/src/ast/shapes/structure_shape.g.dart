@@ -20,6 +20,10 @@ class _$StructureShapeSerializer
   Iterable<Object?> serialize(Serializers serializers, StructureShape object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object?>[
+      'mixins',
+      serializers.serialize(object.mixins,
+          specifiedType:
+              const FullType(BuiltList, const [const FullType(ShapeRef)])),
       'members',
       serializers.serialize(object.members,
           specifiedType: const FullType(NamedMembersMap)),
@@ -43,6 +47,12 @@ class _$StructureShapeSerializer
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
+        case 'mixins':
+          result.mixins.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(ShapeRef)]))!
+              as BuiltList<Object?>);
+          break;
         case 'members':
           result.members = serializers.deserialize(value,
                   specifiedType: const FullType(NamedMembersMap))!
@@ -61,6 +71,8 @@ class _$StructureShapeSerializer
 
 class _$StructureShape extends StructureShape {
   @override
+  final BuiltList<ShapeRef> mixins;
+  @override
   final NamedMembersMap members;
   @override
   final ShapeId shapeId;
@@ -71,8 +83,12 @@ class _$StructureShape extends StructureShape {
       (new StructureShapeBuilder()..update(updates))._build();
 
   _$StructureShape._(
-      {required this.members, required this.shapeId, required this.traits})
+      {required this.mixins,
+      required this.members,
+      required this.shapeId,
+      required this.traits})
       : super._() {
+    BuiltValueNullFieldError.checkNotNull(mixins, r'StructureShape', 'mixins');
     BuiltValueNullFieldError.checkNotNull(
         members, r'StructureShape', 'members');
     BuiltValueNullFieldError.checkNotNull(
@@ -92,6 +108,7 @@ class _$StructureShape extends StructureShape {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is StructureShape &&
+        mixins == other.mixins &&
         members == other.members &&
         shapeId == other.shapeId &&
         traits == other.traits;
@@ -100,6 +117,7 @@ class _$StructureShape extends StructureShape {
   @override
   int get hashCode {
     var _$hash = 0;
+    _$hash = $jc(_$hash, mixins.hashCode);
     _$hash = $jc(_$hash, members.hashCode);
     _$hash = $jc(_$hash, shapeId.hashCode);
     _$hash = $jc(_$hash, traits.hashCode);
@@ -110,6 +128,7 @@ class _$StructureShape extends StructureShape {
   @override
   String toString() {
     return (newBuiltValueToStringHelper(r'StructureShape')
+          ..add('mixins', mixins)
           ..add('members', members)
           ..add('shapeId', shapeId)
           ..add('traits', traits))
@@ -122,6 +141,12 @@ class StructureShapeBuilder
         Builder<StructureShape, StructureShapeBuilder>,
         NamedMembersShapeBuilder {
   _$StructureShape? _$v;
+
+  ListBuilder<ShapeRef>? _mixins;
+  ListBuilder<ShapeRef> get mixins =>
+      _$this._mixins ??= new ListBuilder<ShapeRef>();
+  set mixins(covariant ListBuilder<ShapeRef>? mixins) =>
+      _$this._mixins = mixins;
 
   NamedMembersMap? _members;
   NamedMembersMap? get members => _$this._members;
@@ -142,6 +167,7 @@ class StructureShapeBuilder
   StructureShapeBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
+      _mixins = $v.mixins.toBuilder();
       _members = $v.members;
       _shapeId = $v.shapeId;
       _traits = $v.traits;
@@ -165,14 +191,28 @@ class StructureShapeBuilder
   StructureShape build() => _build();
 
   _$StructureShape _build() {
-    final _$result = _$v ??
-        new _$StructureShape._(
-            members: BuiltValueNullFieldError.checkNotNull(
-                members, r'StructureShape', 'members'),
-            shapeId: BuiltValueNullFieldError.checkNotNull(
-                shapeId, r'StructureShape', 'shapeId'),
-            traits: BuiltValueNullFieldError.checkNotNull(
-                traits, r'StructureShape', 'traits'));
+    _$StructureShape _$result;
+    try {
+      _$result = _$v ??
+          new _$StructureShape._(
+              mixins: mixins.build(),
+              members: BuiltValueNullFieldError.checkNotNull(
+                  members, r'StructureShape', 'members'),
+              shapeId: BuiltValueNullFieldError.checkNotNull(
+                  shapeId, r'StructureShape', 'shapeId'),
+              traits: BuiltValueNullFieldError.checkNotNull(
+                  traits, r'StructureShape', 'traits'));
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'mixins';
+        mixins.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            r'StructureShape', _$failedField, e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

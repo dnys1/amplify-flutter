@@ -58,6 +58,13 @@ class ShapeMapSerializer extends StructuredSerializer<ShapeMap> {
           }
         });
       }
+      // Validate mixins have been flattened.
+      if (shape is StructureShape && shape.hasTrait<MixinTrait>()) {
+        throw ArgumentError(
+          'Structure shape ${shape.shapeId} has a mixin trait. '
+          'Mixins must be flattened before deserializing.',
+        );
+      }
     }
 
     // Apply traits to shape map

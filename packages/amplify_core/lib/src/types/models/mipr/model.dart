@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:amplify_core/amplify_core.dart' show ModelFieldDefinition;
 import 'package:amplify_core/src/types/models/mipr.dart';
 import 'package:aws_common/aws_common.dart';
 import 'package:built_collection/built_collection.dart';

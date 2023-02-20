@@ -142,17 +142,22 @@ class AppSyncScalar extends EnumClass {
   static const AppSyncScalar awsPhone = _$awsPhone;
 
   /// {@template amplify_core.models.appsync_scalar_aws_url}
-  ///
-  /// {@endtemplate}
-  @BuiltValueEnumConst(wireName: 'AWSURL')
-  static const AppSyncScalar awsUrl = _$awsUrl;
-
-  /// {@template amplify_core.models.appsync_scalar_string}
   /// A URL as defined by [RFC 1738](https://tools.ietf.org/html/rfc1738).
   ///
   /// For example, `https://www.amazon.com/dp/B000NZW3KC/` or `mailto:example@example.com`.
   /// URLs must contain a schema (`http`, `mailto`) and can't contain two
   /// forward slashes (`//`) in the path part.
+  /// {@endtemplate}
+  @BuiltValueEnumConst(wireName: 'AWSURL')
+  static const AppSyncScalar awsUrl = _$awsUrl;
+
+  /// {@template amplify_core.models.appsync_scalar_ip_address}
+  /// A valid IPv4 or IPv6 address.
+  ///
+  /// IPv4 addresses are expected in quad-dotted notation (`123.12.34.56`).
+  /// IPv6 addresses are expected in non-bracketed, colon-separated format
+  /// (`1a2b:3c4b::1234:4567`). You can include an optional CIDR suffix
+  /// (`123.45.67.89/16`) to indicate subnet mask.
   /// {@endtemplate}
   @BuiltValueEnumConst(wireName: 'AWSIPAddress')
   static const AppSyncScalar awsIpAddress = _$awsIpAddress;
@@ -255,7 +260,7 @@ abstract class SchemaType with AWSSerializable<Map<String, Object?>> {
   ///   name: String!
   /// }
   ///
-  /// # `myList` is a list type of `MyNonModel` types.
+  /// # `nonModels` is a list type of `MyNonModel` types.
   /// type MyModel @model {
   ///   id: ID!
   ///   nonModels: [MyNonModel]

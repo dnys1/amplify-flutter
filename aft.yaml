@@ -7,6 +7,8 @@
 # tool.
 dependencies:
   async: ^2.10.0
+  build_runner: ^2.4.0
+  build_web_compilers: ^4.0.0
   built_value: ">=8.4.0 <8.5.0"
   built_value_generator: 8.4.3
   code_builder: 4.4.0
@@ -16,13 +18,14 @@ dependencies:
   intl: ">=0.17.0 <1.0.0"
   mime: ^1.0.0
   pigeon: ^7.1.5
+  test: ^1.22.1
   uuid: ">=3.0.6 <=3.0.7"
   xml: ">=6.1.0 <=6.2.2"
 
 # The current constraints for SDKs and OSs.
 environment:
-  sdk: '>=2.18.0 <4.0.0'
-  flutter: '>=3.3.0'
+  sdk: '>=3.0.0-0 <4.0.0'
+  flutter: '>=3.8.0-10.1.pre'
   android:
     minSdkVersion: '24'
   ios:

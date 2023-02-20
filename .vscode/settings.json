@@ -7,5 +7,11 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
     "source.organizeImports": true,
-  }
+  },
+  // "dart.analyzerAdditionalArgs": [
+  //   "--enable-experiment=records,patterns,class-modifiers"
+  // ],
+  // "dart.vmAdditionalArgs": [
+  //   "--enable-experiment=records,patterns,class-modifiers"
+  // ]
 }

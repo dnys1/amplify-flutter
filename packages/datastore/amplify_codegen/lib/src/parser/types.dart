@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ignore: implementation_imports
 import 'package:amplify_core/src/types/models/mipr.dart';
 import 'package:gql/ast.dart';
 

@@ -14,6 +14,7 @@
 
 import 'dart:async';
 
+// ignore: implementation_imports
 import 'package:amplify_core/src/types/models/mipr.dart';
 
 /// The current code generation context.

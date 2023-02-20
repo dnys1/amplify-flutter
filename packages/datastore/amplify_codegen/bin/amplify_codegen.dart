@@ -15,15 +15,48 @@
 import 'dart:io';
 
 import 'package:amplify_codegen/src/generate.dart';
+import 'package:amplify_codegen/src/model/codegen_plugin_service.dart';
+import 'package:args/args.dart';
+import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart' as shelf_io;
+import 'package:smithy/src/http/http_server.dart';
 
-void main() {
+void main(List<String> args) async {
+  final argParser = ArgParser()..addFlag('serve', defaultsTo: false);
+  final argResults = argParser.parse(args);
+  if (argResults['serve'] as bool) {
+    final server = await shelf_io.serve(
+      CodegenPluginServer(),
+      InternetAddress.loopbackIPv4,
+      3000,
+    );
+    print('Serving on ${server.address.address}:${server.port}');
+  } else {
+    await codegenProject(Directory.current.path);
+  }
+}
+
+class CodegenPluginServer extends CodegenPluginServerBase {
+  @override
+  Future<void> codegen(CodegenRequest input, Context context) async {
+    print('Got request: $input');
+  }
+
+  @override
+  Future<Response> handleUncaughtError(Object error, StackTrace st) {
+    throw UnimplementedError();
+  }
+}
+
+Future<void> codegenProject(String projectRoot) async {
   final apiDir = Directory.fromUri(
-    Directory.current.uri.resolve('amplify/backend/api/'),
+    Uri.file(projectRoot).resolve('amplify/backend/api/'),
   );
   final apis = apiDir.listSync().whereType<Directory>();
   if (apis.length != 1) {
-    throw Exception(
-      'Expected exactly one API, found ${apis.length} in ${apiDir.path}',
+    throw CodegenError(
+      message: 'Expected exactly one API, '
+          'found ${apis.length} in ${apiDir.path}',
     );
   }
   final schemaPath = apis.single.uri.resolve('schema.graphql').toFilePath();

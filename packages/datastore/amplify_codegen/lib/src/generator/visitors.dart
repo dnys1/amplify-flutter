@@ -16,6 +16,7 @@ import 'package:amplify_codegen/src/generator/enum.dart';
 import 'package:amplify_codegen/src/generator/generated_library.dart';
 import 'package:amplify_codegen/src/generator/model.dart';
 import 'package:amplify_codegen/src/generator/non_model.dart';
+// ignore: implementation_imports
 import 'package:amplify_core/src/types/models/mipr.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:gql/ast.dart';

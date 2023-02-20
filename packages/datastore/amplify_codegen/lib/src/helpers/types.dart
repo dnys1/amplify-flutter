@@ -15,11 +15,13 @@
 import 'package:amplify_codegen/src/generator/types.dart';
 import 'package:amplify_codegen/src/helpers/language.dart';
 import 'package:amplify_codegen/src/helpers/model.dart';
+// ignore: implementation_imports
 import 'package:amplify_core/src/types/models/mipr.dart';
 import 'package:aws_common/aws_common.dart';
 import 'package:built_value/serializer.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:gql/ast.dart';
+// ignore: implementation_imports
 import 'package:smithy_codegen/src/util/symbol_ext.dart';
 
 /// Helpers for [TypeNode].

@@ -19,12 +19,15 @@ import 'package:amplify_codegen/src/helpers/language.dart';
 import 'package:amplify_codegen/src/helpers/model.dart';
 import 'package:amplify_codegen/src/helpers/node.dart';
 import 'package:amplify_codegen/src/helpers/types.dart';
+// ignore: implementation_imports
 import 'package:amplify_core/src/types/models/mipr.dart';
+// ignore: implementation_imports
 import 'package:amplify_core/src/types/query/query_field.dart';
 import 'package:aws_common/aws_common.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:collection/collection.dart';
 import 'package:gql/ast.dart';
+// ignore: implementation_imports
 import 'package:smithy_codegen/src/util/symbol_ext.dart';
 
 /// Returns the query field name for [fieldName].

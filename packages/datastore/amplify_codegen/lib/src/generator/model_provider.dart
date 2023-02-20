@@ -2,6 +2,7 @@ import 'package:amplify_codegen/src/generator/generated_library.dart';
 import 'package:amplify_codegen/src/generator/types.dart';
 import 'package:amplify_codegen/src/helpers/model.dart';
 import 'package:amplify_codegen/src/helpers/types.dart';
+// ignore: implementation_imports
 import 'package:amplify_core/src/types/models/mipr.dart' as mipr;
 import 'package:code_builder/code_builder.dart';
 import 'package:convert/convert.dart';

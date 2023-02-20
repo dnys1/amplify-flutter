@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:amplify_codegen/src/parser/node.dart';
+// ignore: implementation_imports
 import 'package:amplify_core/src/types/models/mipr.dart';
 import 'package:aws_common/aws_common.dart';
 import 'package:collection/collection.dart';

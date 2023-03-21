@@ -34,17 +34,20 @@ class HostedUIFlow: NSObject, ASWebAuthenticationPresentationContextProviding {
                 let queryParameters = HostedUIFlow.processParameters(callbackURL)
                 continutation.resume(returning: queryParameters)
             }
-
-            session.presentationContextProvider = self
-            session.prefersEphemeralWebBrowserSession = preferPrivateSession
-            guard session.start() else {
-                continutation.resume(throwing: HostedUIError.unknown("Could not start ASWebAuthenticationSession"))
-                return
+            
+            Task { @MainActor in
+                session.presentationContextProvider = self
+                session.prefersEphemeralWebBrowserSession = preferPrivateSession
+                guard session.start() else {
+                    continutation.resume(throwing: HostedUIError.unknown("Could not start ASWebAuthenticationSession"))
+                    return
+                }
             }
         }
     }
 
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+        assert(Thread.isMainThread)
         return ASPresentationAnchor()
     }
 

@@ -9,7 +9,6 @@ import 'package:amplify_auth_cognito_example/screens/confirm_user_attribute.dart
 import 'package:amplify_auth_cognito_example/screens/update_user_attribute.dart';
 import 'package:amplify_auth_cognito_example/screens/update_user_attributes.dart';
 import 'package:amplify_auth_cognito_example/screens/view_user_attributes.dart';
-import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -109,7 +108,7 @@ class _MyAppState extends State<MyApp> {
       //     ),
       //   ),
       // );
-      await Amplify.configure(amplifyconfig);
+      await Amplify.configure(amplifyEnvironments['hosted-ui']!);
       _logger.debug('Successfully configured Amplify');
 
       Amplify.Hub.listen(HubChannel.Auth, (event) {
@@ -122,18 +121,14 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Authenticator(
-      preferPrivateSession: true,
-      child: MaterialApp.router(
-        title: 'Flutter Demo',
-        builder: Authenticator.builder(),
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
-        debugShowCheckedModeBanner: false,
+    return MaterialApp.router(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      routeInformationParser: _router.routeInformationParser,
+      routerDelegate: _router.routerDelegate,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -147,13 +142,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   var _greeting = '';
-  var _loading = false;
+  var _loading = true;
   late final _controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _fetchAuthSession();
+    Amplify.asyncConfig.then((_) {
+      setState(() => _loading = false);
+      _signInWithWebUI();
+    });
   }
 
   @override
@@ -167,6 +165,22 @@ class _HomeScreenState extends State<HomeScreen> {
     _logger.info(
       prettyPrintJson(authSession.toJson()),
     );
+  }
+
+  Future<void> _signInWithWebUI() async {
+    try {
+      final result = await Amplify.Auth.signInWithWebUI(
+        provider: AuthProvider.cognito,
+        options:
+            const CognitoSignInWithWebUIOptions(isPreferPrivateSession: true),
+      );
+      _logger.debug('Signed in with result: ${result.isSignedIn}');
+      if (result.isSignedIn) {
+        await _fetchAuthSession();
+      }
+    } on Exception catch (e) {
+      _logger.error('Could not sign in', e);
+    }
   }
 
   Future<void> _requestGreeting() async {
@@ -231,8 +245,17 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () => context.push('/update-user-attributes'),
               child: const Text('Update User Attributes'),
             ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _signInWithWebUI,
+              child: const Text('Sign In With Web UI'),
+            ),
             const SizedBox(height: 30),
-            const SignOutButton(),
+            ElevatedButton(
+              onPressed: () => Amplify.Auth.signOut(),
+              child: const Text('Sign Out'),
+            ),
+            // const SignOutButton(),
           ],
         ),
       ),

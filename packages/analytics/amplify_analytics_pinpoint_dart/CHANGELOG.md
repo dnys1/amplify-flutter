@@ -1,3 +1,30 @@
+## 0.1.4+3
+
+### Fixes
+- fix(analytics): event retry logic & max fail tries ([#2713](https://github.com/aws-amplify/amplify-flutter/pull/2713))
+
+## 0.1.4+2
+
+- Minor bug fixes and improvements
+
+## 0.1.4+1
+
+- Minor bug fixes and improvements
+
+## 0.1.4
+
+### Features
+- feat(analytics): Use indexedDB on Web ([#2600](https://github.com/aws-amplify/amplify-flutter/pull/2600))
+
+## 0.1.3
+
+### Features
+- feat(analytics): Legacy data migration of Pinpoint Endpoint ID ([#2489](https://github.com/aws-amplify/amplify-flutter/pull/2489))
+
+## 0.1.2+1
+
+- Minor bug fixes and improvements
+
 ## 0.1.2
 
 - Minor bug fixes and improvements

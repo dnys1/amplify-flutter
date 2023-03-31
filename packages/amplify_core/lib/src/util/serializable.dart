@@ -3,7 +3,7 @@
 
 import 'dart:collection';
 
-import 'package:aws_common/aws_common.dart';
+import 'package:amplify_core/amplify_core.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
@@ -22,6 +22,10 @@ export 'package:json_annotation/json_annotation.dart'
 const zAmplifySerializable = JsonSerializable(
   includeIfNull: false,
   explicitToJson: true,
+  converters: [
+    CognitoUserAttributeKeyConverter(),
+    CognitoUserAttributeMapConverter(),
+  ],
 );
 
 /// Global serialization options for Amplify types with generic parameters.
@@ -51,7 +55,7 @@ const zConfigMapSerializable = JsonSerializable(
 /// {@endtemplate}
 class SerializableMap<V> extends MapView<String, V> with AWSSerializable {
   /// {@macro amplify_flutter.serializable_map}
-  const SerializableMap(Map<String, V> map) : super(map);
+  const SerializableMap(super.map);
 
   @override
   Map<String, Object?> toJson() => this;

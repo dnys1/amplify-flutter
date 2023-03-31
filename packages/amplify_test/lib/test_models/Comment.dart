@@ -6,7 +6,7 @@
 // For more info, see: https://dart.dev/guides/language/analysis-options#excluding-code-from-analysis
 
 import 'package:amplify_core/amplify_core.dart';
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
 
 // ignore_for_file: public_member_api_docs, annotate_overrides, dead_code, dead_codepublic_member_api_docs, depend_on_referenced_packages, file_names, library_private_types_in_public_api, no_leading_underscores_for_library_prefixes, no_leading_underscores_for_local_identifiers, non_constant_identifier_names, null_check_on_nullable_type_parameter, prefer_adjacent_string_concatenation, prefer_const_constructors, prefer_if_null_operators, prefer_interpolation_to_compose_strings, slash_for_doc_comments, sort_child_properties_last, unnecessary_const, unnecessary_constructor_name, unnecessary_late, unnecessary_new, unnecessary_null_aware_assignments, unnecessary_nullable_for_final_variable_declarations, unnecessary_string_interpolations, use_build_context_synchronously, implicit_dynamic_parameter, implicit_dynamic_map_literal, implicit_dynamic_type
 
@@ -135,11 +135,10 @@ class Comment extends Model {
   static final QueryModelIdentifier MODEL_IDENTIFIER = QueryModelIdentifier();
   static final QueryField ID = QueryField(fieldName: 'comment.id');
   static final QueryField POST = QueryField(
-      fieldName: 'post',
-      fieldType: ModelFieldType(ModelFieldTypeEnum.model,
-          ofModelName: (Post).toString()));
-  static final QueryField CONTENT = QueryField(fieldName: 'content');
-  static ModelSchema schema =
+      fieldName: "post",
+      fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: 'Post'));
+  static final QueryField CONTENT = QueryField(fieldName: "content");
+  static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = 'Comment';
     modelSchemaDefinition.pluralName = 'Comments';
@@ -153,12 +152,8 @@ class Comment extends Model {
     modelSchemaDefinition.addField(ModelFieldDefinition.belongsTo(
         key: Comment.POST,
         isRequired: false,
-        // TODO(Jordan-Nelson): Remove `targetName` when API category has been
-        // updated to support CPK changes. This was added manually.
-        // ignore: deprecated_member_use
-        targetName: 'postID',
         targetNames: ['postID'],
-        ofModelName: (Post).toString()));
+        ofModelName: 'Post'));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: Comment.CONTENT,
@@ -185,6 +180,11 @@ class _CommentModelType extends ModelType<Comment> {
   @override
   Comment fromJson(Map<String, dynamic> jsonData) {
     return Comment.fromJson(jsonData);
+  }
+
+  @override
+  String modelName() {
+    return 'Comment';
   }
 }
 

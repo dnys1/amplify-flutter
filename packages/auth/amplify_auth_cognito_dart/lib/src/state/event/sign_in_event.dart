@@ -22,16 +22,12 @@ enum SignInEventType {
 
   /// {@macro amplify_auth_cognito.sign_in_succeeded}
   succeeded,
-
-  /// {@macro amplify_auth_cognito.sign_in_failed}
-  failed,
 }
 
 /// {@template amplify_auth_cognito.sign_in_event}
 /// Discrete events of an auth flow state machine.
 /// {@endtemplate}
-abstract class SignInEvent
-    extends StateMachineEvent<SignInEventType, SignInStateType> {
+abstract class SignInEvent extends AuthEvent<SignInEventType, SignInStateType> {
   /// {@macro amplify_auth_cognito.sign_in_event}
   const SignInEvent._();
 
@@ -55,8 +51,8 @@ abstract class SignInEvent
   /// {@macro amplify_auth_cognito.sign_in_succeeded}
   const factory SignInEvent.succeeded(CognitoUser user) = SignInSucceeded;
 
-  /// {@macro amplify_auth_cognito.sign_in_failed}
-  const factory SignInEvent.failed(Exception exception) = SignInFailed;
+  /// Client metadata for the sign in flow.
+  Map<String, String> get clientMetadata => const {};
 
   @override
   PreconditionException? checkPrecondition(SignInState currentState) => null;
@@ -84,6 +80,7 @@ class SignInInitiate extends SignInEvent {
   final SignInParameters parameters;
 
   /// The optional client metadata.
+  @override
   final Map<String, String> clientMetadata;
 
   @override
@@ -120,6 +117,7 @@ class SignInRespondToChallenge extends SignInEvent {
   final String answer;
 
   /// The optional client metadata.
+  @override
   final Map<String, String> clientMetadata;
 
   /// Required user attributes which were not previously provided.
@@ -138,8 +136,29 @@ class SignInRespondToChallenge extends SignInEvent {
 
   @override
   PreconditionException? checkPrecondition(SignInState currentState) {
-    if (currentState is SignInFailure &&
-        currentState.exception is CodeMismatchException) {
+    if (currentState is SignInFailure) {
+      // If the state machine did not reach a challenge state before the
+      // exception was thrown, then any attempts to confirm sign in should
+      // not be allowed and the entire flow must be restarted by the user.
+      if (currentState.previousState.type != SignInStateType.challenge) {
+        return AuthPreconditionException(
+          'Sign-in previously failed',
+          recoverySuggestion:
+              'Restart the sign-in flow by calling Amplify.Auth.signIn',
+          underlyingException: currentState.exception,
+        );
+      }
+      // However, if the state machine was in a respond to challenge state when
+      // the exception was raised, further attempts to confirm sign in should
+      // be allowed.
+      //
+      // Recoverable exceptions are expected at this stage, such as
+      // CodeMismatchException and InvalidPasswordException. These exceptions
+      // prompt the user to retry if they've provided an invalid code or weak
+      // password, for example. It is not feasible to determine which exception
+      // types are non-recoverable, though. For all others, it is better to
+      // allow confirm sign in attempts and have Cognito continue to throw the
+      // exception.
       return null;
     }
     if (currentState.type != SignInStateType.challenge) {
@@ -188,35 +207,6 @@ class SignInSucceeded extends SignInEvent {
   PreconditionException? checkPrecondition(SignInState currentState) {
     if (currentState.type == SignInStateType.success) {
       return const AuthPreconditionException('Auth flow was already completed');
-    }
-    return null;
-  }
-}
-
-/// {@template amplify_auth_cognito.sign_in_failed}
-/// Failure in the auth flow.
-/// {@endtemplate}
-class SignInFailed extends SignInEvent with ErrorEvent {
-  /// {@macro amplify_auth_cognito.sign_in_failed}
-  const SignInFailed(this.exception) : super._();
-
-  /// The sign in flow exception.
-  @override
-  final Exception exception;
-
-  @override
-  SignInEventType get type => SignInEventType.failed;
-
-  @override
-  List<Object?> get props => [type, exception];
-
-  @override
-  PreconditionException? checkPrecondition(SignInState currentState) {
-    if (currentState.type == SignInStateType.failure) {
-      return const AuthPreconditionException(
-        'Auth flow already completed with error',
-        shouldEmit: false,
-      );
     }
     return null;
   }

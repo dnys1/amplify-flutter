@@ -18,14 +18,13 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
 
 dependencies:
-  amplify_auth_cognito: 1.0.0-next.0
-  amplify_authenticator:
-    path: ../
-  amplify_flutter: 1.0.0-next.0
+  amplify_auth_cognito: ">=1.0.0-next.7 <1.0.0-next.8"
+  amplify_authenticator: ">=1.0.0-next.5 <1.0.0-next.6"
+  amplify_flutter: ">=1.0.0-next.7 <1.0.0-next.8"
 
   flutter:
     sdk: flutter
@@ -37,9 +36,13 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+# Needed to support both Flutter 3.3 + 3.7 in CI.
+# TODO(dnys1): Remove when Flutter 3.3 is no longer supported
+dependency_overrides:
+  async: ^2.10.0
+
 dev_dependencies:
-  amplify_api:
-    path: ../../../api/amplify_api
+  amplify_api: ">=1.0.0-next.7 <1.0.0-next.8"
   amplify_authenticator_test:
     path: ../../amplify_authenticator_test
   amplify_lints:

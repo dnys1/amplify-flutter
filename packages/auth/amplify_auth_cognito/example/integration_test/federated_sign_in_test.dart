@@ -12,7 +12,6 @@ import 'package:amplify_test/amplify_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'utils/mock_data.dart';
 import 'utils/setup_utils.dart';
 import 'utils/test_utils.dart';
 
@@ -38,6 +37,37 @@ void main() {
     final username = generateUsername();
     final password = generatePassword();
 
+    Future<CognitoUserPoolTokens> getUserPoolTokens() async {
+      final signInResult = await cognitoPlugin.signIn(
+        username: username,
+        password: password,
+      );
+      expect(signInResult.nextStep.signInStep, AuthSignInStep.done);
+
+      final signInSession = await cognitoPlugin.fetchAuthSession();
+      final userPoolTokens = signInSession.userPoolTokensResult.value;
+      // Clear but do not sign out so that tokens are still valid.
+      // ignore: invalid_use_of_protected_member
+      await cognitoPlugin.stateMachine.clearCredentials();
+
+      return userPoolTokens;
+    }
+
+    Future<FederateToIdentityPoolResult> federateToIdentityPool() async {
+      final userPoolTokens = await getUserPoolTokens();
+      return cognitoPlugin.federateToIdentityPool(
+        token: userPoolTokens.idToken.raw,
+        provider: provider,
+      );
+    }
+
+    Future<void> clearFederation() async {
+      try {
+        await cognitoPlugin.clearFederationToIdentityPool();
+        // ignore: avoid_catches_without_on_clauses
+      } catch (_) {}
+    }
+
     setUpAll(() async {
       await configureAuth();
       await adminCreateUser(
@@ -47,42 +77,23 @@ void main() {
         verifyAttributes: true,
       );
 
+      await clearFederation();
       await signOutUser();
     });
 
     tearDownAll(Amplify.reset);
 
-    tearDown(signOutUser);
-
-    Future<FederateToIdentityPoolResult> federateToIdentityPool() async {
-      final signInResult = await cognitoPlugin.signIn(
-        username: username,
-        password: password,
-      );
-      expect(signInResult.nextStep.signInStep, 'DONE');
-
-      final userPoolTokens =
-          (await cognitoPlugin.fetchAuthSession()).userPoolTokens!;
-      // Clear but do not sign out so that tokens are still valid.
-      // ignore: invalid_use_of_protected_member
-      await cognitoPlugin.plugin.stateMachine.dispatch(
-        CredentialStoreEvent.clearCredentials(
-          CognitoUserPoolKeys(userPoolConfig),
-        ),
-      );
-
-      return cognitoPlugin.federateToIdentityPool(
-        token: userPoolTokens.idToken.raw,
-        provider: provider,
-      );
-    }
+    tearDown(() async {
+      await clearFederation();
+      await signOutUser();
+    });
 
     asyncTest('throws when signed in', (_) async {
       final signInResult = await cognitoPlugin.signIn(
         username: username,
         password: password,
       );
-      expect(signInResult.nextStep.signInStep, 'DONE');
+      expect(signInResult.nextStep.signInStep, AuthSignInStep.done);
 
       await expectLater(
         cognitoPlugin.federateToIdentityPool(
@@ -104,45 +115,43 @@ void main() {
     });
 
     asyncTest('replaces unauthenticated identity', (_) async {
-      // Get unauthenticated identity
-      final unauthSession = await cognitoPlugin.fetchAuthSession(
-        options: const CognitoSessionOptions(getAWSCredentials: true),
-      );
+      final userPoolTokens = await getUserPoolTokens();
 
-      final authSession = await federateToIdentityPool();
+      // Get unauthenticated identity
+      final unauthSession = await cognitoPlugin.fetchAuthSession();
+      final authSession = await cognitoPlugin.federateToIdentityPool(
+        token: userPoolTokens.idToken.raw,
+        provider: provider,
+      );
       expect(
         authSession.identityId,
-        unauthSession.identityId,
-        reason: 'Should retain unauthenticated identity',
+        isNot(unauthSession.identityIdResult.value),
+        reason: 'Should replace unauthenticated identity',
       );
       expect(
         authSession.credentials,
-        isNot(unauthSession.credentials),
+        isNot(unauthSession.credentialsResult.value),
         reason: 'Should get new credentials',
       );
     });
 
     asyncTest('can specify identity ID', (_) async {
       // Get unauthenticated identity (doesn't matter, just need identity ID)
-      final unauthSession = await cognitoPlugin.fetchAuthSession(
-        options: const CognitoSessionOptions(getAWSCredentials: true),
-      );
-      final identityId = unauthSession.identityId!;
+      final unauthSession = await cognitoPlugin.fetchAuthSession();
+      final identityId = unauthSession.identityIdResult.value;
 
       final signInResult = await cognitoPlugin.signIn(
         username: username,
         password: password,
       );
-      expect(signInResult.nextStep.signInStep, 'DONE');
+      expect(signInResult.nextStep.signInStep, AuthSignInStep.done);
 
       final userPoolTokens =
-          (await cognitoPlugin.fetchAuthSession()).userPoolTokens!;
+          (await cognitoPlugin.fetchAuthSession()).userPoolTokensResult.value;
       // Clear but do not sign out so that tokens are still valid.
       // ignore: invalid_use_of_protected_member
-      await cognitoPlugin.plugin.stateMachine.dispatch(
-        CredentialStoreEvent.clearCredentials(
-          CognitoUserPoolKeys(userPoolConfig),
-        ),
+      await cognitoPlugin.stateMachine.clearCredentials(
+        CognitoUserPoolKeys(userPoolConfig),
       );
 
       final session = await cognitoPlugin.federateToIdentityPool(
@@ -176,23 +185,23 @@ void main() {
     });
 
     asyncTest('can clear federation', (_) async {
-      await federateToIdentityPool();
+      final federateToIdentityPoolResult = await federateToIdentityPool();
 
       await expectLater(
         cognitoPlugin.clearFederationToIdentityPool(),
         completes,
       );
 
-      final clearedSession = await cognitoPlugin.fetchAuthSession();
+      final unauthSession = await cognitoPlugin.fetchAuthSession();
       expect(
-        clearedSession.identityId,
-        isNull,
-        reason: 'Should clear session',
+        unauthSession.identityIdResult.value,
+        isNot(federateToIdentityPoolResult.identityId),
+        reason: 'Should clear session and refetch',
       );
       expect(
-        clearedSession.credentials,
-        isNull,
-        reason: 'Should clear session',
+        unauthSession.credentialsResult.value,
+        isNot(federateToIdentityPoolResult.credentials),
+        reason: 'Should clear session and refetch',
       );
     });
 
@@ -201,6 +210,56 @@ void main() {
         cognitoPlugin.clearFederationToIdentityPool(),
         completes,
         reason: 'Clearing with no federation is a no-op',
+      );
+    });
+
+    asyncTest('isSignedIn=true when federated', (_) async {
+      await federateToIdentityPool();
+
+      final session = await cognitoPlugin.fetchAuthSession();
+      expect(
+        session.isSignedIn,
+        isTrue,
+        reason: 'API requirement',
+      );
+      await expectLater(
+        cognitoPlugin.getCurrentUser(),
+        throwsA(isA<InvalidStateException>()),
+        reason: 'API requirement. getCurrentUser should throw '
+            'even though isSignedIn=true',
+      );
+    });
+
+    asyncTest('refreshes federated identity when expired', (_) async {
+      final session = await federateToIdentityPool();
+
+      // Update expiration to now.
+      // ignore: invalid_use_of_protected_member
+      final stateMachine = cognitoPlugin.stateMachine;
+      final credentials = await stateMachine.loadCredentials();
+      await stateMachine.storeCredentials(
+        CredentialStoreData(
+          identityId: session.identityId,
+          awsCredentials: AWSCredentials(
+            session.credentials.accessKeyId,
+            session.credentials.secretAccessKey,
+            session.credentials.sessionToken,
+            DateTime.now(),
+          ),
+          signInDetails: credentials.signInDetails,
+        ),
+      );
+
+      final newSession = await cognitoPlugin.fetchAuthSession();
+      expect(
+        newSession.identityIdResult.value,
+        session.identityId,
+        reason: 'Identity ID should not have changed during refresh',
+      );
+      expect(
+        newSession.credentialsResult.value,
+        isNot(session.credentials),
+        reason: 'Credentials should have been refreshed',
       );
     });
   });

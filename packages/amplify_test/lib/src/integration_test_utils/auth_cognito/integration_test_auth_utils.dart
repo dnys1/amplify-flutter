@@ -4,11 +4,9 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:graphql/client.dart';
+import 'package:amplify_core/amplify_core.dart';
+import 'package:amplify_test/amplify_test.dart';
 import 'package:stream_transform/stream_transform.dart';
-
-import 'types/create_mfa_code_response.dart';
 
 final _logger =
     AmplifyLogger.category(Category.auth).createChild('IntegrationTestUtils');
@@ -22,18 +20,45 @@ mutation DeleteUser($username: String!) {
   }
 }''';
 
-Future<GraphQLClient> get _graphQLClient async {
+final _client = AWSHttpClient()..supportedProtocols = SupportedProtocols.http1;
+
+Future<Map<String, Object?>> _graphQL(
+  String document, {
+  Map<String, Object?>? variables,
+}) async {
   final config = await Amplify.asyncConfig;
   final api = config.api!.awsPlugin!.default$!;
-  return GraphQLClient(
-    cache: GraphQLCache(),
-    link: HttpLink(
-      api.endpoint,
-      defaultHeaders: {
-        'x-api-key': api.apiKey!,
-      },
-    ),
+  final response = await _client
+      .send(
+        AWSStreamedHttpRequest.post(
+          Uri.parse(api.endpoint).replace(path: '/graphql'),
+          headers: {
+            'x-api-key': api.apiKey!,
+          },
+          body: HttpPayload.json({
+            'query': document,
+            if (variables != null) 'variables': variables,
+          }),
+        ),
+      )
+      .response;
+  if (response.statusCode != 200) {
+    throw Exception('${response.statusCode}: ${response.body}');
+  }
+  final responseJson =
+      jsonDecode(await response.decodeBody()) as Map<String, Object?>;
+  final result = GraphQLResponse(
+    data: responseJson['data'] as Map<String, Object?>?,
+    errors: (responseJson['errors'] as List?)
+            ?.cast<Map<String, Object?>>()
+            .map(GraphQLResponseError.fromJson)
+            .toList() ??
+        const [],
   );
+  if (result.errors.isNotEmpty) {
+    throw Exception(result.errors);
+  }
+  return result.data!;
 }
 
 /// Deletes a Cognito user in backend infrastructure.
@@ -41,18 +66,39 @@ Future<GraphQLClient> get _graphQLClient async {
 /// This method differs from the Auth.deleteUser API in that
 /// an access token is not required.
 Future<void> deleteUser(String username) async {
-  final client = await _graphQLClient;
-
-  final options = MutationOptions(
-    document: gql(deleteDocument),
+  final result = await _graphQL(
+    deleteDocument,
     variables: <String, dynamic>{
       'username': username,
     },
   );
 
-  final result = await client.mutate(options);
-  final deleteError =
-      result.data?['deleteUser']?['error'] ?? result.exception?.toString();
+  final deleteError = (result['deleteUser'] as Map?)?['error'];
+  if (deleteError != null) {
+    throw Exception(deleteError);
+  }
+}
+
+/// Deletes a Cognito device identified by [deviceKey].
+Future<void> deleteDevice(String username, String deviceKey) async {
+  final result = await _graphQL(
+    r'''
+mutation DeleteDevice($input: DeleteDeviceInput!) {
+  deleteDevice(input: $input) {
+    error
+    success
+  }
+}
+''',
+    variables: <String, dynamic>{
+      'input': {
+        'username': username,
+        'deviceKey': deviceKey,
+      },
+    },
+  );
+
+  final deleteError = (result['deleteDevice'] as Map?)?['error'];
   if (deleteError != null) {
     throw Exception(deleteError);
   }
@@ -71,7 +117,7 @@ Future<void> deleteUser(String username) async {
 /// The [verifyAttributes] flag will verify the email and phone, and should be used
 /// if tests need to bypass the verification step.
 /// The [attributes] list passes additional attributes.
-Future<void> adminCreateUser(
+Future<String> adminCreateUser(
   String username,
   String password, {
   bool autoConfirm = false,
@@ -79,16 +125,14 @@ Future<void> adminCreateUser(
   bool verifyAttributes = false,
   List<AuthUserAttribute> attributes = const [],
 }) async {
-  final client = await _graphQLClient;
-
   final createUserParams = <String, dynamic>{
     'autoConfirm': autoConfirm,
     'email': attributes
         .firstWhere(
             (el) => el.userAttributeKey == CognitoUserAttributeKey.email,
-            orElse: () => const AuthUserAttribute(
+            orElse: () => AuthUserAttribute(
                 userAttributeKey: CognitoUserAttributeKey.email,
-                value: 'example@example.com'))
+                value: generateEmail()))
         .value,
     'enableMFA': enableMfa,
     'givenName': attributes
@@ -107,26 +151,25 @@ Future<void> adminCreateUser(
     'phoneNumber': attributes
         .firstWhere(
             (el) => el.userAttributeKey == CognitoUserAttributeKey.phoneNumber,
-            orElse: () => const AuthUserAttribute(
+            orElse: () => AuthUserAttribute(
                 userAttributeKey: CognitoUserAttributeKey.phoneNumber,
-                value: '+15555555'))
+                value: generatePhoneNumber()))
         .value,
     'username': username,
     'verifyAttributes': verifyAttributes,
   };
 
   _logger.debug('Creating user "$username" with values: $createUserParams');
-  final options = MutationOptions(
-    document: gql(
-      r'''
+  final result = await _graphQL(
+    r'''
           mutation CreateUser($input: CreateUserInput!) {
             createUser(input: $input) {
               success
+              cognitoUsername
               error
             }
           }
       ''',
-    ),
     variables: {
       'input': {
         ...createUserParams,
@@ -134,75 +177,79 @@ Future<void> adminCreateUser(
       },
     },
   );
+  _logger.debug('Got result: $result');
 
-  final result = await client.mutate(options);
-  final createError =
-      result.data?['createUser']?['error'] ?? result.exception?.toString();
+  final createError = (result['createUser'] as Map?)?['error'];
   if (createError != null) {
     throw Exception(createError);
   }
+
+  return (result['createUser'] as Map)['cognitoUsername'] as String;
 }
 
 class OtpResult {
-  OtpResult({required this.code});
-  Future<String> code;
+  const OtpResult(this.code);
+
+  final Future<String> code;
+}
+
+enum UserAttributeType { username, email, phone }
+
+class UserAttribute {
+  const UserAttribute.username(String username)
+      : value = username,
+        type = UserAttributeType.username;
+  const UserAttribute.email(String email)
+      : value = email,
+        type = UserAttributeType.email;
+  const UserAttribute.phone(String phoneNumber)
+      : value = phoneNumber,
+        type = UserAttributeType.phone;
+
+  final UserAttributeType type;
+  final String value;
 }
 
 /// Returns the OTP code for [username]. Must be called before the network call
 /// generating the OTP code.
-Future<OtpResult> getOtpCode(String username) async {
-  const subscriptionDocument = r'''
-    subscription OnCreateMFACode($username: String!) {
-      onCreateMFACode(username: $username) {
-        username
-        code
-      }
-    }''';
-
+Future<OtpResult> getOtpCode(UserAttribute userAttribute) async {
   final establishedCompleter = Completer<void>();
-  final Stream<GraphQLResponse<String>> operation = Amplify.API.subscribe(
-    GraphQLRequest<String>(
-      document: subscriptionDocument,
-      variables: {
-        'username': username,
-      },
-    ),
-    onEstablished: () {
-      establishedCompleter.complete();
-      _logger.debug('Established connection');
-    },
+  final otpCodes = getOtpCodes(
+    onEstablished: establishedCompleter.complete,
   );
 
   // Collect code delivered via Lambda
-  final code = operation
-      .tap(
-        (event) => _logger.debug(
-          'Got event: ${event.data}, errors: ${event.errors}',
-        ),
-      )
-      .map((event) {
-        if (event.hasErrors) {
-          throw Exception(event.errors);
+  final code = otpCodes
+      .tap((event) => _logger.debug('Got OTP Code: $event'))
+      .where((event) {
+        switch (userAttribute.type) {
+          case UserAttributeType.username:
+            return event.username == userAttribute.value;
+          case UserAttributeType.email:
+            return event.userAttributes[CognitoUserAttributeKey.email] ==
+                userAttribute.value;
+          case UserAttributeType.phone:
+            return event.userAttributes[CognitoUserAttributeKey.phoneNumber] ==
+                userAttribute.value;
         }
-        final json = jsonDecode(event.data!)['onCreateMFACode'] as Map;
-        return CreateMFACodeResponse.fromJson(json.cast());
       })
       .map((event) => event.code)
       .first;
 
   await establishedCompleter.future;
-  return OtpResult(code: code);
+  return OtpResult(code);
 }
 
 /// Returns the stream of all OTP codes broadcast by Cognito.
 ///
 /// This is useful with aliases when the username is not known ahead of time.
-Stream<String> getOtpCodes({void Function()? onEstablished}) {
+Stream<CreateMFACodeResponse> getOtpCodes({void Function()? onEstablished}) {
   const subscriptionDocument = r'''
     subscription OnCreateMFACode {
       onCreateMFACode {
         username
         code
+        userAttributes
       }
     }''';
 
@@ -229,5 +276,5 @@ Stream<String> getOtpCodes({void Function()? onEstablished}) {
     }
     final json = jsonDecode(event.data!)['onCreateMFACode'] as Map;
     return CreateMFACodeResponse.fromJson(json.cast());
-  }).map((event) => event.code);
+  });
 }

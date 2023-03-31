@@ -3,12 +3,13 @@
 
 import 'package:amplify_analytics_pinpoint/src/device_context_info_provider/app_info.dart';
 import 'package:amplify_analytics_pinpoint/src/device_context_info_provider/device_info_provider/device_info_provider.dart';
-import 'package:amplify_analytics_pinpoint_dart/amplify_analytics_pinpoint_dart.dart';
+// ignore: implementation_imports
+import 'package:amplify_analytics_pinpoint_dart/src/impl/flutter_provider_interfaces/device_context_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 /// {@template amplify_analytics_pinpoint.flutter_device_context_info_provider}
-/// Provide information required for Pinpoint EndpointDemographic object
+/// Provide information required for Pinpoint EndpointDemographic object.
 ///
 /// For more details see Pinpoint [Endpoint](https://docs.aws.amazon.com/pinpoint/latest/apireference/apps-application-id-endpoints.html) online spec.
 /// {@endtemplate}

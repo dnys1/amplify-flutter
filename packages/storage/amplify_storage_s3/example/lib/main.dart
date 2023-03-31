@@ -59,17 +59,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> configureAmplify() async {
-    final secureStorage = AmplifySecureStorage(
-      config: AmplifySecureStorageConfig(
-        scope: 'storage',
-        // FIXME: In your app, make sure to remove this line and set up
-        /// Keychain Sharing in Xcode as described in the docs:
-        /// https://docs.amplify.aws/lib/project-setup/platform-setup/q/platform/flutter/#enable-keychain
-        // ignore: invalid_use_of_visible_for_testing_member
-        macOSOptions: MacOSSecureStorageOptions(useDataProtection: false),
+    final auth = AmplifyAuthCognito(
+      // FIXME: In your app, make sure to remove this line and set up
+      /// Keychain Sharing in Xcode as described in the docs:
+      /// https://docs.amplify.aws/lib/project-setup/platform-setup/q/platform/flutter/#enable-keychain
+      secureStorageFactory: AmplifySecureStorage.factoryFrom(
+        macOSOptions:
+            // ignore: invalid_use_of_visible_for_testing_member
+            MacOSSecureStorageOptions(useDataProtection: false),
       ),
     );
-    final auth = AmplifyAuthCognito(credentialStorage: secureStorage);
     final storage = AmplifyStorageS3();
 
     try {
@@ -113,7 +112,10 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Amplify Storage Example'),
       ),
+      // TODO(dnys1): Remove for Dart 3.0
+      // ignore: prefer_const_constructors
       body: Center(
+        // ignore: prefer_const_constructors
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const <Widget>[

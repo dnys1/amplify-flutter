@@ -9,6 +9,7 @@ import 'package:amplify_storage_s3_dart/src/sdk/s3.dart' as s3;
 import 'package:amplify_storage_s3_dart/src/storage_s3_service/storage_s3_service.dart';
 import 'package:meta/meta.dart';
 import 'package:smithy/smithy.dart' as smithy;
+import 'package:smithy_aws/smithy_aws.dart' as smithy_aws;
 
 /// {@template amplify_storage_s3_dart.download_task}
 /// A task created to fulfill a download operation.
@@ -46,10 +47,11 @@ class S3DownloadTask {
   /// {@endtemplate}
   S3DownloadTask({
     required s3.S3Client s3Client,
+    required smithy_aws.S3ClientConfig defaultS3ClientConfig,
     required S3PrefixResolver prefixResolver,
     required String bucket,
     required String key,
-    required S3DownloadDataOptions options,
+    required StorageDownloadDataOptions options,
     FutureOr<void> Function()? preStart,
     void Function(S3TransferProgress)? onProgress,
     void Function(List<int>)? onData,
@@ -58,6 +60,7 @@ class S3DownloadTask {
     required AWSLogger logger,
   })  : _downloadCompleter = Completer<S3Item>(),
         _s3Client = s3Client,
+        _defaultS3ClientConfig = defaultS3ClientConfig,
         _prefixResolver = prefixResolver,
         _bucket = bucket,
         _key = key,
@@ -68,28 +71,33 @@ class S3DownloadTask {
         _onDone = onDone,
         _onError = onError,
         _logger = logger,
-        _downloadedBytesSize = 0;
+        _downloadedBytesSize = 0,
+        _s3PluginOptions =
+            options.pluginOptions as S3DownloadDataPluginOptions? ??
+                const S3DownloadDataPluginOptions();
 
   // the Completer to complete the final `result` Future.
   final Completer<S3Item> _downloadCompleter;
 
   final s3.S3Client _s3Client;
+  final smithy_aws.S3ClientConfig _defaultS3ClientConfig;
   final S3PrefixResolver _prefixResolver;
   final String _bucket;
   final String _key;
-  final S3DownloadDataOptions _downloadDataOptions;
+  final StorageDownloadDataOptions _downloadDataOptions;
   final FutureOr<void> Function()? _preStart;
   final void Function(S3TransferProgress)? _onProgress;
   final void Function(List<int> bytes)? _onData;
   final FutureOr<void> Function()? _onDone;
   final FutureOr<void> Function()? _onError;
   final AWSLogger _logger;
+  final S3DownloadDataPluginOptions _s3PluginOptions;
 
   int _downloadedBytesSize;
 
   // the subscription to `S3Client.getObject` returned stream body.
   // It gets reassigned when pause/resume.
-  late StreamSubscription<List<int>> _bytesSubscription;
+  StreamSubscription<List<int>>? _bytesSubscription;
 
   // The completer to ensure `pause`, `resume` and `cancel` to be executed
   // at correct moment.
@@ -102,7 +110,8 @@ class S3DownloadTask {
   // Total bytes that need to be downloaded, this field is set when the
   // **very first** (without bytes range specified) `S3Client.getObject`
   // response returns, value is from the response header.
-  late final int _totalBytes;
+  // Before the first response returns, the value remains -1 as "unknown".
+  int _totalBytes = -1;
 
   Future<void>? get _getObjectInitiated => _getObjectCompleter?.future;
   Future<void>? get _pausedCompleted => _pauseCompleter?.future;
@@ -128,7 +137,7 @@ class S3DownloadTask {
       prefixResolver: _prefixResolver,
       logger: _logger,
       accessLevel: _downloadDataOptions.accessLevel,
-      identityId: _downloadDataOptions.targetIdentityId,
+      identityId: _s3PluginOptions.targetIdentityId,
     );
 
     _resolvedKey = '$resolvedPrefix$_key';
@@ -137,7 +146,7 @@ class S3DownloadTask {
       final getObjectOutput = await _getObject(
         bucket: _bucket,
         key: _resolvedKey,
-        bytesRange: _downloadDataOptions.bytesRange,
+        bytesRange: _s3PluginOptions.bytesRange,
       );
 
       final remoteSize = getObjectOutput.contentLength?.toInt();
@@ -166,9 +175,11 @@ class S3DownloadTask {
 
     _resetPauseCompleter();
 
-    // TODO(HuiSF): when it's ready, invoke `AWSHttpOperation.cancel` here
-    //  to cancel the underlying http request
-    await _bytesSubscription.cancel();
+    // Calling cancel of the SmithyOperation returned by getObject cannot
+    // cancel the underlying HTTP request, cancel on the body stream instead.
+    await _bytesSubscription?.cancel();
+    _bytesSubscription = null;
+
     _state = S3TransferState.paused;
     _emitTransferProgress();
     _pauseCompleter?.complete();
@@ -228,11 +239,12 @@ class S3DownloadTask {
 
     _state = S3TransferState.canceled;
 
-    // TODO(HuiSF): when it's ready, invoke `AWSHttpOperation.cancel` here
-    //  to cancel the underlying http request
-    await _bytesSubscription.cancel();
-    _emitTransferProgress();
+    // Calling cancel of the SmithyOperation returned by getObject cannot
+    // cancel the underlying HTTP request, cancel on the body stream instead.
+    await _bytesSubscription?.cancel();
+    _bytesSubscription = null;
 
+    _emitTransferProgress();
     _downloadCompleter.completeError(
       S3Exception.controllableOperationCanceled(),
     );
@@ -274,7 +286,7 @@ class S3DownloadTask {
             await _onDone?.call();
             _emitTransferProgress();
             _downloadCompleter.complete(
-              _downloadDataOptions.getProperties
+              (_s3PluginOptions.getProperties)
                   ? S3Item.fromHeadObjectOutput(
                       await StorageS3Service.headObject(
                         s3client: _s3Client,
@@ -325,7 +337,14 @@ class S3DownloadTask {
     });
 
     try {
-      return await _s3Client.getObject(request).result;
+      return await _s3Client
+          .getObject(
+            request,
+            s3ClientConfig: _defaultS3ClientConfig.copyWith(
+              useAcceleration: _s3PluginOptions.useAccelerateEndpoint,
+            ),
+          )
+          .result;
     } on smithy.UnknownSmithyHttpException catch (error) {
       // S3Client.getObject may return 403 error
       throw S3Exception.fromUnknownSmithyHttpException(error);

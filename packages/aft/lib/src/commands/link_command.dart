@@ -21,8 +21,8 @@ class LinkCommand extends AmplifyCommand {
 
   @override
   Future<void> run() async {
-    final allPackages = await this.allPackages;
-    await linkPackages(allPackages);
+    await super.run();
+    await linkPackages();
     stdout.writeln('Packages successfully linked!');
   }
 }
@@ -111,19 +111,21 @@ dependency_overrides:
       .writeAsString(yaml.toString());
 }
 
-/// Links [packages] together using `pubspec_overrides.yaml`.
-Future<void> linkPackages(Map<String, PackageInfo> packages) async {
-  final futureGroup = FutureGroup<void>();
-  for (final package in packages.values) {
-    final dependencyPaths = _collectDependencies(package, packages);
-    futureGroup.add(
-      _createPubspecOverride(
-        package,
-        dependencyPaths,
-        package.pubspecInfo.pubspec.dependencyOverrides,
-      ),
-    );
+extension LinkPackages on AmplifyCommand {
+  /// Links [commandPackages] together using `pubspec_overrides.yaml`.
+  Future<void> linkPackages() async {
+    final futureGroup = FutureGroup<void>();
+    for (final package in repoPackages.values) {
+      final dependencyPaths = _collectDependencies(package, repoPackages);
+      futureGroup.add(
+        _createPubspecOverride(
+          package,
+          dependencyPaths,
+          package.pubspecInfo.pubspec.dependencyOverrides,
+        ),
+      );
+    }
+    futureGroup.close();
+    await futureGroup.future;
   }
-  futureGroup.close();
-  await futureGroup.future;
 }

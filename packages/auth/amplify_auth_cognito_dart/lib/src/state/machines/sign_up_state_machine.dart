@@ -4,19 +4,22 @@
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:amplify_auth_cognito_dart/src/flows/helpers.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
-import 'package:amplify_auth_cognito_dart/src/state/machines/generated/sign_up_state_machine_base.dart';
+import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart';
 
 /// {@template amplify_auth_cognito.sign_up_state_machine}
 /// Manages user sign up with Cognito.
 /// {@endtemplate}
-class SignUpStateMachine extends SignUpStateMachineBase {
+class SignUpStateMachine extends AuthStateMachine<SignUpEvent, SignUpState> {
   /// {@macro amplify_auth_cognito.sign_up_state_machine}
-  SignUpStateMachine(super.manager);
+  SignUpStateMachine(CognitoAuthStateMachine manager) : super(manager, type);
 
   /// The [SignUpStateMachine] type.
-  static const type =
-      StateMachineToken<SignUpEvent, SignUpState, SignUpStateMachine>();
+  static const type = StateMachineToken<SignUpEvent, SignUpState, AuthEvent,
+      AuthState, CognitoAuthStateMachine, SignUpStateMachine>();
+
+  @override
+  SignUpState get initialState => const SignUpState.notStarted();
 
   @override
   String get runtimeTypeName => 'SignUpStateMachine';
@@ -25,6 +28,35 @@ class SignUpStateMachine extends SignUpStateMachineBase {
   CognitoUserPoolConfig get _userPoolConfig => expect();
 
   @override
+  Future<void> resolve(SignUpEvent event) async {
+    switch (event.type) {
+      case SignUpEventType.initiate:
+        event as SignUpInitiate;
+        emit(const SignUpState.initiating());
+        await onInitiate(event);
+        break;
+      case SignUpEventType.confirm:
+        event as SignUpConfirm;
+        emit(const SignUpState.confirming());
+        await onConfirm(event);
+        break;
+      case SignUpEventType.succeeded:
+        event as SignUpSucceeded;
+        emit(SignUpState.success(userId: event.userId));
+        await onSucceeded(event);
+        break;
+    }
+  }
+
+  @override
+  SignUpState? resolveError(Object error, StackTrace st) {
+    if (error is Exception) {
+      return SignUpFailure(error, st);
+    }
+    return null;
+  }
+
+  /// State machine callback for the [SignUpInitiate] event.
   Future<void> onInitiate(SignUpInitiate event) async {
     final resp = await _cognito.signUp(
       SignUpRequest.build(
@@ -37,7 +69,7 @@ class SignUpStateMachine extends SignUpStateMachineBase {
             ..userAttributes.addAll(
               event.userAttributes.entries.map(
                 (attr) => AttributeType(
-                  name: attr.key,
+                  name: attr.key.key,
                   value: attr.value,
                 ),
               ),
@@ -49,7 +81,8 @@ class SignUpStateMachine extends SignUpStateMachineBase {
                   value: attr.value,
                 ),
               ),
-            );
+            )
+            ..analyticsMetadata = get<AnalyticsMetadataType>()?.toBuilder();
 
           final clientSecret = _userPoolConfig.appClientSecret;
           if (clientSecret != null) {
@@ -64,7 +97,7 @@ class SignUpStateMachine extends SignUpStateMachineBase {
     ).result;
 
     if (resp.userConfirmed) {
-      dispatch(SignUpEvent.succeeded(userId: resp.userSub));
+      emit(SignUpState.success(userId: resp.userSub));
     } else {
       emit(
         SignUpState.needsConfirmation(
@@ -75,7 +108,7 @@ class SignUpStateMachine extends SignUpStateMachineBase {
     }
   }
 
-  @override
+  /// State machine callback for the [SignUpConfirm] event.
   Future<void> onConfirm(SignUpConfirm event) async {
     await _cognito.confirmSignUp(
       ConfirmSignUpRequest.build((b) {
@@ -83,7 +116,8 @@ class SignUpStateMachine extends SignUpStateMachineBase {
           ..clientId = _userPoolConfig.appClientId
           ..username = event.username
           ..confirmationCode = event.confirmationCode
-          ..clientMetadata.addAll(event.clientMetadata);
+          ..clientMetadata.addAll(event.clientMetadata)
+          ..analyticsMetadata = get<AnalyticsMetadataType>()?.toBuilder();
 
         final clientSecret = _userPoolConfig.appClientSecret;
         if (clientSecret != null) {
@@ -96,12 +130,9 @@ class SignUpStateMachine extends SignUpStateMachineBase {
       }),
     ).result;
 
-    dispatch(const SignUpEvent.succeeded());
+    emit(const SignUpState.success());
   }
 
-  @override
+  /// State machine callback for the [SignUpSucceeded] event.
   Future<void> onSucceeded(SignUpSucceeded event) async {}
-
-  @override
-  Future<void> onFailed(SignUpFailed event) async {}
 }

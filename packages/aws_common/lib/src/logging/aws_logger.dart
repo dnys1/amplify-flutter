@@ -27,27 +27,27 @@ class AWSLogger implements Closeable {
   ///
   /// {@macro aws_common.logging.aws_logger}
   factory AWSLogger([String namespace = rootNamespace]) {
-    return activeLoggers[namespace] ??= AWSLogger.protected(Logger(namespace));
+    return activeLoggers[namespace] ??= AWSLogger.protected(namespace);
   }
 
   /// Creates a detached [AWSLogger] which is not part of the global hierarchy.
   ///
   /// {@macro aws_common.logging.aws_logger}
-  factory AWSLogger.detached([String namespace = 'Detached']) =>
-      AWSLogger.protected(Logger.detached(namespace));
+  AWSLogger.detached([String namespace = 'Detached'])
+      : _logger = Logger.detached(namespace);
 
   /// {@macro aws_common.logging.aws_logger}
   @protected
-  AWSLogger.protected(this._logger) {
-    _init();
+  AWSLogger.protected(String namespace) : _logger = Logger(namespace) {
+    _init(this);
   }
 
   static bool _initialized = false;
-  static void _init() {
+  static void _init(AWSLogger rootLogger) {
     if (_initialized) return;
     _initialized = true;
     hierarchicalLoggingEnabled = true;
-    AWSLogger().registerPlugin(const SimpleLogPrinter());
+    rootLogger.registerPlugin(const SimpleLogPrinter());
   }
 
   /// The root namespace for all [AWSLogger] instances.

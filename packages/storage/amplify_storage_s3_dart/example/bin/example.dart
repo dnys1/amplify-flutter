@@ -99,8 +99,11 @@ Future<void> listOperation() async {
   // get plugin with plugin key to gain S3 specific interface
   final s3Plugin = Amplify.Storage.getPlugin(AmplifyStorageS3Dart.pluginKey);
   final options = listAll
-      ? const S3ListOptions.listAll()
-      : S3ListOptions(
+      ? StorageListOptions(
+          accessLevel: accessLevel,
+          pluginOptions: const S3ListPluginOptions.listAll(),
+        )
+      : StorageListOptions(
           accessLevel: accessLevel,
           pageSize: pageSize,
         );
@@ -144,7 +147,7 @@ Future<void> listOperation() async {
     result = await s3Plugin
         .list(
           path: path,
-          options: S3ListOptions(
+          options: StorageListOptions(
             accessLevel: accessLevel,
             pageSize: pageSize,
             nextToken: result.nextToken,
@@ -163,7 +166,7 @@ Future<void> getPropertiesOperation() async {
   final s3Plugin = Amplify.Storage.getPlugin(AmplifyStorageS3Dart.pluginKey);
   final getPropertiesOperation = s3Plugin.getProperties(
     key: key,
-    options: S3GetPropertiesOptions(
+    options: StorageGetPropertiesOptions(
       accessLevel: accessLevel,
     ),
   );
@@ -183,16 +186,20 @@ Future<void> getUrlOperation() async {
   final accessLevel = promptStorageAccessLevel(
     'Choose the storage access level associated with the object: ',
   );
+  final useAccelerateEndpoint = promptUseAcceleration();
 
   final s3Plugin = Amplify.Storage.getPlugin(AmplifyStorageS3Dart.pluginKey);
   final getUrlOperation = s3Plugin.getUrl(
     key: key,
-    options: S3GetUrlOptions(
+    options: StorageGetUrlOptions(
       accessLevel: accessLevel,
-      expiresIn: const Duration(
-        minutes: 10,
+      pluginOptions: S3GetUrlPluginOptions(
+        expiresIn: const Duration(
+          minutes: 10,
+        ),
+        checkObjectExistence: true,
+        useAccelerateEndpoint: useAccelerateEndpoint,
       ),
-      checkObjectExistence: true,
     ),
   );
 
@@ -217,23 +224,24 @@ Future<void> downloadDataOperation() async {
   final s3Plugin = Amplify.Storage.getPlugin(AmplifyStorageS3Dart.pluginKey);
   final downloadDataOperation = s3Plugin.downloadData(
     key: key,
-    options: S3DownloadDataOptions(
+    options: StorageDownloadDataOptions(
       accessLevel: accessLevel,
-      getProperties: true,
+      pluginOptions: const S3DownloadDataPluginOptions(
+        getProperties: true,
+      ),
     ),
     onProgress: onTransferProgress,
   );
 
   stdout.writeln('Downloading...');
-  // TODO(HuiSF): re-enable controllable APIs when SmithyOperation.cancel
-  // can cancel underlying http request.
-  // await Future<void>.delayed(const Duration(seconds: 1));
-  // await downloadDataOperation.pause();
-
-  // await Future<void>.delayed(const Duration(seconds: 4));
-  // await downloadDataOperation.resume();
 
   try {
+    await Future<void>.delayed(const Duration(seconds: 1));
+    await downloadDataOperation.pause();
+
+    await Future<void>.delayed(const Duration(seconds: 4));
+    await downloadDataOperation.resume();
+
     final result = await downloadDataOperation.result;
     stdout.writeln('\nDownload completed!');
     stdout.writeln('Download bytes size: ${result.bytes.length}');
@@ -253,29 +261,33 @@ Future<void> downloadFileOperation() async {
   final destinationPath = prompt(
     'Enter the destination file path (ensure the file path is writable): ',
   );
+  final useAccelerateEndpoint = promptUseAcceleration();
+
   final localFile = AWSFile.fromPath(destinationPath);
 
   final s3Plugin = Amplify.Storage.getPlugin(AmplifyStorageS3Dart.pluginKey);
   final downloadFileOperation = s3Plugin.downloadFile(
     key: key,
     localFile: localFile,
-    options: S3DownloadFileOptions(
-      getProperties: true,
+    options: StorageDownloadFileOptions(
       accessLevel: accessLevel,
+      pluginOptions: S3DownloadFilePluginOptions(
+        getProperties: true,
+        useAccelerateEndpoint: useAccelerateEndpoint,
+      ),
     ),
     onProgress: onTransferProgress,
   );
 
   stdout.writeln('Downloading...');
-  // TODO(HuiSF): re-enable controllable APIs when SmithyOperation.cancel
-  // can cancel underlying http request.
-  // await Future<void>.delayed(const Duration(seconds: 1));
-  // await downloadFileOperation.pause();
-
-  // await Future<void>.delayed(const Duration(seconds: 4));
-  // await downloadFileOperation.resume();
 
   try {
+    await Future<void>.delayed(const Duration(seconds: 2));
+    await downloadFileOperation.pause();
+
+    await Future<void>.delayed(const Duration(seconds: 30));
+    await downloadFileOperation.resume();
+
     final result = await downloadFileOperation.result;
     stdout.writeln('\nDownload completed!');
     stdout.writeln('Download file eTag: ${result.downloadedItem.eTag}');
@@ -298,9 +310,11 @@ Future<void> uploadDataUrlOperation() async {
   final uploadDataOperation = s3Plugin.uploadData(
     data: S3DataPayload.dataUrl(dataUrl),
     key: key,
-    options: S3UploadDataOptions(
+    options: StorageUploadDataOptions(
       accessLevel: accessLevel,
-      getProperties: true,
+      pluginOptions: const S3UploadDataPluginOptions(
+        getProperties: true,
+      ),
     ),
   );
 
@@ -330,6 +344,7 @@ Future<void> uploadFileOperation() async {
   final file = AWSFile.fromPath(filePath);
 
   final option = prompt('Upload size ${await file.size}, continue? (Y/n): ');
+  final useAccelerateEndpoint = promptUseAcceleration();
 
   if (option.toLowerCase() != 'y') {
     stdout.writeln('Upload canceled.');
@@ -341,23 +356,27 @@ Future<void> uploadFileOperation() async {
     localFile: file,
     key: key,
     onProgress: onTransferProgress,
-    options: S3UploadFileOptions(
+    options: StorageUploadFileOptions(
       accessLevel: accessLevel,
-      getProperties: true,
-      metadata: {
-        'nameTag': nameTag,
-      },
+      pluginOptions: S3UploadFilePluginOptions(
+        getProperties: true,
+        metadata: {
+          'nameTag': nameTag,
+        },
+        useAccelerateEndpoint: useAccelerateEndpoint,
+      ),
     ),
   );
 
   stdout.writeln('Uploading...');
-  await Future<void>.delayed(const Duration(seconds: 3));
-  await uploadFileOperation.pause();
-
-  await Future<void>.delayed(const Duration(seconds: 4));
-  await uploadFileOperation.resume();
 
   try {
+    await Future<void>.delayed(const Duration(seconds: 3));
+    await uploadFileOperation.pause();
+
+    await Future<void>.delayed(const Duration(seconds: 4));
+    await uploadFileOperation.resume();
+
     final result = await uploadFileOperation.result;
     stdout.writeln('\nUpload completed!');
     stdout.writeln('Upload file eTag: ${result.uploadedItem.eTag}');
@@ -389,7 +408,9 @@ Future<void> copyOperation() async {
       storageItem: S3Item(key: destinationKey),
       accessLevel: destinationStorageAccessLevel,
     ),
-    options: const S3CopyOptions(getProperties: true),
+    options: const StorageCopyOptions(
+      pluginOptions: S3CopyPluginOptions(getProperties: true),
+    ),
   );
 
   try {
@@ -428,7 +449,9 @@ Future<void> moveOperation() async {
       storageItem: S3Item(key: destinationKey),
       accessLevel: destinationStorageAccessLevel,
     ),
-    options: const S3MoveOptions(getProperties: true),
+    options: const StorageMoveOptions(
+      pluginOptions: S3MovePluginOptions(getProperties: true),
+    ),
   );
 
   try {
@@ -456,7 +479,7 @@ Future<void> removeOperation() async {
   final s3Plugin = Amplify.Storage.getPlugin(AmplifyStorageS3Dart.pluginKey);
   final removeOperation = s3Plugin.remove(
     key: key,
-    options: S3RemoveOptions(
+    options: StorageRemoveOptions(
       accessLevel: accessLevel,
     ),
   );
@@ -506,6 +529,17 @@ StorageAccessLevel promptStorageAccessLevel(String message) {
   }
 
   return accessLevel;
+}
+
+bool promptUseAcceleration() {
+  String input;
+
+  do {
+    input = prompt('Use transfer acceleration for this operation? (y/n): ')
+        .toLowerCase();
+  } while (input != 'y' && input != 'n');
+
+  return input == 'y';
 }
 
 Never exitError(Object error, [StackTrace? stackTrace]) {

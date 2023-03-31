@@ -1,8 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:amplify_auth_cognito_dart/src/model/sign_up_parameters.dart';
+import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart';
 
 /// Discrete event types of the sign up flow.
@@ -15,22 +15,18 @@ enum SignUpEventType {
 
   /// {@macro amplify_auth_cognito.sign_up_succeeded}
   succeeded,
-
-  /// {@macro amplify_auth_cognito.sign_up_failed}
-  failed,
 }
 
 /// Discrete events of the sign up flow.
-abstract class SignUpEvent
-    extends StateMachineEvent<SignUpEventType, SignUpStateType> {
+abstract class SignUpEvent extends AuthEvent<SignUpEventType, SignUpStateType> {
   const SignUpEvent._();
 
   /// {@macro amplify_auth_cognito.sign_up_inititate}
   const factory SignUpEvent.initiate({
     required SignUpParameters parameters,
-    Map<String, String>? clientMetadata,
-    Map<String, String>? userAttributes,
-    Map<String, String>? validationData,
+    Map<AuthUserAttributeKey, String> userAttributes,
+    Map<String, String> clientMetadata,
+    Map<String, String> validationData,
   }) = SignUpInitiate;
 
   /// {@macro amplify_auth_cognito.sign_up_confirm}
@@ -45,9 +41,6 @@ abstract class SignUpEvent
     String? userId,
   }) = SignUpSucceeded;
 
-  /// {@macro amplify_auth_cognito.sign_up_failed}
-  const factory SignUpEvent.failed(Exception exception) = SignUpFailed;
-
   @override
   String get runtimeTypeName => 'SignUpEvent';
 }
@@ -59,22 +52,19 @@ class SignUpInitiate extends SignUpEvent {
   /// {@macro amplify_auth_cognito.sign_up_inititate}
   const SignUpInitiate({
     required this.parameters,
-    Map<String, String>? clientMetadata,
-    Map<String, String>? userAttributes,
-    Map<String, String>? validationData,
-  })  : clientMetadata = clientMetadata ?? const {},
-        userAttributes = userAttributes ?? const {},
-        validationData = validationData ?? const {},
-        super._();
+    this.userAttributes = const {},
+    this.clientMetadata = const {},
+    this.validationData = const {},
+  }) : super._();
 
   /// Flow-specific parameters.
   final SignUpParameters parameters;
 
+  /// User attributes.
+  final Map<AuthUserAttributeKey, String> userAttributes;
+
   /// Client metadata.
   final Map<String, String> clientMetadata;
-
-  /// User attributes.
-  final Map<String, String> userAttributes;
 
   /// Validation data.
   final Map<String, String> validationData;
@@ -86,8 +76,8 @@ class SignUpInitiate extends SignUpEvent {
   List<Object?> get props => [
         type,
         parameters,
-        clientMetadata,
         userAttributes,
+        clientMetadata,
         validationData,
       ];
 }
@@ -142,22 +132,4 @@ class SignUpSucceeded extends SignUpEvent {
 
   @override
   List<Object?> get props => [type, userId];
-}
-
-/// {@template amplify_auth_cognito.sign_up_failed}
-/// A failure in a sign up/confirm sign up event.
-/// {@endtemplate}
-class SignUpFailed extends SignUpEvent with ErrorEvent {
-  /// {@macro amplify_auth_cognito.sign_up_failed}
-  const SignUpFailed(this.exception) : super._();
-
-  /// The exception thrown signing up.
-  @override
-  final Exception exception;
-
-  @override
-  SignUpEventType get type => SignUpEventType.failed;
-
-  @override
-  List<Object?> get props => [type, exception];
 }

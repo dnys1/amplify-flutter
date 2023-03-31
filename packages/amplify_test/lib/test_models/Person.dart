@@ -10,7 +10,7 @@
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
 
 /// This is an auto generated class representing the Person type in your schema.
 @immutable
@@ -233,6 +233,11 @@ class _PersonModelType extends ModelType<Person> {
   @override
   Person fromJson(Map<String, dynamic> jsonData) {
     return Person.fromJson(jsonData);
+  }
+
+  @override
+  String modelName() {
+    return 'Person';
   }
 }
 

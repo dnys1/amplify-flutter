@@ -18,7 +18,7 @@ import 'package:amplify_auth_cognito_dart/src/model/cognito_device_secrets.dart'
 import 'package:amplify_auth_cognito_dart/src/model/cognito_user.dart';
 import 'package:amplify_auth_cognito_dart/src/model/sign_in_parameters.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart'
-    hide InvalidParameterException;
+    hide InvalidParameterException, ResourceNotFoundException;
 import 'package:amplify_auth_cognito_dart/src/sdk/sdk_bridge.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart';
@@ -31,13 +31,13 @@ import 'package:meta/meta.dart';
 /// the same pattern of calling `cognitoIdp.InitiateAuth` plus some number of
 /// challenge responses.
 /// {@endtemplate}
-class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
+class SignInStateMachine extends AuthStateMachine<SignInEvent, SignInState> {
   /// {@macro amplify_auth_cognito.sign_in_state_machine}
-  SignInStateMachine(super.manager);
+  SignInStateMachine(CognitoAuthStateMachine manager) : super(manager, type);
 
   /// The [SignInStateMachine] type.
-  static const type =
-      StateMachineToken<SignInEvent, SignInState, SignInStateMachine>();
+  static const type = StateMachineToken<SignInEvent, SignInState, AuthEvent,
+      AuthState, CognitoAuthStateMachine, SignInStateMachine>();
 
   @override
   String get runtimeTypeName => 'SignInStateMachine';
@@ -195,11 +195,12 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
   ///
   /// Subclasses should return `null` if they cannot handle [challengeName].
   Future<RespondToAuthChallengeRequest?> respondToAuthChallenge(
+    SignInEvent? event,
     ChallengeNameType challengeName,
-    BuiltMap<String, String> challengeParameters, [
-    SignInRespondToChallenge? event,
-  ]) async {
-    if (authFlowType == AuthFlowType.customAuth && event != null) {
+    BuiltMap<String, String> challengeParameters,
+  ) async {
+    if (authFlowType == AuthFlowType.customAuth &&
+        event is SignInRespondToChallenge) {
       return RespondToAuthChallengeRequest.build(
         (b) => b
           ..challengeName = ChallengeNameType.customChallenge
@@ -207,10 +208,12 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
             CognitoConstants.challengeParamUsername: parameters.username,
             CognitoConstants.challengeParamAnswer: event.answer,
           })
-          ..clientId = config.appClientId,
+          ..clientId = config.appClientId
+          ..clientMetadata.addAll(event.clientMetadata)
+          ..analyticsMetadata = get<AnalyticsMetadataType>()?.toBuilder(),
       );
     }
-    return respondToSrpChallenge(challengeName, challengeParameters, event);
+    return respondToSrpChallenge(event, challengeName, challengeParameters);
   }
 
   /// Creates the password verifier request in a worker instance.
@@ -534,10 +537,10 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
   /// Responds to an SRP flow challenge.
   @protected
   Future<RespondToAuthChallengeRequest?> respondToSrpChallenge(
+    SignInEvent? event,
     ChallengeNameType challengeName,
-    BuiltMap<String, String> challengeParameters, [
-    SignInRespondToChallenge? event,
-  ]) async {
+    BuiltMap<String, String> challengeParameters,
+  ) async {
     switch (challengeName) {
       case ChallengeNameType.passwordVerifier:
         return createPasswordVerifierRequest(challengeParameters);
@@ -546,12 +549,12 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
       case ChallengeNameType.devicePasswordVerifier:
         return createDevicePasswordVerifierRequest(challengeParameters);
       case ChallengeNameType.smsMfa:
-        if (event != null) {
+        if (event is SignInRespondToChallenge) {
           return createSmsMfaRequest(event);
         }
         break;
       case ChallengeNameType.newPasswordRequired:
-        if (event != null) {
+        if (event is SignInRespondToChallenge) {
           return createNewPasswordRequest(event);
         }
         break;
@@ -595,35 +598,38 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
       ..refreshToken = refreshToken
       ..idToken = idTokenJwt;
 
-    await dispatch(
-      CredentialStoreEvent.storeCredentials(
-        CredentialStoreData(
-          userPoolTokens: user.userPoolTokens.build(),
-          signInDetails: signInDetails,
-        ),
+    await manager.storeCredentials(
+      CredentialStoreData(
+        userPoolTokens: user.userPoolTokens.build(),
+        signInDetails: signInDetails,
       ),
     );
 
     // Clear anonymous credentials, if there were any, and fetch authenticated
     // credentials.
     if (hasIdentityPool) {
-      await dispatch(
-        CredentialStoreEvent.clearCredentials(
-          CognitoIdentityPoolKeys(identityPoolConfig!),
-        ),
+      await manager.clearCredentials(
+        CognitoIdentityPoolKeys(identityPoolConfig!),
       );
 
-      await dispatch(
-        const FetchAuthSessionEvent.fetch(
-          CognitoSessionOptions(getAWSCredentials: true),
-        ),
-      );
-
-      // Wait for above to propagate and complete successfully.
-      await expect(FetchAuthSessionStateMachine.type).getLatestResult();
+      await manager.loadSession();
     }
 
     return accessToken;
+  }
+
+  /// Loads device secrets for the current user and attaches them to the current
+  /// [user].
+  Future<void> _loadDeviceSecrets() async {
+    try {
+      final deviceSecrets =
+          await getOrCreate(DeviceMetadataRepository.token).get(user.username!);
+      if (deviceSecrets != null) {
+        user.deviceSecrets = deviceSecrets.toBuilder();
+      }
+    } on Exception catch (e, st) {
+      logger.debug('Could not retrieve credentials', e, st);
+    }
   }
 
   /// Runs the authentication flow to its stopping state, either a successful
@@ -632,17 +638,14 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
     emit(const SignInState.initiating());
 
     // Collect current user info which may influence SRP flow.
-    try {
-      final deviceSecrets = await getOrCreate(DeviceMetadataRepository.token)
-          .get(event.parameters.username);
-      if (deviceSecrets != null) {
-        user.deviceSecrets = deviceSecrets.toBuilder();
-      }
-    } on Exception catch (e, st) {
-      logger.debug('Could not retrieve credentials', e, st);
-    }
+    user.username = event.parameters.username;
+    await _loadDeviceSecrets();
 
-    final initRequest = await initiate(event);
+    var initRequest = await initiate(event);
+    initRequest = initRequest.rebuild(
+      (b) => b..analyticsMetadata = get<AnalyticsMetadataType>()?.toBuilder(),
+    );
+
     final initResponse =
         await cognitoIdentityProvider.initiateAuth(initRequest).result;
 
@@ -652,7 +655,7 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
     _challengeParameters = initResponse.challengeParameters ?? BuiltMap();
     _session = initResponse.session;
 
-    final stopState = await _processChallenge();
+    final stopState = await _processChallenge(event);
     emit(stopState);
   }
 
@@ -693,7 +696,7 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
   /// `RespondToAuthChallenge` call.
   Future<void> _updateAttributes({
     required String accessToken,
-    required Map<String, String> clientMetadata,
+    required Map<String, String>? clientMetadata,
   }) async {
     if (_attributesNeedingUpdate == null || _attributesNeedingUpdate!.isEmpty) {
       return;
@@ -704,7 +707,7 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
             UpdateUserAttributesRequest.build(
               (b) => b
                 ..accessToken = accessToken
-                ..clientMetadata.addAll(clientMetadata)
+                ..clientMetadata.addAll(clientMetadata ?? const {})
                 ..userAttributes.addAll([
                   for (final userAttribute in _attributesNeedingUpdate!.entries)
                     AttributeType(
@@ -725,9 +728,7 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
   /// 2. Querying the state machine implementation for how to respond.
   /// 3. Yielding control if the state machine cannot respond automatically and
   ///    user input is needed.
-  Future<SignInState> _processChallenge([
-    SignInRespondToChallenge? event,
-  ]) async {
+  Future<SignInState> _processChallenge([SignInEvent? event]) async {
     // There can be an indefinite amount of challenges which need responses.
     // Only when authenticationResult is set is the flow considered complete.
     final authenticationResult = _authenticationResult;
@@ -755,20 +756,20 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
 
       await _updateAttributes(
         accessToken: accessToken,
-        clientMetadata: event?.clientMetadata ?? const {},
+        clientMetadata: event?.clientMetadata,
       );
 
       return SignInState.success(user.build());
     }
 
-    _updateUser(_challengeParameters);
+    await _updateUser(_challengeParameters);
 
     // Query the state machine for a response given potential user input in
     // `event`.
     final respondRequest = await respondToAuthChallenge(
+      event,
       _challengeName!,
       _challengeParameters,
-      event,
     );
 
     // If we can't internally respond to the challenge, we may need user
@@ -799,37 +800,67 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
     }
 
     // Respond to Cognito and evaluate the returned response.
-    await _respondToChallenge(respondRequest, event?.clientMetadata);
-    return _processChallenge();
+    return _respondToChallenge(event, respondRequest);
   }
 
-  /// Inner handle to send the response returned from [respondToAuthChallenge].
-  Future<void> _respondToChallenge(
+  /// Inner handle to send the request returned from [respondToAuthChallenge]
+  /// and process its response.
+  Future<SignInState> _respondToChallenge(
+    SignInEvent? event,
     RespondToAuthChallengeRequest respondRequest,
-    Map<String, String>? clientMetadata,
   ) async {
     // Include session if not already included.
     respondRequest = respondRequest.rebuild(
       (b) => b
         ..session ??= _session
-        ..clientMetadata.replace(clientMetadata ?? const <String, String>{}),
+        ..clientMetadata.replace(event?.clientMetadata ?? const {})
+        ..analyticsMetadata = get<AnalyticsMetadataType>()?.toBuilder(),
     );
 
-    final challengeResp = await cognitoIdentityProvider
-        .respondToAuthChallenge(respondRequest)
-        .result;
+    try {
+      final challengeResp = await cognitoIdentityProvider
+          .respondToAuthChallenge(respondRequest)
+          .result;
 
-    // Update flow state
-    _authenticationResult = challengeResp.authenticationResult;
-    _challengeName = challengeResp.challengeName;
-    _challengeParameters = challengeResp.challengeParameters ?? BuiltMap();
-    _session = challengeResp.session;
+      // Update flow state
+      _authenticationResult = challengeResp.authenticationResult;
+      _challengeName = challengeResp.challengeName;
+      _challengeParameters = challengeResp.challengeParameters ?? BuiltMap();
+      _session = challengeResp.session;
+
+      return _processChallenge();
+    } on ResourceNotFoundException {
+      // For device flows, retry with normal SRP sign-in when the device is not
+      // found. This protects against the case where a device has been removed
+      // in Cognito but exists in the local cache.
+      if (_challengeName == ChallengeNameType.passwordVerifier &&
+          user.deviceSecrets != null) {
+        user.deviceSecrets = null;
+        await getOrCreate(DeviceMetadataRepository.token)
+            .remove(user.username!);
+
+        final respondRequest = await respondToAuthChallenge(
+          event,
+          _challengeName!,
+          _challengeParameters,
+        );
+        return _respondToChallenge(event, respondRequest!);
+      }
+      rethrow;
+    }
   }
 
-  /// Updates the CognitoUser from challege parameters.
-  void _updateUser(BuiltMap<String, String> challengeParameters) {
-    user.username ??=
+  /// Updates the CognitoUser from challenge parameters.
+  Future<void> _updateUser(BuiltMap<String, String> challengeParameters) async {
+    // If a Cognito response returned a different username than what was used
+    // to login, refresh the device secrets so that they are included in future
+    // requests.
+    final cognitoUsername =
         challengeParameters[CognitoConstants.challengeParamUsername];
+    if (cognitoUsername != null && cognitoUsername != user.username) {
+      user.username = cognitoUsername;
+      await _loadDeviceSecrets();
+    }
   }
 
   @override
@@ -853,18 +884,17 @@ class SignInStateMachine extends StateMachine<SignInEvent, SignInState> {
         event as SignInSucceeded;
         emit(SignInState.success(event.user));
         return;
-      case SignInEventType.failed:
-        // TODO(dnys1): Transition to challenge state for CodeMismatchException
-        event as SignInFailed;
-        emit(SignInState.failure(event.exception));
-        return;
     }
   }
 
   @override
-  SignInState? resolveError(Object error, [StackTrace? st]) {
+  SignInState? resolveError(Object error, StackTrace st) {
     if (error is Exception) {
-      return SignInFailure(error);
+      return SignInFailure(
+        previousState: currentState,
+        exception: error,
+        stackTrace: st,
+      );
     }
     return null;
   }

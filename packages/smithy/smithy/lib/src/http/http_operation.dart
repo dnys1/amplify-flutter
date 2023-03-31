@@ -226,7 +226,14 @@ abstract class HttpOperation<InputPayload, Input, OutputPayload, Output>
           (response) => deserializeOutput(
             protocol: protocol,
             response: response,
-          ),
+            // Prevents errors thrown from registering as "Uncaught Exceptions"
+            // in the Dart debugger.
+            //
+            // This is a false positive because we do catch errors in the
+            // retryer which wraps this. Likely this is due to the use of
+            // completers in `CancelableOperation` or some other Zone-related
+            // nonsense.
+          ).catchError(Error.throwWithStackTrace),
         );
       },
       onCancel: () {
@@ -266,8 +273,10 @@ abstract class HttpOperation<InputPayload, Input, OutputPayload, Output>
     StackTrace? stackTrace;
     var successCode = this.successCode();
     try {
-      final payload = await protocol.deserialize(response.split(),
-          specifiedType: FullType(OutputPayload));
+      final payload = await protocol.deserialize(
+        response.split(),
+        specifiedType: FullType(OutputPayload),
+      );
       if (payload is Output) {
         output = payload;
       } else {
@@ -279,36 +288,45 @@ abstract class HttpOperation<InputPayload, Input, OutputPayload, Output>
       stackTrace = st;
     }
     if (response.statusCode == successCode) {
+      // Close the response so that the underlying subscription created by
+      // `split` is cancelled as well.
+      response.close();
       if (output != null) {
         return output;
       }
       Error.throwWithStackTrace(error!, stackTrace!);
     }
 
-    SmithyError? smithyError;
-    final resolvedType = await protocol.resolveErrorType(response);
-    if (resolvedType != null) {
-      smithyError =
-          errorTypes.firstWhereOrNull((t) => t.shapeId.shape == resolvedType);
-    }
-    smithyError ??= errorTypes
-        .singleWhereOrNull((t) => t.statusCode == response.statusCode);
-    if (smithyError == null) {
-      throw SmithyHttpException(
-        statusCode: response.statusCode,
-        body: await response.decodeBody(),
-        headers: response.headers,
+    try {
+      SmithyError? smithyError;
+      final resolvedType = await protocol.resolveErrorType(response);
+      if (resolvedType != null) {
+        smithyError =
+            errorTypes.firstWhereOrNull((t) => t.shapeId.shape == resolvedType);
+      }
+      smithyError ??= errorTypes
+          .singleWhereOrNull((t) => t.statusCode == response.statusCode);
+      if (smithyError == null) {
+        throw SmithyHttpException(
+          statusCode: response.statusCode,
+          body: await response.decodeBody(),
+          headers: response.headers,
+        );
+      }
+      final Type errorType = smithyError.type;
+      final Function builder = smithyError.builder;
+      final Object? errorPayload = await protocol.deserialize(
+        response.body,
+        specifiedType: FullType(errorType),
       );
+      final SmithyException smithyException =
+          builder(errorPayload, response) as SmithyException;
+      throw smithyException;
+    } finally {
+      // Close the response so that the underlying subscription created by
+      // `split` is cancelled as well.
+      response.close();
     }
-    final Type errorType = smithyError.type;
-    final Function builder = smithyError.builder;
-    final Object? errorPayload = await protocol.deserialize(
-      response.body,
-      specifiedType: FullType(errorType),
-    );
-    final SmithyException smithyException =
-        builder(errorPayload, response) as SmithyException;
-    throw smithyException;
   }
 
   SmithyOperation<Output> run(

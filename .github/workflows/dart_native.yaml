@@ -17,9 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          # macos-latest currently points to macos-11
-          # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idruns-on
-          - macos-12
+          - macos-latest
           - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
@@ -51,11 +49,16 @@ jobs:
           sdk: stable
 
       - name: Setup aft
-        run: dart pub global activate -spath packages/aft
+        shell: bash # Run in bash regardless of platform
+        run: |
+          # Patch libgit2dart (see https://github.com/dart-lang/pub/issues/3563)
+          ( cd packages/aft/external/libgit2dart; git apply ../libgit2dart.patch )
+          dart pub global activate -spath packages/aft
+          ( cd packages/aft/external/libgit2dart; git reset --hard HEAD )
 
       - name: Bootstrap
         id: bootstrap
-        timeout-minutes: 15 # macOS needs extra time
+        timeout-minutes: 20 # macOS needs extra time
         run: aft bootstrap
 
       - name: Setup Package

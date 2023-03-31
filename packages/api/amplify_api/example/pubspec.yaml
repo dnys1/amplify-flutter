@@ -6,35 +6,27 @@ description: Demonstrates how to use the amplify_api plugin.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
 
 dependencies:
-  amplify_api:
-    # When depending on this package from a real application you should use:
-    #   amplify_api: ^x.y.z
-    # See https://dart.dev/tools/pub/dependencies#version-constraints
-    # The example app is bundled with the plugin so we use a path dependency on
-    # the parent directory to use the current plugin's version.
-    path: ../
-  amplify_auth_cognito:
-    path: ../../../auth/amplify_auth_cognito
-  amplify_authenticator:
-    path: ../../../authenticator/amplify_authenticator
-  amplify_flutter:
-    path: ../../../amplify/amplify_flutter
-  async: ^2.8.0
-  aws_common: ^0.2.0
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.3
+  amplify_api: ">=1.0.0-next.7 <1.0.0-next.8"
+  amplify_auth_cognito: ">=1.0.0-next.7 <1.0.0-next.8"
+  amplify_authenticator: ">=1.0.0-next.5 <1.0.0-next.6"
+  amplify_flutter: ">=1.0.0-next.7 <1.0.0-next.8"
+  async: ^2.10.0
+  aws_common: ">=0.4.0 <0.5.0"
 
   flutter:
     sdk: flutter
 
+# Needed to support both Flutter 3.3 + 3.7 in CI.
+# TODO(dnys1): Remove when Flutter 3.3 is no longer supported
+dependency_overrides:
+  async: ^2.10.0
+
 dev_dependencies:
-  amplify_lints: 
+  amplify_lints:
     path: ../../../amplify_lints
   amplify_test:
     path: ../../../amplify_test

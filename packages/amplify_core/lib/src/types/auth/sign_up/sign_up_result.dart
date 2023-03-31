@@ -2,10 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'package:amplify_core/amplify_core.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'sign_up_result.g.dart';
 
-@zAmplifySerializable
+@JsonSerializable(
+  includeIfNull: false,
+  explicitToJson: true,
+  // TODO(dnys1): Fix generic serialization
+  createFactory: false,
+)
 class SignUpResult
     with
         AWSEquatable<SignUpResult>,
@@ -17,9 +23,6 @@ class SignUpResult
     this.userId,
   });
 
-  factory SignUpResult.fromJson(Map<String, Object?> json) =>
-      _$SignUpResultFromJson(json);
-
   final bool isSignUpComplete;
   final AuthNextSignUpStep nextStep;
 
@@ -27,6 +30,9 @@ class SignUpResult
   final String? userId;
 
   @override
+  @JsonKey(
+    includeToJson: false,
+  ) // Workaround for https://github.com/google/json_serializable.dart/issues/1102
   List<Object?> get props => [isSignUpComplete, nextStep, userId];
 
   @override

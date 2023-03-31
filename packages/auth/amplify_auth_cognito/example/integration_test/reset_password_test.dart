@@ -7,8 +7,8 @@ import 'package:amplify_test/amplify_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'utils/mock_data.dart';
 import 'utils/setup_utils.dart';
+import 'utils/test_utils.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -20,13 +20,13 @@ void main() {
     tearDownAll(Amplify.reset);
 
     Future<void> signIn() async {
-      final otpResult = await getOtpCode(username);
+      final otpResult = await getOtpCode(UserAttribute.username(username));
       final signInRes = await Amplify.Auth.signIn(
         username: username,
         password: password,
       );
       if (signInRes.nextStep.signInStep ==
-          'CONFIRM_SIGN_IN_WITH_SMS_MFA_CODE') {
+          AuthSignInStep.confirmSignInWithSmsMfaCode) {
         final confirmSignInRes = await Amplify.Auth.confirmSignIn(
           confirmationValue: await otpResult.code,
         );
@@ -59,21 +59,21 @@ void main() {
       await signIn();
     });
 
-    test('can reset password', () async {
+    asyncTest('can reset password', (_) async {
       await signOutUser();
 
-      final otpResult = await getOtpCode(username);
+      final otpResult = await getOtpCode(UserAttribute.username(username));
       final resetPasswordRes = await Amplify.Auth.resetPassword(
         username: username,
       );
       expect(resetPasswordRes.isPasswordReset, isFalse);
       expect(
         resetPasswordRes.nextStep.updateStep,
-        'CONFIRM_RESET_PASSWORD_WITH_CODE',
+        AuthResetPasswordStep.confirmResetPasswordWithCode,
       );
       expect(
         resetPasswordRes.nextStep.codeDeliveryDetails?.deliveryMedium,
-        'EMAIL',
+        DeliveryMedium.email,
       );
 
       password = generatePassword();

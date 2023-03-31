@@ -30,9 +30,12 @@ class NeedsDependencyManagerAndDispatcher {
   final Dispatcher dispatcher;
 }
 
-class MyDispatcher implements Dispatcher {
+class MyDispatcher with Dispatcher {
   @override
-  void dispatch(StateMachineEvent event) {}
+  EventCompleter<StateMachineEvent, StateMachineState> dispatch(
+    StateMachineEvent event,
+  ) =>
+      EventCompleter(event);
 }
 
 void main() {
@@ -86,11 +89,12 @@ void main() {
         Token<DependencyManager>(),
         Token<Dispatcher>(),
       ]);
-      dependencyManager.addBuilder<Dispatcher>(MyDispatcher.new);
-      dependencyManager.addBuilder<NeedsDependencyManagerAndDispatcher>(
-        NeedsDependencyManagerAndDispatcher.new,
-        token,
-      );
+      dependencyManager
+        ..addBuilder<Dispatcher>(MyDispatcher.new)
+        ..addBuilder<NeedsDependencyManagerAndDispatcher>(
+          NeedsDependencyManagerAndDispatcher.new,
+          token,
+        );
 
       expect(
         () => dependencyManager

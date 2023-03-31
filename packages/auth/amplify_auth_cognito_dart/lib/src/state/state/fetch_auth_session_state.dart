@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
+import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart';
 
 /// Discrete state types of the fetch auth session state machine.
@@ -24,7 +25,7 @@ enum FetchAuthSessionStateType {
 
 /// Discrete states of the fetch auth session state machine.
 abstract class FetchAuthSessionState
-    extends StateMachineState<FetchAuthSessionStateType> {
+    extends AuthState<FetchAuthSessionStateType> {
   const FetchAuthSessionState._();
 
   /// {@macro amplify_auth_cognito.fetch_auth_session_idle}
@@ -44,6 +45,7 @@ abstract class FetchAuthSessionState
   /// {@macro amplify_auth_cognito.fetch_auth_session_failure}
   const factory FetchAuthSessionState.failure(
     Exception exception,
+    StackTrace stackTrace,
   ) = FetchAuthSessionFailure;
 
   @override
@@ -95,7 +97,7 @@ class FetchAuthSessionRefreshing extends FetchAuthSessionState {
 /// {@template amplify_auth_cognito.fetch_auth_session_success}
 /// The state machine successfully fetched the current auth session.
 /// {@endtemplate}
-class FetchAuthSessionSuccess extends FetchAuthSessionState {
+class FetchAuthSessionSuccess extends FetchAuthSessionState with SuccessState {
   /// {@macro amplify_auth_cognito.fetch_auth_session_success}
   const FetchAuthSessionSuccess(this.session) : super._();
 
@@ -114,15 +116,18 @@ class FetchAuthSessionSuccess extends FetchAuthSessionState {
 /// {@endtemplate}
 class FetchAuthSessionFailure extends FetchAuthSessionState with ErrorState {
   /// {@macro amplify_auth_cognito.fetch_auth_session_failure}
-  const FetchAuthSessionFailure(this.exception) : super._();
+  const FetchAuthSessionFailure(this.exception, this.stackTrace) : super._();
 
   /// The exception thrown fetching credentials.
   @override
   final Exception exception;
 
   @override
+  final StackTrace stackTrace;
+
+  @override
   FetchAuthSessionStateType get type => FetchAuthSessionStateType.failure;
 
   @override
-  List<Object?> get props => [type, exception];
+  List<Object?> get props => [type, exception, stackTrace];
 }

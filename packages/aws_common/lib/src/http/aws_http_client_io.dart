@@ -51,15 +51,16 @@ class AWSHttpClientImpl extends AWSHttpClient {
     required AWSLogger logger,
     required AWSBaseHttpRequest request,
     required CancelableCompleter<AWSBaseHttpResponse> completer,
-    required Future<void> cancelTrigger,
+    required Completer<void> cancelTrigger,
     required StreamSink<int> requestProgress,
     required StreamSink<int> responseProgress,
   }) async {
     void Function()? onCancel;
     unawaited(
-      cancelTrigger.then((_) {
+      cancelTrigger.future.then((_) {
         logger.verbose('Canceling request');
         onCancel?.call();
+        onCancel = null;
       }),
     );
     _inner ??= HttpClient();
@@ -82,6 +83,7 @@ class AWSHttpClientImpl extends AWSHttpClient {
 
     if (completer.isCanceled) return;
     onCancel = () {
+      onCancel = null;
       logger.verbose('Aborting request');
       ioRequest.abort();
     };
@@ -95,31 +97,43 @@ class AWSHttpClientImpl extends AWSHttpClient {
             requestProgress.add(requestBytesRead);
           },
           onDone: () {
-            logger.verbose('Request sent');
+            if (!cancelTrigger.isCompleted) {
+              logger.verbose('Request sent');
+            }
             requestProgress.close();
           },
         )
-        .takeUntil(cancelTrigger)
+        .takeUntil(cancelTrigger.future)
         .pipe(ioRequest) as HttpClientResponse;
 
     if (completer.isCanceled) return;
-    final bodyController = StreamController<List<int>>(sync: true);
+
+    final bodyController = StreamController<List<int>>(
+      sync: true,
+      // In downstream operations, we may only have access to the body stream
+      // so we need to allow cancellation via the subscription.
+      onCancel: () {
+        logger.verbose('Subscription canceled');
+        if (!cancelTrigger.isCompleted) {
+          cancelTrigger.complete();
+        }
+      },
+    );
     onCancel = () {
+      onCancel = null;
       logger.verbose('Detaching socket');
       if (!bodyController.isClosed) {
         bodyController
           ..addError(const CancellationException())
           ..close();
       }
+      responseProgress.close();
       response.detachSocket().then((socket) {
         socket.destroy();
       });
     };
-    response.listen(
-      bodyController.add,
-      onError: bodyController.addError,
-      onDone: bodyController.close,
-      cancelOnError: true,
+    unawaited(
+      response.forward(bodyController, cancelOnError: true),
     );
 
     logger.verbose('Received headers');
@@ -138,7 +152,9 @@ class AWSHttpClientImpl extends AWSHttpClient {
           responseProgress.add(responseBytesRead);
         },
         onDone: () {
-          logger.verbose('Response received');
+          if (!cancelTrigger.isCompleted) {
+            logger.verbose('Response received');
+          }
           onCancel = null;
           responseProgress.close();
         },
@@ -196,7 +212,12 @@ class AWSHttpClientImpl extends AWSHttpClient {
         for (final entry in request.headers.entries)
           if (redirects.isEmpty ||
               _shouldCopyHeaderOnRedirect(entry.key, request.uri, uri))
-            Header(utf8.encode(entry.key), utf8.encode(entry.value)),
+            Header(
+              // Lower-case headers due to:
+              // https://github.com/dart-lang/http2/issues/49
+              utf8.encode(entry.key.toLowerCase()),
+              utf8.encode(entry.value),
+            ),
       ];
 
   /// Sends an HTTP/2 request using `package:http2`.
@@ -204,13 +225,13 @@ class AWSHttpClientImpl extends AWSHttpClient {
     required AWSBaseHttpRequest request,
     required AWSLogger logger,
     required CancelableCompleter<AWSBaseHttpResponse> completer,
-    required Future<void> cancelTrigger,
+    required Completer<void> cancelTrigger,
     required StreamSink<int> requestProgress,
     required StreamSink<int> responseProgress,
   }) async {
     void Function()? onCancel;
     unawaited(
-      cancelTrigger.then((_) {
+      cancelTrigger.future.then((_) {
         logger.verbose('Canceling request');
         onCancel?.call();
       }),
@@ -265,11 +286,13 @@ class AWSHttpClientImpl extends AWSHttpClient {
             requestProgress.add(requestBytesRead);
             return DataStreamMessage(chunk);
           })
-          .takeUntil(cancelTrigger)
+          .takeUntil(cancelTrigger.future)
           .listen(
             stream.outgoingMessages.add,
             onDone: () {
-              logger.verbose('Request sent');
+              if (!cancelTrigger.isCompleted) {
+                logger.verbose('Request sent');
+              }
               requestProgress.close();
               stream.outgoingMessages.close();
             },
@@ -277,6 +300,7 @@ class AWSHttpClientImpl extends AWSHttpClient {
 
       final gotHeaders = Completer<void>();
       onCancel = () {
+        onCancel = null;
         if (!gotHeaders.isCompleted) {
           gotHeaders.completeError(const CancellationException());
         }
@@ -286,7 +310,17 @@ class AWSHttpClientImpl extends AWSHttpClient {
       };
 
       final headers = CaseInsensitiveMap<String>({});
-      final bodyController = StreamController<List<int>>(sync: true);
+      final bodyController = StreamController<List<int>>(
+        sync: true,
+        // In downstream operations, we may only have access to the body stream
+        // so we need to allow cancellation via the subscription.
+        onCancel: () {
+          logger.verbose('Subscription canceled');
+          if (!cancelTrigger.isCompleted) {
+            cancelTrigger.complete();
+          }
+        },
+      );
 
       late final StreamSubscription<StreamMessage> subscription;
       subscription = stream.incomingMessages.listen(
@@ -345,6 +379,7 @@ class AWSHttpClientImpl extends AWSHttpClient {
       );
       logger.verbose('Subscription established');
       onCancel = () {
+        onCancel = null;
         logger.verbose('Terminating connection');
         subscription.cancel();
         if (!bodyController.isClosed) {
@@ -352,6 +387,7 @@ class AWSHttpClientImpl extends AWSHttpClient {
             ..addError(const CancellationException())
             ..close();
         }
+        responseProgress.close();
       };
       if (completer.isCanceled) return null;
 
@@ -416,7 +452,9 @@ class AWSHttpClientImpl extends AWSHttpClient {
             responseProgress.add(responseBytesRead);
           },
           onDone: () {
-            logger.verbose('Response received');
+            if (!cancelTrigger.isCompleted) {
+              logger.verbose('Response received');
+            }
             onCancel = null;
             responseProgress.close();
           },
@@ -465,7 +503,7 @@ class AWSHttpClientImpl extends AWSHttpClient {
             request: request,
             logger: operation.logger,
             completer: completer,
-            cancelTrigger: cancelTrigger.future,
+            cancelTrigger: cancelTrigger,
             requestProgress: requestProgressController,
             responseProgress: responseProgressController,
           );
@@ -479,7 +517,7 @@ class AWSHttpClientImpl extends AWSHttpClient {
           logger: operation.logger,
           request: request,
           completer: completer,
-          cancelTrigger: cancelTrigger.future,
+          cancelTrigger: cancelTrigger,
           requestProgress: requestProgressController,
           responseProgress: responseProgressController,
         );

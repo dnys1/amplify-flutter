@@ -103,11 +103,6 @@ class AWSFilePlatform extends AWSFile {
   }
 
   @override
-  ChunkedStreamReader<int> getChunkedStreamReader() {
-    return ChunkedStreamReader(stream);
-  }
-
-  @override
   Future<int> get size async {
     final size = _size;
     if (size != null) {
@@ -125,19 +120,53 @@ class AWSFilePlatform extends AWSFile {
           return externalContentType;
         }
 
-        String blobType;
+        String? blobType;
 
         final file = _inputFile ?? _inputBlob;
+        final path = super.path;
+
         if (file != null) {
           blobType = file.type;
-        } else {
+        } else if (path != null) {
           blobType = (await _resolvedBlob).type;
         }
 
         // on Web blob.type may return an empty string
         // https://developer.mozilla.org/en-US/docs/Web/API/Blob/type#value
-        return blobType.isEmpty ? null : blobType;
+        if (blobType != null) {
+          return blobType.isEmpty ? null : blobType;
+        }
+
+        return blobType;
       });
+
+  @override
+  ChunkedStreamReader<int> getChunkedStreamReader() {
+    return ChunkedStreamReader(stream);
+  }
+
+  @override
+  Stream<List<int>> openRead([int? start, int? end]) {
+    final file = _inputFile ?? _inputBlob;
+    if (file != null) {
+      return _getReadStream(file, start: start, end: end);
+    }
+
+    final inputBytes = super.bytes;
+    if (inputBytes != null) {
+      return Stream.value(inputBytes.sublist(start ?? 0, end));
+    }
+
+    final path = super.path;
+    if (path != null) {
+      return _getReadStream(_resolvedBlob, start: start, end: end);
+    }
+
+    throw const InvalidFileException(
+      recoverySuggestion:
+          'Cannot use `openRead` with an AWSFile that is initiated with a stream.',
+    );
+  }
 
   Future<Blob> get _resolvedBlob async {
     final resolvedBlobFromPath = _resolvedBlobFromPath;
@@ -187,8 +216,15 @@ class AWSFilePlatform extends AWSFile {
     return retrievedBlob;
   }
 
-  static Stream<List<int>> _getReadStream(FutureOr<Blob> sourceBlob) async* {
-    final blob = await sourceBlob;
+  static Stream<List<int>> _getReadStream(
+    FutureOr<Blob> sourceBlob, {
+    int? start,
+    int? end,
+  }) async* {
+    var blob = await sourceBlob;
+    if (start != null) {
+      blob = blob.slice(start, end ?? blob.size);
+    }
     final fileReader = FileReader();
     var currentPosition = 0;
 

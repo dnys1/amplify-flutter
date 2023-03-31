@@ -1,3 +1,20 @@
+## 0.4.1+2
+
+- Minor bug fixes and improvements
+
+## 0.4.1+1
+
+- Minor bug fixes and improvements
+
+## 0.4.1
+
+### Features
+- feat(smithy_aws): add copyWith to S3ClientConfig
+
+## 0.4.0
+
+- Minor bug fixes and improvements
+
 ## 0.3.2
 
 - Minor bug fixes and improvements

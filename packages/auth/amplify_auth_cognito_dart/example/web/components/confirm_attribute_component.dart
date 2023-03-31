@@ -1,8 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart'
-    hide AuthState;
+import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:cognito_example/common.dart';
 import 'package:example_common/example_common.dart';
 
@@ -24,10 +23,12 @@ abstract class ConfirmAttributeComponent extends StatefulComponent {
   void _resendCode() {
     resendUserAttributeConfirmationCode(
       key: key,
-      options: const CognitoResendUserAttributeConfirmationCodeOptions(
-        clientMetadata: {
-          'method': 'resendUserAttributeConfirmationCode',
-        },
+      options: const ResendUserAttributeConfirmationCodeOptions(
+        pluginOptions: CognitoResendUserAttributeConfirmationCodePluginOptions(
+          clientMetadata: {
+            'method': 'resendUserAttributeConfirmationCode',
+          },
+        ),
       ),
     );
   }

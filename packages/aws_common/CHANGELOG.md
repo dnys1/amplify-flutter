@@ -1,3 +1,35 @@
+## 0.4.2+1
+
+### Fixes
+- fix(aws_common): Explicitly serialize values
+- fix(core): Refine `toJson` outputs when `createFactory = false`
+
+## 0.4.2
+
+### Features
+- feat(aws_common): add openRead API for AWSFile
+
+## 0.4.1+1
+
+- Minor bug fixes and improvements
+
+## 0.4.1
+
+### Fixes
+- fix(http): Cancel streamed responses ([#2545](https://github.com/aws-amplify/amplify-flutter/pull/2545))
+
+### Features
+- feat(analytics): Use indexedDB on Web ([#2600](https://github.com/aws-amplify/amplify-flutter/pull/2600))
+
+## 0.4.0
+
+### Fixes
+- fix(aws_common): AWSFile contentType getter should not throw exception
+
+## 0.3.5+1
+
+- Minor bug fixes and improvements
+
 ## 0.3.5
 
 - Minor bug fixes and improvements

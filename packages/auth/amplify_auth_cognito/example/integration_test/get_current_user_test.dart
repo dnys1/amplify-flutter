@@ -9,7 +9,6 @@ import 'package:amplify_test/amplify_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'utils/mock_data.dart';
 import 'utils/setup_utils.dart';
 import 'utils/test_utils.dart';
 import 'utils/validation_utils.dart';
@@ -73,8 +72,8 @@ void main() {
     group(
       'with alias',
       () {
-        const username = mockPhoneNumber;
-        final password = generatePassword();
+        late String username;
+        late String password;
 
         setUpAll(() async {
           await configureAuth(
@@ -86,32 +85,36 @@ void main() {
         tearDownAll(Amplify.reset);
 
         setUp(() async {
-          await adminCreateUser(
+          username = generatePhoneNumber();
+          password = generatePassword();
+          final cognitoUsername = await adminCreateUser(
             username,
             password,
             autoConfirm: true,
             verifyAttributes: true,
             enableMfa: true,
-            attributes: const [
+            attributes: [
               AuthUserAttribute(
                 userAttributeKey: CognitoUserAttributeKey.phoneNumber,
-                value: mockPhoneNumber,
+                value: username,
               ),
             ],
           );
           addTearDown(() => deleteUser(username));
 
-          final code = getOtpCodes().first;
+          final code = await getOtpCode(
+            UserAttribute.username(cognitoUsername),
+          );
           final signInRes = await Amplify.Auth.signIn(
             username: username,
             password: password,
           );
           expect(
             signInRes.nextStep.signInStep,
-            'CONFIRM_SIGN_IN_WITH_SMS_MFA_CODE',
+            AuthSignInStep.confirmSignInWithSmsMfaCode,
           );
           final confirmSignInRes = await Amplify.Auth.confirmSignIn(
-            confirmationValue: await code,
+            confirmationValue: await code.code,
           );
           expect(confirmSignInRes.isSignedIn, isTrue);
         });
@@ -129,7 +132,7 @@ void main() {
             isA<CognitoSignInDetailsApiBased>().having(
               (details) => details.username,
               'username',
-              mockPhoneNumber,
+              username,
             ),
             reason: 'Should return the phone number alias since it '
                 'was used to sign in',

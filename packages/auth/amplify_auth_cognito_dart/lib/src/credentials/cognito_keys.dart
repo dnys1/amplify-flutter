@@ -68,6 +68,12 @@ enum CognitoIdentityPoolKey {
 
   /// AWS Identity ID.
   identityId,
+
+  /// Third-party [AuthProvider] (only used in federation).
+  provider,
+
+  /// Third-party OIDC token (only used in federation).
+  idToken,
 }
 
 /// Discrete keys stored for Hosted UI operations in secure storage.
@@ -90,7 +96,7 @@ enum HostedUiKey {
   /// The OIDC nonce value.
   nonce,
 
-  /// The [CognitoSignInWithWebUIOptions] passed to `signInWithWebUI`.
+  /// The [CognitoSignInWithWebUIPluginOptions] passed to `signInWithWebUI`.
   options,
 
   /// The [AuthProvider] passed to `signInWithWebUI`.

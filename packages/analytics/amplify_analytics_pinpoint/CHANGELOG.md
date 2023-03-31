@@ -1,3 +1,30 @@
+## 1.0.0-next.7
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.6
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.5+1
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.5
+
+### Features
+- feat(analytics): Use indexedDB on Web ([#2600](https://github.com/aws-amplify/amplify-flutter/pull/2600))
+
+## 1.0.0-next.4
+
+### Features
+- feat(analytics): Legacy data migration of Pinpoint Endpoint ID ([#2489](https://github.com/aws-amplify/amplify-flutter/pull/2489))
+
+## 1.0.0-next.3
+
+### Fixes
+- fix(analytics): Secure storage on Android ([#2530](https://github.com/aws-amplify/amplify-flutter/pull/2530))
+
 ## 1.0.0-next.2
 
 - Minor bug fixes and improvements

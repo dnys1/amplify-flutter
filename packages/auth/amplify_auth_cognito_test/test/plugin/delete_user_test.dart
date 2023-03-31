@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+// ignore_for_file: invalid_use_of_protected_member
+
 import 'dart:async';
 
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart'
@@ -8,14 +10,13 @@ import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart'
 import 'package:amplify_auth_cognito_dart/src/credentials/cognito_keys.dart';
 import 'package:amplify_auth_cognito_dart/src/model/auth_configuration.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
+import 'package:amplify_auth_cognito_test/common/matchers.dart';
+import 'package:amplify_auth_cognito_test/common/mock_clients.dart';
+import 'package:amplify_auth_cognito_test/common/mock_config.dart';
+import 'package:amplify_auth_cognito_test/common/mock_secure_storage.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_secure_storage_dart/amplify_secure_storage_dart.dart';
 import 'package:test/test.dart';
-
-import '../common/matchers.dart';
-import '../common/mock_clients.dart';
-import '../common/mock_config.dart';
-import '../common/mock_secure_storage.dart';
 
 void main() {
   final authConfig = AuthConfiguration.fromConfig(mockConfig.auth!.awsPlugin!);
@@ -26,7 +27,7 @@ void main() {
 
   late AmplifyAuthCognitoDart plugin;
   late CognitoAuthStateMachine stateMachine;
-  late SecureStorageInterface secureStorage;
+  late MockSecureStorage secureStorage;
 
   late StreamController<AuthHubEvent> hubEventsController;
   late Stream<AuthHubEvent> hubEvents;
@@ -42,9 +43,11 @@ void main() {
   group('AmplifyAuthCognitoDart', () {
     setUp(() async {
       secureStorage = MockSecureStorage();
+      SecureStorageInterface storageFactory(scope) => secureStorage;
+
       stateMachine = CognitoAuthStateMachine()..addInstance(secureStorage);
 
-      plugin = AmplifyAuthCognitoDart(credentialStorage: secureStorage)
+      plugin = AmplifyAuthCognitoDart(secureStorageFactory: storageFactory)
         ..stateMachine = stateMachine;
 
       hubEventsController = StreamController();
@@ -63,9 +66,10 @@ void main() {
           config: mockConfig,
           authProviderRepo: testAuthRepo,
         );
-        await expectLater(plugin.deleteUser(), throwsSignedOutException);
 
         expect(hubEvents, neverEmits(userDeletedEvent));
+        await expectLater(plugin.deleteUser(), throwsSignedOutException);
+
         unawaited(hubEventsController.close());
       });
 
@@ -85,9 +89,12 @@ void main() {
         );
         stateMachine.addInstance<CognitoIdentityProviderClient>(mockIdp);
 
-        await expectLater(plugin.getCredentials(), completes);
+        await expectLater(plugin.stateMachine.getUserPoolTokens(), completes);
         await expectLater(plugin.deleteUser(), completes);
-        expect(plugin.getCredentials(), throwsSignedOutException);
+        expect(
+          plugin.stateMachine.getUserPoolTokens(),
+          throwsSignedOutException,
+        );
         expect(hubEvents, emitsThrough(userDeletedEvent));
       });
 
@@ -109,9 +116,9 @@ void main() {
         );
         stateMachine.addInstance<CognitoIdentityProviderClient>(mockIdp);
 
-        await expectLater(plugin.getCredentials(), completes);
+        await expectLater(plugin.stateMachine.getUserPoolTokens(), completes);
         await expectLater(plugin.deleteUser(), throwsA(isA<Exception>()));
-        expect(plugin.getCredentials(), completes);
+        expect(plugin.stateMachine.getUserPoolTokens(), completes);
         expect(hubEvents, neverEmits(userDeletedEvent));
         unawaited(hubEventsController.close());
       });

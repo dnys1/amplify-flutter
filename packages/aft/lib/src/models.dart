@@ -4,16 +4,18 @@
 import 'dart:io';
 
 import 'package:aft/src/flutter_platform.dart';
+import 'package:aft/src/models/raw_config.dart';
 import 'package:aft/src/util.dart';
 import 'package:aws_common/aws_common.dart';
+import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
-import 'package:smithy/ast.dart';
-import 'package:yaml_edit/yaml_edit.dart';
 
-part 'models.g.dart';
+export 'models/config.dart';
+export 'models/package_selector.dart';
+export 'models/raw_config.dart';
 
 /// Packages which report as an example app, but should be considered as
 /// publishable for some purposes.
@@ -48,37 +50,13 @@ enum PackageFlavor {
   final String entrypoint;
 }
 
-/// {@template amplify_tools.package_info}
-/// Information about a Dart/Flutter package in the repo.
-/// {@endtemplate}
-class PackageInfo
-    with AWSEquatable<PackageInfo>
-    implements Comparable<PackageInfo> {
-  /// {@macro amplify_tools.package_info}
-  const PackageInfo({
-    required this.name,
-    required this.path,
-    required this.pubspecInfo,
-    required this.flavor,
-  });
+class PubVersionInfo {
+  const PubVersionInfo(this.allVersions);
 
-  /// Returns the [PackageInfo] found in [dir].
-  static PackageInfo? fromDirectory(Directory dir) {
-    final pubspecInfo = dir.pubspec;
-    if (pubspecInfo == null) {
-      return null;
-    }
-    final pubspec = pubspecInfo.pubspec;
-    return PackageInfo(
-      name: pubspec.name,
-      path: dir.path,
-      pubspecInfo: pubspecInfo,
-      flavor: pubspec.flavor,
-    );
-  }
+  final List<Version> allVersions;
 
-  /// The name of the package.
-  final String name;
+  Version? get latestVersion =>
+      allVersions.where((version) => !version.isPreRelease).lastOrNull;
 
   /// Absolute path to the package.
   final String path;
@@ -168,27 +146,89 @@ class PackageInfo
   int compareTo(PackageInfo other) {
     return path.compareTo(other.path);
   }
+
+  Version? get latestPrerelease =>
+      allVersions.where((version) => version.isPreRelease).lastOrNull;
 }
 
-/// The package's pubspec and metadata.
-class PubspecInfo {
-  PubspecInfo({
-    required this.pubspec,
-    required this.pubspecYaml,
-    required this.uri,
-  });
+extension AmplifyVersion on Version {
+  Version get nextPreRelease => Version(
+        major,
+        minor,
+        patch,
+        pre: preRelease.map((el) {
+          if (el is! int) return el;
+          return el + 1;
+        }).join('.'),
+      );
 
-  /// The package's parsed pubspec.
-  final Pubspec pubspec;
+  /// The next version according to Amplify rules for incrementing.
+  Version nextAmplifyVersion(VersionBumpType type) {
+    final newBuild = (build.singleOrNull as int? ?? 0) + 1;
+    if (preRelease.isEmpty) {
+      switch (type) {
+        case VersionBumpType.patch:
+          return major == 0 ? replace(build: [newBuild]) : nextPatch;
+        case VersionBumpType.nonBreaking:
+          return major == 0 ? nextPatch : nextMinor;
+        case VersionBumpType.breaking:
+          return major == 0 ? nextMinor : nextMajor;
+      }
+    }
+    if (type == VersionBumpType.breaking) {
+      return nextPreRelease;
+    }
+    return replace(build: [newBuild]);
+  }
 
-  /// The URI of the `pubspec.yaml` file.
-  final Uri uri;
+  /// The constraint to use for this version in pubspecs.
+  String amplifyConstraint({Version? minVersion}) {
+    final Version maxVersion;
+    if (preRelease.isEmpty) {
+      final currentMinor = Version(major, minor, 0);
+      minVersion ??= currentMinor;
+      maxVersion = Version(major, minor + 1, 0);
+    } else {
+      final currentPreRelease = Version(
+        major,
+        minor,
+        patch,
+        pre: preRelease.join('.'),
+      );
+      minVersion ??= currentPreRelease;
+      maxVersion = nextPreRelease;
+    }
+    return '>=$minVersion <$maxVersion';
+  }
 
-  /// The package's pubspec as YAML.
-  final String pubspecYaml;
-
-  /// The pubspec as a YAML editor, used to alter dependencies or other info.
-  late final YamlEditor pubspecYamlEditor = YamlEditor(pubspecYaml);
+  /// Creates a copy of this version with the given fields replaced.
+  Version replace({
+    int? major,
+    int? minor,
+    int? patch,
+    List<Object>? preRelease,
+    List<Object>? build,
+  }) {
+    String? pre;
+    if (preRelease != null) {
+      pre = preRelease.join('.');
+    } else if (this.preRelease.isNotEmpty) {
+      pre = this.preRelease.join('.');
+    }
+    String? buildString;
+    if (build != null) {
+      buildString = build.join('.');
+    } else if (this.build.isNotEmpty) {
+      buildString = this.build.join('.');
+    }
+    return Version(
+      major ?? this.major,
+      minor ?? this.minor,
+      patch ?? this.patch,
+      pre: pre,
+      build: buildString,
+    );
+  }
 }
 
 enum DependencyType {
@@ -205,24 +245,6 @@ enum DependencyType {
   final String description;
 }
 
-extension DirectoryX on Directory {
-  /// The pubspec for the package in this directory, if any.
-  PubspecInfo? get pubspec {
-    final pubspecPath = p.join(path, 'pubspec.yaml');
-    final pubspecFile = File(pubspecPath);
-    if (!pubspecFile.existsSync()) {
-      return null;
-    }
-    final pubspecYaml = pubspecFile.readAsStringSync();
-    final pubspec = Pubspec.parse(pubspecYaml, sourceUrl: pubspecFile.uri);
-    return PubspecInfo(
-      pubspec: pubspec,
-      pubspecYaml: pubspecYaml,
-      uri: pubspecFile.uri,
-    );
-  }
-}
-
 extension PubspecX on Pubspec {
   /// The package flavor of this pubspec.
   PackageFlavor get flavor {
@@ -231,73 +253,4 @@ extension PubspecX on Pubspec {
     }
     return PackageFlavor.dart;
   }
-}
-
-const yamlSerializable = JsonSerializable(
-  anyMap: true,
-  checked: true,
-  disallowUnrecognizedKeys: true,
-);
-
-/// The typed representation of the `aft.yaml` file.
-@yamlSerializable
-@_VersionConstraintConverter()
-class AftConfig {
-  const AftConfig({
-    this.dependencies = const {},
-    this.ignore = const [],
-  });
-
-  factory AftConfig.fromJson(Map<Object?, Object?>? json) =>
-      _$AftConfigFromJson(json ?? const {});
-
-  final Map<String, VersionConstraint> dependencies;
-  final List<String> ignore;
-
-  Map<String, Object?> toJson() => _$AftConfigToJson(this);
-}
-
-/// Typed representation of the `sdk.yaml` file.
-@yamlSerializable
-@ShapeIdConverter()
-class SdkConfig
-    with
-        AWSEquatable<SdkConfig>,
-        AWSSerializable<Map<String, Object?>>,
-        AWSDebuggable {
-  const SdkConfig({
-    this.ref = 'master',
-    required this.apis,
-    this.plugins = const [],
-  });
-
-  factory SdkConfig.fromJson(Map<Object?, Object?>? json) =>
-      _$SdkConfigFromJson(json ?? const {});
-
-  /// The `aws-models` ref to pull.
-  ///
-  /// Defaults to `master`.
-  final String ref;
-  final Map<String, List<ShapeId>?> apis;
-  final List<String> plugins;
-
-  @override
-  Map<String, Object?> toJson() => _$SdkConfigToJson(this);
-
-  @override
-  List<Object?> get props => [ref, apis, plugins];
-
-  @override
-  String get runtimeTypeName => 'SdkConfig';
-}
-
-class _VersionConstraintConverter
-    implements JsonConverter<VersionConstraint, String> {
-  const _VersionConstraintConverter();
-
-  @override
-  VersionConstraint fromJson(String json) => VersionConstraint.parse(json);
-
-  @override
-  String toJson(VersionConstraint object) => object.toString();
 }

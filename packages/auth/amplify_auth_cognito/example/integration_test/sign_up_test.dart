@@ -3,10 +3,10 @@
 
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_test/amplify_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'utils/mock_data.dart';
 import 'utils/setup_utils.dart';
 import 'utils/test_utils.dart';
 
@@ -28,10 +28,10 @@ void main() {
       final res = await Amplify.Auth.signUp(
         username: username,
         password: password,
-        options: CognitoSignUpOptions(
+        options: SignUpOptions(
           userAttributes: {
             CognitoUserAttributeKey.email: generateEmail(),
-            CognitoUserAttributeKey.phoneNumber: mockPhoneNumber
+            CognitoUserAttributeKey.phoneNumber: generatePhoneNumber(),
           },
         ),
       ) as CognitoSignUpResult;
@@ -61,10 +61,10 @@ void main() {
       (_) async {
         final username = generateUsername();
         const invalidPassword = '123';
-        final options = CognitoSignUpOptions(
+        final options = SignUpOptions(
           userAttributes: {
             CognitoUserAttributeKey.email: generateEmail(),
-            CognitoUserAttributeKey.phoneNumber: mockPhoneNumber
+            CognitoUserAttributeKey.phoneNumber: generatePhoneNumber(),
           },
         );
         await expectLater(
@@ -87,10 +87,10 @@ void main() {
 
         // sign up first user
         final userOnePassword = generatePassword();
-        final userOneOptions = CognitoSignUpOptions(
+        final userOneOptions = SignUpOptions(
           userAttributes: {
             CognitoUserAttributeKey.email: generateEmail(),
-            CognitoUserAttributeKey.phoneNumber: mockPhoneNumber
+            CognitoUserAttributeKey.phoneNumber: generatePhoneNumber(),
           },
         );
         await Amplify.Auth.signUp(
@@ -101,10 +101,10 @@ void main() {
 
         // attempt to sign up second user with the same username
         final userTwoPassword = generatePassword();
-        final userTwoOptions = CognitoSignUpOptions(
+        final userTwoOptions = SignUpOptions(
           userAttributes: {
             CognitoUserAttributeKey.email: generateEmail(),
-            CognitoUserAttributeKey.phoneNumber: mockPhoneNumber
+            CognitoUserAttributeKey.phoneNumber: generatePhoneNumber(),
           },
         );
         await expectLater(

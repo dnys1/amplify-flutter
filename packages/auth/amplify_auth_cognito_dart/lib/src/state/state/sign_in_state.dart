@@ -3,6 +3,7 @@
 
 import 'package:amplify_auth_cognito_dart/src/model/cognito_user.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
+import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart';
 
 /// {@template amplify_auth_cognito_dart.sign_in_state_type}
@@ -31,7 +32,7 @@ enum SignInStateType {
 /// {@template amplify_auth_cognito_dart.sign_in_state}
 /// Discrete states of an auth flow state machine.
 /// {@endtemplate}
-abstract class SignInState extends StateMachineState<SignInStateType> {
+abstract class SignInState extends AuthState<SignInStateType> {
   /// {@macro amplify_auth_cognito_dart.sign_in_state}
   const SignInState();
 
@@ -55,7 +56,11 @@ abstract class SignInState extends StateMachineState<SignInStateType> {
   const factory SignInState.cancelling() = SignInCancelling;
 
   /// {@macro amplify_auth_cognito_dart.sign_in_failure}
-  const factory SignInState.failure(Exception exception) = SignInFailure;
+  const factory SignInState.failure({
+    required SignInState previousState,
+    required Exception exception,
+    required StackTrace stackTrace,
+  }) = SignInFailure;
 
   @override
   String get runtimeTypeName => 'SignInState';
@@ -124,7 +129,7 @@ class SignInChallenge extends SignInState {
 /// {@template amplify_auth_cognito_dart.sign_in_success}
 /// Sign in successfully completed.
 /// {@endtemplate}
-class SignInSuccess extends SignInState {
+class SignInSuccess extends SignInState with SuccessState {
   /// {@macro amplify_auth_cognito_dart.sign_in_success}
   const SignInSuccess(this.user);
 
@@ -157,15 +162,25 @@ class SignInCancelling extends SignInState {
 /// {@endtemplate}
 class SignInFailure extends SignInState with ErrorState {
   /// {@macro amplify_auth_cognito_dart.sign_in_failure}
-  const SignInFailure(this.exception);
+  const SignInFailure({
+    required this.previousState,
+    required this.exception,
+    required this.stackTrace,
+  });
+
+  /// The state of the machine at the time [exception] was raised.
+  final SignInState previousState;
 
   /// The exception thrown during sign up.
   @override
   final Exception exception;
 
   @override
+  final StackTrace stackTrace;
+
+  @override
   SignInStateType get type => SignInStateType.failure;
 
   @override
-  List<Object?> get props => [type, exception];
+  List<Object?> get props => [type, previousState, exception, stackTrace];
 }

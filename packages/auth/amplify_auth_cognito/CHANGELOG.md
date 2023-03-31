@@ -1,3 +1,43 @@
+## 1.0.0-next.7
+
+### Breaking Changes
+- refactor(auth)!: Plugin options ([#2691](https://github.com/aws-amplify/amplify-flutter/pull/2691))
+
+## 1.0.0-next.6
+
+### Fixes
+- fix(auth): Await `signInUri` in Hosted UI platform ([#2706](https://github.com/aws-amplify/amplify-flutter/pull/2706))
+
+## 1.0.0-next.5+1
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.5
+
+### Breaking Changes
+- refactor(auth)!: Make attribute update step an enum
+- refactor(auth)!: Make reset password step an enum
+- refactor(auth)!: Make sign-in step an enum
+- refactor(auth)!: Make sign-up step an enum
+- refactor(auth)!: Remove category->plugin indirection for `getPlugin`
+- refactor(auth)!: State machine facade ([#2482](https://github.com/aws-amplify/amplify-flutter/pull/2482))
+
+## 1.0.0-next.4
+
+### Breaking Changes
+- fix(auth)!: Fetch Auth Session offline behavior ([#2585](https://github.com/aws-amplify/amplify-flutter/pull/2585))
+
+### Fixes
+- fix(auth): SessionExpired Auth Hub event ([#2609](https://github.com/aws-amplify/amplify-flutter/pull/2609))
+
+## 1.0.0-next.3
+
+### Breaking Changes
+- chore(auth)!: Remove `isPreferPrivateSession` from `CognitoSignOutWithWebUIOptions` ([#2538](https://github.com/aws-amplify/amplify-flutter/pull/2538))
+- refactor(auth)!: Align exception types
+- refactor(auth)!: Remove intermediate request types ([#2475](https://github.com/aws-amplify/amplify-flutter/pull/2475))
+- refactor(core)!: Migrate exception types
+
 ## 1.0.0-next.2+1
 
 ### Fixes

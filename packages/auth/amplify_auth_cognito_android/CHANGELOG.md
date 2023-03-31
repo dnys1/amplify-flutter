@@ -1,3 +1,25 @@
+## 1.0.0-next.7
+
+### Fixes
+- fix(android): Bump Amplify Android to 2.4.1
+
+## 1.0.0-next.6
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.5
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.4
+
+### Breaking Changes
+- fix(auth)!: Fetch Auth Session offline behavior ([#2585](https://github.com/aws-amplify/amplify-flutter/pull/2585))
+
+## 1.0.0-next.3
+
+- Minor bug fixes and improvements
+
 ## 1.0.0-next.2
 
 - Minor bug fixes and improvements

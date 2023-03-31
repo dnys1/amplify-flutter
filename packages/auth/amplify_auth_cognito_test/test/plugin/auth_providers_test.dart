@@ -8,11 +8,11 @@ import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart'
 import 'package:amplify_auth_cognito_dart/src/credentials/cognito_keys.dart';
 import 'package:amplify_auth_cognito_dart/src/util/cognito_iam_auth_provider.dart';
 import 'package:amplify_auth_cognito_dart/src/util/cognito_user_pools_auth_provider.dart';
+import 'package:amplify_auth_cognito_test/common/mock_config.dart';
+import 'package:amplify_auth_cognito_test/common/mock_secure_storage.dart';
 import 'package:amplify_core/amplify_core.dart';
+import 'package:amplify_secure_storage_dart/amplify_secure_storage_dart.dart';
 import 'package:test/test.dart';
-
-import '../common/mock_config.dart';
-import '../common/mock_secure_storage.dart';
 
 AWSHttpRequest _generateTestRequest() {
   return AWSHttpRequest(
@@ -25,22 +25,27 @@ AWSHttpRequest _generateTestRequest() {
 class TestAmplifyAuthUserPoolOnly extends AmplifyAuthCognitoDart {
   @override
   Future<CognitoAuthSession> fetchAuthSession({
-    CognitoSessionOptions? options,
+    FetchAuthSessionOptions? options,
   }) async {
-    final getAWSCredentials = options?.getAWSCredentials;
-    if (getAWSCredentials != null && getAWSCredentials) {
-      throw const InvalidAccountTypeException.noIdentityPool(
-        recoverySuggestion:
-            'Register an identity pool using the CLI or set getAWSCredentials '
-            'to false',
-      );
-    }
     return CognitoAuthSession(
       isSignedIn: true,
-      userPoolTokens: CognitoUserPoolTokens(
-        accessToken: accessToken,
-        idToken: idToken,
-        refreshToken: refreshToken,
+      userPoolTokensResult: AuthResult.success(
+        CognitoUserPoolTokens(
+          accessToken: accessToken,
+          idToken: idToken,
+          refreshToken: refreshToken,
+        ),
+      ),
+      userSubResult: const AuthResult.success(userSub),
+      credentialsResult: const AuthResult.error(
+        InvalidAccountTypeException.noIdentityPool(
+          recoverySuggestion: 'Register an identity pool using the CLI',
+        ),
+      ),
+      identityIdResult: const AuthResult.error(
+        InvalidAccountTypeException.noIdentityPool(
+          recoverySuggestion: 'Register an identity pool using the CLI',
+        ),
       ),
     );
   }
@@ -53,8 +58,9 @@ void main() {
   setUpAll(() async {
     testAuthRepo = AmplifyAuthProviderRepository();
     final secureStorage = MockSecureStorage();
+    SecureStorageInterface storageFactory(scope) => secureStorage;
     final stateMachine = CognitoAuthStateMachine()..addInstance(secureStorage);
-    plugin = AmplifyAuthCognitoDart(credentialStorage: secureStorage)
+    plugin = AmplifyAuthCognitoDart(secureStorageFactory: storageFactory)
       ..stateMachine = stateMachine;
 
     seedStorage(

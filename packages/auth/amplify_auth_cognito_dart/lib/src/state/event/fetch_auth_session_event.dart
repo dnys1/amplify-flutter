@@ -18,19 +18,16 @@ enum FetchAuthSessionEventType {
 
   /// {@macro amplify_auth_cognito.fetch_auth_session_succeeded}
   succeeded,
-
-  /// {@macro amplify_auth_cognito.fetch_auth_session_failed}
-  failed,
 }
 
 /// Discrete events of the fetch auth session state machine.
-abstract class FetchAuthSessionEvent extends StateMachineEvent<
-    FetchAuthSessionEventType, FetchAuthSessionStateType> {
+abstract class FetchAuthSessionEvent
+    extends AuthEvent<FetchAuthSessionEventType, FetchAuthSessionStateType> {
   const FetchAuthSessionEvent._();
 
   /// {@macro amplify_auth_cognito.fetch_auth_session_fetch}
   const factory FetchAuthSessionEvent.fetch([
-    CognitoSessionOptions? options,
+    FetchAuthSessionOptions? options,
   ]) = FetchAuthSessionFetch;
 
   /// {@macro amplify_auth_cognito.fetch_auth_session_federate}
@@ -49,11 +46,6 @@ abstract class FetchAuthSessionEvent extends StateMachineEvent<
     CognitoAuthSession session,
   ) = FetchAuthSessionSucceeded;
 
-  /// {@macro amplify_auth_cognito.fetch_auth_session_failed}
-  const factory FetchAuthSessionEvent.failed(
-    Exception exception,
-  ) = FetchAuthSessionFailed;
-
   @override
   String get runtimeTypeName => 'FetchAuthSessionEvent';
 }
@@ -66,7 +58,7 @@ class FetchAuthSessionFetch extends FetchAuthSessionEvent {
   const FetchAuthSessionFetch([this.options]) : super._();
 
   /// Options for the fetch.
-  final CognitoSessionOptions? options;
+  final FetchAuthSessionOptions? options;
 
   @override
   FetchAuthSessionEventType get type => FetchAuthSessionEventType.fetch;
@@ -179,22 +171,4 @@ class FetchAuthSessionSucceeded extends FetchAuthSessionEvent {
 
   @override
   List<Object?> get props => [type, session];
-}
-
-/// {@template amplify_auth_cognito.fetch_auth_session_failed}
-/// Fetching the current user's auth session failed.
-/// {@endtemplate}
-class FetchAuthSessionFailed extends FetchAuthSessionEvent with ErrorEvent {
-  /// {@macro amplify_auth_cognito.fetch_auth_session_failed}
-  const FetchAuthSessionFailed(this.exception) : super._();
-
-  /// The exception thrown fetching credentials.
-  @override
-  final Exception exception;
-
-  @override
-  FetchAuthSessionEventType get type => FetchAuthSessionEventType.failed;
-
-  @override
-  List<Object?> get props => [type, exception];
 }

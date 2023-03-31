@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import { CustomSMSSenderTriggerEvent, CustomSMSSenderTriggerHandler } from "aws-lambda";
+import type { CustomSMSSenderTriggerEvent, CustomSMSSenderTriggerHandler } from "aws-lambda";
 import { decryptAndBroadcastCode } from "./custom-sender";
 
 export const handler: CustomSMSSenderTriggerHandler = async (
@@ -15,9 +15,9 @@ export const handler: CustomSMSSenderTriggerHandler = async (
   }
 
   const { userName } = event;
-  const { code } = event.request;
+  const { code, userAttributes } = event.request;
 
-  await decryptAndBroadcastCode(userName, code!);
+  await decryptAndBroadcastCode(userName, code!, userAttributes);
 
   return event;
 };

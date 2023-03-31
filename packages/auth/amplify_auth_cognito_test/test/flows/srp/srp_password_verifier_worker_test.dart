@@ -10,12 +10,13 @@ import 'package:amplify_auth_cognito_dart/src/flows/constants.dart';
 import 'package:amplify_auth_cognito_dart/src/flows/srp/srp_password_verifier_worker.dart';
 import 'package:amplify_auth_cognito_dart/src/model/sign_in_parameters.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/src/cognito_identity_provider/model/respond_to_auth_challenge_request.dart';
+import 'package:amplify_auth_cognito_test/common/mock_config.dart'
+    hide username;
 import 'package:amplify_core/amplify_core.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:test/test.dart';
 import 'package:worker_bee/worker_bee.dart';
 
-import '../../common/mock_config.dart' hide username;
 import 'srp_helper_test.dart';
 
 void main() {
@@ -35,12 +36,12 @@ void main() {
           ..poolId = 'us-east-1_$poolName'
           ..parameters = SignInParameters(
             (p) => p
-              ..username = username
-              ..password = password,
+              ..username = srpUsername
+              ..password = srpPassword,
           )
           ..challengeParameters = BuiltMap({
-            CognitoConstants.challengeParamUsername: username,
-            CognitoConstants.challengeParamUserIdForSrp: username,
+            CognitoConstants.challengeParamUsername: srpUsername,
+            CognitoConstants.challengeParamUserIdForSrp: srpUsername,
             CognitoConstants.challengeParamSecretBlock: secretBlock,
             CognitoConstants.challengeParamSalt: salt,
             CognitoConstants.challengeParamSrpB: publicB,
@@ -76,8 +77,8 @@ void main() {
           ..poolId = 'us-east-1_$poolName'
           ..parameters = SignInParameters(
             (p) => p
-              ..username = username
-              ..password = password,
+              ..username = srpUsername
+              ..password = srpPassword,
           )
           ..challengeParameters = BuiltMap(<String, String>{})
           ..timestamp = DateTime.utc(2017, 6, 15, 7),

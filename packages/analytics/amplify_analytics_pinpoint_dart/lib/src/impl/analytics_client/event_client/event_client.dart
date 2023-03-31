@@ -3,15 +3,19 @@
 
 import 'dart:async';
 
+import 'package:amplify_analytics_pinpoint_dart/src/exception/pinpoint_analytics_exception.dart';
 import 'package:amplify_analytics_pinpoint_dart/src/impl/analytics_client/endpoint_client/endpoint_client.dart';
 import 'package:amplify_analytics_pinpoint_dart/src/impl/analytics_client/event_client/event_storage_adapter.dart';
+import 'package:amplify_analytics_pinpoint_dart/src/impl/analytics_client/event_client/queued_item_store/index_db/in_memory_queued_item_store.dart';
+import 'package:amplify_analytics_pinpoint_dart/src/impl/analytics_client/event_client/queued_item_store/queued_item_store.dart';
+import 'package:amplify_analytics_pinpoint_dart/src/impl/analytics_client/event_creator/event_creator.dart';
+import 'package:amplify_analytics_pinpoint_dart/src/impl/flutter_provider_interfaces/device_context_info_provider.dart';
 import 'package:amplify_analytics_pinpoint_dart/src/sdk/pinpoint.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:smithy/smithy.dart';
-import 'package:uuid/uuid.dart';
 
 /// {@template amplify_analytics_pinpoint_dart.event_client}
-/// Manages storage and flush of analytics events
+/// Manages storage and flush of analytics events.
 ///
 /// - Uses [EventStorageAdapter] to cache analytics events
 /// - Uses [PinpointClient] to flush analytics events to AWS Pinpoint
@@ -21,24 +25,29 @@ import 'package:uuid/uuid.dart';
 class EventClient implements Closeable {
   /// {@macro amplify_analytics_pinpoint_dart.event_client}
   EventClient({
-    required String appId,
-    required String fixedEndpointId,
+    required String pinpointAppId,
     required PinpointClient pinpointClient,
     required EndpointClient endpointClient,
-    required EventStorageAdapter storageAdapter,
-  })  : _appId = appId,
-        _fixedEndpointId = fixedEndpointId,
+    QueuedItemStore? eventStore,
+    DeviceContextInfo? deviceContextInfo,
+  })  : _pinpointAppId = pinpointAppId,
+        _fixedEndpointId = endpointClient.fixedEndpointId,
         _pinpointClient = pinpointClient,
         _endpointClient = endpointClient,
-        _storageAdapter = storageAdapter {
+        _eventStorage =
+            EventStorageAdapter(eventStore ?? InMemoryQueuedItemStore()),
+        _eventCreator = EventCreator(
+          deviceContextInfo: deviceContextInfo,
+        ) {
     _listenForFlushEvents();
   }
 
-  final EventStorageAdapter _storageAdapter;
-  final String _appId;
+  final EventStorageAdapter _eventStorage;
+  final String _pinpointAppId;
   final String _fixedEndpointId;
   final PinpointClient _pinpointClient;
   final EndpointClient _endpointClient;
+  final EventCreator _eventCreator;
 
   /// Controller to queue requests to [flushEvents] so that there is only one
   /// concurrent request to the database and Pinpoint backend at a time.
@@ -60,49 +69,67 @@ class EventClient implements Closeable {
     }
   }
 
-  static const _uuid = Uuid();
-
   static final AmplifyLogger _logger =
       AmplifyLogger.category(Category.analytics).createChild('EventClient');
 
-  /// Received events are NEVER sent immediately but cached to be sent in a batch
-  Future<void> recordEvent(Event event) async {
-    await _storageAdapter.saveEvent(event);
+  /// Record event to be sent in the next event batch on [flushEvents].
+  Future<void> recordEvent({
+    required String eventType,
+    Session? session,
+    CustomProperties? properties,
+  }) async {
+    final pinpointEvent = _eventCreator.createPinpointEvent(
+      eventType,
+      session,
+      properties,
+    );
+    await _eventStorage.saveEvent(pinpointEvent);
   }
 
-  /// Send cached events as a batch to Pinpoint
-  /// Parse and response to Pinpoint response
+  /// Register [CustomProperties] to be sent with all future events.
+  void registerGlobalProperties(
+    CustomProperties globalProperties,
+  ) {
+    return _eventCreator.registerGlobalProperties(globalProperties);
+  }
+
+  /// Unregister [CustomProperties] to not be sent with all future events.
+  void unregisterGlobalProperties(
+    List<String> propertyNames,
+  ) {
+    return _eventCreator.unregisterGlobalProperties(propertyNames);
+  }
+
+  /// Send cached events as a batch to Pinpoint.
+  /// Delete cached events that have been successfully sent.
   Future<void> flushEvents() {
     final completer = Completer<void>.sync();
     _flushEventsController.add(completer);
     return completer.future;
   }
 
+  final _failureCountByEvent = <String, int>{};
+
   Future<void> _flushEvents() async {
-    final storedEvents = await _storageAdapter.retrieveEvents();
+    final storedEvents = await _eventStorage.retrieveEvents();
 
     if (storedEvents.isEmpty) {
       return;
     }
 
-    final eventsMap = <String, Event>{};
-    final eventIdsToDelete = <String, int>{};
+    final eventsToSend = <String, Event>{};
+    final eventsToDelete = <String, StoredEvent>{};
 
     for (final storedEvent in storedEvents) {
-      final id = _uuid.v1();
-      // Assign unique id to every event we will send
-      eventsMap[id] = storedEvent.event;
-
-      // Mapping EventId -> StoredEventId to help with deleting cached events
-      // EventId identifies if event was sent to Pinpoint successfully
-      // StoredEventId identifies cached event
-      eventIdsToDelete[id] = storedEvent.id;
+      final id = storedEvent.data.id.toString();
+      eventsToSend[id] = storedEvent.event;
+      eventsToDelete[id] = storedEvent;
     }
 
     // The Event batch to be sent to Pinpoint
     final batch = EventsBatch(
       endpoint: _endpointClient.getPublicEndpoint(),
-      events: eventsMap,
+      events: eventsToSend,
     );
 
     final batchItems = {_fixedEndpointId: batch};
@@ -111,7 +138,7 @@ class EventClient implements Closeable {
       final result = await _pinpointClient
           .putEvents(
             PutEventsRequest(
-              applicationId: _appId,
+              applicationId: _pinpointAppId,
               eventsRequest: EventsRequest(batchItem: batchItems),
             ),
           )
@@ -148,64 +175,88 @@ class EventClient implements Closeable {
           'putEvents - no EventsItemResponse response received from Pinpoint',
         );
       }
-      eventsItemResponse?.forEach((eventID, eventItemResponse) {
+      eventsItemResponse?.forEach((eventId, eventItemResponse) {
+        final eventType = eventsToSend[eventId]!.eventType;
+
         if (!_equalsIgnoreCase(eventItemResponse.message ?? '', 'Accepted')) {
           _logger.warn(
-            'putEvents - issue with eventId: $eventID \n $eventItemResponse',
+            'putEvents - issue with event: $eventType \n $eventItemResponse',
           );
 
-          if (_isRetryable(eventItemResponse.message ?? '')) {
+          if (_isRetryable(eventItemResponse.statusCode) &&
+              _shouldRetryEvent(eventId, eventType)) {
             _logger.warn(
-              'putEvents - recoverable issue, will attempt to resend: $eventID in next FlushEvents',
+              'putEvents - recoverable issue, will attempt to resend: $eventType in next FlushEvents',
             );
-            eventIdsToDelete.remove(eventID);
+            eventsToDelete.remove(eventId);
           }
         }
       });
-    } on BadRequestException catch (e) {
-      _handleRecoverableException(e, eventIdsToDelete);
-    } on InternalServerErrorException catch (e) {
-      _handleRecoverableException(e, eventIdsToDelete);
-    } on NotFoundException catch (e) {
-      _handleRecoverableException(e, eventIdsToDelete);
-    } on TooManyRequestsException catch (e) {
-      _handleRecoverableException(e, eventIdsToDelete);
     } on PayloadTooLargeException catch (e) {
       _logger
-        ..warn('putEvents - exception encountered: ', e)
+        ..warn('putEvents - PayloadTooLarge exception: ', e)
         ..warn(
             'Pinpoint event batch limits exceeded: 100 events / 4 mb total size / 1 mb max size per event \n '
             'Reduce your event size or change number of events in a batch')
         ..warn('Unrecoverable issue, deleting cache for local event batch');
+    } on AWSHttpException {
+      // AWSHttpException indicates request did not complete
+      // Due to no internet or unable to reach server.
+      // These exceptions are always retryable.
+      eventsToDelete.clear();
+    } on SmithyHttpException catch (e) {
+      if (e.statusCode != null && _isRetryable(e.statusCode!)) {
+        eventsToDelete.removeWhere((eventId, _) {
+          final eventType = eventsToDelete[eventId]?.event.eventType ?? eventId;
+          return _shouldRetryEvent(eventId, eventType);
+        });
+        _logRecoverableException(e);
+      } else {
+        _logger
+          ..error('putEvents - exception encountered: ', e)
+          ..error('Unrecoverable issue, deleting cache for local event batch');
+        throw fromPinpointException(e);
+      }
     } on Exception catch (e) {
       _logger
-        ..warn('putEvents - exception encountered: ', e)
-        ..warn('Unrecoverable issue, deleting cache for local event batch');
+        ..error('putEvents - exception encountered: ', e)
+        ..error('Unrecoverable issue, deleting cache for local event batch');
+      throw fromPinpointException(e);
     } finally {
       // Always delete local store of events
       // Unless a retryable exception has been received (see above)
-      if (eventIdsToDelete.isNotEmpty) {
-        await _storageAdapter.deleteEvents(eventIdsToDelete.values);
+      if (eventsToDelete.isNotEmpty) {
+        await _eventStorage.deleteEvents(eventsToDelete.values);
+
+        // Update _numFailuresByEvent to avoid memory leak
+        for (final eventId in eventsToDelete.keys) {
+          _failureCountByEvent.remove(eventId);
+        }
       }
     }
   }
 
   // If exception is recoverable, do not delete eventIds from local cache
-  void _handleRecoverableException(
-    SmithyHttpException e,
-    Map<String, int> eventIdsToDelete,
-  ) {
+  void _logRecoverableException(Exception e) {
     _logger
-      ..warn('putEvents - exception encountered: ', e)
-      ..warn('Recoverable issue, will attempt to resend event batch');
-    eventIdsToDelete.clear();
+      ..warn('putEvents - recoverable exception: ', e)
+      ..warn('Will attempt to resend event batch');
   }
 
-  bool _isRetryable(String? message) {
-    return message != null &&
-        !_equalsIgnoreCase(message, 'ValidationException') &&
-        !_equalsIgnoreCase(message, 'SerializationException') &&
-        !_equalsIgnoreCase(message, 'BadRequestException');
+  bool _isRetryable(int statusCode) {
+    // Pinpoint service policy is for 500-599 status codes to be retryable
+    return statusCode >= 500 && statusCode < 600;
+  }
+
+  bool _shouldRetryEvent(String eventId, String eventType) {
+    final timesFailed = _failureCountByEvent[eventId] ?? 1;
+    if (timesFailed >= 3) {
+      _logger.warn('Retry limit exceeded, deleting event: $eventType');
+      _failureCountByEvent.remove(eventId);
+      return false;
+    }
+    _failureCountByEvent[eventId] = timesFailed + 1;
+    return true;
   }
 
   bool _equalsIgnoreCase(String string1, String string2) {
@@ -214,6 +265,7 @@ class EventClient implements Closeable {
 
   @override
   Future<void> close() async {
+    await _eventStorage.close();
     await _flushEventsController.close();
     await _pendingFlushEvent;
   }

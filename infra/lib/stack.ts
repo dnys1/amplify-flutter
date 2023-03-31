@@ -3,6 +3,7 @@
 
 import * as cdk from "aws-cdk-lib";
 import { CfnOutput } from "aws-cdk-lib";
+import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as wafv2 from "aws-cdk-lib/aws-wafv2";
 import { Construct } from "constructs";
 import { AnalyticsIntegrationTestStack } from "./analytics/stack";
@@ -62,16 +63,12 @@ export class AmplifyFlutterIntegStack extends cdk.Stack {
 
     // Creates a WAF association on `this` so that they can be chained later
     // and do not block the concurrent creation of environments.
-    const associateWithWaf = (resourceArn: string) => {
+    const associateWithWaf = (name: string, resourceArn: string) => {
       wafAssociations.push(
-        new wafv2.CfnWebACLAssociation(
-          this,
-          `WAFAssociation${wafAssociations.length}`,
-          {
-            resourceArn,
-            webAclArn: waf.attrArn,
-          }
-        )
+        new wafv2.CfnWebACLAssociation(this, `WAFAssociation-${name}`, {
+          resourceArn,
+          webAclArn: waf.attrArn,
+        })
       );
     };
 
@@ -91,28 +88,54 @@ export class AmplifyFlutterIntegStack extends cdk.Stack {
         customDomain,
       });
     }
+
+    const deviceTrackingOptIn: cognito.DeviceTracking = {
+      // Trust remembered devices (allow MFA bypass)
+      challengeRequiredOnNewDevice: true,
+      // Opt-in to tracking
+      deviceOnlyRememberedOnUserPrompt: true,
+    };
+    const deviceTrackingAlways: cognito.DeviceTracking = {
+      // Trust remembered devices (allow MFA bypass)
+      challengeRequiredOnNewDevice: true,
+      // Always track
+      deviceOnlyRememberedOnUserPrompt: false,
+    };
     const auth = new AuthIntegrationTestStack(this, [
       { associateWithWaf, type: "FULL", environmentName: "main" },
       {
         associateWithWaf,
         type: "FULL",
         environmentName: "device-tracking-always",
-        deviceTracking: {
-          // Trust remembered devices (allow MFA bypass)
-          challengeRequiredOnNewDevice: true,
-          // Always track
-          deviceOnlyRememberedOnUserPrompt: false,
-        },
+        deviceTracking: deviceTrackingAlways,
       },
       {
         associateWithWaf,
         type: "FULL",
         environmentName: "device-tracking-opt-in",
-        deviceTracking: {
-          // Trust remembered devices (allow MFA bypass)
-          challengeRequiredOnNewDevice: true,
-          // Opt-in to tracking
-          deviceOnlyRememberedOnUserPrompt: true,
+        deviceTracking: deviceTrackingOptIn,
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "device-tracking-email-alias",
+        deviceTracking: deviceTrackingAlways,
+        signInAliases: {
+          email: true,
+        },
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "sign-in-with-username",
+        signInAliases: {
+          username: true,
+        },
+        standardAttributes: {
+          email: {
+            mutable: true,
+            required: true,
+          },
         },
       },
       {
@@ -122,6 +145,68 @@ export class AmplifyFlutterIntegStack extends cdk.Stack {
         signInAliases: {
           phone: true,
         },
+        standardAttributes: {
+          phoneNumber: {
+            mutable: true,
+            required: true,
+          },
+        },
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "sign-in-with-email",
+        signInAliases: {
+          email: true,
+        },
+        standardAttributes: {
+          email: {
+            mutable: true,
+            required: true,
+          },
+        },
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "sign-in-with-email-or-phone",
+        signInAliases: {
+          phone: true,
+          email: true,
+        },
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "sign-in-with-email-lambda-trigger",
+        signInAliases: {
+          email: true,
+        },
+        autoConfirm: true,
+        standardAttributes: {
+          email: {
+            mutable: true,
+            required: true,
+          },
+        },
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "hosted-ui",
+        enableHostedUI: true,
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "custom-auth-with-srp",
+        customAuth: "WITH_SRP",
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "custom-auth-without-srp",
+        customAuth: "WITHOUT_SRP",
       },
       {
         associateWithWaf,
@@ -167,7 +252,7 @@ export class AmplifyFlutterIntegStack extends cdk.Stack {
     // has a fixed rate limit which can easily be exceeded when deploying concurrent
     // stacks and their WAF associations.
     wafAssociations.forEach((assoc, index) => {
-      if (index > 0) assoc.addDependsOn(wafAssociations[index - 1]);
+      if (index > 0) assoc.addDependency(wafAssociations[index - 1]);
     });
   }
 

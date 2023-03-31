@@ -11,8 +11,8 @@ import 'package:amplify_test/amplify_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'utils/mock_data.dart';
 import 'utils/setup_utils.dart';
+import 'utils/test_utils.dart';
 
 class InlineHttpClient extends AWSCustomHttpClient {
   InlineHttpClient({
@@ -43,13 +43,10 @@ void main() {
       await Amplify.reset();
     });
 
-    test('adds cache-control header', () async {
+    asyncTest('adds cache-control header', (_) async {
       final plugin = AmplifyAuthCognito(
-        credentialStorage: AmplifySecureStorage(
-          config: AmplifySecureStorageConfig(
-            scope: 'auth-test',
-            macOSOptions: MacOSSecureStorageOptions(useDataProtection: false),
-          ),
+        secureStorageFactory: AmplifySecureStorage.factoryFrom(
+          macOSOptions: MacOSSecureStorageOptions(useDataProtection: false),
         ),
       );
       final client = InlineHttpClient(

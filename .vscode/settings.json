@@ -1,9 +1,14 @@
 {
   "dart.runPubGetOnPubspecChanges": "always",
+  "dart.analysisExcludedFolders": [
+    "templates"
+  ],
   "files.insertFinalNewline": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
     "source.organizeImports": true,
   },
-  "dart.sdkPath": "/Users/dillonnys/dev/dart-sdk/sdk/xcodebuild/ReleaseARM64/dart-sdk"
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

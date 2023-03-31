@@ -8,7 +8,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'utils/mock_data.dart';
 import 'utils/setup_utils.dart';
 import 'utils/test_utils.dart';
 
@@ -23,7 +22,7 @@ void main() {
   final username = generateUsername();
   final password = generatePassword();
   final email = generateEmail();
-  const phoneNumber = mockPhoneNumber;
+  final phoneNumber = generatePhoneNumber();
   final name = generateNameAttribute();
 
   group('User Attributes', () {
@@ -44,9 +43,9 @@ void main() {
             userAttributeKey: CognitoUserAttributeKey.email,
             value: email,
           ),
-          const AuthUserAttribute(
+          AuthUserAttribute(
             userAttributeKey: CognitoUserAttributeKey.phoneNumber,
-            value: mockPhoneNumber,
+            value: phoneNumber,
           )
         ],
       );
@@ -84,7 +83,7 @@ void main() {
           userAttributeKey: CognitoUserAttributeKey.name,
           value: updatedName,
         );
-        expect(res.nextStep.updateAttributeStep, 'DONE');
+        expect(res.nextStep.updateAttributeStep, AuthUpdateAttributeStep.done);
 
         final userAttributes = await Amplify.Auth.fetchUserAttributes();
         expect(

@@ -4,29 +4,30 @@
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart'
     hide SignUpRequest;
+import 'package:amplify_auth_cognito_dart/src/sdk/sdk_bridge.dart';
+import 'package:amplify_auth_cognito_test/common/mock_clients.dart';
+import 'package:amplify_auth_cognito_test/common/mock_config.dart';
+import 'package:amplify_auth_cognito_test/common/mock_secure_storage.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_secure_storage_dart/amplify_secure_storage_dart.dart';
 import 'package:test/test.dart';
-
-import '../common/mock_clients.dart';
-import '../common/mock_config.dart';
-import '../common/mock_secure_storage.dart';
 
 // Follows signUp test cases:
 // https://github.com/aws-amplify/amplify-android/tree/main/aws-auth-cognito/src/test/resources/feature-test/testsuites/signUp
 void main() {
   late AmplifyAuthCognitoDart plugin;
   late CognitoAuthStateMachine stateMachine;
-  late SecureStorageInterface secureStorage;
+  late MockSecureStorage secureStorage;
 
   final testAuthRepo = AmplifyAuthProviderRepository();
 
   group('AmplifyAuthCognitoDart', () {
     setUp(() async {
       secureStorage = MockSecureStorage();
-      stateMachine = CognitoAuthStateMachine()..addInstance(secureStorage);
+      SecureStorageInterface storageFactory(scope) => secureStorage;
+      stateMachine = CognitoAuthStateMachine();
 
-      plugin = AmplifyAuthCognitoDart(credentialStorage: secureStorage)
+      plugin = AmplifyAuthCognitoDart(secureStorageFactory: storageFactory)
         ..stateMachine = stateMachine;
     });
 
@@ -51,7 +52,7 @@ void main() {
           plugin.signUp(
             username: username,
             password: 'password',
-            options: CognitoSignUpOptions(
+            options: SignUpOptions(
               userAttributes: {
                 CognitoUserAttributeKey.email: 'user@domain.com',
               },
@@ -67,7 +68,7 @@ void main() {
                 .having(
                   (res) => res.nextStep,
                   'nextStep',
-                  const AuthNextSignUpStep(signUpStep: 'DONE'),
+                  const AuthNextSignUpStep(signUpStep: AuthSignUpStep.done),
                 ),
           ),
         );
@@ -82,15 +83,16 @@ void main() {
         const destination = 'user@domain.com';
         const deliveryMedium = DeliveryMediumType.email;
         const attributeName = 'attributeName';
+        final codeDeliveryDetails = CodeDeliveryDetailsType(
+          destination: destination,
+          deliveryMedium: deliveryMedium,
+          attributeName: attributeName,
+        );
         final mockIdp = MockCognitoIdentityProviderClient(
           signUp: () async => SignUpResponse(
             userConfirmed: false,
             userSub: userSub,
-            codeDeliveryDetails: CodeDeliveryDetailsType(
-              destination: destination,
-              deliveryMedium: deliveryMedium,
-              attributeName: attributeName,
-            ),
+            codeDeliveryDetails: codeDeliveryDetails,
           ),
         );
         stateMachine.addInstance<CognitoIdentityProviderClient>(mockIdp);
@@ -99,7 +101,7 @@ void main() {
           plugin.signUp(
             username: username,
             password: 'password',
-            options: CognitoSignUpOptions(
+            options: SignUpOptions(
               userAttributes: {
                 CognitoUserAttributeKey.email: 'user@domain.com',
               },
@@ -116,12 +118,9 @@ void main() {
                   (res) => res.nextStep,
                   'nextStep',
                   AuthNextSignUpStep(
-                    signUpStep: 'CONFIRM_SIGN_UP_STEP',
-                    codeDeliveryDetails: AuthCodeDeliveryDetails(
-                      attributeName: attributeName,
-                      deliveryMedium: deliveryMedium.name,
-                      destination: destination,
-                    ),
+                    signUpStep: AuthSignUpStep.confirmSignUp,
+                    codeDeliveryDetails:
+                        codeDeliveryDetails.asAuthCodeDeliveryDetails,
                   ),
                 ),
           ),

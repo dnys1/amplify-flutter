@@ -3,21 +3,15 @@ description: Demonstrates how to use the Amplify Flutter client libraries.
 publish_to: none
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=2.18.0 <4.0.0"
 
 dependencies:
-  amplify_analytics_pinpoint:
-    path: ../../../analytics/amplify_analytics_pinpoint
-  amplify_api:
-    path: ../../../api/amplify_api
-  amplify_auth_cognito:
-    path: ../../../auth/amplify_auth_cognito
-  amplify_datastore:
-    path: ../../../amplify_datastore
-  amplify_flutter:
-    path: ../
-  amplify_storage_s3:
-    path: ../../../storage/amplify_storage_s3
+  amplify_analytics_pinpoint: ">=1.0.0-next.7 <1.0.0-next.8"
+  amplify_api: ">=1.0.0-next.7 <1.0.0-next.8"
+  amplify_auth_cognito: ">=1.0.0-next.7 <1.0.0-next.8"
+  amplify_datastore: ">=1.0.0-next.7 <1.0.0-next.8"
+  amplify_flutter: ">=1.0.0-next.7 <1.0.0-next.8"
+  amplify_storage_s3: ">=1.0.0-next.7 <1.0.0-next.8"
   flutter:
     sdk: flutter
 
@@ -42,6 +36,9 @@ dependency_overrides:
     path: ../../../secure_storage/amplify_secure_storage
   amplify_secure_storage_dart:
     path: ../../../secure_storage/amplify_secure_storage_dart
+  # Needed to support both Flutter 3.3 + 3.7 in CI.
+  # TODO(dnys1): Remove when Flutter 3.3 is no longer supported
+  async: ^2.10.0
   aws_common:
     path: ../../../aws_common
   aws_signature_v4:

@@ -33,7 +33,7 @@ abstract class AuthService {
 
   Future<ResetPasswordResult> resetPassword(String username);
 
-  Future<UpdatePasswordResult> confirmResetPassword(
+  Future<ResetPasswordResult> confirmResetPassword(
     String username,
     String code,
     String newPassword,
@@ -82,8 +82,10 @@ class AmplifyAuthService implements AuthService {
   }) {
     return Amplify.Auth.signInWithWebUI(
       provider: provider,
-      options: CognitoSignInWithWebUIOptions(
-        isPreferPrivateSession: preferPrivateSession,
+      options: SignInWithWebUIOptions(
+        pluginOptions: CognitoSignInWithWebUIPluginOptions(
+          isPreferPrivateSession: preferPrivateSession,
+        ),
       ),
     );
   }
@@ -102,7 +104,7 @@ class AmplifyAuthService implements AuthService {
     return Amplify.Auth.signUp(
       username: username,
       password: password,
-      options: CognitoSignUpOptions(
+      options: SignUpOptions(
         userAttributes: attributes,
       ),
     );
@@ -123,7 +125,11 @@ class AmplifyAuthService implements AuthService {
   }) {
     return Amplify.Auth.confirmSignIn(
       confirmationValue: confirmationValue,
-      options: CognitoConfirmSignInOptions(userAttributes: attributes),
+      options: ConfirmSignInOptions(
+        pluginOptions: CognitoConfirmSignInPluginOptions(
+          userAttributes: attributes,
+        ),
+      ),
     );
   }
 
@@ -162,12 +168,20 @@ class AmplifyAuthService implements AuthService {
 
   @override
   Future<bool> isValidSession() async {
+    final res = await Amplify.Auth.fetchAuthSession() as CognitoAuthSession;
     try {
-      final res = await Amplify.Auth.fetchAuthSession() as CognitoAuthSession;
-      return res.userPoolTokens != null;
+      // If tokens can be retrieved without an exception, return true.
+      res.userPoolTokensResult.value;
+      return true;
     } on SignedOutException {
       return false;
+    } on NetworkException {
+      // NetworkException indicates that access and/or id tokens have expired
+      // and cannot be refreshed due to a network error. In this case the user
+      // should be treated as authenticated to allow for offline use cases.
+      return true;
     } on Exception {
+      // Any other exception should be thrown to be handled appropriately.
       rethrow;
     }
   }
@@ -178,7 +192,7 @@ class AmplifyAuthService implements AuthService {
   }
 
   @override
-  Future<UpdatePasswordResult> confirmResetPassword(
+  Future<ResetPasswordResult> confirmResetPassword(
     String username,
     String code,
     String newPassword,

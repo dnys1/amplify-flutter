@@ -7,7 +7,6 @@ import 'package:amplify_test/amplify_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'utils/mock_data.dart';
 import 'utils/setup_utils.dart';
 import 'utils/test_utils.dart';
 
@@ -33,7 +32,7 @@ void main() {
         final username = generateUsername();
         final password = generatePassword();
 
-        final otpResult = await getOtpCode(username);
+        final otpResult = await getOtpCode(UserAttribute.username(username));
 
         await adminCreateUser(
           username,
@@ -49,13 +48,13 @@ void main() {
         );
         expect(
           signInRes.nextStep.signInStep,
-          'CONFIRM_SIGN_IN_WITH_SMS_MFA_CODE',
+          AuthSignInStep.confirmSignInWithSmsMfaCode,
         );
 
         final confirmRes = await Amplify.Auth.confirmSignIn(
           confirmationValue: await otpResult.code,
         );
-        expect(confirmRes.nextStep.signInStep, 'DONE');
+        expect(confirmRes.nextStep.signInStep, AuthSignInStep.done);
       });
     },
   );

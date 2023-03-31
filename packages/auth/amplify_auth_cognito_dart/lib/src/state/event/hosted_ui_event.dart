@@ -27,14 +27,11 @@ enum HostedUiEventType {
 
   /// {@macro amplify_auth_cognito.hosted_ui_succeeded}
   succeeded,
-
-  /// {@macro amplify_auth_cognito.hosted_ui_failed}
-  failed,
 }
 
 /// Discrete events of the hosted UI state machine.
 abstract class HostedUiEvent
-    extends StateMachineEvent<HostedUiEventType, HostedUiStateType> {
+    extends AuthEvent<HostedUiEventType, HostedUiStateType> {
   const HostedUiEvent._();
 
   /// {@macro amplify_auth_cognito.hosted_ui_configure}
@@ -48,7 +45,7 @@ abstract class HostedUiEvent
 
   /// {@macro amplify_auth_cognito.hosted_ui_sign_in}
   const factory HostedUiEvent.signIn({
-    CognitoSignInWithWebUIOptions options,
+    CognitoSignInWithWebUIPluginOptions options,
     AuthProvider? provider,
     Uri? redirectUri,
   }) = HostedUiSignIn;
@@ -67,9 +64,6 @@ abstract class HostedUiEvent
   const factory HostedUiEvent.succeeded(
     CognitoUserPoolTokens tokens,
   ) = HostedUiSucceeded;
-
-  /// {@macro amplify_auth_cognito.hosted_ui_failed}
-  const factory HostedUiEvent.failed(Exception exception) = HostedUiFailed;
 
   @override
   String get runtimeTypeName => 'HostedUiEvent';
@@ -118,13 +112,13 @@ class HostedUiFoundState extends HostedUiEvent {
 class HostedUiSignIn extends HostedUiEvent {
   /// {@macro amplify_auth_cognito.hosted_ui_sign_in}
   const HostedUiSignIn({
-    this.options = const CognitoSignInWithWebUIOptions(),
+    this.options = const CognitoSignInWithWebUIPluginOptions(),
     this.provider,
     this.redirectUri,
   }) : super._();
 
   /// The plugin options.
-  final CognitoSignInWithWebUIOptions options;
+  final CognitoSignInWithWebUIPluginOptions options;
 
   /// The provider used for sign-in.
   ///
@@ -241,33 +235,4 @@ class HostedUiSucceeded extends HostedUiEvent {
 
   @override
   HostedUiEventType get type => HostedUiEventType.succeeded;
-}
-
-/// {@template amplify_auth_cognito.hosted_ui_failed}
-/// The Hosted UI flow failed with an [exception].
-/// {@endtemplate}
-class HostedUiFailed extends HostedUiEvent with ErrorEvent {
-  /// {@macro amplify_auth_cognito.hosted_ui_failed}
-  const HostedUiFailed(this.exception) : super._();
-
-  /// The Hosted UI exception.
-  @override
-  final Exception exception;
-
-  @override
-  List<Object?> get props => [type, exception];
-
-  @override
-  HostedUiEventType get type => HostedUiEventType.failed;
-
-  @override
-  PreconditionException? checkPrecondition(HostedUiState currentState) {
-    if (currentState.type == HostedUiStateType.failure) {
-      return const AuthPreconditionException(
-        'The state machine is already in a failure state.',
-        shouldEmit: false,
-      );
-    }
-    return null;
-  }
 }

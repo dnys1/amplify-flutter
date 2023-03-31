@@ -2,7 +2,7 @@ group 'com.amazonaws.amplify.amplify_datastore'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.6.10'
+    ext.kotlin_version = '1.7.10'
     repositories {
         mavenLocal()
         google()
@@ -13,7 +13,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.3'
+        classpath 'com.android.tools.build:gradle:7.2.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'org.jlleitschuh.gradle:ktlint-gradle:10.2.1'
     }
@@ -29,7 +29,6 @@ rootProject.allprojects {
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply from: './coverage.gradle'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
 // Logic for finding sibling plugins, from `flutter_tools/gradle/flutter.gradle`
@@ -68,11 +67,6 @@ android {
             includeAndroidResources = true
         }
     }
-    buildTypes {
-        debug {
-            testCoverageEnabled = true
-        }
-    }
 }
 
 dependencies {
@@ -81,8 +75,8 @@ dependencies {
 
     api amplifyFlutter
 
-    implementation "com.amplifyframework:aws-datastore:2.0.0"
-    implementation "com.amplifyframework:aws-api-appsync:2.0.0"
+    implementation "com.amplifyframework:aws-datastore:2.4.1"
+    implementation "com.amplifyframework:aws-api-appsync:2.4.1"
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:4.0.0'

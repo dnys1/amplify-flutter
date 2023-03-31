@@ -8,16 +8,16 @@
     "test": "jest",
     "cdk": "cdk",
     "setup": "cdk bootstrap --profile=${AWS_PROFILE:=default}",
-    "deploy": "cdk deploy --profile=${AWS_PROFILE:=default} && tool/create_configs.dart",
+    "deploy": "cdk deploy --profile=${AWS_PROFILE:=default} && dart pub get && tool/create_configs.dart",
     "destroy": "cdk destroy --profile=${AWS_PROFILE:=default}"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.109",
-    "@types/babel__traverse": "7.18.2",
+    "@types/aws-lambda": "^8.10.112",
+    "@types/babel__traverse": "^7.18.3",
     "@types/jest": "^27.5.2",
-    "@types/node": "16",
+    "@types/node": "^16.18.16",
     "@types/prettier": "2.6.0",
-    "aws-cdk": "2.53.0",
+    "aws-cdk": "2.69.0",
     "esbuild": "^0.15.18",
     "jest": "^27.5.1",
     "ts-jest": "^27.1.5",
@@ -25,13 +25,11 @@
     "typescript": "~3.9.10"
   },
   "dependencies": {
-    "@aws-cdk/aws-appsync-alpha": "^2.53.0-alpha.0",
-    "@aws-crypto/client-node": "^3.1.1",
-    "@aws-sdk/client-cognito-identity-provider": "^3.224.0",
-    "aws-cdk-lib": "2.53.0",
-    "base64-js": "^1.5.1",
-    "constructs": "^10.1.181",
-    "node-fetch": "^3.3.0",
+    "@aws-crypto/client-node": "^3.2.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.290.0",
+    "aws-cdk-lib": "2.69.0",
+    "constructs": "^10.1.277",
+    "node-fetch": "^3.3.1",
     "source-map-support": "^0.5.21"
   }
 }

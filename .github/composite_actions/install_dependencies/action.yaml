@@ -1,5 +1,9 @@
 name: "Install Non-Platform Dependencies"
 description: "Installs non-platform dependencies: Flutter, melos, aft"
+inputs:
+  flutter-version:
+    required: false
+    description: The version of Flutter to run tests against. Defaults to "stable".
 
 runs:
   using: "composite"
@@ -8,6 +12,7 @@ runs:
       with:
         cache: true
         channel: 'stable'
+        flutter-version: ${{ inputs.flutter-version }}
 
     - name: Install Melos
       run: |
@@ -17,6 +22,7 @@ runs:
     #  Install aft from path, links packages and runs build runner where needed.
     - name: Partial aft bootstrap
       run: |
+        git submodule update --init
         flutter pub global activate -spath packages/aft
         flutter pub global run aft link
         flutter pub global run melos exec -c 1 --scope="amplify_secure_storage_dart,amplify_auth_cognito_dart" -- dart run build_runner build --delete-conflicting-outputs

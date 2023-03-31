@@ -1,9 +1,12 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+// ignore_for_file: depend_on_referenced_packages, implementation_imports, invalid_use_of_internal_member
+
 import 'dart:core';
 
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
+import 'package:amplify_auth_cognito_dart/src/jwt/jwt.dart';
 import 'package:amplify_core/amplify_core.dart';
 
 const usernameExistsException = UsernameExistsException(
@@ -43,6 +46,9 @@ class AmplifyAuthCognitoStub extends AuthPluginInterface
 
   AuthCodeDeliveryDetails _codeDeliveryDetails(MockCognitoUser user) =>
       AuthCodeDeliveryDetails(
+        deliveryMedium: user.phoneNumber != null
+            ? DeliveryMedium.phone
+            : DeliveryMedium.email,
         destination: user.email ?? user.phoneNumber ?? 'S****@g***.com',
       );
 
@@ -76,7 +82,7 @@ class AmplifyAuthCognitoStub extends AuthPluginInterface
       return CognitoSignUpResult(
         isSignUpComplete: false,
         nextStep: AuthNextSignUpStep(
-          signUpStep: 'CONFIRM_SIGN_UP_STEP',
+          signUpStep: AuthSignUpStep.confirmSignUp,
           codeDeliveryDetails: _codeDeliveryDetails(newUser),
         ),
       );
@@ -95,7 +101,7 @@ class AmplifyAuthCognitoStub extends AuthPluginInterface
     }
     return const CognitoSignUpResult(
       isSignUpComplete: true,
-      nextStep: AuthNextSignUpStep(signUpStep: 'DONE'),
+      nextStep: AuthNextSignUpStep(signUpStep: AuthSignUpStep.done),
     );
   }
 
@@ -129,7 +135,7 @@ class AmplifyAuthCognitoStub extends AuthPluginInterface
     _currentUser = user;
     return CognitoSignInResult(
       isSignedIn: _isSignedIn(),
-      nextStep: const AuthNextSignInStep(signInStep: 'DONE'),
+      nextStep: const AuthNextSignInStep(signInStep: AuthSignInStep.done),
     );
   }
 
@@ -141,7 +147,7 @@ class AmplifyAuthCognitoStub extends AuthPluginInterface
     await Future<void>.delayed(delay);
     return CognitoSignInResult(
       isSignedIn: _isSignedIn(),
-      nextStep: const AuthNextSignInStep(signInStep: 'DONE'),
+      nextStep: const AuthNextSignInStep(signInStep: AuthSignInStep.done),
     );
   }
 
@@ -175,14 +181,14 @@ class AmplifyAuthCognitoStub extends AuthPluginInterface
     return CognitoResetPasswordResult(
       isPasswordReset: true,
       nextStep: ResetPasswordStep(
-        updateStep: 'DONE',
+        updateStep: AuthResetPasswordStep.done,
         codeDeliveryDetails: _codeDeliveryDetails(user),
       ),
     );
   }
 
   @override
-  Future<UpdatePasswordResult> confirmResetPassword({
+  Future<CognitoResetPasswordResult> confirmResetPassword({
     required String username,
     required String newPassword,
     required String confirmationCode,
@@ -199,19 +205,53 @@ class AmplifyAuthCognitoStub extends AuthPluginInterface
     MockCognitoUser updatedUser = user.copyWith(password: newPassword);
     _users[username] = updatedUser;
     _currentUser = updatedUser;
-    return const UpdatePasswordResult();
+    return const CognitoResetPasswordResult(
+      isPasswordReset: true,
+      nextStep: ResetPasswordStep(
+        updateStep: AuthResetPasswordStep.done,
+      ),
+    );
   }
 
   @override
   Future<AuthSession> fetchAuthSession({
-    AuthSessionOptions? options,
+    FetchAuthSessionOptions? options,
   }) async {
-    return CognitoAuthSession(isSignedIn: _isSignedIn());
+    if (_currentUser == null) {
+      return const CognitoAuthSession(
+        isSignedIn: false,
+        userPoolTokensResult: AuthResult.error(
+          SignedOutException('There is no user signed in.'),
+        ),
+        userSubResult: AuthResult.error(
+          SignedOutException('There is no user signed in.'),
+        ),
+        credentialsResult: AuthResult.error(
+          UnknownException('credentials not available in mocks'),
+        ),
+        identityIdResult: AuthResult.error(
+          UnknownException('identityId not available in mocks'),
+        ),
+      );
+    }
+    final userPoolTokens = _currentUser!.userPoolTokens;
+    final userSub = _currentUser!.sub;
+    return CognitoAuthSession(
+      isSignedIn: true,
+      userPoolTokensResult: AuthResult.success(userPoolTokens),
+      userSubResult: AuthResult.success(userSub),
+      credentialsResult: const AuthResult.error(
+        UnknownException('credentials not available in mocks'),
+      ),
+      identityIdResult: const AuthResult.error(
+        UnknownException('identityId not available in mocks'),
+      ),
+    );
   }
 
   @override
   Future<AuthUser> getCurrentUser({
-    AuthUserOptions? options,
+    GetCurrentUserOptions? options,
   }) async {
     if (_currentUser == null) {
       throw const SignedOutException('There is no user signed in.');
@@ -283,7 +323,7 @@ class AmplifyAuthCognitoStub extends AuthPluginInterface
     return UpdateUserAttributeResult(
       isUpdated: true,
       nextStep: AuthNextUpdateAttributeStep(
-        updateAttributeStep: 'DONE',
+        updateAttributeStep: AuthUpdateAttributeStep.done,
         codeDeliveryDetails: _codeDeliveryDetails(_currentUser!),
       ),
     );
@@ -379,6 +419,36 @@ class MockCognitoUser {
     required this.phoneNumber,
     required this.email,
   });
+
+  CognitoUserPoolTokens get userPoolTokens {
+    final accessToken = JsonWebToken(
+      header: const JsonWebHeader(algorithm: Algorithm.hmacSha256),
+      claims: JsonWebClaims(
+        subject: sub,
+        expiration: DateTime.now().add(const Duration(minutes: 60)),
+        customClaims: {
+          'username': username,
+        },
+      ),
+      signature: const [],
+    );
+    const refreshToken = 'refreshToken';
+    final idToken = JsonWebToken(
+      header: const JsonWebHeader(algorithm: Algorithm.hmacSha256),
+      claims: JsonWebClaims(
+        subject: sub,
+        customClaims: {
+          'cognito:username': username,
+        },
+      ),
+      signature: const [],
+    );
+    return CognitoUserPoolTokens(
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      idToken: idToken,
+    );
+  }
 
   MockCognitoUser copyWith({
     String? sub,

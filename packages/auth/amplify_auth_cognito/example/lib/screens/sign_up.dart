@@ -1,7 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 
@@ -38,11 +37,13 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       final res = await Amplify.Auth.signUp(
         username: usernameController.text.trim(),
         password: passwordController.text.trim(),
-        options: CognitoSignUpOptions(userAttributes: userAttributes),
+        options: SignUpOptions(userAttributes: userAttributes),
       );
       widget.showResult('Sign Up Status = ${res.nextStep.signUpStep}');
       widget.changeDisplay(
-        res.nextStep.signUpStep != 'DONE' ? 'SHOW_CONFIRM' : 'SHOW_SIGN_UP',
+        res.nextStep.signUpStep != AuthSignUpStep.done
+            ? 'SHOW_CONFIRM'
+            : 'SHOW_SIGN_UP',
       );
     } on Exception catch (e) {
       widget.setError(e);

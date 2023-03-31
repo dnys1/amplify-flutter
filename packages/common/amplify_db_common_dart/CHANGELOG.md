@@ -1,3 +1,24 @@
+## 0.2.0+4
+
+- Minor bug fixes and improvements
+
+## 0.2.0+3
+
+- Minor bug fixes and improvements
+
+## 0.2.0+2
+
+- Minor bug fixes and improvements
+
+## 0.2.0+1
+
+- Minor bug fixes and improvements
+
+## 0.2.0
+
+### Breaking Changes
+- refactor(core)!: Migrate exception types
+
 ## 0.1.3
 
 - Minor bug fixes and improvements

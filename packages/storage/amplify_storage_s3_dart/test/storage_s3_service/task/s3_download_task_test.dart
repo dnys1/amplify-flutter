@@ -9,6 +9,7 @@ import 'package:amplify_storage_s3_dart/src/sdk/s3.dart';
 import 'package:amplify_storage_s3_dart/src/storage_s3_service/service/task/s3_download_task.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:smithy/smithy.dart';
+import 'package:smithy_aws/smithy_aws.dart';
 import 'package:test/test.dart';
 
 import '../../test_utils/mocks.dart';
@@ -18,7 +19,11 @@ void main() {
   group('S3DownloadTask', () {
     const testBucket = 'bucket1';
     const testKey = 'some-object';
+    const defaultTestOptions = StorageDownloadDataOptions(
+      accessLevel: StorageAccessLevel.guest,
+    );
     final testPrefixResolver = TestPrefixResolver();
+    const defaultS3ClientConfig = S3ClientConfig();
     late S3Client s3Client;
     late AWSLogger logger;
 
@@ -39,13 +44,14 @@ void main() {
           key: 'dummy key',
         ),
       );
+
+      registerFallbackValue(const S3ClientConfig());
     });
 
     group('start() API', () {
       test(
           'it should ripple exception thrown from `preStart` to the result Future',
           () {
-        const testOptions = S3DownloadDataOptions();
         final testException = S3Exception.unknownException();
         Future<void> testPreStart() async {
           throw testException;
@@ -53,10 +59,11 @@ void main() {
 
         final downloadTask = S3DownloadTask(
           s3Client: s3Client,
+          defaultS3ClientConfig: defaultS3ClientConfig,
           prefixResolver: testPrefixResolver,
           bucket: testBucket,
           key: testKey,
-          options: testOptions,
+          options: defaultTestOptions,
           logger: logger,
           preStart: testPreStart,
         );
@@ -68,7 +75,6 @@ void main() {
 
       test('it should invoke S3Client.getObject API with correct parameters',
           () async {
-        const testOptions = S3DownloadDataOptions();
         const testBodyBytes = [101, 102];
         final testGetObjectOutput = GetObjectOutput(
           contentLength: Int64(testBodyBytes.length),
@@ -82,15 +88,19 @@ void main() {
         ).thenAnswer((_) async => testGetObjectOutput);
 
         when(
-          () => s3Client.getObject(any()),
+          () => s3Client.getObject(
+            any(),
+            s3ClientConfig: any(named: 's3ClientConfig'),
+          ),
         ).thenAnswer((_) => smithyOperation);
 
         final downloadTask = S3DownloadTask(
           s3Client: s3Client,
+          defaultS3ClientConfig: defaultS3ClientConfig,
           prefixResolver: testPrefixResolver,
           bucket: testBucket,
           key: testKey,
-          options: testOptions,
+          options: defaultTestOptions,
           logger: logger,
           onProgress: (progress) {
             finalState = progress.state;
@@ -100,7 +110,10 @@ void main() {
         await downloadTask.start();
 
         final capturedRequest = verify(
-          () => s3Client.getObject(captureAny<GetObjectRequest>()),
+          () => s3Client.getObject(
+            captureAny<GetObjectRequest>(),
+            s3ClientConfig: any(named: 's3ClientConfig'),
+          ),
         ).captured.last;
 
         expect(capturedRequest is GetObjectRequest, isTrue);
@@ -110,7 +123,7 @@ void main() {
         expect(
           request.key,
           '${await testPrefixResolver.resolvePrefix(
-            accessLevel: testOptions.accessLevel,
+            accessLevel: defaultTestOptions.accessLevel,
           )}$testKey',
         );
         expect(request.checksumMode, ChecksumMode.enabled);
@@ -120,9 +133,65 @@ void main() {
       });
 
       test(
+          'it should invoke S3Client.getObject API with correct useAcceleration parameter',
+          () async {
+        const testUseAccelerateEndpoint = true;
+        const testOptions = StorageDownloadDataOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3DownloadDataPluginOptions(
+            useAccelerateEndpoint: testUseAccelerateEndpoint,
+          ),
+        );
+        const testBodyBytes = [101, 102];
+        final testGetObjectOutput = GetObjectOutput(
+          contentLength: Int64(testBodyBytes.length),
+          body: Stream.value(testBodyBytes),
+        );
+        final smithyOperation = MockSmithyOperation<GetObjectOutput>();
+
+        when(
+          () => smithyOperation.result,
+        ).thenAnswer((_) async => testGetObjectOutput);
+
+        when(
+          () => s3Client.getObject(
+            any(),
+            s3ClientConfig: any(named: 's3ClientConfig'),
+          ),
+        ).thenAnswer((_) => smithyOperation);
+
+        final downloadTask = S3DownloadTask(
+          s3Client: s3Client,
+          defaultS3ClientConfig: defaultS3ClientConfig,
+          prefixResolver: testPrefixResolver,
+          bucket: testBucket,
+          key: testKey,
+          options: testOptions,
+          logger: logger,
+        );
+
+        await downloadTask.start();
+
+        final capturedS3ClientConfig = verify(
+          () => s3Client.getObject(
+            any(),
+            s3ClientConfig: captureAny<S3ClientConfig>(named: 's3ClientConfig'),
+          ),
+        ).captured.last;
+
+        expect(
+          capturedS3ClientConfig,
+          isA<S3ClientConfig>().having(
+            (o) => o.useAcceleration,
+            'useAcceleration',
+            testUseAccelerateEndpoint,
+          ),
+        );
+      });
+
+      test(
           'it should throw S3Exception when getObject response doesn\'t include a value contentLength header',
           () async {
-        const testOptions = S3DownloadDataOptions();
         final testGetObjectOutput = GetObjectOutput(
           body: Stream.value([101]),
         );
@@ -134,15 +203,19 @@ void main() {
         ).thenAnswer((_) async => testGetObjectOutput);
 
         when(
-          () => s3Client.getObject(any()),
+          () => s3Client.getObject(
+            any(),
+            s3ClientConfig: any(named: 's3ClientConfig'),
+          ),
         ).thenAnswer((_) => smithyOperation);
 
         final downloadTask = S3DownloadTask(
           s3Client: s3Client,
+          defaultS3ClientConfig: defaultS3ClientConfig,
           prefixResolver: testPrefixResolver,
           bucket: testBucket,
           key: testKey,
-          options: testOptions,
+          options: defaultTestOptions,
           logger: logger,
           onError: () {
             onErrorHasBeenCalled = true;
@@ -161,13 +234,17 @@ void main() {
 
     group('pause API()', () {
       test('it should pause the task', () async {
-        const testOptions = S3DownloadDataOptions();
+        var bodyStreamHasBeenCanceled = false;
         final testGetObjectOutput = GetObjectOutput(
           contentLength: Int64(1024),
           body: Stream<List<int>>.periodic(
             const Duration(microseconds: 200),
             (_) => [101],
-          ).take(1024),
+          ).take(1024).asBroadcastStream(
+            onCancel: (StreamSubscription<List<int>> subscription) {
+              bodyStreamHasBeenCanceled = true;
+            },
+          ),
         );
         final smithyOperation = MockSmithyOperation<GetObjectOutput>();
         final receivedState = <S3TransferState>[];
@@ -176,31 +253,37 @@ void main() {
           () => smithyOperation.result,
         ).thenAnswer((_) async => testGetObjectOutput);
         when(
-          () => s3Client.getObject(any()),
+          () => s3Client.getObject(
+            any(),
+            s3ClientConfig: any(named: 's3ClientConfig'),
+          ),
         ).thenAnswer((_) => smithyOperation);
 
         final downloadTask = S3DownloadTask(
           s3Client: s3Client,
+          defaultS3ClientConfig: defaultS3ClientConfig,
           prefixResolver: testPrefixResolver,
           bucket: testBucket,
           key: testKey,
-          options: testOptions,
+          options: defaultTestOptions,
           logger: logger,
           onProgress: (progress) {
             receivedState.add(progress.state);
           },
         );
 
+        // pause only takes effect after `start` gets called.
+        // pause can be called without having to wait for start to complete.
         unawaited(downloadTask.start());
         await downloadTask.pause();
 
         expect(receivedState.last, S3TransferState.paused);
+        expect(bodyStreamHasBeenCanceled, isTrue);
       });
     });
 
     group('resume API()', () {
       test('it should resume the task from paused state', () async {
-        const testOptions = S3DownloadDataOptions();
         final testGetObjectOutput1 = GetObjectOutput(
           contentLength: Int64(1024),
           body: Stream<List<int>>.periodic(
@@ -216,15 +299,19 @@ void main() {
         ).thenAnswer((_) async => testGetObjectOutput1);
 
         when(
-          () => s3Client.getObject(any()),
+          () => s3Client.getObject(
+            any(),
+            s3ClientConfig: any(named: 's3ClientConfig'),
+          ),
         ).thenAnswer((_) => smithyOperation1);
 
         final downloadTask = S3DownloadTask(
           s3Client: s3Client,
+          defaultS3ClientConfig: defaultS3ClientConfig,
           prefixResolver: testPrefixResolver,
           bucket: testBucket,
           key: testKey,
-          options: testOptions,
+          options: defaultTestOptions,
           logger: logger,
           onProgress: (progress) {
             receivedState.add(progress.state);
@@ -248,7 +335,10 @@ void main() {
         ).thenAnswer((_) async => testGetObjectOutput2);
 
         when(
-          () => s3Client.getObject(any()),
+          () => s3Client.getObject(
+            any(),
+            s3ClientConfig: any(named: 's3ClientConfig'),
+          ),
         ).thenAnswer((_) => smithyOperation2);
 
         await downloadTask.resume();
@@ -258,7 +348,6 @@ void main() {
 
       test('should throw exception when attempt to resume a canceled task',
           () async {
-        const testOptions = S3DownloadDataOptions();
         final testGetObjectOutput = GetObjectOutput(
           contentLength: Int64(1024),
           body: Stream<List<int>>.periodic(
@@ -274,15 +363,19 @@ void main() {
         ).thenAnswer((_) async => testGetObjectOutput);
 
         when(
-          () => s3Client.getObject(any()),
+          () => s3Client.getObject(
+            any(),
+            s3ClientConfig: any(named: 's3ClientConfig'),
+          ),
         ).thenAnswer((_) => smithyOperation);
 
         final downloadTask = S3DownloadTask(
           s3Client: s3Client,
+          defaultS3ClientConfig: defaultS3ClientConfig,
           prefixResolver: testPrefixResolver,
           bucket: testBucket,
           key: testKey,
-          options: testOptions,
+          options: defaultTestOptions,
           logger: logger,
           onProgress: (progress) {
             receivedState.add(progress.state);
@@ -299,13 +392,17 @@ void main() {
 
     group('cancel API()', () {
       test('it should cancel the task', () async {
-        const testOptions = S3DownloadDataOptions();
+        var bodyStreamHasBeenCanceled = false;
         final testGetObjectOutput = GetObjectOutput(
           contentLength: Int64(1024),
           body: Stream<List<int>>.periodic(
             const Duration(microseconds: 200),
             (_) => [101],
-          ).take(1024),
+          ).take(1024).asBroadcastStream(
+            onCancel: (StreamSubscription<List<int>> subscription) {
+              bodyStreamHasBeenCanceled = true;
+            },
+          ),
         );
         final smithyOperation = MockSmithyOperation<GetObjectOutput>();
         final receivedState = <S3TransferState>[];
@@ -315,15 +412,19 @@ void main() {
         ).thenAnswer((_) async => testGetObjectOutput);
 
         when(
-          () => s3Client.getObject(any()),
+          () => s3Client.getObject(
+            any(),
+            s3ClientConfig: any(named: 's3ClientConfig'),
+          ),
         ).thenAnswer((_) => smithyOperation);
 
         final downloadTask = S3DownloadTask(
           s3Client: s3Client,
+          defaultS3ClientConfig: defaultS3ClientConfig,
           prefixResolver: testPrefixResolver,
           bucket: testBucket,
           key: testKey,
-          options: testOptions,
+          options: defaultTestOptions,
           logger: logger,
           onProgress: (progress) {
             receivedState.add(progress.state);
@@ -334,12 +435,12 @@ void main() {
         await downloadTask.cancel();
         expect(receivedState.last, S3TransferState.canceled);
         expect(downloadTask.result, throwsA(isA<S3Exception>()));
+        expect(bodyStreamHasBeenCanceled, isTrue);
       });
     });
 
     group('error handling around S3Client.getObject', () {
       test('should forward S3Exception when getObject returns no body', () {
-        const testOptions = S3DownloadDataOptions();
         final testGetObjectOutput = GetObjectOutput(contentLength: Int64(1024));
         final smithyOperation = MockSmithyOperation<GetObjectOutput>();
 
@@ -348,15 +449,19 @@ void main() {
         ).thenAnswer((_) async => testGetObjectOutput);
 
         when(
-          () => s3Client.getObject(any()),
+          () => s3Client.getObject(
+            any(),
+            s3ClientConfig: any(named: 's3ClientConfig'),
+          ),
         ).thenAnswer((_) => smithyOperation);
 
         final downloadTask = S3DownloadTask(
           s3Client: s3Client,
+          defaultS3ClientConfig: defaultS3ClientConfig,
           prefixResolver: testPrefixResolver,
           bucket: testBucket,
           key: testKey,
-          options: testOptions,
+          options: defaultTestOptions,
           logger: logger,
         );
 
@@ -370,34 +475,48 @@ void main() {
           statusCode: 403,
           body: 'Access denied!',
         ),
+        'UnknownSmithyHttpException for Acceleration':
+            const UnknownSmithyHttpException(
+          statusCode: 400,
+          body: 'S3 Transfer Acceleration is disabled on this bucket',
+        ),
         'NoSuchKey': NoSuchKey(),
       }
         ..forEach((exceptionType, exception) {
           test(
               'it should complete with an exception on $exceptionType of getObject on start',
               () async {
-            const testOptions = S3DownloadDataOptions();
-
             when(
-              () => s3Client.getObject(any()),
+              () => s3Client.getObject(
+                any(),
+                s3ClientConfig: any(named: 's3ClientConfig'),
+              ),
             ).thenThrow(exception);
 
             final downloadTask = S3DownloadTask(
               s3Client: s3Client,
+              defaultS3ClientConfig: defaultS3ClientConfig,
               prefixResolver: testPrefixResolver,
               bucket: testBucket,
               key: testKey,
-              options: testOptions,
+              options: defaultTestOptions,
               logger: logger,
             );
 
             unawaited(downloadTask.start());
 
             if (exception is UnknownSmithyHttpException) {
-              expect(
-                downloadTask.result,
-                throwsA(isA<StorageAccessDeniedException>()),
-              );
+              if (exception.statusCode == 403) {
+                expect(
+                  downloadTask.result,
+                  throwsA(isA<StorageAccessDeniedException>()),
+                );
+              } else {
+                expect(
+                  downloadTask.result,
+                  throwsA(isA<StorageHttpStatusException>()),
+                );
+              }
             } else {
               expect(
                 downloadTask.result,
@@ -410,7 +529,6 @@ void main() {
           test(
               'it should complete with an exception on $exceptionType of getObject on resume',
               () async {
-            const testOptions = S3DownloadDataOptions();
             final testGetObjectOutput1 = GetObjectOutput(
               contentLength: Int64(1024),
               body: Stream<List<int>>.periodic(
@@ -426,35 +544,51 @@ void main() {
             ).thenAnswer((_) async => testGetObjectOutput1);
 
             when(
-              () => s3Client.getObject(any()),
+              () => s3Client.getObject(
+                any(),
+                s3ClientConfig: any(named: 's3ClientConfig'),
+              ),
             ).thenAnswer((_) => smithyOperation1);
 
             final downloadTask = S3DownloadTask(
               s3Client: s3Client,
+              defaultS3ClientConfig: defaultS3ClientConfig,
               prefixResolver: testPrefixResolver,
               bucket: testBucket,
               key: testKey,
-              options: testOptions,
+              options: defaultTestOptions,
               logger: logger,
               onProgress: (progress) {
                 receivedState.add(progress.state);
               },
             );
 
+            // pause only takes effect after `start` gets called.
+            // pause can be called without having to wait for start to complete.
             unawaited(downloadTask.start());
             await downloadTask.pause();
 
             when(
-              () => s3Client.getObject(any()),
+              () => s3Client.getObject(
+                any(),
+                s3ClientConfig: any(named: 's3ClientConfig'),
+              ),
             ).thenThrow(exception);
 
             unawaited(downloadTask.resume());
 
             if (exception is UnknownSmithyHttpException) {
-              expect(
-                downloadTask.result,
-                throwsA(isA<StorageAccessDeniedException>()),
-              );
+              if (exception.statusCode == 403) {
+                expect(
+                  downloadTask.result,
+                  throwsA(isA<StorageAccessDeniedException>()),
+                );
+              } else {
+                expect(
+                  downloadTask.result,
+                  throwsA(isA<StorageHttpStatusException>()),
+                );
+              }
             } else {
               expect(
                 downloadTask.result,
@@ -467,7 +601,6 @@ void main() {
 
     group('download completion', () {
       test('download should complete', () async {
-        const testOptions = S3DownloadDataOptions();
         const testBodyBytes = [101, 102];
         final testGetObjectOutput = GetObjectOutput(
           contentLength: Int64(testBodyBytes.length),
@@ -481,15 +614,19 @@ void main() {
         ).thenAnswer((_) async => testGetObjectOutput);
 
         when(
-          () => s3Client.getObject(any()),
+          () => s3Client.getObject(
+            any(),
+            s3ClientConfig: any(named: 's3ClientConfig'),
+          ),
         ).thenAnswer((_) => smithOperation);
 
         final downloadTask = S3DownloadTask(
           s3Client: s3Client,
+          defaultS3ClientConfig: defaultS3ClientConfig,
           prefixResolver: testPrefixResolver,
           bucket: testBucket,
           key: testKey,
-          options: testOptions,
+          options: defaultTestOptions,
           logger: logger,
           onProgress: (progress) {
             finalState = progress.state;
@@ -504,7 +641,6 @@ void main() {
       test(
           '`onDone` should be invoked when body stream is completed and ripples exception from onDone to the result Future',
           () async {
-        const testOptions = S3DownloadDataOptions();
         const testBodyBytes = [101, 102];
         final testGetObjectOutput = GetObjectOutput(
           contentLength: Int64(testBodyBytes.length),
@@ -520,15 +656,19 @@ void main() {
         ).thenAnswer((_) async => testGetObjectOutput);
 
         when(
-          () => s3Client.getObject(any()),
+          () => s3Client.getObject(
+            any(),
+            s3ClientConfig: any(named: 's3ClientConfig'),
+          ),
         ).thenAnswer((_) => smithyOperation);
 
         final downloadTask = S3DownloadTask(
           s3Client: s3Client,
+          defaultS3ClientConfig: defaultS3ClientConfig,
           prefixResolver: testPrefixResolver,
           bucket: testBucket,
           key: testKey,
-          options: testOptions,
+          options: defaultTestOptions,
           logger: logger,
           onDone: () async {
             onDoneHasBeenCalled = true;
@@ -550,10 +690,14 @@ void main() {
           'should invoke S3Client.headObject to retrieve properties of object when getProperties is set to true in the options',
           () async {
         const testTargetIdentity = 'some-else-id';
-        const testOptions = S3DownloadDataOptions.forIdentity(
-          testTargetIdentity,
-          getProperties: true,
+        const testOptions = StorageDownloadDataOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3DownloadDataPluginOptions.forIdentity(
+            testTargetIdentity,
+            getProperties: true,
+          ),
         );
+
         const testBodyBytes = [101, 102];
         final testGetObjectOutput = GetObjectOutput(
           contentLength: Int64(testBodyBytes.length),
@@ -573,7 +717,10 @@ void main() {
         ).thenAnswer((_) async => testHeadObjectOutput);
 
         when(
-          () => s3Client.getObject(any()),
+          () => s3Client.getObject(
+            any(),
+            s3ClientConfig: any(named: 's3ClientConfig'),
+          ),
         ).thenAnswer((_) => getSmithyOperation);
 
         when(
@@ -582,6 +729,7 @@ void main() {
 
         final downloadTask = S3DownloadTask(
           s3Client: s3Client,
+          defaultS3ClientConfig: defaultS3ClientConfig,
           prefixResolver: testPrefixResolver,
           bucket: testBucket,
           key: testKey,

@@ -1,3 +1,30 @@
+## 0.4.0+4
+
+### Fixes
+- fix(smithy): Handle uncaught exception ([#2720](https://github.com/aws-amplify/amplify-flutter/pull/2720))
+
+## 0.4.0+3
+
+- Minor bug fixes and improvements
+
+## 0.4.0+2
+
+### Fixes
+- fix(http): Cancel streamed responses ([#2545](https://github.com/aws-amplify/amplify-flutter/pull/2545))
+
+## 0.4.0+1
+
+### Features
+- feat(smithy_aws): add copyWith to S3ClientConfig
+
+## 0.4.0
+
+### Breaking Changes
+- feat(aft)!: Add plugins to SDK generation
+
+### Fixes
+- fix(smithy): Retry behavior
+
 ## 0.3.2
 
 ### Features

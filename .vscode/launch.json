@@ -1,0 +1,20 @@
+{
+  "configurations": [
+    {
+      "name": "Run",
+      "type": "dart",
+      "request": "launch",
+    },
+    {
+      "name": "Dart Test in Chrome",
+      "type": "dart",
+      "request": "launch",
+      "args": ["-p", "chrome"],
+      "codeLens": {
+        "for": ["run-test", "run-test-file", "debug-test", "debug-test-file"],
+        "path": "packages",
+        "title": "${debugType} Dart test with Chrome"
+      }
+    }
+  ]
+}

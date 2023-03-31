@@ -11,15 +11,15 @@ Future<void> configureAuth({
   List<AmplifyPluginInterface> additionalPlugins = const [],
 }) async {
   final authPlugin = AmplifyAuthCognito(
-    credentialStorage: AmplifySecureStorage(
-      config: AmplifySecureStorageConfig(
-        scope: 'auth-test',
-        macOSOptions: MacOSSecureStorageOptions(useDataProtection: false),
-      ),
+    secureStorageFactory: AmplifySecureStorage.factoryFrom(
+      macOSOptions: MacOSSecureStorageOptions(useDataProtection: false),
     ),
   );
   await Amplify.addPlugins([authPlugin, ...additionalPlugins]);
   await Amplify.configure(config ?? amplifyconfig);
+  addTearDown(
+    Amplify.Auth.getPlugin(AmplifyAuthCognito.pluginKey).close,
+  );
   addTearDown(Amplify.reset);
 }
 

@@ -1,3 +1,25 @@
+## 0.3.0
+
+### Breaking Changes
+- feat(secure_storage)!: Use Local App Data Directory on Windows ([#2744](https://github.com/aws-amplify/amplify-flutter/pull/2744))
+
+### Fixes
+- fix(secure_storage): Only init Windows config on Windows ([#2751](https://github.com/aws-amplify/amplify-flutter/pull/2751))
+
+## 0.2.0
+
+### Breaking Changes
+- fix(secure_storage)!: use correct values for `kSecAttrAccessible` ([#2649](https://github.com/aws-amplify/amplify-flutter/pull/2649))
+
+## 0.1.4+2
+
+### Fixes
+- fix(secure_storage): clear SharedPreferences on first app launch after install ([#2637](https://github.com/aws-amplify/amplify-flutter/pull/2637))
+
+## 0.1.4+1
+
+- Minor bug fixes and improvements
+
 ## 0.1.4
 
 - Minor bug fixes and improvements

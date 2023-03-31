@@ -1,9 +1,9 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import * as appsync from "@aws-cdk/aws-appsync-alpha";
 import * as cdk from "aws-cdk-lib";
-import { Duration, Expiration, RemovalPolicy } from "aws-cdk-lib";
+import { Duration, Expiration, Fn, RemovalPolicy } from "aws-cdk-lib";
+import * as appsync from "aws-cdk-lib/aws-appsync";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as iam from "aws-cdk-lib/aws-iam";
@@ -35,7 +35,7 @@ export interface AuthBaseEnvironmentProps
   /**
    * Associates `resourceArn` with the shared WAF.
    */
-  associateWithWaf: (resourceArn: string) => void;
+  associateWithWaf: (name: string, resourceArn: string) => void;
 
   /**
    * The type of environment to build.
@@ -55,6 +55,34 @@ export interface AuthFullEnvironmentProps {
    * Aliases allowed for sign in.
    */
   signInAliases?: cognito.SignInAliases;
+
+  /**
+   * Standard attributes to collect on sign up.
+   *
+   * @default ["email", "phone_number"]
+   */
+  standardAttributes?: cognito.StandardAttributes;
+
+  /**
+   * Whether Hosted UI is enabled.
+   *
+   * @default false
+   */
+  enableHostedUI?: boolean;
+
+  /**
+   * Whether to auto-confirm users.
+   *
+   * @default false
+   */
+  autoConfirm?: boolean;
+
+  /**
+   * Which custom authorization workflow is enabled.
+   *
+   * @default none
+   */
+  customAuth?: "WITH_SRP" | "WITHOUT_SRP";
 }
 
 export interface AuthCustomAuthorizerEnvironmentProps {
@@ -121,14 +149,29 @@ class AuthIntegrationTestStackEnvironment extends IntegrationTestStackEnvironmen
   ) {
     super(scope, baseName, props);
 
-    const { associateWithWaf } = props;
+    const {
+      associateWithWaf,
+      enableHostedUI = false,
+      signInAliases,
+      standardAttributes = {
+        email: {
+          mutable: true,
+          required: true,
+        },
+        phoneNumber: {
+          mutable: true,
+          required: true,
+        },
+      },
+      customAuth,
+    } = props;
 
     // Create the GraphQL API for admin actions
 
     const authorizationType = appsync.AuthorizationType.API_KEY;
     const graphQLApi = new appsync.GraphqlApi(this, "GraphQLApi", {
       name: this.name,
-      schema: appsync.Schema.fromAsset(
+      schema: appsync.SchemaFile.fromAsset(
         path.resolve(__dirname, "schema.graphql")
       ),
       authorizationConfig: {
@@ -145,32 +188,6 @@ class AuthIntegrationTestStackEnvironment extends IntegrationTestStackEnvironmen
       },
     });
 
-    // Create the Custom Auth handlers
-
-    const createAuthChallenge = new lambda_nodejs.NodejsFunction(
-      this,
-      "create-auth-challenge",
-      {
-        runtime: lambda.Runtime.NODEJS_16_X,
-      }
-    );
-
-    const defineAuthChallenge = new lambda_nodejs.NodejsFunction(
-      this,
-      "define-auth-challenge",
-      {
-        runtime: lambda.Runtime.NODEJS_16_X,
-      }
-    );
-
-    const verifyAuthChallengeResponse = new lambda_nodejs.NodejsFunction(
-      this,
-      "verify-auth-challenge",
-      {
-        runtime: lambda.Runtime.NODEJS_16_X,
-      }
-    );
-
     // Create Custom SMS handler + KMS key
 
     const customSenderKmsKey = new kms.Key(this, "CustomSenderKey", {
@@ -183,7 +200,10 @@ class AuthIntegrationTestStackEnvironment extends IntegrationTestStackEnvironmen
       this,
       "custom-sms-sender",
       {
-        runtime: lambda.Runtime.NODEJS_16_X,
+        runtime: lambda.Runtime.NODEJS_18_X,
+        bundling: {
+          nodeModules: ["@aws-crypto/client-node"],
+        },
         environment: {
           GRAPHQL_API_ENDPOINT: graphQLApi.graphqlUrl,
           GRAPHQL_API_KEY: graphQLApi.apiKey!,
@@ -198,7 +218,10 @@ class AuthIntegrationTestStackEnvironment extends IntegrationTestStackEnvironmen
       this,
       "custom-email-sender",
       {
-        runtime: lambda.Runtime.NODEJS_16_X,
+        runtime: lambda.Runtime.NODEJS_18_X,
+        bundling: {
+          nodeModules: ["@aws-crypto/client-node"],
+        },
         environment: {
           GRAPHQL_API_ENDPOINT: graphQLApi.graphqlUrl,
           GRAPHQL_API_KEY: graphQLApi.apiKey!,
@@ -209,46 +232,148 @@ class AuthIntegrationTestStackEnvironment extends IntegrationTestStackEnvironmen
     graphQLApi.grantMutation(customEmailSender);
     customSenderKmsKey.grantDecrypt(customEmailSender);
 
+    const additionalTriggers: Omit<
+      cognito.UserPoolTriggers,
+      "customSmsSender" | "customEmailSender"
+    > = {};
+    if (props.autoConfirm) {
+      additionalTriggers.preSignUp = new lambda_nodejs.NodejsFunction(
+        this,
+        "pre-sign-up",
+        {
+          runtime: lambda.Runtime.NODEJS_18_X,
+        }
+      );
+    }
+
+    // Create the Custom Auth handlers
+    if (customAuth == "WITH_SRP") {
+      additionalTriggers.createAuthChallenge = new lambda_nodejs.NodejsFunction(
+        this,
+        "create-auth-challenge",
+        {
+          entry: "lib/auth/custom-auth-with-srp/create-auth-challenge.ts",
+          runtime: lambda.Runtime.NODEJS_18_X,
+        }
+      );
+
+      additionalTriggers.defineAuthChallenge = new lambda_nodejs.NodejsFunction(
+        this,
+        "define-auth-challenge",
+        {
+          entry: "lib/auth/custom-auth-with-srp/define-auth-challenge.ts",
+          runtime: lambda.Runtime.NODEJS_18_X,
+        }
+      );
+
+      additionalTriggers.verifyAuthChallengeResponse =
+        new lambda_nodejs.NodejsFunction(this, "verify-auth-challenge", {
+          entry: "lib/auth/custom-auth-with-srp/verify-auth-challenge.ts",
+          runtime: lambda.Runtime.NODEJS_18_X,
+        });
+    } else if (customAuth == "WITHOUT_SRP") {
+      additionalTriggers.createAuthChallenge = new lambda_nodejs.NodejsFunction(
+        this,
+        "create-auth-challenge",
+        {
+          entry: "lib/auth/custom-auth-without-srp/create-auth-challenge.ts",
+          runtime: lambda.Runtime.NODEJS_18_X,
+        }
+      );
+
+      additionalTriggers.defineAuthChallenge = new lambda_nodejs.NodejsFunction(
+        this,
+        "define-auth-challenge",
+        {
+          entry: "lib/auth/custom-auth-without-srp/define-auth-challenge.ts",
+          runtime: lambda.Runtime.NODEJS_18_X,
+        }
+      );
+
+      additionalTriggers.verifyAuthChallengeResponse =
+        new lambda_nodejs.NodejsFunction(this, "verify-auth-challenge", {
+          entry: "lib/auth/custom-auth-without-srp/verify-auth-challenge.ts",
+          runtime: lambda.Runtime.NODEJS_18_X,
+        });
+    }
+
     // Create the Cognito User Pool
 
+    const mfa = standardAttributes.phoneNumber?.required
+      ? cognito.Mfa.OPTIONAL
+      : cognito.Mfa.OFF;
+    const accountRecovery = standardAttributes.phoneNumber?.required
+      ? cognito.AccountRecovery.EMAIL_AND_PHONE_WITHOUT_MFA
+      : cognito.AccountRecovery.EMAIL_ONLY;
+    const verificationMechanisms: string[] = ["EMAIL"];
+    if (standardAttributes.phoneNumber?.required) {
+      verificationMechanisms.push("PHONE_NUMBER");
+    }
     const userPool = new cognito.UserPool(this, "UserPool", {
       userPoolName: this.name,
       removalPolicy: RemovalPolicy.DESTROY,
       selfSignUpEnabled: true,
-      accountRecovery: cognito.AccountRecovery.EMAIL_AND_PHONE_WITHOUT_MFA,
+      accountRecovery,
       autoVerify: {
         email: true,
         phone: true,
       },
-      mfa: cognito.Mfa.OPTIONAL,
-      signInAliases: props.signInAliases,
-      standardAttributes: {
-        email: {
-          mutable: true,
-          required: true,
-        },
-        phoneNumber: {
-          mutable: true,
-          required: true,
-        },
-      },
+      mfa,
+      signInAliases,
+      standardAttributes,
       lambdaTriggers: {
-        createAuthChallenge,
-        defineAuthChallenge,
-        verifyAuthChallengeResponse,
         customSmsSender,
         customEmailSender,
+        ...additionalTriggers,
       },
       customSenderKmsKey,
       deviceTracking: props.deviceTracking,
     });
 
+    let oAuth: cognito.OAuthSettings | undefined;
+    let webDomain: cognito.UserPoolDomain | undefined;
+    const signInRedirectUris = ["authtest:/", "http://localhost:3000/"];
+    const signOutRedirectUris = ["authtest:/", "http://localhost:3000/"];
+    const scopes = [
+      cognito.OAuthScope.PHONE,
+      cognito.OAuthScope.EMAIL,
+      cognito.OAuthScope.OPENID,
+      cognito.OAuthScope.PROFILE,
+      cognito.OAuthScope.COGNITO_ADMIN,
+    ];
+    if (enableHostedUI) {
+      oAuth = {
+        flows: {
+          authorizationCodeGrant: true,
+          implicitCodeGrant: false,
+          clientCredentials: false,
+        },
+        callbackUrls: signInRedirectUris,
+        logoutUrls: signOutRedirectUris,
+        scopes,
+      };
+      webDomain = userPool.addDomain("Domain", {
+        cognitoDomain: {
+          // Construct a unique domain prefix so that it does not conflict with other projects.
+          domainPrefix: Fn.join("-", [
+            this.environmentName,
+            // https://stackoverflow.com/questions/54897459/how-to-set-semi-random-name-for-s3-bucket-using-cloud-formation
+            Fn.select(
+              0,
+              Fn.split("-", Fn.select(2, Fn.split("/", this.stackId)))
+            ),
+          ]),
+        },
+      });
+    }
+    const disableOAuth = !enableHostedUI;
     const userPoolClient = userPool.addClient("UserPoolClient", {
       authFlows: {
         userSrp: true,
         custom: true,
       },
-      disableOAuth: true,
+      disableOAuth,
+      oAuth,
     });
 
     // Create the Cognito Identity Pool
@@ -311,8 +436,8 @@ class AuthIntegrationTestStackEnvironment extends IntegrationTestStackEnvironmen
       }
     );
 
-    associateWithWaf(graphQLApi.arn);
-    associateWithWaf(userPool.userPoolArn);
+    associateWithWaf(`${this.environmentName}GraphQL`, graphQLApi.arn);
+    associateWithWaf(`${this.environmentName}UserPool`, userPool.userPoolArn);
 
     // Create the DynamoDB table to store MFA codes for AppSync subscriptions
 
@@ -335,7 +460,7 @@ class AuthIntegrationTestStackEnvironment extends IntegrationTestStackEnvironmen
       this,
       "create-user",
       {
-        runtime: lambda.Runtime.NODEJS_16_X,
+        runtime: lambda.Runtime.NODEJS_18_X,
         environment: {
           USER_POOL_ID: userPool.userPoolId,
         },
@@ -353,13 +478,25 @@ class AuthIntegrationTestStackEnvironment extends IntegrationTestStackEnvironmen
       this,
       "delete-user",
       {
-        runtime: lambda.Runtime.NODEJS_16_X,
+        runtime: lambda.Runtime.NODEJS_18_X,
         environment: {
           USER_POOL_ID: userPool.userPoolId,
         },
       }
     );
     userPool.grant(deleteUserLambda, "cognito-idp:AdminDeleteUser");
+
+    const deleteDeviceLambda = new lambda_nodejs.NodejsFunction(
+      this,
+      "delete-device",
+      {
+        runtime: lambda.Runtime.NODEJS_18_X,
+        environment: {
+          USER_POOL_ID: userPool.userPoolId,
+        },
+      }
+    );
+    userPool.grant(deleteDeviceLambda, "cognito-idp:AdminForgetDevice");
 
     // Add the GraphQL resolvers
 
@@ -369,7 +506,7 @@ class AuthIntegrationTestStackEnvironment extends IntegrationTestStackEnvironmen
     );
 
     // Mutation.createMFACode
-    mfaCodesSource.createResolver({
+    mfaCodesSource.createResolver("MutationCreateMFACodeResolver", {
       typeName: "Mutation",
       fieldName: "createMFACode",
       requestMappingTemplate: appsync.MappingTemplate.dynamoDbPutItem(
@@ -383,7 +520,7 @@ class AuthIntegrationTestStackEnvironment extends IntegrationTestStackEnvironmen
     });
 
     // Query.listMFACodes
-    mfaCodesSource.createResolver({
+    mfaCodesSource.createResolver("QueryListMFACodesResolver", {
       typeName: "Query",
       fieldName: "listMFACodes",
       requestMappingTemplate: appsync.MappingTemplate.dynamoDbScanTable(),
@@ -395,7 +532,7 @@ class AuthIntegrationTestStackEnvironment extends IntegrationTestStackEnvironmen
       "GraphQLApiCreateUserLambda",
       createUserLambda
     );
-    createUserSource.createResolver({
+    createUserSource.createResolver("MutationCreateUserResolver", {
       typeName: "Mutation",
       fieldName: "createUser",
       requestMappingTemplate: appsync.MappingTemplate.lambdaRequest(),
@@ -407,9 +544,21 @@ class AuthIntegrationTestStackEnvironment extends IntegrationTestStackEnvironmen
       "GraphQLApiDeleteUserLambda",
       deleteUserLambda
     );
-    deleteUserSource.createResolver({
+    deleteUserSource.createResolver("MutationDeleteUserResolver", {
       typeName: "Mutation",
       fieldName: "deleteUser",
+      requestMappingTemplate: appsync.MappingTemplate.lambdaRequest(),
+      responseMappingTemplate: appsync.MappingTemplate.lambdaResult(),
+    });
+
+    // Mutation.deleteDevice
+    const deleteDeviceSource = graphQLApi.addLambdaDataSource(
+      "GraphQLApiDeleteDeviceLambda",
+      deleteDeviceLambda
+    );
+    deleteDeviceSource.createResolver("MutationDeleteDeviceResolver", {
+      typeName: "Mutation",
+      fieldName: "deleteDevice",
       requestMappingTemplate: appsync.MappingTemplate.lambdaRequest(),
       responseMappingTemplate: appsync.MappingTemplate.lambdaResult(),
     });
@@ -431,11 +580,24 @@ class AuthIntegrationTestStackEnvironment extends IntegrationTestStackEnvironmen
         userPoolConfig: {
           userPoolId: userPool.userPoolId,
           userPoolClientId: userPoolClient.userPoolClientId,
+          standardAttributes,
+          signInAliases,
+          mfa,
+          verificationMechanisms,
         },
         identityPoolConfig: {
           identityPoolId: identityPool.ref,
         },
       },
     };
+
+    if (webDomain) {
+      this.config.authConfig!.hostedUiConfig = {
+        webDomain: webDomain.baseUrl(),
+        signInRedirectUris,
+        signOutRedirectUris,
+        scopes: scopes.map((scope) => scope.scopeName),
+      };
+    }
   }
 }

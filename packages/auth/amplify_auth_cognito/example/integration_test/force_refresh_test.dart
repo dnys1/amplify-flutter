@@ -7,7 +7,6 @@ import 'package:amplify_test/amplify_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'utils/mock_data.dart';
 import 'utils/setup_utils.dart';
 import 'utils/test_utils.dart';
 
@@ -18,12 +17,10 @@ void main() {
     bool forceRefresh = false,
   }) async {
     final session = await Amplify.Auth.fetchAuthSession(
-      options: CognitoSessionOptions(forceRefresh: forceRefresh),
+      options: FetchAuthSessionOptions(forceRefresh: forceRefresh),
     ) as CognitoAuthSession;
-    final idToken = session.userPoolTokens?.idToken;
-    expect(idToken, isNotNull, reason: 'User is logged in');
-
-    return idToken!.claims.customClaims;
+    final idToken = session.userPoolTokensResult.value.idToken;
+    return idToken.claims.customClaims;
   }
 
   group('Force refresh', () {
@@ -47,7 +44,7 @@ void main() {
         username: username,
         password: password,
       );
-      expect(res.nextStep.signInStep, 'DONE');
+      expect(res.nextStep.signInStep, AuthSignInStep.done);
 
       expect(
         await getCustomAttributes(),

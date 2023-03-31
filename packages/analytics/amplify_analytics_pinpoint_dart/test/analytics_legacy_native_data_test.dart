@@ -1,0 +1,121 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+@TestOn('vm')
+
+import 'dart:async';
+
+import 'package:amplify_analytics_pinpoint_dart/src/impl/analytics_client/endpoint_client/endpoint_info_store_manager.dart';
+import 'package:amplify_analytics_pinpoint_dart/src/impl/analytics_client/endpoint_client/endpoint_store_keys.dart';
+import 'package:amplify_core/amplify_core.dart';
+
+import 'package:mocktail/mocktail.dart';
+import 'package:test/test.dart';
+
+import 'common/mock_secure_storage.dart';
+import 'common/mocktail_mocks.dart';
+
+void main() {
+  group('LegacyNativeDataProvider ', () {
+    late MockLegacyNativeDataProvider legacyDataProvider;
+    late MockSecureStorage store;
+    late EndpointStore endpointStore;
+
+    const pinpointAppId = 'appId';
+    const legacyEndpointId = 'legacy-endpointId';
+
+    setUp(() {
+      legacyDataProvider = MockLegacyNativeDataProvider();
+      store = MockSecureStorage();
+      endpointStore = EndpointStore(pinpointAppId, store);
+    });
+
+    test('First app load, no legacy data, writes proper values', () async {
+      when(() => legacyDataProvider.getEndpointId(pinpointAppId))
+          .thenAnswer((_) async => null);
+
+      final endpointIdManager = EndpointInfoStoreManager(
+        store: store,
+        legacyNativeDataProvider: legacyDataProvider,
+      );
+      await endpointIdManager.init(pinpointAppId: pinpointAppId);
+
+      expect(
+        endpointIdManager.endpointId,
+        isNotNull,
+      );
+
+      final storeVersion = await store.read(
+        key: EndpointStoreKey.version.name,
+      );
+      expect(storeVersion, EndpointStoreVersion.v1.name);
+
+      final migratedEndpointId = await endpointStore.read(
+        key: EndpointStoreKey.endpointId.name,
+      );
+      expect(migratedEndpointId, isNotNull);
+
+      verify(() => legacyDataProvider.getEndpointId(pinpointAppId)).called(1);
+    });
+
+    test('First app load, legacy data, writes proper values', () async {
+      when(() => legacyDataProvider.getEndpointId(pinpointAppId))
+          .thenAnswer((_) => Future.value(legacyEndpointId));
+
+      final endpointIdManager = EndpointInfoStoreManager(
+        store: store,
+        legacyNativeDataProvider: legacyDataProvider,
+      );
+      await endpointIdManager.init(pinpointAppId: pinpointAppId);
+      expect(
+        endpointIdManager.endpointId,
+        legacyEndpointId,
+      );
+
+      final storeVersion = await store.read(
+        key: EndpointStoreKey.version.name,
+      );
+      expect(storeVersion, EndpointStoreVersion.v1.name);
+
+      final migratedEndpointId = await endpointStore.read(
+        key: EndpointStoreKey.endpointId.name,
+      );
+      expect(migratedEndpointId, legacyEndpointId);
+
+      verify(() => legacyDataProvider.getEndpointId(pinpointAppId)).called(1);
+    });
+
+    test('Second app load, legacy data is ignored', () async {
+      when(() => legacyDataProvider.getEndpointId(pinpointAppId))
+          .thenAnswer((_) => Future.value(legacyEndpointId));
+
+      final endpointId = uuid();
+      store.write(
+        key: EndpointStoreKey.version.name,
+        value: EndpointStoreVersion.v1.name,
+      );
+      endpointStore.write(
+        key: EndpointStoreKey.endpointId.name,
+        value: endpointId,
+      );
+
+      final endpointIdManager = EndpointInfoStoreManager(
+        store: store,
+        legacyNativeDataProvider: legacyDataProvider,
+      );
+      await endpointIdManager.init(pinpointAppId: pinpointAppId);
+
+      expect(
+        endpointIdManager.endpointId,
+        endpointId,
+      );
+
+      final migratedEndpointId = await endpointStore.read(
+        key: EndpointStoreKey.endpointId.name,
+      );
+      expect(migratedEndpointId, endpointId);
+
+      verifyNever(() => legacyDataProvider.getEndpointId(any()));
+    });
+  });
+}

@@ -53,7 +53,7 @@ interface StorageIntegrationTestEnvironmentProps
 
 export class StorageIntegrationTestStack extends IntegrationTestStack<
   StorageIntegrationTestEnvironmentProps,
-  StorageIntgrationTestEnvironment
+  StorageIntegrationTestEnvironment
 > {
   constructor(
     scope: Construct,
@@ -70,15 +70,15 @@ export class StorageIntegrationTestStack extends IntegrationTestStack<
 
   protected buildEnvironments(
     environments: StorageIntegrationTestEnvironmentProps[]
-  ): StorageIntgrationTestEnvironment[] {
+  ): StorageIntegrationTestEnvironment[] {
     return environments.map(
       (environment) =>
-        new StorageIntgrationTestEnvironment(this, this.baseName, environment)
+        new StorageIntegrationTestEnvironment(this, this.baseName, environment)
     );
   }
 }
 
-class StorageIntgrationTestEnvironment extends IntegrationTestStackEnvironment<StorageIntegrationTestEnvironmentProps> {
+class StorageIntegrationTestEnvironment extends IntegrationTestStackEnvironment<StorageIntegrationTestEnvironmentProps> {
   constructor(
     scope: Construct,
     baseName: string,
@@ -89,6 +89,7 @@ class StorageIntgrationTestEnvironment extends IntegrationTestStackEnvironment<S
     // Create the bucket
 
     const bucket = new s3.Bucket(this, "Bucket", {
+      transferAcceleration: true,
       removalPolicy: RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
       enforceSSL: true,
@@ -122,16 +123,17 @@ class StorageIntgrationTestEnvironment extends IntegrationTestStackEnvironment<S
       this,
       "auto-confirm",
       {
-        runtime: lambda.Runtime.NODEJS_16_X,
+        runtime: lambda.Runtime.NODEJS_18_X,
       }
     );
 
+    const mfa = cognito.Mfa.OFF;
     const userPool = new cognito.UserPool(this, "UserPool", {
       userPoolName: this.name,
       removalPolicy: RemovalPolicy.DESTROY,
       selfSignUpEnabled: true,
       accountRecovery: cognito.AccountRecovery.NONE,
-      mfa: cognito.Mfa.OFF,
+      mfa,
       lambdaTriggers: {
         preSignUp: autoConfirmTrigger,
       },
@@ -305,6 +307,7 @@ class StorageIntgrationTestEnvironment extends IntegrationTestStackEnvironment<S
         userPoolConfig: {
           userPoolId: userPool.userPoolId,
           userPoolClientId: userPoolClient.userPoolClientId,
+          mfa,
         },
         identityPoolConfig: {
           identityPoolId: identityPool.ref,

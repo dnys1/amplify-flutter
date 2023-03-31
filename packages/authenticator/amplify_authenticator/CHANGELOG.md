@@ -1,3 +1,50 @@
+## 1.0.0-next.5
+
+### Fixes
+- fix(authenticator): Hub event processing
+- fix(authenticator): Verify attribute state
+
+### Features
+- feat(authenticator): Add AutoFill Capabilities ([#2306](https://github.com/aws-amplify/amplify-flutter/pull/2306))
+
+### Breaking Changes
+- refactor(auth)!: Plugin options ([#2691](https://github.com/aws-amplify/amplify-flutter/pull/2691))
+
+## 1.0.0-next.4+2
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.4+1
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.4
+
+### Breaking Changes
+- refactor(auth)!: Make reset password step an enum
+- refactor(auth)!: Make sign-in step an enum
+- refactor(auth)!: Make sign-up step an enum
+- refactor(auth)!: State machine facade ([#2482](https://github.com/aws-amplify/amplify-flutter/pull/2482))
+
+## 1.0.0-next.3
+
+### Fixes
+- fix(authenticator): ARB syntax ([#2560](https://github.com/aws-amplify/amplify-flutter/pull/2560))
+
+### Breaking Changes
+- fix(auth)!: Fetch Auth Session offline behavior ([#2585](https://github.com/aws-amplify/amplify-flutter/pull/2585))
+
+## 1.0.0-next.2
+
+### Fixes
+- fix(authenticator): Example Dead Link ([#2505](https://github.com/aws-amplify/amplify-flutter/pull/2505))
+- fix(authenticator): Navigation via TabBar ([#2486](https://github.com/aws-amplify/amplify-flutter/pull/2486))
+- fix(authenticator): keyboard navigation ([#2473](https://github.com/aws-amplify/amplify-flutter/pull/2473))
+
+### Breaking Changes
+- refactor(auth)!: Align exception types
+- refactor(core)!: Migrate exception types
+
 ## 1.0.0-next.1+3
 
 ### Fixes

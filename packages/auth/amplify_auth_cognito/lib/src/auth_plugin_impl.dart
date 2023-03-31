@@ -4,12 +4,19 @@
 import 'dart:async';
 import 'dart:io';
 
+// ignore: implementation_imports
+import 'package:amplify_analytics_pinpoint/src/flutter_endpoint_info_store_manager.dart';
+// ignore: implementation_imports
+import 'package:amplify_analytics_pinpoint_dart/src/impl/analytics_client/endpoint_client/endpoint_info_store_manager.dart';
+
 import 'package:amplify_auth_cognito/src/credentials/legacy_credential_provider_impl.dart';
 import 'package:amplify_auth_cognito/src/native_auth_plugin.g.dart';
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
+// ignore: implementation_imports
 import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_platform_stub.dart'
-    if (dart.library.html) 'flows/hosted_ui/hosted_ui_platform_html.dart'
+    if (dart.library.html) 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_platform_html.dart'
     if (dart.library.ui) 'flows/hosted_ui/hosted_ui_platform_flutter.dart';
+// ignore: implementation_imports
 import 'package:amplify_auth_cognito_dart/src/state/machines/hosted_ui_state_machine.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_secure_storage/amplify_secure_storage.dart';
@@ -22,21 +29,13 @@ class AmplifyAuthCognito extends AmplifyAuthCognitoDart with AWSDebuggable {
   /// {@macro amplify_auth_cognito.amplify_auth_cognito}
   ///
   /// To change the default behavior of credential storage,
-  /// provide a [credentialStorage] value. If no value is provided,
-  /// [AmplifySecureStorage] will be used with a `scope` of "awsCognitoAuthPlugin".
-  ///
-  /// **NOTE**: Switching credential storage providers will likely result in
-  /// end-users needing to re-authenticate since no migrations are performed in
-  /// this case.
+  /// provide a [SecureStorageFactory] value. If no value is provided,
+  /// storage will be configured with default [AmplifySecureStorageConfig] values.
   AmplifyAuthCognito({
-    SecureStorageInterface? credentialStorage,
+    SecureStorageFactory? secureStorageFactory,
   }) : super(
-          credentialStorage: credentialStorage ??
-              AmplifySecureStorage(
-                config: AmplifySecureStorageConfig(
-                  scope: 'awsCognitoAuthPlugin',
-                ),
-              ),
+          secureStorageFactory:
+              secureStorageFactory ?? AmplifySecureStorage.factoryFrom(),
           hostedUiPlatformFactory: HostedUiPlatformImpl.new,
         );
 
@@ -47,36 +46,19 @@ class AmplifyAuthCognito extends AmplifyAuthCognitoDart with AWSDebuggable {
       CognitoUserAttributeKey,
       AuthUserAttribute<CognitoUserAttributeKey>,
       CognitoDevice,
-      CognitoSignUpOptions,
       CognitoSignUpResult,
-      CognitoConfirmSignUpOptions,
       CognitoSignUpResult,
-      CognitoResendSignUpCodeOptions,
       CognitoResendSignUpCodeResult,
-      CognitoSignInOptions,
       CognitoSignInResult,
-      CognitoConfirmSignInOptions,
       CognitoSignInResult,
-      SignOutOptions,
       SignOutResult,
-      CognitoUpdatePasswordOptions,
       UpdatePasswordResult,
-      CognitoResetPasswordOptions,
       CognitoResetPasswordResult,
-      CognitoConfirmResetPasswordOptions,
-      UpdatePasswordResult,
-      AuthUserOptions,
-      FetchUserAttributesOptions,
-      CognitoSessionOptions,
+      CognitoResetPasswordResult,
       CognitoAuthSession,
-      CognitoSignInWithWebUIOptions,
       CognitoSignInResult,
-      CognitoUpdateUserAttributeOptions,
       UpdateUserAttributeResult,
-      CognitoUpdateUserAttributesOptions,
-      ConfirmUserAttributeOptions,
       ConfirmUserAttributeResult,
-      CognitoResendUserAttributeConfirmationCodeOptions,
       ResendUserAttributeConfirmationCodeResult,
       AmplifyAuthCognito> pluginKey = _AmplifyAuthCognitoPluginKey();
 
@@ -104,8 +86,8 @@ class AmplifyAuthCognito extends AmplifyAuthCognitoDart with AWSDebuggable {
     try {
       await nativeBridge.addPlugin();
     } on PlatformException catch (e) {
-      if (e.code == 'AmplifyAlreadyConfiguredException' ||
-          e.code == 'AlreadyConfiguredException') {
+      if (e.code.contains('AmplifyAlreadyConfiguredException') ||
+          e.code.contains('AlreadyConfiguredException')) {
         throw const AmplifyAlreadyConfiguredException(
           AmplifyExceptionMessages.alreadyConfiguredDefaultMessage,
           recoverySuggestion:
@@ -124,6 +106,11 @@ class AmplifyAuthCognito extends AmplifyAuthCognitoDart with AWSDebuggable {
     AmplifyConfig? config,
     required AmplifyAuthProviderRepository authProviderRepo,
   }) async {
+    // Dependencies for AnalyticsMetadataType
+    stateMachine.addInstance<EndpointInfoStoreManager>(
+      FlutterEndpointInfoStoreManager(),
+    );
+
     await super.configure(
       config: config,
       authProviderRepo: authProviderRepo,
@@ -159,20 +146,28 @@ class AmplifyAuthCognito extends AmplifyAuthCognitoDart with AWSDebuggable {
   Future<CognitoSignUpResult> signUp({
     required String username,
     required String password,
-    CognitoSignUpOptions? options,
+    SignUpOptions? options,
   }) async {
+    options ??= const SignUpOptions();
+    final pluginOptions = reifyPluginOptions(
+      pluginOptions: options.pluginOptions,
+      defaultPluginOptions: const CognitoSignUpPluginOptions(),
+    );
     Map<String, String>? validationData;
     if (!zIsWeb && (Platform.isAndroid || Platform.isIOS)) {
       final nativeValidationData =
           await stateMachine.expect<NativeAuthBridge>().getValidationData();
       validationData = nativeValidationData.cast();
     }
-    options ??= CognitoSignUpOptions();
-    options = options.copyWith(
-      validationData: {
-        ...?validationData,
-        ...?options.validationData,
-      },
+    options = SignUpOptions(
+      userAttributes: options.userAttributes,
+      pluginOptions: CognitoSignUpPluginOptions(
+        clientMetadata: pluginOptions.clientMetadata,
+        validationData: {
+          ...pluginOptions.validationData,
+          ...?validationData,
+        },
+      ),
     );
     return super.signUp(
       username: username,
@@ -193,19 +188,15 @@ class _NativeAmplifyAuthCognito
   final CognitoAuthStateMachine _stateMachine;
 
   @override
-  Future<NativeAuthSession> fetchAuthSession(
-    bool getAwsCredentials,
-  ) async {
+  Future<NativeAuthSession> fetchAuthSession() async {
     try {
-      final authSession = await _basePlugin.fetchAuthSession(
-        options: CognitoSessionOptions(getAWSCredentials: getAwsCredentials),
-      );
+      final authSession = await _basePlugin.fetchAuthSession();
       final nativeAuthSession = NativeAuthSession(
         isSignedIn: authSession.isSignedIn,
-        userSub: authSession.userSub,
-        identityId: authSession.identityId,
+        userSub: authSession.userSubResult.valueOrNull,
+        identityId: authSession.identityIdResult.valueOrNull,
       );
-      final userPoolTokens = authSession.userPoolTokens;
+      final userPoolTokens = authSession.userPoolTokensResult.valueOrNull;
       if (userPoolTokens != null) {
         nativeAuthSession.userPoolTokens = NativeUserPoolTokens(
           accessToken: userPoolTokens.accessToken.raw,
@@ -213,7 +204,7 @@ class _NativeAmplifyAuthCognito
           idToken: userPoolTokens.idToken.raw,
         );
       }
-      final awsCredentials = authSession.credentials;
+      final awsCredentials = authSession.credentialsResult.valueOrNull;
       if (awsCredentials != null) {
         nativeAuthSession.awsCredentials = NativeAWSCredentials(
           accessKeyId: awsCredentials.accessKeyId,
@@ -235,7 +226,11 @@ class _NativeAmplifyAuthCognito
     final oauthParameters = OAuthParameters.fromJson(params.cast());
     final hostedUiStateMachine = _stateMachine.get(HostedUiStateMachine.type);
     if (hostedUiStateMachine != null) {
-      _stateMachine.dispatch(HostedUiEvent.exchange(oauthParameters));
+      unawaited(
+        _stateMachine.acceptAndComplete(
+          HostedUiEvent.exchange(oauthParameters),
+        ),
+      );
     } else {
       // Cache them as initial route parameters.
       _stateMachine.addInstance(oauthParameters);
@@ -251,98 +246,23 @@ class _AmplifyAuthCognitoPluginKey extends AuthPluginKey<
     CognitoUserAttributeKey,
     AuthUserAttribute<CognitoUserAttributeKey>,
     CognitoDevice,
-    CognitoSignUpOptions,
     CognitoSignUpResult,
-    CognitoConfirmSignUpOptions,
     CognitoSignUpResult,
-    CognitoResendSignUpCodeOptions,
     CognitoResendSignUpCodeResult,
-    CognitoSignInOptions,
     CognitoSignInResult,
-    CognitoConfirmSignInOptions,
     CognitoSignInResult,
-    SignOutOptions,
     SignOutResult,
-    CognitoUpdatePasswordOptions,
     UpdatePasswordResult,
-    CognitoResetPasswordOptions,
     CognitoResetPasswordResult,
-    CognitoConfirmResetPasswordOptions,
-    UpdatePasswordResult,
-    AuthUserOptions,
-    FetchUserAttributesOptions,
-    CognitoSessionOptions,
+    CognitoResetPasswordResult,
     CognitoAuthSession,
-    CognitoSignInWithWebUIOptions,
     CognitoSignInResult,
-    CognitoUpdateUserAttributeOptions,
     UpdateUserAttributeResult,
-    CognitoUpdateUserAttributesOptions,
-    ConfirmUserAttributeOptions,
     ConfirmUserAttributeResult,
-    CognitoResendUserAttributeConfirmationCodeOptions,
     ResendUserAttributeConfirmationCodeResult,
     AmplifyAuthCognito> {
   const _AmplifyAuthCognitoPluginKey();
 
   @override
   String get runtimeTypeName => 'AmplifyAuthCognito';
-}
-
-/// Extensions to [AuthCategory] when using [AmplifyAuthCognito].
-extension AmplifyAuthCognitoCategoryExtensions on AuthCategory<
-    CognitoAuthUser,
-    CognitoUserAttributeKey,
-    AuthUserAttribute<CognitoUserAttributeKey>,
-    CognitoDevice,
-    CognitoSignUpOptions,
-    CognitoSignUpResult,
-    CognitoConfirmSignUpOptions,
-    CognitoSignUpResult,
-    CognitoResendSignUpCodeOptions,
-    CognitoResendSignUpCodeResult,
-    CognitoSignInOptions,
-    CognitoSignInResult,
-    CognitoConfirmSignInOptions,
-    CognitoSignInResult,
-    SignOutOptions,
-    SignOutResult,
-    CognitoUpdatePasswordOptions,
-    UpdatePasswordResult,
-    CognitoResetPasswordOptions,
-    CognitoResetPasswordResult,
-    CognitoConfirmResetPasswordOptions,
-    UpdatePasswordResult,
-    AuthUserOptions,
-    FetchUserAttributesOptions,
-    CognitoSessionOptions,
-    CognitoAuthSession,
-    CognitoSignInWithWebUIOptions,
-    CognitoSignInResult,
-    CognitoUpdateUserAttributeOptions,
-    UpdateUserAttributeResult,
-    CognitoUpdateUserAttributesOptions,
-    ConfirmUserAttributeOptions,
-    ConfirmUserAttributeResult,
-    CognitoResendUserAttributeConfirmationCodeOptions,
-    ResendUserAttributeConfirmationCodeResult,
-    AmplifyAuthCognito> {
-  /// {@macro amplify_auth_cognito_dart.impl.federate_to_identity_pool}
-  Future<FederateToIdentityPoolResult> federateToIdentityPool({
-    required String token,
-    required AuthProvider provider,
-    FederateToIdentityPoolOptions? options,
-  }) async {
-    final request = FederateToIdentityPoolRequest(
-      token: token,
-      provider: provider,
-      options: options,
-    );
-    return plugin.federateToIdentityPool(request: request);
-  }
-
-  /// {@macro amplify_auth_cognito_dart.impl.clear_federation_to_identity_pool}
-  Future<void> clearFederationToIdentityPool() async {
-    return plugin.clearFederationToIdentityPool();
-  }
 }

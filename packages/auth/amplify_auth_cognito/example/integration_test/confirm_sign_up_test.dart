@@ -8,7 +8,6 @@ import 'package:amplify_test/amplify_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'utils/mock_data.dart';
 import 'utils/setup_utils.dart';
 import 'utils/test_utils.dart';
 
@@ -33,17 +32,17 @@ void main() {
         final signUpResult = await Amplify.Auth.signUp(
           username: username,
           password: password,
-          options: CognitoSignUpOptions(
+          options: SignUpOptions(
             userAttributes: {
               CognitoUserAttributeKey.email: generateEmail(),
-              CognitoUserAttributeKey.phoneNumber: mockPhoneNumber
+              CognitoUserAttributeKey.phoneNumber: generatePhoneNumber(),
             },
           ),
         ) as CognitoSignUpResult;
         expect(signUpResult.isSignUpComplete, false);
         expect(
           signUpResult.nextStep.codeDeliveryDetails?.deliveryMedium,
-          'SMS',
+          DeliveryMedium.sms,
         );
         expect(signUpResult.userId, isNotNull);
       }
@@ -53,7 +52,7 @@ void main() {
         final password = generatePassword();
 
         // Sign up, but do not confirm, user
-        final otpResult = await getOtpCode(username);
+        final otpResult = await getOtpCode(UserAttribute.username(username));
         await signUpWithoutConfirming(username, password);
 
         // Confirm sign up and complete sign in
@@ -69,7 +68,7 @@ void main() {
         final password = generatePassword();
 
         // Sign up, but do not confirm, user
-        final otpResult = await getOtpCode(username);
+        final otpResult = await getOtpCode(UserAttribute.username(username));
 
         await signUpWithoutConfirming(username, password);
 
@@ -78,7 +77,7 @@ void main() {
           username: username,
           password: password,
         );
-        expect(signInResult.nextStep.signInStep, 'CONFIRM_SIGN_UP');
+        expect(signInResult.nextStep.signInStep, AuthSignInStep.confirmSignUp);
 
         // Confirm sign up and complete sign in
         final confirmResult = await Amplify.Auth.confirmSignUp(
@@ -91,7 +90,7 @@ void main() {
           username: username,
           password: password,
         );
-        expect(signInComplete.nextStep.signInStep, 'DONE');
+        expect(signInComplete.nextStep.signInStep, AuthSignInStep.done);
       });
 
       asyncTest('can resend sign up code', (_) async {
@@ -99,17 +98,20 @@ void main() {
         final password = generatePassword();
 
         // Sign up, but do not confirm, user
-        var otpResult = await getOtpCode(username);
+        var otpResult = await getOtpCode(UserAttribute.username(username));
         await signUpWithoutConfirming(username, password);
 
         // Throw away code and get next one
         await otpResult.code;
-        otpResult = await getOtpCode(username);
+        otpResult = await getOtpCode(UserAttribute.username(username));
 
         final resendResult = await Amplify.Auth.resendSignUpCode(
           username: username,
         );
-        expect(resendResult.codeDeliveryDetails.deliveryMedium, 'SMS');
+        expect(
+          resendResult.codeDeliveryDetails.deliveryMedium,
+          DeliveryMedium.sms,
+        );
 
         final confirmResult = await Amplify.Auth.confirmSignUp(
           username: username,

@@ -1,3 +1,57 @@
+## 0.8.0
+
+### Breaking Changes
+- refactor(auth)!: Plugin options ([#2691](https://github.com/aws-amplify/amplify-flutter/pull/2691))
+
+### Fixes
+- fix(auth): Always pass client metadata
+
+## 0.7.0
+
+### Fixes
+- fix(auth): Transform session expired exceptions ([#2688](https://github.com/aws-amplify/amplify-flutter/pull/2688))
+
+### Breaking Changes
+- chore(auth)!: Chain stack traces in state machine
+
+## 0.6.0+1
+
+- Minor bug fixes and improvements
+
+## 0.6.0
+
+### Breaking Changes
+- chore(auth)!: Change `AuthCodeDeliveryDetails.attributeKey` to be of type `AuthUserAttributeKey`
+- refactor(auth)!: Make attribute update step an enum
+- refactor(auth)!: Make reset password step an enum
+- refactor(auth)!: Make sign-in step an enum
+- refactor(auth)!: Make sign-up step an enum
+- refactor(auth)!: Remove category->plugin indirection for `getPlugin`
+- refactor(auth)!: State machine facade ([#2482](https://github.com/aws-amplify/amplify-flutter/pull/2482))
+
+### Fixes
+- fix(auth): Device tracking with alias
+- fix(auth): Retry sign-in on `ResourceNotFoundException` for device tracking
+- fix(auth): `federateToIdentityPool` discrepancies
+
+## 0.5.0
+
+### Fixes
+- fix(auth): Clear credentials before redirect on Web ([#2603](https://github.com/aws-amplify/amplify-flutter/pull/2603))
+- fix(auth): Refresh token in non-state machine calls ([#2572](https://github.com/aws-amplify/amplify-flutter/pull/2572))
+- fix(auth): SessionExpired Auth Hub event ([#2609](https://github.com/aws-amplify/amplify-flutter/pull/2609))
+
+### Breaking Changes
+- fix(auth)!: Fetch Auth Session offline behavior ([#2585](https://github.com/aws-amplify/amplify-flutter/pull/2585))
+
+## 0.4.0
+
+### Breaking Changes
+- chore(auth)!: Remove `isPreferPrivateSession` from `CognitoSignOutWithWebUIOptions` ([#2538](https://github.com/aws-amplify/amplify-flutter/pull/2538))
+- refactor(auth)!: Align exception types
+- refactor(auth)!: Make SRP failures errors
+- refactor(auth)!: Remove intermediate request types ([#2475](https://github.com/aws-amplify/amplify-flutter/pull/2475))
+
 ## 0.3.1
 
 ### Fixes

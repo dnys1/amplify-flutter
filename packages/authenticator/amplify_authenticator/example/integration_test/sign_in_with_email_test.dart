@@ -4,10 +4,9 @@
 // This test follows the Amplify UI feature "sign-in-with-email"
 // https://github.com/aws-amplify/amplify-ui/blob/main/packages/e2e/features/ui/components/authenticator/sign-in-with-email.feature
 
-import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_authenticator_test/amplify_authenticator_test.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_test/amplify_test.dart';
+import 'package:amplify_integration_test/amplify_integration_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -25,7 +24,6 @@ void main() {
     setUpAll(() async {
       await loadConfiguration(
         environmentName: 'sign-in-with-email',
-        additionalConfigs: [AmplifyAPI()],
       );
     });
 
@@ -44,7 +42,7 @@ void main() {
         ]),
       );
 
-      SignInPage signInPage = SignInPage(tester: tester);
+      final signInPage = SignInPage(tester: tester);
       signInPage.expectUsername(label: 'Email');
 
       // When I type my "email" with status "UNKNOWN"
@@ -79,8 +77,8 @@ void main() {
         ]),
       );
 
-      SignInPage signInPage = SignInPage(tester: tester);
-      ConfirmSignUpPage confirmSignUpPage = ConfirmSignUpPage(tester: tester);
+      final signInPage = SignInPage(tester: tester);
+      final confirmSignUpPage = ConfirmSignUpPage(tester: tester);
 
       final otpResult = await getOtpCode(UserAttribute.email(email));
 
@@ -148,7 +146,7 @@ void main() {
         ]),
       );
 
-      SignInPage signInPage = SignInPage(tester: tester);
+      final signInPage = SignInPage(tester: tester);
       signInPage.expectUsername(label: 'Email');
 
       // When I type my "email" with status "CONFIRMED"
@@ -197,7 +195,7 @@ void main() {
         ]),
       );
 
-      SignInPage signInPage = SignInPage(tester: tester);
+      final signInPage = SignInPage(tester: tester);
       signInPage.expectUsername(label: 'Email');
 
       // When I type my "email" with status "CONFIRMED"
@@ -249,8 +247,8 @@ void main() {
         ]),
       );
 
-      SignInPage signInPage = SignInPage(tester: tester);
-      ConfirmSignInPage confirmSignInPage = ConfirmSignInPage(tester: tester);
+      final signInPage = SignInPage(tester: tester);
+      final confirmSignInPage = ConfirmSignInPage(tester: tester);
       signInPage.expectUsername(label: 'Email');
 
       // When I type my "username"

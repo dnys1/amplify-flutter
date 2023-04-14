@@ -197,7 +197,7 @@ Future<void> getUrlOperation() async {
         expiresIn: const Duration(
           minutes: 10,
         ),
-        checkObjectExistence: true,
+        validateObjectExistence: true,
         useAccelerateEndpoint: useAccelerateEndpoint,
       ),
     ),
@@ -358,11 +358,11 @@ Future<void> uploadFileOperation() async {
     onProgress: onTransferProgress,
     options: StorageUploadFileOptions(
       accessLevel: accessLevel,
+      metadata: {
+        'nameTag': nameTag,
+      },
       pluginOptions: S3UploadFilePluginOptions(
         getProperties: true,
-        metadata: {
-          'nameTag': nameTag,
-        },
         useAccelerateEndpoint: useAccelerateEndpoint,
       ),
     ),

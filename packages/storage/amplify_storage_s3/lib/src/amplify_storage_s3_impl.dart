@@ -19,21 +19,8 @@ class AmplifyStorageS3 extends AmplifyStorageS3Dart {
 
   /// A plugin key which can be used with `Amplify.Storage.getPlugin` to retrieve
   /// a S3-specific Storage category interface.
-  static const StoragePluginKey<
-      S3ListOperation,
-      S3GetPropertiesOperation,
-      S3GetUrlOperation,
-      S3UploadDataOperation,
-      S3UploadFileOperation,
-      S3DownloadDataOperation,
-      S3DownloadFileOperation,
-      S3CopyOperation,
-      S3MoveOperation,
-      S3RemoveOperation,
-      S3RemoveManyOperation,
-      S3Item,
-      S3TransferProgress,
-      AmplifyStorageS3> pluginKey = _AmplifyStorageS3PluginKey();
+  static const StoragePluginKey<AmplifyStorageS3> pluginKey =
+      _AmplifyStorageS3PluginKey();
 
   @override
   Future<void> configure({
@@ -43,27 +30,13 @@ class AmplifyStorageS3 extends AmplifyStorageS3Dart {
     await super.configure(config: config, authProviderRepo: authProviderRepo);
 
     // override the path provider dependency added by AmplifyStorageS3Dart
-    dependencyManager
+    dependencies
       ..addInstance<db_common.Connect>(db_common.connect)
-      ..addBuilder<AppPathProvider>(S3AppPathProvider.new);
+      ..addBuilder<AppPathProvider>((_) => S3AppPathProvider());
   }
 }
 
-class _AmplifyStorageS3PluginKey extends StoragePluginKey<
-    S3ListOperation,
-    S3GetPropertiesOperation,
-    S3GetUrlOperation,
-    S3UploadDataOperation,
-    S3UploadFileOperation,
-    S3DownloadDataOperation,
-    S3DownloadFileOperation,
-    S3CopyOperation,
-    S3MoveOperation,
-    S3RemoveOperation,
-    S3RemoveManyOperation,
-    S3Item,
-    S3TransferProgress,
-    AmplifyStorageS3> {
+class _AmplifyStorageS3PluginKey extends StoragePluginKey<AmplifyStorageS3> {
   const _AmplifyStorageS3PluginKey();
 
   @override

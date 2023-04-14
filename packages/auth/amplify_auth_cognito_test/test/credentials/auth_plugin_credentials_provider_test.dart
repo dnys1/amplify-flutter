@@ -3,9 +3,11 @@
 
 import 'dart:async';
 
-import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:amplify_auth_cognito_dart/src/credentials/auth_plugin_credentials_provider.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
+import 'package:amplify_auth_cognito_dart/src/state/event/configuration_event.dart';
+import 'package:amplify_auth_cognito_dart/src/state/state/configuration_state.dart';
 import 'package:amplify_auth_cognito_test/common/mock_clients.dart';
 import 'package:amplify_auth_cognito_test/common/mock_config.dart';
 import 'package:amplify_auth_cognito_test/common/mock_secure_storage.dart';
@@ -20,7 +22,7 @@ void main() {
 
     setUp(() async {
       stateMachine = CognitoAuthStateMachine()
-        ..addBuilder<SecureStorageInterface>(MockSecureStorage.new)
+        ..addBuilder<SecureStorageInterface>((_) => MockSecureStorage())
         ..dispatch(ConfigurationEvent.configure(mockConfig)).ignore();
       provider = AuthPluginCredentialsProviderImpl(stateMachine);
 

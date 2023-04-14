@@ -1,3 +1,46 @@
+## 1.0.0-next.8+1
+
+### Features
+- feat(notifications): implement push notification Flutter iOS module ([#2707](https://github.com/aws-amplify/amplify-flutter/pull/2707))
+- feat(notifications): killed state notification handling and Analytics integration ([#2747](https://github.com/aws-amplify/amplify-flutter/pull/2747))
+- feat(push): interfaces, category function and types added for push
+
+### Fixes
+- fix(core): formatting issues in notifications data types
+- fix(notifications): Analytics naming updates, Android test fixes and token received bug fix ([#2824](https://github.com/aws-amplify/amplify-flutter/pull/2824))
+- fix(notifications): analyzer reported issues
+- fix(notifications): correct rebased codebase
+- fix(notifications): killed state behavior correction, no longer calls lib/main.dart ([#2759](https://github.com/aws-amplify/amplify-flutter/pull/2759))
+- fix(notifications): the luanch notification should be nullified on some occasions
+- fix(notifications): type casting error and clean up example app ([#2817](https://github.com/aws-amplify/amplify-flutter/pull/2817))
+
+## 1.0.0-next.8
+
+### Breaking Changes
+- chore(analytics)!: Remove Analytics Prefix ([#2753](https://github.com/aws-amplify/amplify-flutter/pull/2753))
+- chore(analytics)!: export endpointManager, redo exports
+- chore(auth)!: send Pinpoint Endpoint id to Cognito
+- feat(storage)!: update upload APIs options to add metadata field ([#2815](https://github.com/aws-amplify/amplify-flutter/pull/2815))
+- refactor(auth)!: Remove generic types ([#2804](https://github.com/aws-amplify/amplify-flutter/pull/2804))
+- refactor(core)!: Dependency management
+- refactor(storage)!: rename checkObjectExistence to validateObjectExistence
+- refactor(storage)!: storage category APIs to use category level plugin options ([#2754](https://github.com/aws-amplify/amplify-flutter/pull/2754))
+- chore(secure_storage)!: add factory constructor, mark AmplifySecureStorage as internal ([#2607](https://github.com/aws-amplify/amplify-flutter/pull/2607))
+
+### Fixes
+- fix(api): Auth provider registration
+- fix(api): Include owner field in selection set ([#2795](https://github.com/aws-amplify/amplify-flutter/pull/2795))
+- fix(api): Support model definition target name ([#2814](https://github.com/aws-amplify/amplify-flutter/pull/2814))
+- fix(auth): Always allow repeated `confirmSignIn` attempts
+- fix(auth): Process sign-in events once
+- fix(secure_storage): resolve conflict with win32 package ([#2829](https://github.com/aws-amplify/amplify-flutter/pull/2829))
+
+### Features
+- feat(storage): add generic StorageOperationCanceledException in core
+- feat(storage): add handling of non-ascii object metadata values
+- feat(storage): make access level optional for storage APIs ([#2793](https://github.com/aws-amplify/amplify-flutter/pull/2793))
+- feat(storage): promote StorageTransferState to amplify_core
+
 ## 1.0.0-next.7
 
 ### Breaking Changes

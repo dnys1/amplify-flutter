@@ -8,11 +8,27 @@ import 'package:amplify_core/amplify_core.dart';
 /// failure.
 /// {@endtemplate}
 class NetworkException extends AmplifyException
-    implements AuthException, StorageException, AnalyticsException {
+    implements
+        ApiException,
+        AuthException,
+        StorageException,
+        AnalyticsException {
   /// {@macro amplify_core.network_exception}
   const NetworkException(
     super.message, {
     super.recoverySuggestion,
     super.underlyingException,
   });
+}
+
+extension AWSHttpExceptionToAmplifyException on AWSHttpException {
+  /// Creates a [NetworkException] with the [AWSHttpException] as the underlying
+  /// exception.
+  NetworkException toNetworkException() {
+    return NetworkException(
+      'The request failed due to a network error.',
+      recoverySuggestion: 'Ensure that you have an active network connection',
+      underlyingException: this,
+    );
+  }
 }

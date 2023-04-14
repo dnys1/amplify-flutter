@@ -13,6 +13,8 @@ import 'package:meta/meta.dart';
 part 'amplify_analytics_category.dart';
 part 'amplify_api_category.dart';
 part 'amplify_datastore_category.dart';
+part 'amplify_notifications_category.dart';
+part 'amplify_push_notifications_category.dart';
 part 'amplify_storage_category.dart';
 
 String _errorMsgPluginNotAdded(String pluginName) =>
@@ -45,6 +47,9 @@ enum Category {
 
   /// Upload and download files from the cloud
   storage,
+
+  /// Push Notifications
+  pushNotifications,
 }
 
 extension CategoryName on Category {
@@ -62,6 +67,8 @@ extension CategoryName on Category {
         return 'Hub';
       case Category.storage:
         return 'Storage';
+      case Category.pushNotifications:
+        return 'PushNotifications';
     }
   }
 }
@@ -106,7 +113,7 @@ abstract class AmplifyCategory<P extends AmplifyPluginInterface> {
   /// Resets the category, clearing all registered plugins.
   @visibleForTesting
   Future<void> reset() async {
-    // ignore: invalid_use_of_visible_for_testing_member
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     await Future.wait<void>(_plugins.map((plugin) => plugin.reset()));
     _plugins.clear();
   }

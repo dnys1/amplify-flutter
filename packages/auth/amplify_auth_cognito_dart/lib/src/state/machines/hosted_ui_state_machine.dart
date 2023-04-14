@@ -6,7 +6,9 @@ import 'dart:convert';
 
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:amplify_auth_cognito_dart/src/credentials/cognito_keys.dart';
+import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_platform.dart';
 import 'package:amplify_auth_cognito_dart/src/model/auth_user_ext.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_secure_storage_dart/amplify_secure_storage_dart.dart';
@@ -34,7 +36,7 @@ class HostedUiStateMachine
   SecureStorageInterface get _secureStorage => getOrCreate();
 
   /// The platform-specific behavior.
-  late final HostedUiPlatform _platform = getOrCreate(HostedUiPlatform.token);
+  late final HostedUiPlatform _platform = getOrCreate();
 
   @override
   Future<void> resolve(HostedUiEvent event) async {

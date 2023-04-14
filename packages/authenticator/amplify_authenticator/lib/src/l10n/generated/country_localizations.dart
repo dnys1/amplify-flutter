@@ -3,20 +3,20 @@
 
 import 'dart:async';
 
+import 'package:amplify_authenticator/src/l10n/generated/country_localizations_en.dart'
+    deferred as country_localizations_en;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'country_localizations_en.dart' deferred as country_localizations_en;
-
-/// Callers can lookup localized strings with an instance of AuthenticatorCountryLocalizations returned
-/// by `AuthenticatorCountryLocalizations.of(context)`.
+/// Callers can lookup localized strings with an instance of AuthenticatorCountryLocalizations
+/// returned by `AuthenticatorCountryLocalizations.of(context)`.
 ///
 /// Applications need to include `AuthenticatorCountryLocalizations.delegate()` in their app's
-/// localizationDelegates list, and the locales they support in the app's
-/// supportedLocales list. For example:
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
 ///
-/// ```
+/// ```dart
 /// import 'generated/country_localizations.dart';
 ///
 /// return MaterialApp(
@@ -31,14 +31,14 @@ import 'country_localizations_en.dart' deferred as country_localizations_en;
 /// Please make sure to update your pubspec.yaml to include the following
 /// packages:
 ///
-/// ```
+/// ```yaml
 /// dependencies:
 ///   # Internationalization support.
 ///   flutter_localizations:
 ///     sdk: flutter
 ///   intl: any # Use the pinned version from flutter_localizations
 ///
-///   # rest of dependencies
+///   # Rest of dependencies
 /// ```
 ///
 /// ## iOS Applications
@@ -62,13 +62,15 @@ import 'country_localizations_en.dart' deferred as country_localizations_en;
 /// property.
 abstract class AuthenticatorCountryLocalizations {
   AuthenticatorCountryLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+      : localeName = intl.Intl.canonicalizedLocale(locale);
 
   final String localeName;
 
   static AuthenticatorCountryLocalizations? of(BuildContext context) {
     return Localizations.of<AuthenticatorCountryLocalizations>(
-        context, AuthenticatorCountryLocalizations);
+      context,
+      AuthenticatorCountryLocalizations,
+    );
   }
 
   static const LocalizationsDelegate<AuthenticatorCountryLocalizations>
@@ -1594,8 +1596,10 @@ Future<AuthenticatorCountryLocalizations>
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'en':
-      return country_localizations_en.loadLibrary().then((dynamic _) =>
-          country_localizations_en.AuthenticatorCountryLocalizationsEn());
+      return country_localizations_en.loadLibrary().then(
+            (dynamic _) =>
+                country_localizations_en.AuthenticatorCountryLocalizationsEn(),
+          );
   }
 
   throw FlutterError(

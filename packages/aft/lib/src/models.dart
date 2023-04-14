@@ -23,6 +23,7 @@ const falsePositiveExamples = [
   'smoke_test',
   'amplify_auth_cognito_test',
   'amplify_secure_storage_test',
+  'amplify_native_legacy_wrapper',
 
   // Smithy Golden packages
   'aws_json1_0_v1',
@@ -35,6 +36,8 @@ const falsePositiveExamples = [
   'rest_json1_v2',
   'rest_xml_v2',
   'rest_xml_with_namespace_v2',
+  'custom_v1',
+  'custom_v2',
 ];
 
 /// The flavor of a package, e.g. Dart/Flutter.

@@ -3,13 +3,13 @@
 
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:amplify_auth_cognito_dart/src/credentials/device_metadata_repository.dart';
-import 'package:amplify_auth_cognito_dart/src/exception/auth_precondition_exception.dart';
 import 'package:amplify_auth_cognito_dart/src/flows/constants.dart';
 import 'package:amplify_auth_cognito_dart/src/model/cognito_device_secrets.dart';
 import 'package:amplify_auth_cognito_dart/src/model/sign_in_parameters.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart'
     as cognito_idp;
-import 'package:amplify_auth_cognito_dart/src/state/machines/sign_in_state_machine.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
+import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_auth_cognito_test/common/mock_clients.dart';
 import 'package:amplify_auth_cognito_test/common/mock_config.dart';
 import 'package:amplify_auth_cognito_test/common/mock_secure_storage.dart';
@@ -291,7 +291,7 @@ void main() {
           completion(isA<Configured>()),
         );
         deviceRepo = DeviceMetadataRepository(userPoolConfig, secureStorage);
-        stateMachine.addInstance(deviceRepo, DeviceMetadataRepository.token);
+        stateMachine.addInstance<DeviceMetadataRepository>(deviceRepo);
       });
 
       test('should fail when verification fails', () async {
@@ -642,20 +642,6 @@ void main() {
             ),
           ),
           throwsA(const _SignInException()),
-        );
-
-        await expectLater(
-          stateMachine.acceptAndComplete(
-            SignInEvent.initiate(
-              parameters: SignInParameters(
-                (b) => b
-                  ..username = username
-                  ..password = password,
-              ),
-            ),
-          ),
-          throwsA(isA<AuthPreconditionException>()),
-          reason: 'Sign-in reattempts on the same state machine are disallowed',
         );
 
         await expectLater(

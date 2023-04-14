@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:amplify_auth_cognito_dart/src/credentials/auth_plugin_credentials_provider.dart';
 import 'package:amplify_auth_cognito_dart/src/credentials/device_metadata_repository.dart';
+import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_platform.dart';
 import 'package:amplify_auth_cognito_dart/src/model/session/cognito_sign_in_details.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart';
@@ -14,7 +15,8 @@ import 'package:meta/meta.dart';
 
 /// Default state machine builders for [CognitoAuthStateMachine].
 @visibleForTesting
-final stateMachineBuilders = <StateMachineToken, Function>{
+final stateMachineBuilders = <StateMachineToken,
+    StateMachineBuilder<AuthEvent, AuthState, CognitoAuthStateMachine>>{
   ConfigurationStateMachine.type: ConfigurationStateMachine.new,
   CredentialStoreStateMachine.type: CredentialStoreStateMachine.new,
   FetchAuthSessionStateMachine.type: FetchAuthSessionStateMachine.new,
@@ -24,17 +26,15 @@ final stateMachineBuilders = <StateMachineToken, Function>{
   SignUpStateMachine.type: SignUpStateMachine.new,
 };
 
-AWSHttpClient _makeAwsHttpClient() =>
-    AmplifyHttpClient()..supportedProtocols = SupportedProtocols.http1;
-
 /// Default defaultDependencies for [CognitoAuthStateMachine].
 @visibleForTesting
 final defaultDependencies = <Token, DependencyBuilder>{
-  HostedUiPlatform.token: HostedUiPlatform.new,
-  const Token<http.Client>(): http.Client.new,
-  const Token<AWSHttpClient>(): _makeAwsHttpClient,
-  AuthPluginCredentialsProvider.token: AuthPluginCredentialsProviderImpl.new,
-  DeviceMetadataRepository.token: DeviceMetadataRepository.new,
+  const Token<HostedUiPlatform>(): HostedUiPlatform.new,
+  const Token<http.Client>(): (_) => http.Client(),
+  const Token<AuthPluginCredentialsProvider>():
+      AuthPluginCredentialsProviderImpl.new,
+  const Token<DeviceMetadataRepository>():
+      DeviceMetadataRepository.fromDependencies,
 };
 
 /// {@template amplify_auth_cognito.cognito_auth_state_machine}
@@ -47,8 +47,12 @@ class CognitoAuthStateMachine
     DependencyManager? dependencyManager,
   }) : super(
           stateMachineBuilders,
-          dependencyManager ?? DependencyManager(defaultDependencies),
-        );
+          dependencyManager ?? AmplifyDependencyManager(),
+        ) {
+    defaultDependencies.forEach((token, builder) {
+      addBuilder(builder, token);
+    });
+  }
 
   @override
   StateMachineToken mapEventToMachine(AuthEvent event) {

@@ -6,6 +6,8 @@ import 'dart:math';
 
 import 'package:amplify_core/amplify_core.dart' hide PaginatedResult;
 import 'package:amplify_storage_s3_dart/amplify_storage_s3_dart.dart';
+import 'package:amplify_storage_s3_dart/src/exception/s3_storage_exception.dart'
+    as s3_exception;
 import 'package:amplify_storage_s3_dart/src/sdk/s3.dart' as s3;
 import 'package:amplify_storage_s3_dart/src/sdk/src/s3/common/endpoint_resolver.dart'
     as endpoint_resolver;
@@ -28,23 +30,21 @@ const testDateTimeNowOverride = #_testDateTimeNowOverride;
 class StorageS3Service {
   /// {@macro amplify_storage_s3.storage_s3_service}
   StorageS3Service({
-    required String defaultBucket,
-    required String defaultRegion,
+    required S3PluginConfig s3PluginConfig,
     required S3PrefixResolver prefixResolver,
     required AWSIamAmplifyAuthProvider credentialsProvider,
     required AWSLogger logger,
     String? delimiter,
     required DependencyManager dependencyManager,
-  })  : _defaultBucket = defaultBucket,
-        _defaultRegion = defaultRegion,
+  })  : _s3PluginConfig = s3PluginConfig,
         _delimiter = delimiter ?? '/',
         // dependencyManager.get() => S3Client is used for unit tests
         _defaultS3Client = dependencyManager.get() ??
             s3.S3Client(
-              region: defaultRegion,
+              region: s3PluginConfig.region,
               credentialsProvider: credentialsProvider,
               s3ClientConfig: _defaultS3ClientConfig,
-              client: AmplifyHttpClient()
+              client: AmplifyHttpClient(dependencyManager)
                 ..supportedProtocols = SupportedProtocols.http1,
             ),
         _prefixResolver = prefixResolver,
@@ -63,8 +63,7 @@ class StorageS3Service {
   static final _defaultS3SignerConfiguration =
       sigv4.S3ServiceConfiguration(signPayload: false);
 
-  final String _defaultBucket;
-  final String _defaultRegion;
+  final S3PluginConfig _s3PluginConfig;
   final String _delimiter;
   final s3.S3Client _defaultS3Client;
   final S3PrefixResolver _prefixResolver;
@@ -74,12 +73,12 @@ class StorageS3Service {
   final DateTime _serviceStartingTime;
 
   sigv4.AWSCredentialScope get _signerScope => sigv4.AWSCredentialScope(
-        region: _defaultRegion,
+        region: _s3PluginConfig.region,
         service: AWSService.s3,
       );
 
   transfer.TransferDatabase get _transferDatabase =>
-      _dependencyManager.getOrCreate(transfer.TransferDatabase.token);
+      _dependencyManager.getOrCreate();
 
   /// Takes in input from [AmplifyStorageS3Dart.list] API to compose a
   /// [s3.ListObjectsV2Request] and to S3 service, then returns a
@@ -87,7 +86,7 @@ class StorageS3Service {
   /// [s3.S3Client.listObjectsV2] API.
   ///
   /// {@template storage.s3_service.throw_exception_unknown_smithy_exception}
-  /// May throw [S3Exception] based on
+  /// May throw exception based on
   /// service returned [smithy.UnknownSmithyHttpException] if any.
   /// {@endtemplate}
   Future<S3ListResult> list({
@@ -99,7 +98,7 @@ class StorageS3Service {
     final resolvedPrefix = await getResolvedPrefix(
       prefixResolver: _prefixResolver,
       logger: _logger,
-      accessLevel: options.accessLevel,
+      accessLevel: options.accessLevel ?? _s3PluginConfig.defaultAccessLevel,
       identityId: s3PluginOptions.targetIdentityId,
     );
 
@@ -108,7 +107,7 @@ class StorageS3Service {
     if (!s3PluginOptions.listAll) {
       final request = s3.ListObjectsV2Request.build((builder) {
         builder
-          ..bucket = _defaultBucket
+          ..bucket = _s3PluginConfig.bucket
           ..prefix = listTargetPrefix
           ..maxKeys = options.pageSize
           ..continuationToken = options.nextToken
@@ -122,7 +121,9 @@ class StorageS3Service {
         );
       } on smithy.UnknownSmithyHttpException catch (error) {
         // S3Client.headObject may return 403 error
-        throw S3Exception.fromUnknownSmithyHttpException(error);
+        throw error.toStorageException();
+      } on AWSHttpException catch (error) {
+        throw error.toNetworkException();
       }
     }
 
@@ -132,7 +133,7 @@ class StorageS3Service {
     try {
       final request = s3.ListObjectsV2Request.build((builder) {
         builder
-          ..bucket = _defaultBucket
+          ..bucket = _s3PluginConfig.bucket
           ..prefix = listTargetPrefix
           ..delimiter = s3PluginOptions.excludeSubPaths ? _delimiter : null;
       });
@@ -156,7 +157,9 @@ class StorageS3Service {
       return recursiveResult;
     } on smithy.UnknownSmithyHttpException catch (error) {
       // S3Client.headObject may return 403 error
-      throw S3Exception.fromUnknownSmithyHttpException(error);
+      throw error.toStorageException();
+    } on AWSHttpException catch (error) {
+      throw error.toNetworkException();
     }
   }
 
@@ -177,7 +180,7 @@ class StorageS3Service {
     final resolvedPrefix = await getResolvedPrefix(
       prefixResolver: _prefixResolver,
       logger: _logger,
-      accessLevel: options.accessLevel,
+      accessLevel: options.accessLevel ?? _s3PluginConfig.defaultAccessLevel,
       identityId: s3PluginOptions.targetIdentityId,
     );
 
@@ -187,7 +190,7 @@ class StorageS3Service {
       storageItem: S3Item.fromHeadObjectOutput(
         await headObject(
           s3client: _defaultS3Client,
-          bucket: _defaultBucket,
+          bucket: _s3PluginConfig.bucket,
           key: keyToGetProperties,
         ),
         key: key,
@@ -207,9 +210,10 @@ class StorageS3Service {
     final s3PluginOptions = options.pluginOptions as S3GetUrlPluginOptions? ??
         const S3GetUrlPluginOptions();
 
-    if (s3PluginOptions.checkObjectExistence) {
-      // make a HeadObject call for checking object existence
-      // it may throw 404 if object doesn't exist in bucket
+    if (s3PluginOptions.validateObjectExistence) {
+      // make a HeadObject call for validating object existence
+      // the validation may throw exceptions that are thrown from
+      // the `getProperties` API (i.e. HeadObject)
       final targetIdentityId = s3PluginOptions.targetIdentityId;
       final getPropertiesOptions = targetIdentityId == null
           ? StorageGetPropertiesOptions(
@@ -229,7 +233,7 @@ class StorageS3Service {
     final resolvedPrefix = await getResolvedPrefix(
       prefixResolver: _prefixResolver,
       logger: _logger,
-      accessLevel: options.accessLevel,
+      accessLevel: options.accessLevel ?? _s3PluginConfig.defaultAccessLevel,
       identityId: s3PluginOptions.targetIdentityId,
     );
     var keyToGetUrl = '$resolvedPrefix$key';
@@ -237,12 +241,13 @@ class StorageS3Service {
       keyToGetUrl = '/$keyToGetUrl';
     }
 
-    var host = '$_defaultBucket.${_getS3EndpointHost(region: _defaultRegion)}';
+    var host =
+        '${_s3PluginConfig.bucket}.${_getS3EndpointHost(region: _s3PluginConfig.region)}';
 
     if (s3PluginOptions.useAccelerateEndpoint) {
       // https: //docs.aws.amazon.com/AmazonS3/latest/userguide/transfer-acceleration-getting-started.html
       host = host
-          .replaceFirst(RegExp('$_defaultRegion\\.'), '')
+          .replaceFirst(RegExp('${_s3PluginConfig.region}\\.'), '')
           .replaceFirst(RegExp(r'\.s3\.'), '.s3-accelerate.');
     }
 
@@ -288,7 +293,8 @@ class StorageS3Service {
     final downloadDataTask = S3DownloadTask(
       s3Client: _defaultS3Client,
       defaultS3ClientConfig: _defaultS3ClientConfig,
-      bucket: _defaultBucket,
+      bucket: _s3PluginConfig.bucket,
+      defaultAccessLevel: _s3PluginConfig.defaultAccessLevel,
       key: key,
       options: options,
       prefixResolver: _prefixResolver,
@@ -320,7 +326,8 @@ class StorageS3Service {
       dataPayload,
       s3Client: _defaultS3Client,
       defaultS3ClientConfig: _defaultS3ClientConfig,
-      bucket: _defaultBucket,
+      bucket: _s3PluginConfig.bucket,
+      defaultAccessLevel: _s3PluginConfig.defaultAccessLevel,
       key: key,
       options: options,
       prefixResolver: _prefixResolver,
@@ -350,16 +357,17 @@ class StorageS3Service {
             const S3UploadFilePluginOptions();
     final uploadDataOptions = StorageUploadDataOptions(
       accessLevel: options.accessLevel,
+      metadata: options.metadata,
       pluginOptions: S3UploadDataPluginOptions(
         getProperties: s3PluginOptions.getProperties,
-        metadata: s3PluginOptions.metadata,
       ),
     );
     final uploadDataTask = S3UploadTask.fromAWSFile(
       localFile,
       s3Client: _defaultS3Client,
       defaultS3ClientConfig: _defaultS3ClientConfig,
-      bucket: _defaultBucket,
+      bucket: _s3PluginConfig.bucket,
+      defaultAccessLevel: _s3PluginConfig.defaultAccessLevel,
       key: key,
       options: uploadDataOptions,
       prefixResolver: _prefixResolver,
@@ -413,8 +421,8 @@ class StorageS3Service {
 
     final copyRequest = s3.CopyObjectRequest.build((builder) {
       builder
-        ..bucket = _defaultBucket
-        ..copySource = '$_defaultBucket/$sourceKey'
+        ..bucket = _s3PluginConfig.bucket
+        ..copySource = '${_s3PluginConfig.bucket}/$sourceKey'
         ..key = destinationKey
         ..metadataDirective = s3.MetadataDirective.copy;
     });
@@ -423,7 +431,9 @@ class StorageS3Service {
       await _defaultS3Client.copyObject(copyRequest).result;
     } on smithy.UnknownSmithyHttpException catch (error) {
       // S3Client.copyObject may return 403 or 404 error
-      throw S3Exception.fromUnknownSmithyHttpException(error);
+      throw error.toStorageException();
+    } on AWSHttpException catch (error) {
+      throw error.toNetworkException();
     }
 
     return S3CopyResult(
@@ -431,7 +441,7 @@ class StorageS3Service {
           ? S3Item.fromHeadObjectOutput(
               await headObject(
                 s3client: _defaultS3Client,
-                bucket: _defaultBucket,
+                bucket: _s3PluginConfig.bucket,
                 key: destinationKey,
               ),
               key: destination.storageItem.key,
@@ -475,11 +485,13 @@ class StorageS3Service {
               : const S3CopyPluginOptions(),
         ),
       );
-    } on S3Exception catch (error) {
-      throw S3Exception(
-        'Copy the source object failed while moving it due to: ${error.message}',
-        recoverySuggestion: error.recoverySuggestion!,
-        underlyingException: error.underlyingException,
+    } on StorageException catch (error) {
+      // Normally copy should not fail during moving, if it fails it's a
+      // "unknown" failure wrapping the underlying exception.
+      throw UnknownException(
+        'Copying the source object failed during the move operation.',
+        recoverySuggestion: 'Review the underlying exception.',
+        underlyingException: error,
       );
     }
 
@@ -495,14 +507,16 @@ class StorageS3Service {
     try {
       await _deleteObject(
         s3client: _defaultS3Client,
-        bucket: _defaultBucket,
+        bucket: _s3PluginConfig.bucket,
         key: keyToRemove,
       );
-    } on S3Exception catch (error) {
-      throw S3Exception(
-        'Delete the source object failed while moving it due to: ${error.message}',
-        recoverySuggestion: error.recoverySuggestion!,
-        underlyingException: error.underlyingException,
+    } on StorageException catch (error) {
+      // Normally delete should not fail during moving, if it fails it's a
+      // "unknown" failure wrapping the underlying exception.
+      throw UnknownException(
+        'Deleting the source object failed during the move operation.',
+        recoverySuggestion: 'Review the underlying exception.',
+        underlyingException: error,
       );
     }
 
@@ -521,14 +535,14 @@ class StorageS3Service {
     final resolvedPrefix = await getResolvedPrefix(
       prefixResolver: _prefixResolver,
       logger: _logger,
-      accessLevel: options.accessLevel,
+      accessLevel: options.accessLevel ?? _s3PluginConfig.defaultAccessLevel,
     );
 
     final keyToRemove = '$resolvedPrefix$key';
 
     await _deleteObject(
       s3client: _defaultS3Client,
-      bucket: _defaultBucket,
+      bucket: _s3PluginConfig.bucket,
       key: keyToRemove,
     );
 
@@ -553,7 +567,7 @@ class StorageS3Service {
     final resolvedPrefix = await getResolvedPrefix(
       prefixResolver: _prefixResolver,
       logger: _logger,
-      accessLevel: options.accessLevel,
+      accessLevel: options.accessLevel ?? _s3PluginConfig.defaultAccessLevel,
     );
 
     final objectIdentifiersToRemove = keys
@@ -572,7 +586,7 @@ class StorageS3Service {
       );
       final request = s3.DeleteObjectsRequest.build((builder) {
         builder
-          ..bucket = _defaultBucket
+          ..bucket = _s3PluginConfig.bucket
           // force to use sha256 instead of md5
           ..checksumAlgorithm = s3.ChecksumAlgorithm.sha256
           ..delete = s3.Delete.build((builder) {
@@ -593,7 +607,9 @@ class StorageS3Service {
         removedErrors.addAll(output.errors?.toList() ?? []);
       } on smithy.UnknownSmithyHttpException catch (error) {
         // S3Client.deleteObjects may return 403
-        throw S3Exception.fromUnknownSmithyHttpException(error);
+        throw error.toStorageException();
+      } on AWSHttpException catch (error) {
+        throw error.toNetworkException();
       } finally {
         objectIdentifiersToRemove.removeRange(0, numOfBatchedItems);
       }
@@ -623,7 +639,9 @@ class StorageS3Service {
     } on smithy.UnknownSmithyHttpException catch (error) {
       // S3Client.deleteObject may return 403, for deleting a non-existing
       // object, the API call returns a successful response
-      throw S3Exception.fromUnknownSmithyHttpException(error);
+      throw error.toStorageException();
+    } on AWSHttpException catch (error) {
+      throw error.toNetworkException();
     }
   }
 
@@ -654,10 +672,10 @@ class StorageS3Service {
       );
     } on Exception catch (error, st) {
       logger.error('Error happened while resolving prefix', error, st);
-      throw S3Exception(
-        'Error happened while resolving prefix.',
+      throw UnknownException(
+        'An error occurred while resolving the prefix.',
         recoverySuggestion:
-            'If you are providing a custom prefix resolver, please review the underlying exception to determine the cause.',
+            'If you are providing a custom prefix resolver, review the underlying exception to determine the cause.',
         underlyingException: error,
       );
     }
@@ -683,7 +701,9 @@ class StorageS3Service {
       return await s3client.headObject(request).result;
     } on smithy.UnknownSmithyHttpException catch (error) {
       // S3Client.headObject may return 403 or 404 error
-      throw S3Exception.fromUnknownSmithyHttpException(error);
+      throw error.toStorageException();
+    } on AWSHttpException catch (error) {
+      throw error.toNetworkException();
     }
   }
 
@@ -700,7 +720,7 @@ class StorageS3Service {
     for (final record in records) {
       final request = s3.AbortMultipartUploadRequest.build((builder) {
         builder
-          ..bucket = _defaultBucket
+          ..bucket = _s3PluginConfig.bucket
           ..key = record.objectKey
           ..uploadId = record.uploadId;
       });

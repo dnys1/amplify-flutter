@@ -3,14 +3,12 @@
 
 import 'dart:convert';
 
-import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_auth_cognito_example/amplifyconfiguration.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_test/amplify_test.dart';
+import 'package:amplify_integration_test/amplify_integration_test.dart';
 import 'package:aws_signature_v4/aws_signature_v4.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 
 import 'utils/setup_utils.dart';
 import 'utils/test_utils.dart';
@@ -26,8 +24,7 @@ class CognitoUserPoolsAuthorizer extends OIDCAuthProvider {
 }
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  AWSLogger().logLevel = LogLevel.verbose;
+  initTests();
 
   group('Custom Authorizer', () {
     const customHeaders = {
@@ -66,14 +63,10 @@ void main() {
               addTearDown(client.close);
               await configureAuth(
                 config: configJson,
-                additionalPlugins: [
-                  AmplifyAPI(
-                    authProviders: const [
-                      CognitoUserPoolsAuthorizer(),
-                    ],
-                    baseHttpClient: client,
-                  ),
+                apiAuthProviders: const [
+                  CognitoUserPoolsAuthorizer(),
                 ],
+                baseClient: client,
               );
               addTearDown(deleteAndSignOut);
             });
@@ -183,7 +176,7 @@ void main() {
                     containsPair('x-query-$key', value),
                   );
                 });
-              } on RestException catch (e) {
+              } on HttpStatusException catch (e) {
                 fail('${e.response.statusCode}: ${e.response.decodeBody()}');
               }
             });
@@ -217,11 +210,7 @@ void main() {
                   addTearDown(client.close);
                   await configureAuth(
                     config: configJson,
-                    additionalPlugins: [
-                      AmplifyAPI(
-                        baseHttpClient: client,
-                      ),
-                    ],
+                    baseClient: client,
                   );
                   addTearDown(signOutUser);
                 });
@@ -315,7 +304,7 @@ void main() {
                         containsPair('x-query-$key', value),
                       );
                     });
-                  } on RestException catch (e) {
+                  } on HttpStatusException catch (e) {
                     fail(
                       '${e.response.statusCode}: ${e.response.decodeBody()}',
                     );

@@ -1,3 +1,13 @@
+## 0.4.2+3
+
+- Minor bug fixes and improvements
+
+## 0.4.2+2
+
+### Fixes
+- fix(http): Header casing in HTTP/2
+- fix(sigv4): Query parameter encoding
+
 ## 0.4.2+1
 
 ### Fixes

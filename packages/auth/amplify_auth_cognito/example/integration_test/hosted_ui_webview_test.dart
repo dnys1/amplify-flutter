@@ -9,14 +9,17 @@ import 'dart:io';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 // ignore: implementation_imports
 import 'package:amplify_auth_cognito/src/flows/hosted_ui/hosted_ui_platform_flutter.dart';
+import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_platform.dart';
+import 'package:amplify_auth_cognito_dart/src/model/hosted_ui/oauth_parameters.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
+import 'package:amplify_auth_cognito_dart/src/state/event/hosted_ui_event.dart';
 import 'package:amplify_auth_cognito_example/amplifyconfiguration.dart';
 import 'package:amplify_auth_cognito_test/amplify_auth_cognito_test.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_test/amplify_test.dart';
+import 'package:amplify_integration_test/amplify_integration_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 // ignore: implementation_imports
 import 'package:webview_flutter_wkwebview/src/foundation/foundation.dart';
@@ -28,8 +31,7 @@ final AWSLogger _logger = AWSLogger().createChild('HostedUI');
 // This test verifies the non-native logic of the Hosted UI flow on iOS and
 // Android using an embedded WebView.
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  AWSLogger().logLevel = LogLevel.verbose;
+  initTests();
 
   group(
     'Hosted UI',
@@ -41,7 +43,7 @@ void main() {
 
       setUp(() async {
         await configureAuth(
-          config: amplifyEnvironments['hosted-ui'],
+          config: amplifyEnvironments['hosted-ui']!,
         );
         plugin = Amplify.Auth.getPlugin(AmplifyAuthCognito.pluginKey);
         stateMachine = plugin.stateMachine;
@@ -63,14 +65,13 @@ void main() {
       });
 
       Future<void> signIn(WidgetTester tester) async {
-        stateMachine.addInstance(
+        stateMachine.addInstance<HostedUiPlatform>(
           HostedUiTestPlatform(
             tester,
             stateMachine,
             username: username,
             password: password,
           ),
-          HostedUiPlatform.token,
         );
         _logger.debug('Signing in with Web UI');
         final result = await plugin.signInWithWebUI(

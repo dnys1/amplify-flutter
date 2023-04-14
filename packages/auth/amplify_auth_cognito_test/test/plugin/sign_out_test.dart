@@ -1,14 +1,15 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-// ignore_for_file: invalid_use_of_protected_member
-
 import 'dart:async';
 
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart'
     hide InternalErrorException;
 import 'package:amplify_auth_cognito_dart/src/credentials/cognito_keys.dart';
+import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_platform.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
+import 'package:amplify_auth_cognito_dart/src/state/state/credential_store_state.dart';
 import 'package:amplify_auth_cognito_test/common/mock_clients.dart';
 import 'package:amplify_auth_cognito_test/common/mock_config.dart';
 import 'package:amplify_auth_cognito_test/common/mock_hosted_ui.dart';
@@ -48,7 +49,7 @@ void main() {
       secureStorage = MockSecureStorage();
       SecureStorageInterface storageFactory(scope) => secureStorage;
       stateMachine = CognitoAuthStateMachine()
-        ..addBuilder(
+        ..addBuilder<HostedUiPlatform>(
           createHostedUiFactory(
             signIn: (
               HostedUiPlatform platform,
@@ -60,7 +61,6 @@ void main() {
               CognitoSignInWithWebUIPluginOptions options,
             ) async {},
           ),
-          HostedUiPlatform.token,
         );
 
       plugin = AmplifyAuthCognitoDart(secureStorageFactory: storageFactory)
@@ -253,6 +253,13 @@ void main() {
           config: userPoolOnlyConfig,
           authProviderRepo: testAuthRepo,
         );
+
+        final mockIdp = MockCognitoIdentityProviderClient(
+          globalSignOut: () async => GlobalSignOutResponse(),
+          revokeToken: () async => RevokeTokenResponse(),
+        );
+        stateMachine.addInstance<CognitoIdentityProviderClient>(mockIdp);
+
         expect(plugin.signOut(), completion(isA<CognitoCompleteSignOut>()));
       });
 
@@ -370,7 +377,7 @@ void main() {
             identityPoolKeys: identityPoolKeys,
             hostedUiKeys: hostedUiKeys,
           );
-          stateMachine.addBuilder(
+          stateMachine.addBuilder<HostedUiPlatform>(
             createHostedUiFactory(
               signIn: (
                 HostedUiPlatform platform,
@@ -383,7 +390,6 @@ void main() {
               ) async =>
                   throw _HostedUiException(),
             ),
-            HostedUiPlatform.token,
           );
           await plugin.configure(
             config: mockConfig,
@@ -425,7 +431,7 @@ void main() {
               identityPoolKeys: identityPoolKeys,
               hostedUiKeys: hostedUiKeys,
             );
-            stateMachine.addBuilder(
+            stateMachine.addBuilder<HostedUiPlatform>(
               createHostedUiFactory(
                 signIn: (
                   HostedUiPlatform platform,
@@ -438,7 +444,6 @@ void main() {
                 ) async =>
                     throw const UserCancelledException(''),
               ),
-              HostedUiPlatform.token,
             );
             await plugin.configure(
               config: mockConfig,

@@ -5,6 +5,11 @@ import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 
+/* TODO: update `usernameRegex` expression to match Cognito requirements
+* Proposed expression `[\p{L}\p{M}\p{S}\p{N}\p{P}]+` does not work as 
+* expected due to a mismatch in Regex flavor used by dart
+*/
+final usernameRegex = RegExp(r'^\S+$');
 final emailRegex = RegExp(r'^\S+@\S+$');
 final phoneNumberRegex = RegExp(r'^\+\d+$');
 final _codeRegex = RegExp(r'^\d{6}$');
@@ -24,6 +29,29 @@ FormFieldValidator<String> simpleValidator(
       }
       return message;
     }
+    return null;
+  };
+}
+
+FormFieldValidator<String> usernameValidator({
+  required BuildContext context,
+  required InputResolver inputResolver,
+}) {
+  return (String? input) {
+    if (input == null || input.isEmpty) {
+      return inputResolver.resolve(
+        context,
+        InputResolverKey.usernameEmpty,
+      );
+    }
+
+    if (!usernameRegex.hasMatch(input)) {
+      return inputResolver.resolve(
+        context,
+        InputResolverKey.usernameRequirementsUnmet,
+      );
+    }
+
     return null;
   };
 }
@@ -48,7 +76,7 @@ FormFieldValidator<String> Function(BuildContext) validateNewPassword({
   required AmplifyConfig? amplifyConfig,
   required InputResolver inputResolver,
 }) {
-  final PasswordProtectionSettings? passwordProtectionSettings = amplifyConfig
+  final passwordProtectionSettings = amplifyConfig
       ?.auth?.awsPlugin?.auth?.default$?.passwordProtectionSettings;
   return (BuildContext context) => (String? password) {
         if (password == null || password.isEmpty) {
@@ -61,21 +89,21 @@ FormFieldValidator<String> Function(BuildContext) validateNewPassword({
           return null;
         }
 
-        final List<PasswordPolicyCharacters> unmetReqs = [];
+        final unmetReqs = <PasswordPolicyCharacters>[];
 
-        int? minLength = passwordProtectionSettings.passwordPolicyMinLength;
-        bool meetsMinLengthRequirement =
+        final minLength = passwordProtectionSettings.passwordPolicyMinLength;
+        final meetsMinLengthRequirement =
             minLength == null || password.length >= minLength;
 
         final passwordPolicies =
             passwordProtectionSettings.passwordPolicyCharacters;
-        for (var policy in passwordPolicies) {
+        for (final policy in passwordPolicies) {
           if (!policy.meetsRequirement(password)) {
             unmetReqs.add(policy);
           }
         }
 
-        var error = inputResolver.resolve(
+        final error = inputResolver.resolve(
           context,
           InputResolverKey.passwordRequirementsUnmet(
             PasswordProtectionSettings(
@@ -102,7 +130,9 @@ FormFieldValidator<String> validatePasswordConfirmation(
       );
     } else if (getPassword() != passwordConfirmation.trim()) {
       return inputResolver.resolve(
-          context, InputResolverKey.passwordsDoNotMatch);
+        context,
+        InputResolverKey.passwordsDoNotMatch,
+      );
     }
     return null;
   };
@@ -163,7 +193,9 @@ FormFieldValidator<String> validateCode({
       );
     } else if (!_codeRegex.hasMatch(code)) {
       return inputResolver.resolve(
-          context, InputResolverKey.verificationCodeFormat);
+        context,
+        InputResolverKey.verificationCodeFormat,
+      );
     }
 
     return null;

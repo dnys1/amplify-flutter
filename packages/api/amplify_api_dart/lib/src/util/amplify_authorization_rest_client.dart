@@ -17,9 +17,8 @@ class AmplifyAuthorizationRestClient extends AWSBaseHttpClient {
     required this.endpointConfig,
     required this.authProviderRepo,
     this.authorizationMode,
-    AWSHttpClient? baseClient,
-  }) : baseClient = baseClient ??
-            (AWSHttpClient()..supportedProtocols = SupportedProtocols.http1);
+    required this.baseClient,
+  });
 
   /// [AmplifyAuthProviderRepository] for any auth modes this client may use.
   final AmplifyAuthProviderRepository authProviderRepo;
@@ -40,7 +39,9 @@ class AmplifyAuthorizationRestClient extends AWSBaseHttpClient {
   @override
   Future<AWSBaseHttpRequest> transformRequest(AWSBaseHttpRequest request) {
     if (request.scheme != 'https') {
-      throw const ApiException('Non-HTTPS requests not supported.');
+      throw const ApiOperationException(
+        'Non-HTTPS requests not supported.',
+      );
     }
     return authorizeHttpRequest(
       request,
@@ -63,7 +64,7 @@ class AmplifyAuthorizationRestClient extends AWSBaseHttpClient {
       } else {
         responseForException = response as AWSHttpResponse;
       }
-      throw RestException(responseForException);
+      throw HttpStatusException(responseForException);
     }
     return response;
   }

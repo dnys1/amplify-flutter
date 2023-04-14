@@ -1,15 +1,13 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_auth_cognito_dart/src/credentials/device_metadata_repository.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
 import 'package:amplify_auth_cognito_example/amplifyconfiguration.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_test/amplify_test.dart';
+import 'package:amplify_integration_test/amplify_integration_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 
 import 'utils/setup_utils.dart';
 import 'utils/test_utils.dart';
@@ -23,8 +21,7 @@ DeviceMetadataRepository get deviceRepo =>
         .getOrCreate<DeviceMetadataRepository>();
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  AmplifyLogger().logLevel = LogLevel.debug;
+  initTests();
 
   group('Device Tracking', () {
     // The username selected by the user.
@@ -121,67 +118,70 @@ void main() {
       }
     }
 
-    group('Opt-In', () {
-      setUpAll(() async {
-        await configureAuth(
-          config: amplifyEnvironments['device-tracking-opt-in'],
-        );
-      });
+    for (final environmentName in deviceOptInEnvironments) {
+      group('Opt-In', () {
+        group(environmentName, () {
+          setUpAll(() async {
+            await configureAuth(
+              config: amplifyEnvironments[environmentName]!,
+            );
+          });
 
-      setUp(signIn);
+          setUp(signIn);
 
-      asyncTest('device is not automatically remembered', (_) async {
-        expect(await getDeviceState(), DeviceState.tracked);
-      });
+          asyncTest('device is not automatically remembered', (_) async {
+            expect(await getDeviceState(), DeviceState.tracked);
+          });
 
-      asyncTest('rememberDevice starts tracking', (_) async {
-        expect(await getDeviceState(), DeviceState.tracked);
-        await Amplify.Auth.rememberDevice();
-        expect(await getDeviceState(), DeviceState.remembered);
-      });
+          asyncTest('rememberDevice starts tracking', (_) async {
+            expect(await getDeviceState(), DeviceState.tracked);
+            await Amplify.Auth.rememberDevice();
+            expect(await getDeviceState(), DeviceState.remembered);
+          });
 
-      asyncTest('forgetDevice stops tracking', (_) async {
-        expect(await getDeviceState(), DeviceState.tracked);
-        await Amplify.Auth.rememberDevice();
-        expect(await getDeviceState(), DeviceState.remembered);
-        await Amplify.Auth.forgetDevice();
-        expect(await getDeviceState(), DeviceState.untracked);
-      });
+          asyncTest('forgetDevice stops tracking', (_) async {
+            expect(await getDeviceState(), DeviceState.tracked);
+            await Amplify.Auth.rememberDevice();
+            expect(await getDeviceState(), DeviceState.remembered);
+            await Amplify.Auth.forgetDevice();
+            expect(await getDeviceState(), DeviceState.untracked);
+          });
 
-      asyncTest('fetchDevices lists remembered devices', (_) async {
-        expect(await getDeviceState(), DeviceState.tracked);
-        expect(await Amplify.Auth.fetchDevices(), isEmpty);
-        await Amplify.Auth.rememberDevice();
-        expect(await Amplify.Auth.fetchDevices(), isNotEmpty);
-      });
+          asyncTest('fetchDevices lists remembered devices', (_) async {
+            expect(await getDeviceState(), DeviceState.tracked);
+            expect(await Amplify.Auth.fetchDevices(), isEmpty);
+            await Amplify.Auth.rememberDevice();
+            expect(await Amplify.Auth.fetchDevices(), isNotEmpty);
+          });
 
-      asyncTest('multiple logins use the same device key', (_) async {
-        final deviceKey = await getDeviceKey();
-        expect(deviceKey, isNotNull);
-        await signOutUser();
-        await signIn();
-        expect(await getDeviceKey(), deviceKey);
-      });
+          asyncTest('multiple logins use the same device key', (_) async {
+            final deviceKey = await getDeviceKey();
+            expect(deviceKey, isNotNull);
+            await signOutUser();
+            await signIn();
+            expect(await getDeviceKey(), deviceKey);
+          });
 
-      asyncTest('can login when device is removed in Cognito', (_) async {
-        final deviceKey = await getDeviceKey();
-        expect(deviceKey, isNotNull);
-        await signOutUser();
-        await deleteDevice(cognitoUsername, deviceKey!);
-        await expectLater(signIn(), completes);
-        final newDeviceKey = await getDeviceKey();
-        expect(newDeviceKey, isNotNull);
-        expect(newDeviceKey, isNot(deviceKey));
+          asyncTest('can login when device is removed in Cognito', (_) async {
+            final deviceKey = await getDeviceKey();
+            expect(deviceKey, isNotNull);
+            await signOutUser();
+            await deleteDevice(cognitoUsername, deviceKey!);
+            await expectLater(signIn(), completes);
+            final newDeviceKey = await getDeviceKey();
+            expect(newDeviceKey, isNotNull);
+            expect(newDeviceKey, isNot(deviceKey));
+          });
+        });
       });
-    });
+    }
 
     group(
       'Opt-In (MFA)',
       () {
         setUpAll(() async {
           await configureAuth(
-            additionalPlugins: [AmplifyAPI()],
-            config: amplifyEnvironments['device-tracking-opt-in'],
+            config: amplifyEnvironments['device-tracking-opt-in']!,
           );
         });
 
@@ -232,7 +232,7 @@ void main() {
     group('Always', () {
       setUpAll(() async {
         await configureAuth(
-          config: amplifyEnvironments['device-tracking-always'],
+          config: amplifyEnvironments['device-tracking-always']!,
         );
       });
 
@@ -279,8 +279,7 @@ void main() {
     group('Always (MFA)', () {
       setUpAll(() async {
         await configureAuth(
-          additionalPlugins: [AmplifyAPI()],
-          config: amplifyEnvironments['device-tracking-always'],
+          config: amplifyEnvironments['device-tracking-always']!,
         );
       });
 
@@ -315,7 +314,7 @@ void main() {
     group('Always (Email Alias)', () {
       setUpAll(() async {
         await configureAuth(
-          config: amplifyEnvironments['device-tracking-email-alias'],
+          config: amplifyEnvironments['device-tracking-email-alias']!,
         );
       });
 
@@ -362,8 +361,7 @@ void main() {
     group('Always (Email Alias / MFA)', () {
       setUpAll(() async {
         await configureAuth(
-          additionalPlugins: [AmplifyAPI()],
-          config: amplifyEnvironments['device-tracking-email-alias'],
+          config: amplifyEnvironments['device-tracking-email-alias']!,
         );
       });
 

@@ -50,13 +50,12 @@
         "description": "User's gender.",
         "example": "male"
     },
-    "genders": "{gender, select, male{male}, female{female}, other{other}}",
+    "genders": "{gender, select, male{male} female{female} other{other}}",
     "@genders": {
         "placeholders": {
             "gender": {
-                "description": "The user's gender.",
-                "type": "Gender",
-                "example": "male"
+                "example": "male",
+                "description": "The user's gender."
             }
         }
     },
@@ -146,6 +145,10 @@
                 "description": "The field which can be filled."
             }
         }
+    },    
+    "usernameRequirements": "Username must only contain alphanumeric characters and symbols.",
+    "@usernameRequirements": {
+        "description": "Warning for when username requirements are not met."
     },
     "passwordRequirementsPreamble": "Password must include:",
     "@passwordRequirementsPreamble": {
@@ -156,7 +159,6 @@
         "description": "Character(s) in a password.",
         "placeholders": {
             "characterType": {
-                "type": "PasswordPolicyCharacters",
                 "description": "The character class or type."
             }
         }

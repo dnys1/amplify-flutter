@@ -3,7 +3,7 @@
 
 import 'dart:async';
 
-import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_auth_cognito_dart/src/util/credentials_providers.dart';
 import 'package:amplify_core/amplify_core.dart';
@@ -24,11 +24,6 @@ const zInFetch = #_zInFetch;
 abstract class AuthPluginCredentialsProvider implements AWSCredentialsProvider {
   /// {@macro amplify_auth_cognito.credentials.auth_plugin_credentials_provider}
   const AuthPluginCredentialsProvider(this.dependencyManager);
-
-  /// The dependency manager token for [AuthPluginCredentialsProvider].
-  static const token = Token<AuthPluginCredentialsProvider>([
-    Token<DependencyManager>(),
-  ]);
 
   /// The registered dependency manager.
   final DependencyManager dependencyManager;

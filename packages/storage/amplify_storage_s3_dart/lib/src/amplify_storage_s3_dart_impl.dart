@@ -26,20 +26,8 @@ bool get _zIsTest => Zone.current[zIsTest] as bool? ?? false;
 /// {@template amplify_storage_s3_dart.amplify_storage_s3_plugin_dart}
 /// The Dart Storage S3 plugin for the Amplify Storage Category.
 /// {@endtemplate}
-class AmplifyStorageS3Dart extends StoragePluginInterface<
-    S3ListOperation,
-    S3GetPropertiesOperation,
-    S3GetUrlOperation,
-    S3UploadDataOperation,
-    S3UploadFileOperation,
-    S3DownloadDataOperation,
-    S3DownloadFileOperation,
-    S3CopyOperation,
-    S3MoveOperation,
-    S3RemoveOperation,
-    S3RemoveManyOperation,
-    S3Item,
-    S3TransferProgress> with AWSDebuggable, AWSLoggerMixin {
+class AmplifyStorageS3Dart extends StoragePluginInterface
+    with AWSDebuggable, AWSLoggerMixin {
   /// {@macro amplify_storage_s3_dart.amplify_storage_s3_plugin_dart}
   AmplifyStorageS3Dart({
     String? delimiter,
@@ -47,33 +35,22 @@ class AmplifyStorageS3Dart extends StoragePluginInterface<
     @visibleForTesting DependencyManager? dependencyManagerOverride,
   })  : _delimiter = delimiter,
         _prefixResolver = prefixResolver,
-        dependencyManager = dependencyManagerOverride ?? DependencyManager();
+        _dependencyManagerOverride = dependencyManagerOverride;
 
   /// {@template amplify_storage_s3_dart.plugin_key}
   /// A plugin key which can be used with `Amplify.Storage.getPlugin` to retrieve
   /// a S3-specific Storage category interface.
   /// {@endtemplate}
-  static const StoragePluginKey<
-      S3ListOperation,
-      S3GetPropertiesOperation,
-      S3GetUrlOperation,
-      S3UploadDataOperation,
-      S3UploadFileOperation,
-      S3DownloadDataOperation,
-      S3DownloadFileOperation,
-      S3CopyOperation,
-      S3MoveOperation,
-      S3RemoveOperation,
-      S3RemoveManyOperation,
-      S3Item,
-      S3TransferProgress,
-      AmplifyStorageS3Dart> pluginKey = _AmplifyStorageS3DartPluginKey();
+  static const StoragePluginKey<AmplifyStorageS3Dart> pluginKey =
+      _AmplifyStorageS3DartPluginKey();
 
   final String? _delimiter;
 
-  /// Dependencies of the plugin.
-  @protected
-  final DependencyManager dependencyManager;
+  final DependencyManager? _dependencyManagerOverride;
+
+  @override
+  DependencyManager get dependencies =>
+      _dependencyManagerOverride ?? super.dependencies;
 
   /// The [S3PluginConfig] of the [AmplifyStorageS3Dart] plugin.
   @protected
@@ -87,9 +64,9 @@ class AmplifyStorageS3Dart extends StoragePluginInterface<
 
   /// Gets the instance of dependent [StorageS3Service].
   @protected
-  StorageS3Service get storageS3Service => dependencyManager.expect();
+  StorageS3Service get storageS3Service => dependencies.expect();
 
-  AppPathProvider get _appPathProvider => dependencyManager.getOrCreate();
+  AppPathProvider get _appPathProvider => dependencies.getOrCreate();
 
   @override
   Future<void> configure({
@@ -131,24 +108,18 @@ class AmplifyStorageS3Dart extends StoragePluginInterface<
       );
     }
 
-    dependencyManager
+    dependencies
       ..addInstance<db_common.Connect>(db_common.connect)
-      ..addBuilder<AppPathProvider>(S3DartAppPathProvider.new)
-      ..addBuilder(
-        transfer.TransferDatabase.new,
-        const Token<transfer.TransferDatabase>(
-          [Token<db_common.Connect>(), Token<AppPathProvider>()],
-        ),
-      )
+      ..addBuilder<AppPathProvider>((_) => const S3DartAppPathProvider())
+      ..addBuilder(transfer.TransferDatabase.new)
       ..addInstance<StorageS3Service>(
         StorageS3Service(
           credentialsProvider: credentialsProvider,
-          defaultBucket: s3pluginConfig.bucket,
-          defaultRegion: s3pluginConfig.region,
+          s3PluginConfig: s3PluginConfig,
           delimiter: _delimiter,
           prefixResolver: _prefixResolver!,
           logger: logger,
-          dependencyManager: dependencyManager,
+          dependencyManager: dependencies,
         ),
       );
 
@@ -171,7 +142,7 @@ class AmplifyStorageS3Dart extends StoragePluginInterface<
       defaultPluginOptions: const S3ListPluginOptions(),
     );
     final s3Options = StorageListOptions(
-      accessLevel: options?.accessLevel ?? s3pluginConfig.defaultAccessLevel,
+      accessLevel: options?.accessLevel,
       pluginOptions: s3PluginOptions,
     );
 
@@ -198,7 +169,7 @@ class AmplifyStorageS3Dart extends StoragePluginInterface<
     );
 
     final s3Options = StorageGetPropertiesOptions(
-      accessLevel: options?.accessLevel ?? s3pluginConfig.defaultAccessLevel,
+      accessLevel: options?.accessLevel,
       pluginOptions: s3PluginOptions,
     );
 
@@ -225,7 +196,7 @@ class AmplifyStorageS3Dart extends StoragePluginInterface<
     );
 
     final s3Options = StorageGetUrlOptions(
-      accessLevel: options?.accessLevel ?? s3pluginConfig.defaultAccessLevel,
+      accessLevel: options?.accessLevel,
       pluginOptions: s3PluginOptions,
     );
 
@@ -253,7 +224,7 @@ class AmplifyStorageS3Dart extends StoragePluginInterface<
     );
 
     final s3Options = StorageDownloadDataOptions(
-      accessLevel: options?.accessLevel ?? s3pluginConfig.defaultAccessLevel,
+      accessLevel: options?.accessLevel,
       pluginOptions: s3PluginOptions,
     );
 
@@ -294,7 +265,7 @@ class AmplifyStorageS3Dart extends StoragePluginInterface<
       defaultPluginOptions: const S3DownloadFilePluginOptions(),
     );
     options = StorageDownloadFileOptions(
-      accessLevel: options?.accessLevel ?? s3pluginConfig.defaultAccessLevel,
+      accessLevel: options?.accessLevel,
       pluginOptions: s3PluginOptions,
     );
     return download_file_impl.downloadFile(
@@ -321,7 +292,8 @@ class AmplifyStorageS3Dart extends StoragePluginInterface<
     );
 
     final s3Options = StorageUploadDataOptions(
-      accessLevel: options?.accessLevel ?? s3pluginConfig.defaultAccessLevel,
+      accessLevel: options?.accessLevel,
+      metadata: options?.metadata ?? const {},
       pluginOptions: s3PluginOptions,
     );
 
@@ -358,7 +330,8 @@ class AmplifyStorageS3Dart extends StoragePluginInterface<
     );
 
     final s3Options = StorageUploadFileOptions(
-      accessLevel: options?.accessLevel ?? s3pluginConfig.defaultAccessLevel,
+      accessLevel: options?.accessLevel,
+      metadata: options?.metadata ?? const {},
       pluginOptions: s3PluginOptions,
     );
 
@@ -459,7 +432,7 @@ class AmplifyStorageS3Dart extends StoragePluginInterface<
     );
 
     final s3Options = StorageRemoveOptions(
-      accessLevel: options?.accessLevel ?? s3pluginConfig.defaultAccessLevel,
+      accessLevel: options?.accessLevel,
       pluginOptions: s3PluginOptions,
     );
 
@@ -486,7 +459,7 @@ class AmplifyStorageS3Dart extends StoragePluginInterface<
     );
 
     final s3Options = StorageRemoveManyOptions(
-      accessLevel: options?.accessLevel ?? s3pluginConfig.defaultAccessLevel,
+      accessLevel: options?.accessLevel,
       pluginOptions: s3PluginOptions,
     );
 
@@ -506,21 +479,8 @@ class AmplifyStorageS3Dart extends StoragePluginInterface<
   String get runtimeTypeName => 'AmplifyStorageS3Dart';
 }
 
-class _AmplifyStorageS3DartPluginKey extends StoragePluginKey<
-    S3ListOperation,
-    S3GetPropertiesOperation,
-    S3GetUrlOperation,
-    S3UploadDataOperation,
-    S3UploadFileOperation,
-    S3DownloadDataOperation,
-    S3DownloadFileOperation,
-    S3CopyOperation,
-    S3MoveOperation,
-    S3RemoveOperation,
-    S3RemoveManyOperation,
-    S3Item,
-    S3TransferProgress,
-    AmplifyStorageS3Dart> {
+class _AmplifyStorageS3DartPluginKey
+    extends StoragePluginKey<AmplifyStorageS3Dart> {
   const _AmplifyStorageS3DartPluginKey();
 
   @override

@@ -13,7 +13,7 @@ void main() {
   ReadableStream createReadableStream() {
     return ReadableStream(
       createUnderlyingSource(
-        start: (controller) {
+        start: (controller) async {
           controller
             ..enqueue(Uint8List.fromList([1, 2, 3, 4, 5]))
             ..enqueue(Uint8List.fromList([6, 7, 8, 9, 0]))

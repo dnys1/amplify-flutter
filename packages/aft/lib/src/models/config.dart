@@ -4,6 +4,7 @@
 import 'dart:io';
 
 import 'package:aft/src/changelog/changelog.dart';
+import 'package:aft/src/flutter_platform.dart';
 import 'package:aft/src/models.dart';
 import 'package:aft/src/util.dart';
 import 'package:aws_common/aws_common.dart';
@@ -186,6 +187,32 @@ class PackageInfo
       return null;
     }
     return unitTestDir;
+  }
+
+  /// The integration test directory within the enclosing directory, if any
+  Directory? get integTestDirectory {
+    final expectedPath = p.join(path, 'integration_test');
+    final integTestDir = Directory(expectedPath);
+    if (!integTestDir.existsSync()) {
+      return null;
+    }
+    return integTestDir;
+  }
+
+  /// The platforms a package supports, typically for example apps.
+  List<FlutterPlatform>? get platforms {
+    final platforms = <FlutterPlatform>[];
+    for (final value in FlutterPlatform.values) {
+      final expectedPath = p.join(path, value.name);
+      final platformDirectory = Directory(expectedPath);
+      if (platformDirectory.existsSync()) {
+        platforms.add(value);
+      }
+    }
+    if (platforms.isEmpty) {
+      return null;
+    }
+    return platforms;
   }
 
   /// Whether the package needs `build_runner` to be run.

@@ -5,6 +5,9 @@
 @JS()
 library js_promise;
 
+import 'dart:js_interop';
+
+import 'package:aws_common/src/js/common.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart' as js_util;
 
@@ -31,7 +34,7 @@ extension PromiseRejecterExtension on PromiseRejecter {
 @staticInterop
 abstract class Promise<T extends Object?> {
   /// A constructor for a JS promise
-  external factory Promise(PromiseExecutor<T> executor);
+  external factory Promise(JSFunction executor);
 }
 
 /// The type of function that is used to create a Promise<T>
@@ -40,13 +43,17 @@ typedef PromiseExecutor<T extends Object?> = void Function(
   PromiseRejecter reject,
 );
 
-Promise<T> createPromiseFromFuture<T>(Future<T> future) {
-  return Promise<T>(
+final Object _promiseCtor = js_util.getProperty(self, 'Promise');
+
+JSPromise futureToPromise<T extends Object?>(Future<T> future) {
+  return js_util.callConstructor(_promiseCtor, [
     allowInterop((PromiseResolver<T> resolver, PromiseRejecter rejecter) {
       future.then(
         (T value) => resolver.resolve(value),
-        onError: (Object? error) => rejecter.reject(error),
+        onError: (Object? error) {
+          rejecter.reject(error);
+        },
       );
     }),
-  );
+  ]) as JSPromise;
 }

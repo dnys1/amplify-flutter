@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
 export "FLUTTER_ROOT=/Users/nydillon/flutter"
-export "FLUTTER_APPLICATION_PATH=/Users/nydillon/dev/amplify-dart/packages/worker_bee/e2e_flutter_test"
+export "FLUTTER_APPLICATION_PATH=/Users/nydillon/dev/wasm/amplify_flutter_wasm/packages/worker_bee/e2e_flutter_test"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=1.0.0"

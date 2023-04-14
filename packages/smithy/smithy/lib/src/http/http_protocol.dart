@@ -57,10 +57,16 @@ abstract class HttpProtocol<InputPayload, Input, OutputPayload, Output>
     } else {
       specifiedType ??= FullType(Input, [FullType(InputPayload)]);
       return Stream.fromFuture(() async {
-        return await wireSerializer.serialize(
+        final serialized = wireSerializer.serialize(
           input,
           specifiedType: specifiedType,
         );
+        if (serialized is Future) {
+          // ignore: unnecessary_cast
+          return (await serialized) as List<int>;
+        }
+        // ignore: unnecessary_cast
+        return serialized as List<int>;
       }());
     }
   }

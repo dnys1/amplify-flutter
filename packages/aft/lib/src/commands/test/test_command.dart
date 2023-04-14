@@ -49,8 +49,7 @@ abstract class BaseTestCommand extends AmplifyCommand {
     if (workingDirectory.pubspec == null) {
       exitError('Current directory has no pubspec.yaml');
     }
-    final packages = await allPackages;
-    return packages.values.singleWhere(
+    return repoPackages.values.singleWhere(
       (el) => el.path == workingDirectory.path,
     );
   }
@@ -97,21 +96,21 @@ abstract class BaseTestCommand extends AmplifyCommand {
       // These can be non-harmful errors such as
       // `Warning: pubspec.yaml has overrides from pubspec_overrides.yaml`
       // Log and evaluate if further action is needed.
-      logger.stderr(error.toString());
+      logger.error(error.toString());
     });
     final completer = Completer<void>.sync();
     testStream.listen(
       (testEvent) {
-        logger.trace('Got ${testEvent.type} event');
+        logger.verbose('Got ${testEvent.type} event');
         switch (testEvent.type) {
           case 'suite':
             testEvent as SuiteTestEvent;
-            logger.trace('  ID: ${testEvent.suite.id}');
+            logger.verbose('  ID: ${testEvent.suite.id}');
             suitePaths[testEvent.suite.id] = testEvent.suite.path;
             break;
           case 'allSuites':
             testEvent as AllSuitesTestEvent;
-            logger.trace('  # of Suites: ${testEvent.count}');
+            logger.verbose('  # of Suites: ${testEvent.count}');
             break;
           case 'testStart':
             testEvent as TestStartEvent;
@@ -122,9 +121,9 @@ abstract class BaseTestCommand extends AmplifyCommand {
               url = suitePaths[testEvent.test.suiteID];
             }
             logger
-              ..trace('  ID: ${testEvent.test.id}')
-              ..trace('  URL: $url')
-              ..trace('  Name: ${testEvent.test.name}');
+              ..verbose('  ID: ${testEvent.test.id}')
+              ..verbose('  URL: $url')
+              ..verbose('  Name: ${testEvent.test.name}');
             if (url == null) {
               return;
             }
@@ -137,10 +136,10 @@ abstract class BaseTestCommand extends AmplifyCommand {
           case 'error':
             testEvent as ErrorTestEvent;
             logger
-              ..trace('  ID: ${testEvent.testID}')
-              ..trace('  Is TestFailure: ${testEvent.isFailure}')
-              ..trace('  Error: ${testEvent.error}')
-              ..trace('  StackTrace: ${testEvent.stackTrace}');
+              ..verbose('  ID: ${testEvent.testID}')
+              ..verbose('  Is TestFailure: ${testEvent.isFailure}')
+              ..verbose('  Error: ${testEvent.error}')
+              ..verbose('  StackTrace: ${testEvent.stackTrace}');
             final reportBuilder = reportBuilders[testEvent.testID];
             if (reportBuilder == null) {
               return;
@@ -151,16 +150,16 @@ abstract class BaseTestCommand extends AmplifyCommand {
               );
               reportBuilder.result = TestResult.fail;
             } else {
-              logger.stderr('${testEvent.error}\n${testEvent.stackTrace}');
+              logger.error('${testEvent.error}\n${testEvent.stackTrace}');
             }
             break;
           case 'testDone':
             testEvent as TestDoneEvent;
             logger
-              ..trace('  ID: ${testEvent.testID}')
-              ..trace('  Hidden: ${testEvent.hidden}')
-              ..trace('  Skipped: ${testEvent.skipped}')
-              ..trace('  Result: ${testEvent.result.name}');
+              ..verbose('  ID: ${testEvent.testID}')
+              ..verbose('  Hidden: ${testEvent.hidden}')
+              ..verbose('  Skipped: ${testEvent.skipped}')
+              ..verbose('  Result: ${testEvent.result.name}');
             final reportBuilder = reportBuilders[testEvent.testID];
             if (reportBuilder == null) {
               return;

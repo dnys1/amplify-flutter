@@ -35,4 +35,6 @@ const bool zReleaseMode = bool.fromEnvironment('dart.vm.product');
 /// Since JS does not support integers, an int and a double will be identical
 /// when representing the same value. However, this will not be true for all
 /// other compilation targets.
-const bool zIsWeb = identical(0, 0.0);
+const bool zIsWeb = bool.fromEnvironment('dart.library.js_util');
+
+const bool zIsWasm = zIsWeb && bool.fromEnvironment('dart.library.ffi');

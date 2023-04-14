@@ -95,7 +95,7 @@ class UnitTestCommand extends BaseTestCommand {
         outputPath,
       ];
 
-      logger.stdout(
+      logger.info(
         'Compiling $relativePath to $outputPath: "dart $arguments"...',
       );
       final proc = await Process.start(
@@ -112,6 +112,7 @@ class UnitTestCommand extends BaseTestCommand {
 
   @override
   Future<void> run() async {
+    await super.run();
     final packageToTest = await this.packageToTest;
     if (packageToTest.unitTestDirectory == null) {
       exitError('No unit tests for package');

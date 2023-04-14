@@ -50,6 +50,7 @@ class IntegrationTestCommand extends BaseTestCommand {
 
   @override
   Future<void> run() async {
+    await super.run();
     final selectedDevice = await _selectDevice();
     var packageToTest = await this.packageToTest;
     final examplePackage = packageToTest.example;
@@ -108,7 +109,7 @@ class IntegrationTestCommand extends BaseTestCommand {
   }) async {
     final integTestDirectory = package.integTestDirectory;
     if (integTestDirectory == null) {
-      logger.stderr('No integration tests for "${package.name}"');
+      logger.error('No integration tests for "${package.name}"');
       return;
     }
     final testArguments = [...argResults!.rest];
@@ -126,7 +127,7 @@ class IntegrationTestCommand extends BaseTestCommand {
 
     final List<TestReport> reports;
     final arguments = ['-d', device.id, ...testArguments];
-    logger.trace(
+    logger.verbose(
       'Running tests on device ${device.id} (${device.platform!.displayName})',
     );
     if (device.platform == FlutterPlatform.web) {

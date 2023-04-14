@@ -22,8 +22,7 @@ void clientTest(
     StreamQueue<Object?> Function() getHttpServerQueue,
     StreamChannel<Object?> Function() getHttpServerChannel,
     Uri Function(String) createUri,
-  )
-      testCases, {
+  ) testCases, {
   Object? skip,
 }) {
   AWSLogger().logLevel = LogLevel.verbose;
@@ -82,12 +81,14 @@ void clientTest(
     AlpnProtocol.http1_1,
     secure: true,
     supportedProtocols: SupportedProtocols.http1,
-    skip: zIsWeb ? 'Secure web servers cannot be tested on Web' : skip,
+    skip:
+        zIsWeb || zIsWasm ? 'Secure web servers cannot be tested on Web' : skip,
   );
   innerTest(
     AlpnProtocol.http2,
     secure: true,
     supportedProtocols: SupportedProtocols.http2_3,
-    skip: zIsWeb ? 'Secure web servers cannot be tested on Web' : skip,
+    skip:
+        zIsWeb || zIsWasm ? 'Secure web servers cannot be tested on Web' : skip,
   );
 }

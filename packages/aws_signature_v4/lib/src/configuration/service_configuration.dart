@@ -141,7 +141,7 @@ class BaseServiceConfiguration extends ServiceConfiguration {
     if (!isSigningTest) {
       const userAgent = 'aws-sigv4-dart/$packageVersion';
       headers.update(
-        zIsWeb ? AWSHeaders.amzUserAgent : AWSHeaders.userAgent,
+        zIsWeb || zIsWasm ? AWSHeaders.amzUserAgent : AWSHeaders.userAgent,
         (value) => '$value $userAgent',
         ifAbsent: () => userAgent,
       );

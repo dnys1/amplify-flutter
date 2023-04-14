@@ -21,12 +21,12 @@ mixin JSEnum on Enum {
   /// Default values are represented as `undefined`, as opposed to `null` which
   /// can be interpreted incorrectly by DOM APIs. Non-default values are
   /// representated as the parameter-cased [name].
-  JSAny? get jsValue {
+  JSString? get jsValue {
     switch (name) {
       case r'default$':
-        return undefined;
+        return undefined as Null;
       default:
-        return name.paramCase.toJS as JSAny;
+        return name.paramCase.toJS;
     }
   }
 }
@@ -74,7 +74,7 @@ abstract class Window implements GlobalScope {}
 extension PropsWindow on Window {
   /// Loads a specified resource into a new or existing browsing context
   /// (that is, a tab, a window, or an iframe) under a specified name.
-  external void open([String? url, String? target]);
+  external void open([JSString? url, JSString? target]);
 }
 
 /// {@template aws_common.js.document}
@@ -91,7 +91,7 @@ extension PropsDocument on Document {
   /// specified selector, or group of selectors.
   ///
   /// If no matches are found, `null` is returned.
-  external Element? querySelector(String selectors);
+  external Element? querySelector(JSString selectors);
 }
 
 /// {@template aws_common.js.element}
@@ -111,7 +111,7 @@ extension PropsElement on Element {
   ///
   /// If the given attribute does not exist, the value returned will either be
   /// `null` or `""` (the empty string);
-  external String? getAttribute(String name);
+  external JSString? getAttribute(JSString name);
 }
 
 /// A function which handles DOM events.
@@ -146,9 +146,9 @@ extension PropsEventTarget on EventTarget {
     void Function(Event) listener,
   ) =>
       js_util.callMethod(this, 'addEventListener', [
-        type,
-        allowInterop(listener),
-        false,
+        type.toJS,
+        listener.toJS,
+        false.toJS,
       ]);
 
   /// Removes [listener] as a callback for events of type [type].
@@ -157,15 +157,10 @@ extension PropsEventTarget on EventTarget {
     void Function(Event) listener,
   ) =>
       js_util.callMethod(this, 'removeEventListener', [
-        type,
-        allowInterop(listener),
-        false,
+        type.toJS,
+        listener.toJS,
+        false.toJS,
       ]);
-}
-
-Object? _convertToJs(Object? o) {
-  if (o == null || o is! Map || o is! Iterable) return o;
-  return js_util.jsify(o);
 }
 
 /// {@template worker_bee.js.interop.global_scope}
@@ -193,8 +188,8 @@ extension PropsGlobalScope on GlobalScope {
     List<Object>? transfer,
   ]) =>
       js_util.callMethod(this, 'postMessage', [
-        _convertToJs(o),
-        transfer?.map(_convertToJs).toList(),
+        js_util.jsify(o),
+        transfer?.map(js_util.jsify).toList(),
       ]);
 }
 
@@ -258,8 +253,8 @@ extension PropsMessagePort on MessagePort {
     List<Object>? transfer,
   ]) =>
       js_util.callMethod(this, 'postMessage', [
-        _convertToJs(o),
-        transfer?.map(_convertToJs).toList(),
+        js_util.jsify(o),
+        transfer?.map(js_util.jsify).toList(),
       ]);
 
   /// Starts the sending of messages queued on the port.
@@ -283,11 +278,11 @@ abstract class Location {}
 /// {@macro worker_bee.js.interop.location}
 extension PropsLocation on Location {
   /// The entire URL.
-  external String get href;
+  external JSString get href;
 
   /// Returns a string containing the canonical form of the origin of the
   /// specific location.
-  external String get origin;
+  external JSString get origin;
 }
 
 /// {@template worker_bee.js.interop.worker_init}
@@ -300,7 +295,7 @@ extension PropsLocation on Location {
 class WorkerInit {
   /// {@macro worker_bee.js.interop.worker_init}
   external factory WorkerInit({
-    String? type,
+    JSString? type,
   });
 }
 
@@ -312,7 +307,7 @@ class WorkerInit {
 @staticInterop
 class Worker extends EventTarget {
   /// {@macro worker_bee.js.interop.worker}
-  external factory Worker(String url, [WorkerInit? init]);
+  external factory Worker(JSString url, [WorkerInit? init]);
 }
 
 /// {@macro worker_bee.js.interop.worker}
@@ -329,8 +324,14 @@ extension PropsWorker on Worker {
     js_util.setProperty(this, 'onmessage', allowInterop(listener));
   }
 
+  @JS('postMessage')
+  external void _postMessage(JSAny? o, [JSArray? transfer]);
+
   /// Sends a message to the worker's inner scope.
-  external void postMessage(Object? o, [List<Object?>? transfer]);
+  void postMessage(Object? o, [List<Object?>? transfer]) => _postMessage(
+        o?.toJS,
+        transfer?.map((o) => o?.toJS).toList().toJS,
+      );
 
   /// Immediately terminates the Worker.
   ///
@@ -350,10 +351,10 @@ class ErrorEvent extends Event {}
 /// {@macro worker_bee.js.interop.error_event}
 extension PropsErrorEvent on ErrorEvent {
   /// The error object associated with the event.
-  external Object? get error;
+  external JSAny? get error;
 
   /// A string containing a human-readable error message describing the problem.
-  external String? get message;
+  external JSString? get message;
 }
 
 /// {@template worker_bee.js.interop.message_channel}
@@ -382,7 +383,7 @@ extension PropsMessageChannel on MessageChannel {
 @staticInterop
 class JSON {
   /// Stringifies a JSON-like object.
-  external static String stringify(Object? object);
+  external static JSString stringify(JSAny? object);
 }
 
 /// {@template worker_bee.js.interop.js_object}
@@ -393,12 +394,12 @@ class JSON {
 class JSObject {
   /// Returns an array of a given [object]'s own enumerable property names,
   /// iterated in the same order that a normal loop would.
-  external static List<String> keys(Object object);
+  external static JSObject keys(JSObject object);
 
   /// Returns the prototype (i.e. the value of the internal `[[Prototype]]`
   /// property) of the specified [object].
-  external static Object? getPrototypeOf(Object? object);
+  external static JSAny? getPrototypeOf(JSObject? object);
 
   /// The prototype of the JS `Object` class.
-  external static Object get prototype;
+  external static JSAny get prototype;
 }

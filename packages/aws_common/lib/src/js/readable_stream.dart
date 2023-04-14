@@ -10,7 +10,6 @@ import 'dart:typed_data';
 
 import 'package:async/async.dart';
 import 'package:aws_common/src/js/common.dart';
-import 'package:aws_common/src/js/promise.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart' as js_util;
 import 'package:meta/meta.dart';
@@ -36,7 +35,7 @@ class UnderlyingSource {
     /// [ReadableStreamDefaultController] or a [ReadableByteStreamController],
     /// depending on the value of the `type` property. This can be used by the
     /// developer to control the stream during set up.
-    FutureOr<void> Function(ReadableStreamController controller)? start,
+    Future<void> Function(ReadableStreamController controller)? start,
 
     /// This method, also defined by the developer, will be called repeatedly
     /// when the stream's internal queue of chunks is not full, up until it
@@ -50,7 +49,7 @@ class UnderlyingSource {
     /// [ReadableStreamDefaultController] or a [ReadableByteStreamController],
     /// depending on the value of the type property. This can be used by the
     /// developer to control the stream as more chunks are fetched.
-    FutureOr<void> Function(ReadableStreamController controller)? pull,
+    Future<void> Function(ReadableStreamController controller)? pull,
 
     /// This method, also defined by the developer, will be called if the app
     /// signals that the stream is to be cancelled
@@ -60,11 +59,10 @@ class UnderlyingSource {
     /// stream source. If this process is asynchronous, it can return a promise
     /// to signal success or failure. The reason parameter contains a
     /// `DOMString` describing why the stream was cancelled.
-    FutureOr<void> Function([
+    Future<void> Function([
       String? reason,
       ReadableStreamController? controller,
-    ])?
-        cancel,
+    ])? cancel,
 
     /// This property controls what type of readable stream is being dealt with.
     ReadableStreamType type = ReadableStreamType.default$,
@@ -88,11 +86,9 @@ class UnderlyingSource {
   }
 
   external factory UnderlyingSource._({
-    JSAny? start,
-    JSAny? pull,
-    JSAny? cancel,
-    JSAny? type,
-    JSAny? autoAllocateChunkSize,
+    JSFunction? start,
+    JSFunction? pull,
+    JSFunction? cancel,
   });
 }
 
@@ -101,51 +97,37 @@ class UnderlyingSource {
 // TODO(dnys1): Remove when fixed https://github.com/dart-lang/sdk/issues/49778.
 @internal
 UnderlyingSource createUnderlyingSource({
-  FutureOr<void> Function(ReadableStreamController controller)? start,
-  FutureOr<void> Function(ReadableStreamController controller)? pull,
-  FutureOr<void> Function([
+  Future<void> Function(ReadableStreamController controller)? start,
+  Future<void> Function(ReadableStreamController controller)? pull,
+  Future<void> Function([
     String? reason,
     ReadableStreamController? controller,
-  ])?
-      cancel,
+  ])? cancel,
   ReadableStreamType type = ReadableStreamType.default$,
   int? autoAllocateChunkSize,
 }) {
-  final startFn = start == null
-      ? undefined
-      : start is Future<void> Function(ReadableStreamController)
-          ? allowInterop((ReadableStreamController controller) {
-              return createPromiseFromFuture(start(controller));
-            })
-          : allowInterop(start);
-  final pullFn = pull == null
-      ? undefined
-      : pull is Future<void> Function(ReadableStreamController)
-          ? allowInterop((ReadableStreamController controller) {
-              return createPromiseFromFuture(pull(controller));
-            })
-          : allowInterop(pull);
-  final cancelFn = cancel == null
-      ? undefined
-      : cancel is Future<void> Function([
-          String? reason,
-          ReadableStreamController? controller,
-        ])
-          ? allowInterop((
-              String? reason,
-              ReadableStreamController? controller,
-            ) {
-              return createPromiseFromFuture(
-                Future<void>.value(cancel(reason, controller)),
-              );
-            })
-          : allowInterop(cancel);
+  JSAny? startFn(ReadableStreamController controller) {
+    final result = start?.call(controller);
+    return result?.toJS;
+  }
+
+  JSAny? pullFn(ReadableStreamController controller) {
+    final result = pull?.call(controller);
+    return result?.toJS;
+  }
+
+  JSAny? cancelFn([JSString? reason, ReadableStreamController? controller]) {
+    final result = cancel?.call(reason?.toDart, controller);
+    return result?.toJS;
+  }
+
   return UnderlyingSource._(
-    start: startFn?.toJS as JSAny?,
-    pull: pullFn?.toJS as JSAny?,
-    cancel: cancelFn?.toJS as JSAny?,
-    type: type.jsValue,
-    autoAllocateChunkSize: autoAllocateChunkSize?.toJS as JSAny? ?? undefined,
+    start: startFn.toJS,
+    pull: pullFn.toJS,
+    cancel: cancelFn.toJS,
+    // TODO(dnys1): passing `null` for these throws but cannot send `undefined` for some reason in WASM.
+    // type: type.jsValue ?? undefined,
+    // autoAllocateChunkSize: autoAllocateChunkSize?.toJS ?? undefined,
   );
 }
 
@@ -170,14 +152,20 @@ abstract class ReadableStreamController {}
 
 /// {@macro aws_common.js.readable_stream_controller}
 extension PropsReadableStreamController on ReadableStreamController {
+  @JS('desiredSize')
+  external JSNumber get _desiredSize;
+
   /// The desired size required to fill the stream's internal queue.
-  external int get desiredSize;
+  int get desiredSize => _desiredSize.toDart.toInt();
 
   /// Closes the associated stream.
   external void close();
 
+  @JS('enqueue')
+  external void _enqueue(JSUint8Array chunk);
+
   /// Enqueues a given chunk in the associated stream.
-  external void enqueue(Uint8List chunk);
+  void enqueue(Uint8List chunk) => _enqueue(chunk.toJS);
 }
 
 /// {@template aws_common.js.readable_stream_default_controller}
@@ -215,16 +203,19 @@ final Expando<ReadableStreamView> _readableStreamViews =
 
 /// {@macro aws_common.js.readable_stream}
 extension PropsReadableStream on ReadableStream {
+  @JS('locked')
+  external JSBoolean get _locked;
+
   /// Whether or not the readable stream is locked to a reader.
-  external bool get locked;
+  bool get locked => _locked.toDart;
 
   /// Returns a Promise that resolves when the stream is canceled.
   ///
   /// Calling this method signals a loss of interest in the stream by a
   /// consumer. The supplied reason argument will be given to the underlying
   /// source, which may or may not use it.
-  Future<void> cancel([String? reason]) =>
-      js_util.promiseToFuture(js_util.callMethod(this, 'cancel', [reason]));
+  Future<void> cancel([String? reason]) => js_util
+      .promiseToFuture(js_util.callMethod(this, 'cancel', [reason?.toJS]));
 
   /// Creates a reader and locks the stream to it.
   ///
@@ -240,7 +231,7 @@ extension PropsReadableStream on ReadableStream {
       _readableStreamViews[this] ??= ReadableStreamView(this);
 
   /// The progress (in bytes) of [stream].
-  Stream<int> get progress => stream.progress;
+  Stream<num> get progress => stream.progress;
 }
 
 /// {@template aws_common.js.readable_stream_reader}
@@ -324,13 +315,19 @@ abstract class ReadableStreamChunk {}
 
 /// {@macro aws_common.js.readable_stream_chunk}
 extension PropsReadableStreamChunk on ReadableStreamChunk {
+  @JS('value')
+  external JSUint8Array? get _value;
+
   /// The chunk of data.
   ///
   /// Always `null` when [done] is `true`.
-  external Uint8List? get value;
+  Uint8List? get value => _value?.toDart;
+
+  @JS('done')
+  external JSBoolean get _done;
 
   /// Whether the stream is done producing values.
-  external bool get done;
+  bool get done => _done.toDart;
 }
 
 /// {@template aws_common.js.readable_stream_view}

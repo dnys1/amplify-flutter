@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'dart:js_interop';
+import 'dart:typed_data';
 
 import 'package:aws_common/aws_common.dart';
 import 'package:aws_common/src/js/abort.dart';
@@ -232,17 +233,9 @@ abstract class RequestInit {
   }
 
   external factory RequestInit._({
-    JSAny? cache,
-    JSAny? credentials,
-    JSAny? mode,
-    JSAny? destination,
-    JSAny? redirect,
-    JSAny? referrer,
     JSAny? headers,
-    JSAny? integrity,
     JSAny? duplex,
-    JSAny? signal,
-    JSAny? keepalive,
+    AbortSignal? signal,
     JSString? method,
     JSAny? body,
   });
@@ -280,26 +273,54 @@ RequestInit createRequestInit({
   if (cannotHaveBody) {
     body = null;
   }
-  if (body is Stream<List<int>>) {
-    body = body.asReadableStream();
+  final JSAny? jsBody;
+  if (body == null) {
+    print('its null');
+    jsBody = null;
+  } else if (body is Stream<List<int>>) {
+    print('its a stream');
+    // ignore: unnecessary_cast
+    jsBody = body.asReadableStream() as JSAny;
+  } else {
+    print('its an array');
+    jsBody = (body as Uint8List).toJS;
   }
-  return RequestInit._(
-    cache: cache.jsValue,
-    credentials: credentials.jsValue,
-    mode: mode.jsValue,
-    destination: destination.jsValue,
-    redirect: redirect.jsValue,
-    referrer: referrer?.toJS as JSAny? ?? undefined,
-    headers: headers != null ? js_util.jsify(headers) : undefined,
-    integrity: integrity?.toJS as JSAny? ?? undefined,
-    keepalive: keepalive?.toJS as JSAny? ?? undefined,
-    method: method.value.toJS,
-    signal: signal as JSAny? ?? undefined,
-    body: body as JSAny? ?? undefined,
-    // Added for full compatibility with all `fetch` impls:
-    // https://developer.chrome.com/articles/fetch-streaming-requests/#half-duplex
-    duplex: 'half'.toJS as JSAny,
-  );
+  if (jsBody.isDefinedAndNotNull) {
+    return RequestInit._(
+      // cache: cache.jsValue,
+      // credentials: credentials.jsValue,
+      // mode: mode.jsValue,
+      // destination: destination.jsValue,
+      // redirect: redirect.jsValue,
+      // referrer: referrer?.toJS ?? undefined,
+      headers: headers != null ? js_util.jsify(headers) : undefined,
+      // integrity: integrity?.toJS ?? undefined,
+      // keepalive: keepalive?.toJS ?? undefined,
+      method: method.value.toJS,
+      signal: signal,
+      body: jsBody,
+      // Added for full compatibility with all `fetch` impls:
+      // https://developer.chrome.com/articles/fetch-streaming-requests/#half-duplex
+      duplex: 'half'.toJS,
+    );
+  } else {
+    return RequestInit._(
+      // cache: cache.jsValue,
+      // credentials: credentials.jsValue,
+      // mode: mode.jsValue,
+      // destination: destination.jsValue,
+      // redirect: redirect.jsValue,
+      // referrer: referrer?.toJS ?? undefined,
+      headers: headers != null ? js_util.jsify(headers) : undefined,
+      // integrity: integrity?.toJS ?? undefined,
+      // keepalive: keepalive?.toJS ?? undefined,
+      method: method.value.toJS,
+      signal: signal,
+      // Added for full compatibility with all `fetch` impls:
+      // https://developer.chrome.com/articles/fetch-streaming-requests/#half-duplex
+      duplex: 'half'.toJS,
+    );
+  }
 }
 
 /// {@template aws_common.js.headers}
@@ -313,41 +334,44 @@ RequestInit createRequestInit({
 @staticInterop
 class Headers {
   /// {@macro aws_common.js.headers}
-  external factory Headers(Map<String, String> headers);
+  factory Headers(Map<String, String> headers) =>
+      Headers._(js_util.jsify(headers) as JSObject);
+
+  external factory Headers._(JSObject headers);
 }
 
 /// {@macro aws_common.js.headers}
 extension PropsHeaders on Headers {
   /// Alias for [get].
-  String? operator [](String name) => get(name);
+  String? operator [](String name) => get(name.toJS)?.toDart;
 
   /// Alias for [set].
-  void operator []=(String name, String value) => set(name, value);
+  void operator []=(String name, String value) => set(name.toJS, value.toJS);
 
   /// Appends a new value onto an existing header inside a Headers object, or
   /// adds the header if it does not already exist.
-  external void append(String name, String value);
+  external void append(JSString name, JSString value);
 
   /// Deletes a header.
-  external void delete(String name);
+  external void delete(JSString name);
 
-  /// Returns a String sequence of all the values of a header within a
+  /// Returns a JSString sequence of all the values of a header within a
   /// [Headers] object with a given [name].
-  external String? get(String name);
+  external JSString? get(JSString name);
 
   /// Returns a boolean stating whether a [Headers] object contains a certain
   /// [header].
-  external bool has(String header);
+  external JSBoolean has(JSString header);
 
   /// Sets a new value for an existing header inside a [Headers] object, or adds
   /// the header if it does not already exist.
-  external void set(String name, String value);
+  external void set(JSString name, JSString value);
 
   /// Executes [callback] once for each array element.
   void forEach(
-    void Function(String value, String key, Headers parent) callback,
+    void Function(JSString value, JSString key, Headers parent) callback,
   ) =>
-      js_util.callMethod(this, 'forEach', [allowInterop(callback)]);
+      js_util.callMethod(this, 'forEach', [callback.toJS]);
 }
 
 /// {@template aws_common.js.request}
@@ -357,7 +381,7 @@ extension PropsHeaders on Headers {
 @staticInterop
 class Request {
   /// {@macro aws_common.js.request}
-  external factory Request(String url, [RequestInit? init]);
+  external factory Request(JSString url, [RequestInit? init]);
 }
 
 /// {@template aws_common.js.response}
@@ -368,7 +392,7 @@ class Request {
 @staticInterop
 class Response {
   /// {@macro aws_common.js.response}
-  external factory Response(String url, [RequestInit? init]);
+  external factory Response(JSString url, [RequestInit? init]);
 }
 
 /// Used to expand [Response] and treat `Response.body` as a `late final`
@@ -386,27 +410,36 @@ extension PropsResponse on Response {
   Map<String, String> get headers {
     final Map<String, String> headers = CaseInsensitiveMap({});
     js_util.getProperty<Headers>(this, 'headers').forEach((value, key, _) {
-      headers[key] = value;
+      headers[key.toDart] = value.toDart;
     });
     return headers;
   }
 
+  @JS('status')
+  external JSNumber get _status;
+
   /// The status code of the response.
-  external int get status;
+  int get status => _status.toDart.toInt();
+
+  @JS('statusText')
+  external JSString get _statusText;
 
   /// The status message corresponding to [status].
-  external String get statusText;
+  String get statusText => _statusText.toDart;
+
+  @JS('redirected')
+  external JSBoolean get _redirected;
 
   /// Whether or not the response is the result of a redirect.
-  external bool get redirected;
+  bool get redirected => _redirected.toDart;
 }
 
 @JS('fetch')
-external Promise<Response> _fetch(String url, [RequestInit? init]);
+external Promise<Response> _fetch(JSString url, [RequestInit? init]);
 
 /// The global fetch() method starts the process of fetching a resource from
 /// the network, returning a promise which is fulfilled once the response is
 /// available.
 Future<Response> fetch(String url, [RequestInit? init]) {
-  return js_util.promiseToFuture(_fetch(url, init));
+  return js_util.promiseToFuture(_fetch(url.toJS, init));
 }

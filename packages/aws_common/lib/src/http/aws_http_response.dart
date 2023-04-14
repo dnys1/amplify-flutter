@@ -96,7 +96,24 @@ class AWSStreamedHttpResponse extends AWSBaseHttpResponse {
       encoding.decodeStream(body);
 
   @override
-  Future<Uint8List> get bodyBytes => collectBytes(body);
+  Future<Uint8List> get bodyBytes async {
+    final bytes = BytesBuilder(copy: false);
+    final completer = Completer<List<int>>.sync();
+    split().listen(
+      (b) {
+        print('Addding bytes: ${b.length}/${b.runtimeType}');
+        bytes.add(Uint8List.fromList(b));
+      },
+      onError: completer.completeError,
+      onDone: () {
+        final tb = bytes.takeBytes();
+        print('Done with bytes: ${tb.length}/${tb.runtimeType}');
+        completer.complete(tb);
+      },
+      cancelOnError: true,
+    );
+    return Uint8List.fromList(await completer.future);
+  }
 
   /// Reads [body] fully and returns a flattened [AWSHttpResponse].
   ///

@@ -2,9 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'dart:async';
-import 'dart:typed_data';
 
-import 'package:async/async.dart';
 import 'package:aws_common/aws_common.dart';
 import 'package:aws_common/src/js/abort.dart';
 import 'package:aws_common/src/js/fetch.dart';
@@ -53,94 +51,87 @@ class AWSHttpClientImpl extends AWSHttpClient {
     } else {
       redirect = RequestRedirect.manual;
     }
-    try {
-      // ReadableStream bodies are only supported in fetch on HTTPS calls to
-      // HTTP/2 or HTTP/3 servers:
-      // - https://developer.chrome.com/articles/fetch-streaming-requests/#doesnt-work-on-http1x
-      // - https://developer.chrome.com/articles/fetch-streaming-requests/#incompatibility-outside-of-your-control
-      var requestBytesRead = 0;
-      final stream = request.body.tap(
-        (chunk) {
-          requestBytesRead += chunk.length;
-          requestProgressController.add(requestBytesRead);
-        },
+    // ReadableStream bodies are only supported in fetch on HTTPS calls to
+    // HTTP/2 or HTTP/3 servers:
+    // - https://developer.chrome.com/articles/fetch-streaming-requests/#doesnt-work-on-http1x
+    // - https://developer.chrome.com/articles/fetch-streaming-requests/#incompatibility-outside-of-your-control
+    var requestBytesRead = 0;
+    final stream = request.body.tap(
+      (chunk) {
+        requestBytesRead += chunk.length;
+        requestProgressController.add(requestBytesRead);
+      },
+      onDone: () {
+        if (!cancelTrigger.isCompleted) {
+          logger.verbose('Request sent');
+        }
+        requestProgressController.close();
+      },
+    ).takeUntil(cancelTrigger.future);
+    Object? body;
+    if (request.scheme == 'http' ||
+        supportedProtocols.supports(AlpnProtocol.http1_1)) {
+      body = await request.bodyBytes;
+    } else {
+      body = stream;
+    }
+
+    if (completer.isCanceled) return;
+    final resp = await fetch(
+      request.uri.toString(),
+      RequestInit(
+        method: request.method,
+        headers: request.headers,
+        body: body,
+        signal: abortController.signal,
+        redirect: redirect,
+      ),
+    );
+
+    final streamView = resp.body;
+    final bodyController = StreamController<List<int>>(
+      sync: true,
+      // In downstream operations, we may only have access to the body stream
+      // so we need to allow cancellation via the subscription.
+      onCancel: () {
+        logger.verbose('Subscription canceled');
+        if (!cancelTrigger.isCompleted) {
+          cancelTrigger.complete();
+        }
+      },
+    );
+    onCancel = () {
+      if (!bodyController.isClosed) {
+        bodyController
+          ..addError(const CancellationException())
+          ..close();
+      }
+      responseProgressController.close();
+    };
+    unawaited(
+      streamView.progress.forward(
+        responseProgressController,
+        cancelOnError: true,
+      ),
+    );
+    unawaited(
+      streamView.forward(bodyController, cancelOnError: true),
+    );
+    final streamedResponse = AWSStreamedHttpResponse(
+      statusCode: resp.status,
+      headers: resp.headers,
+      body: bodyController.stream.tap(
+        null,
         onDone: () {
           if (!cancelTrigger.isCompleted) {
-            logger.verbose('Request sent');
+            logger.verbose('Response received');
           }
-          requestProgressController.close();
+          onCancel = null;
+          responseProgressController.close();
         },
-      ).takeUntil(cancelTrigger.future);
-      Object body;
-      if (request.scheme == 'http' ||
-          supportedProtocols.supports(AlpnProtocol.http1_1)) {
-        body = Uint8List.fromList(await collectBytes(stream));
-      } else {
-        body = stream;
-      }
-
-      if (completer.isCanceled) return;
-      final resp = await fetch(
-        request.uri.toString(),
-        createRequestInit(
-          method: request.method,
-          headers: request.headers,
-          body: body,
-          signal: abortController.signal,
-          redirect: redirect,
-        ),
-      );
-
-      final streamView = resp.body;
-      final bodyController = StreamController<List<int>>(
-        sync: true,
-        // In downstream operations, we may only have access to the body stream
-        // so we need to allow cancellation via the subscription.
-        onCancel: () {
-          logger.verbose('Subscription canceled');
-          if (!cancelTrigger.isCompleted) {
-            cancelTrigger.complete();
-          }
-        },
-      );
-      onCancel = () {
-        if (!bodyController.isClosed) {
-          bodyController
-            ..addError(const CancellationException())
-            ..close();
-        }
-        responseProgressController.close();
-      };
-      unawaited(
-        streamView.progress.forward(
-          responseProgressController,
-          cancelOnError: true,
-        ),
-      );
-      unawaited(
-        streamView.forward(bodyController, cancelOnError: true),
-      );
-      final streamedResponse = AWSStreamedHttpResponse(
-        statusCode: resp.status,
-        headers: resp.headers,
-        body: bodyController.stream.tap(
-          null,
-          onDone: () {
-            if (!cancelTrigger.isCompleted) {
-              logger.verbose('Response received');
-            }
-            onCancel = null;
-            responseProgressController.close();
-          },
-        ),
-      );
-      completer.complete(streamedResponse);
-    } on Object catch (e, st) {
-      completer.completeError(
-        AWSHttpException(request, e),
-        st,
-      );
-    }
+      ),
+    );
+    completer.complete(streamedResponse);
   }
 
   @override

@@ -6,6 +6,8 @@
 @JS()
 library aws_common.js.abort;
 
+import 'dart:js_interop';
+
 import 'package:js/js.dart';
 import 'package:js/js_util.dart' as js_util;
 
@@ -17,18 +19,18 @@ import 'package:js/js_util.dart' as js_util;
 @staticInterop
 abstract class AbortSignal {
   /// An [AbortSignal] instance that is already set as aborted.
-  external static AbortSignal abort([String? reason]);
+  external static AbortSignal abort([JSString? reason]);
 
   /// An [AbortSignal] instance that will automatically abort after a specified
   /// time.
-  external static AbortSignal timeout(int millis);
+  external static AbortSignal timeout(JSNumber millis);
 }
 
 /// {@macro aws_http.js.abort_signal}
 extension PropsAbortSignal on AbortSignal {
   /// Whether the request(s) the signal is communicating with is/are aborted
   /// (`true`) or not (`false`).
-  external bool get aborted;
+  external JSBoolean get aborted;
 
   /// The abort reason, once the signal has aborted.
   String? get reason =>
@@ -53,5 +55,5 @@ extension PropsAbortController on AbortController {
   external AbortSignal get signal;
 
   /// Aborts a DOM request before it has completed.
-  external void abort([String? reason]);
+  external void abort([JSString? reason]);
 }

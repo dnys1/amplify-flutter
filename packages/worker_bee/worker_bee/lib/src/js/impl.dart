@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'dart:async';
+import 'dart:js_interop';
 
 // ignore: implementation_imports
 import 'package:aws_common/src/js/common.dart';
@@ -202,7 +203,7 @@ mixin WorkerBeeImpl<Request extends Object, Response>
             _worker!.onError = (Event event) {
               Object error;
               if (event is ErrorEvent) {
-                final eventJson = JSON.stringify(event.error);
+                final eventJson = JSON.stringify(event.error?.toJS);
                 error = WorkerBeeExceptionImpl('${event.message} ($eventJson)');
               } else {
                 error = WorkerBeeExceptionImpl('An unknown error occurred');

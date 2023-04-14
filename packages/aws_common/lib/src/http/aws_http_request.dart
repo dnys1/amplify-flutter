@@ -499,7 +499,9 @@ class AWSStreamedHttpRequest extends AWSBaseHttpRequest {
   Stream<List<int>> get body => _splitter == null ? _body : split();
 
   @override
-  Future<Uint8List> get bodyBytes => collectBytes(split());
+  Future<Uint8List> get bodyBytes async {
+    return Uint8List.fromList(await _body.first);
+  }
 
   @override
   Future<AWSHttpRequest> read() async {

@@ -6,9 +6,7 @@ import 'dart:io';
 import 'package:aft/src/flutter_platform.dart';
 import 'package:aft/src/models/raw_config.dart';
 import 'package:aft/src/util.dart';
-import 'package:aws_common/aws_common.dart';
 import 'package:collection/collection.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
@@ -57,95 +55,6 @@ class PubVersionInfo {
 
   Version? get latestVersion =>
       allVersions.where((version) => !version.isPreRelease).lastOrNull;
-
-  /// Absolute path to the package.
-  final String path;
-
-  /// The package's pubspec.
-  final PubspecInfo pubspecInfo;
-
-  /// The package flavor, e.g. Dart or Flutter.
-  final PackageFlavor flavor;
-
-  /// The integration test directory within the enclosing directory, if any
-  Directory? get integTestDirectory {
-    final expectedPath = p.join(path, 'integration_test');
-    final integTestDir = Directory(expectedPath);
-    if (!integTestDir.existsSync()) {
-      return null;
-    }
-    return integTestDir;
-  }
-
-  /// The unit test directory within the enclosing directory, if any
-  Directory? get unitTestDirectory {
-    final expectedPath = p.join(path, 'test');
-    final unitTestDir = Directory(expectedPath);
-    if (!unitTestDir.existsSync()) {
-      return null;
-    }
-    return unitTestDir;
-  }
-
-  /// The example app for this package, if any.
-  PackageInfo? get example {
-    final expectedPath = p.join(path, 'example');
-    final exampleDir = Directory(expectedPath);
-    if (!exampleDir.existsSync()) {
-      return null;
-    }
-    return PackageInfo.fromDirectory(exampleDir);
-  }
-
-  /// The platforms a package supports, typically for example apps.
-  List<FlutterPlatform>? get platforms {
-    final platforms = <FlutterPlatform>[];
-    for (final value in FlutterPlatform.values) {
-      final expectedPath = p.join(path, value.name);
-      final platformDirectory = Directory(expectedPath);
-      if (platformDirectory.existsSync()) {
-        platforms.add(value);
-      }
-    }
-    if (platforms.isEmpty) {
-      return null;
-    }
-    return platforms;
-  }
-
-  /// Whether the package needs `build_runner` to be run.
-  ///
-  /// Used as a pre-publish check to ensure that generated code is
-  /// up-to-date before publishing.
-  bool get needsBuildRunner {
-    return pubspecInfo.pubspec.devDependencies.containsKey('build_runner') &&
-        // aft should not be used to run `build_runner` in example projects
-        (pubspecInfo.pubspec.publishTo != 'none' ||
-            falsePositiveExamples.contains(name));
-  }
-
-  /// Skip package checks for Flutter packages when running in CI without
-  /// Flutter, which may happen when testing Dart-only packages or specific
-  /// Dart versions.
-  bool get skipChecks {
-    final isCI = getEnv('CI') == 'true' || getEnv('CI') == '1';
-    return isCI &&
-        getEnv('FLUTTER_ROOT') == null &&
-        flavor == PackageFlavor.flutter;
-  }
-
-  @override
-  List<Object?> get props => [
-        name,
-        path,
-        pubspecInfo,
-        flavor,
-      ];
-
-  @override
-  int compareTo(PackageInfo other) {
-    return path.compareTo(other.path);
-  }
 
   Version? get latestPrerelease =>
       allVersions.where((version) => version.isPreRelease).lastOrNull;

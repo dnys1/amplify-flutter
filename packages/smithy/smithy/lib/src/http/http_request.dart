@@ -214,6 +214,10 @@ class SmithyHttpRequest {
         },
         onError: completer.completeError,
       );
+    }).onError((error, stackTrace) {
+      print('ERROR: $error');
+      print('STACK: $stackTrace');
+      Error.throwWithStackTrace(error!, stackTrace);
     });
     return AWSHttpOperation(
       completer.operation,

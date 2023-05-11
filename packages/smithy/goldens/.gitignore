@@ -31,3 +31,7 @@ gradle-app.setting
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+
+# jnigen
+mvn_jar
+mvn_java

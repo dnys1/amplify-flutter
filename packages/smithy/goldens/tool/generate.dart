@@ -4,14 +4,17 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:args/args.dart';
 import 'package:aws_common/aws_common.dart';
 import 'package:file/local.dart';
 import 'package:glob/glob.dart';
+import 'package:jni/internal_helpers_for_jnigen.dart';
+import 'package:jni/jni.dart';
 import 'package:path/path.dart' as path;
 import 'package:pubspec_parse/pubspec_parse.dart';
-import 'package:smithy/ast.dart';
+import 'package:smithy/ast.dart' hide ServiceShape;
 import 'package:smithy_codegen/smithy_codegen.dart';
+
+import 'smithy.g.dart';
 
 final modelsPath = path.join(Directory.current.path, 'models');
 const skipProtocols = [
@@ -27,18 +30,21 @@ const awsProtocols = [
 ];
 
 Future<void> main(List<String> args) async {
-  final argParser = ArgParser()
-    ..addFlag(
-      'update',
-      help: 'Whether to update test models from git',
-      defaultsTo: false,
-    );
-  final parsedArgs = argParser.parse(args);
-  final update = parsedArgs['update'] as bool;
-  if (update) {
-    await updateModels();
+  final jars = Directory.fromUri(Platform.script.resolve('../mvn_jar'))
+      .listSync()
+      .map((e) => e.path)
+      .where((path) => path.endsWith('.jar'))
+      .toList();
+  stdout.writeln('Found jars:\n${jars.join('\n')}');
+  if (jars.isEmpty) {
+    stderr.writeln('Must run `dart run jni:setup` first');
+    exit(1);
   }
-  final glob = Glob(parsedArgs.rest.length == 1 ? parsedArgs.rest.single : '*');
+  Jni.spawn(
+    dylibDir: Platform.script.resolve('../build/jni_libs').toFilePath(),
+    classPath: jars,
+  );
+  final glob = Glob(args.length == 1 ? args.single : '*');
   final futures = <Future<void> Function()>[];
   final entites = glob.listFileSystemSync(
     const LocalFileSystem(),
@@ -70,98 +76,6 @@ Future<void> main(List<String> args) async {
   await Future.wait<void>(futures.map((fut) => fut()));
 }
 
-String _replaceDirectory(String path, {bool create = false}) {
-  final dir = Directory(path);
-  if (dir.existsSync()) {
-    dir.deleteSync(recursive: true);
-  }
-  if (create) {
-    dir.createSync(recursive: true);
-  }
-  return path;
-}
-
-Future<void> _copy(String from, String to) async {
-  final process = await Process.start(
-    'cp',
-    ['-R', from, to],
-    mode: ProcessStartMode.inheritStdio,
-    workingDirectory: Directory.current.path,
-  );
-  if (await process.exitCode != 0) {
-    stderr.writeln('Could not copy $from to $to');
-    exit(1);
-  }
-}
-
-/// Updates v2 models from git.
-///
-/// v1 models are no longer committed to git and are fixed at the last commit
-/// in which they were updated.
-Future<void> updateModels() async {
-  final smithyVersion = File.fromUri(
-    Platform.script.resolve('../smithy-version'),
-  ).readAsStringSync().trim();
-  const url = 'https://github.com/awslabs/smithy';
-  final tmpDir = Directory.systemTemp.createTempSync('smithy');
-  final process = await Process.start(
-    'git',
-    [
-      'clone',
-      '--depth=1',
-      '--branch',
-      smithyVersion,
-      url,
-      tmpDir.path,
-    ],
-    mode: ProcessStartMode.inheritStdio,
-    workingDirectory: Directory.current.path,
-  );
-  if (await process.exitCode != 0) {
-    stderr.writeln('Could not clone $url');
-    exit(1);
-  }
-  for (final protocol in awsProtocols) {
-    final src = path.join(
-      tmpDir.path,
-      'smithy-aws-protocol-tests',
-      'model',
-      protocol,
-    );
-    final dest = _replaceDirectory(
-      path.join(modelsPath, protocol),
-    );
-    await _copy(src, dest);
-  }
-
-  // Copy shared types
-  final sharedPath = _replaceDirectory(
-    path.join(modelsPath, 'shared'),
-    create: true,
-  );
-  const sharedModels = [
-    'aws-config.smithy',
-    'shared-types.smithy',
-  ];
-  for (final sharedModel in sharedModels) {
-    final sourcePath = path.join(
-      tmpDir.path,
-      'smithy-aws-protocol-tests',
-      'model',
-      sharedModel,
-    );
-    await _copy(sourcePath, sharedPath);
-  }
-
-  // Replace `coral` references
-  final allModelFiles =
-      Directory(modelsPath).listSync(recursive: true).whereType<File>();
-  for (final file in allModelFiles) {
-    final content = file.readAsStringSync();
-    file.writeAsStringSync(content.replaceAll('coral', 'example'));
-  }
-}
-
 Future<SmithyAst> _transform(
   SmithyVersion version,
   String modelPath, {
@@ -170,27 +84,48 @@ Future<SmithyAst> _transform(
 }) async {
   stdout.writeln('Generating AST for $modelPath');
 
-  final tempModel = File(
-    path.join(tempOutputs.path, '${modelPath}_${version.name}.json'),
-  );
-  final result = await Process.run(
-    Platform.script.resolve('../gradlew').toFilePath(),
-    [
-      'run',
-      '--args="$modelsPath" "${tempModel.path}" "$protocolName" "${version.name.toUpperCase()}"',
-    ],
-    stdoutEncoding: utf8,
-    stderrEncoding: utf8,
-  );
-  if (result.exitCode != 0) {
-    stderr.write('Could not generate model for $modelPath: ');
-    stderr.writeln(result.stdout);
-    stderr.writeln(result.stderr);
-    exit(result.exitCode);
-  }
+  final modelImport =
+      Platform.script.resolve('../models/$modelPath').toFilePath();
+  final sharedImport = Platform.script.resolve('../models/shared').toFilePath();
 
-  final astJson = tempModel.readAsStringSync();
-  return parseAstJson(astJson);
+  var model = Model.assembler().use((assembler) => assembler
+      .discoverModels1()
+      .addImport(sharedImport.toJString())
+      .addImport(modelImport.toJString())
+      .assemble()
+      .unwrap());
+
+  ModelTransformer.create().use((transformer) {
+    model = transformer.changeStringEnumsToEnumShapes1(model);
+    model = transformer.flattenAndRemoveMixins(model);
+    final serviceShapes =
+        model.getServiceShapes().castTo(JArray.type(ServiceShape.type));
+    for (var i = 0; i < serviceShapes.length; i++) {
+      final serviceShape = ServiceShape.fromRef(
+        serviceShapes.elementAt(i, JniCallType.objectType).object,
+      );
+      model = transformer.copyServiceErrorsToOperations(model, serviceShape);
+    }
+    model = switch (version) {
+      SmithyVersion.v1 => transformer.downgradeToV1(model),
+      _ => model,
+    };
+    model = transformer.getModelWithoutTraitShapes(model);
+  });
+
+  final serializer = ModelSerializer.builder().use(
+    (b) => b.includePrelude(false).build(),
+  );
+  final jsonRef = serializer.use((serializer) {
+    // TODO(dnys1): Fix UTF8 encoding.
+    /// Does this need support for modified UTF8?
+    /// https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html#modified_utf_8_strings
+    return Node.prettyPrintJson(
+      Node.fromRef(serializer.serialize(model).reference),
+    );
+  });
+
+  return parseAstJson(jsonRef.toDartString());
 }
 
 Future<void> _generateFor({

@@ -1,0 +1,26 @@
+preamble: |
+  // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+  // SPDX-License-Identifier: Apache-2.0
+maven_downloads:
+  source_deps:
+    - software.amazon.smithy:smithy-model:1.28.1
+    - software.amazon.smithy:smithy-aws-apigateway-traits:1.28.1
+    - software.amazon.smithy:smithy-aws-cloudformation-traits:1.28.1
+    - software.amazon.smithy:smithy-aws-iam-traits:1.28.1
+    - software.amazon.smithy:smithy-aws-traits:1.28.1
+    - software.amazon.smithy:smithy-mqtt-traits:1.28.1
+    - software.amazon.smithy:smithy-protocol-test-traits:1.28.1
+    - software.amazon.smithy:smithy-validation-model:1.28.1
+classes:
+  - software.amazon.smithy.model.Model
+  - software.amazon.smithy.model.loader.ModelAssembler
+  - software.amazon.smithy.model.node.Node
+  - software.amazon.smithy.model.shapes.ModelSerializer
+  - software.amazon.smithy.model.shapes.ServiceShape
+  - software.amazon.smithy.model.transform.ModelTransformer
+  - software.amazon.smithy.model.validation.ValidatedResult
+output:
+  bindings_type: dart_only
+  dart:
+    path: tool/smithy.g.dart
+    structure: single_file

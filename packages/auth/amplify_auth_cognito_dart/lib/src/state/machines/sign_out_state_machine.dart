@@ -58,6 +58,8 @@ final class SignOutStateMachine
       tokens = await manager.getUserPoolTokens();
     } on SignedOutException {
       return emit(const SignOutState.success());
+    } on AuthException catch (e) {
+      return emit(SignOutState.failure(e));
     }
 
     // Capture results of individual steps to determine overall success.

@@ -88,19 +88,11 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "pub"
-    directory: "packages/auth/amplify_auth_cognito_android/"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "pub"
     directory: "packages/auth/amplify_auth_cognito_dart/"
     schedule:
       interval: "daily"
   - package-ecosystem: "pub"
     directory: "packages/auth/amplify_auth_cognito_dart/example/"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "pub"
-    directory: "packages/auth/amplify_auth_cognito_ios/"
     schedule:
       interval: "daily"
   - package-ecosystem: "pub"

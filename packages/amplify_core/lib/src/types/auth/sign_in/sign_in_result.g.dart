@@ -8,14 +8,14 @@ part of 'sign_in_result.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Map<String, dynamic> _$SignInResultToJson<Key extends AuthUserAttributeKey>(
-  SignInResult<Key> instance,
-  Object? Function(Key value) toJsonKey,
-) =>
+SignInResult _$SignInResultFromJson(Map<String, dynamic> json) => SignInResult(
+      isSignedIn: json['isSignedIn'] as bool,
+      nextStep:
+          AuthNextSignInStep.fromJson(json['nextStep'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$SignInResultToJson(SignInResult instance) =>
     <String, dynamic>{
-      'hashCode': instance.hashCode,
       'isSignedIn': instance.isSignedIn,
       'nextStep': instance.nextStep.toJson(),
-      'props': instance.props,
-      'runtimeTypeName': instance.runtimeTypeName,
     };

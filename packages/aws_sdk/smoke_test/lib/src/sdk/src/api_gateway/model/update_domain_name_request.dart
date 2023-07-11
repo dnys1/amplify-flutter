@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.update_domain_name_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -54,9 +55,8 @@ abstract class UpdateDomainNameRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    UpdateDomainNameRequestRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<UpdateDomainNameRequestPayload>>
+      serializers = [UpdateDomainNameRequestRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(UpdateDomainNameRequestBuilder b) {}
@@ -92,15 +92,15 @@ abstract class UpdateDomainNameRequest
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('UpdateDomainNameRequest');
-    helper.add(
-      'domainName',
-      domainName,
-    );
-    helper.add(
-      'patchOperations',
-      patchOperations,
-    );
+    final helper = newBuiltValueToStringHelper('UpdateDomainNameRequest')
+      ..add(
+        'domainName',
+        domainName,
+      )
+      ..add(
+        'patchOperations',
+        patchOperations,
+      );
     return helper.toString();
   }
 }
@@ -127,12 +127,11 @@ abstract class UpdateDomainNameRequestPayload
   List<Object?> get props => [patchOperations];
   @override
   String toString() {
-    final helper =
-        newBuiltValueToStringHelper('UpdateDomainNameRequestPayload');
-    helper.add(
-      'patchOperations',
-      patchOperations,
-    );
+    final helper = newBuiltValueToStringHelper('UpdateDomainNameRequestPayload')
+      ..add(
+        'patchOperations',
+        patchOperations,
+      );
     return helper.toString();
   }
 }
@@ -168,18 +167,18 @@ class UpdateDomainNameRequestRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'patchOperations':
-          if (value != null) {
-            result.patchOperations.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i4.BuiltList,
-                [FullType(_i3.PatchOperation)],
-              ),
-            ) as _i4.BuiltList<_i3.PatchOperation>));
-          }
-          break;
+          result.patchOperations.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i4.BuiltList,
+              [FullType(_i3.PatchOperation)],
+            ),
+          ) as _i4.BuiltList<_i3.PatchOperation>));
       }
     }
 
@@ -189,24 +188,22 @@ class UpdateDomainNameRequestRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    UpdateDomainNameRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is UpdateDomainNameRequest
-        ? object.getPayload()
-        : (object as UpdateDomainNameRequestPayload);
-    final result = <Object?>[];
-    if (payload.patchOperations != null) {
-      result
+    final result$ = <Object?>[];
+    final UpdateDomainNameRequestPayload(:patchOperations) = object;
+    if (patchOperations != null) {
+      result$
         ..add('patchOperations')
         ..add(serializers.serialize(
-          payload.patchOperations!,
+          patchOperations,
           specifiedType: const FullType(
             _i4.BuiltList,
             [FullType(_i3.PatchOperation)],
           ),
         ));
     }
-    return result;
+    return result$;
   }
 }

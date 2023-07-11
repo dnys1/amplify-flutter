@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of smoke_test.api_gateway.model.create_request_validator_request;
+part of 'create_request_validator_request.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
@@ -8,26 +8,30 @@ part of smoke_test.api_gateway.model.create_request_validator_request;
 
 class _$CreateRequestValidatorRequest extends CreateRequestValidatorRequest {
   @override
-  final String? name;
-  @override
   final String restApiId;
   @override
-  final bool? validateRequestBody;
+  final String? name;
   @override
-  final bool? validateRequestParameters;
+  final bool validateRequestBody;
+  @override
+  final bool validateRequestParameters;
 
   factory _$CreateRequestValidatorRequest(
           [void Function(CreateRequestValidatorRequestBuilder)? updates]) =>
       (new CreateRequestValidatorRequestBuilder()..update(updates))._build();
 
   _$CreateRequestValidatorRequest._(
-      {this.name,
-      required this.restApiId,
-      this.validateRequestBody,
-      this.validateRequestParameters})
+      {required this.restApiId,
+      this.name,
+      required this.validateRequestBody,
+      required this.validateRequestParameters})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
         restApiId, r'CreateRequestValidatorRequest', 'restApiId');
+    BuiltValueNullFieldError.checkNotNull(validateRequestBody,
+        r'CreateRequestValidatorRequest', 'validateRequestBody');
+    BuiltValueNullFieldError.checkNotNull(validateRequestParameters,
+        r'CreateRequestValidatorRequest', 'validateRequestParameters');
   }
 
   @override
@@ -43,8 +47,8 @@ class _$CreateRequestValidatorRequest extends CreateRequestValidatorRequest {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is CreateRequestValidatorRequest &&
-        name == other.name &&
         restApiId == other.restApiId &&
+        name == other.name &&
         validateRequestBody == other.validateRequestBody &&
         validateRequestParameters == other.validateRequestParameters;
   }
@@ -52,8 +56,8 @@ class _$CreateRequestValidatorRequest extends CreateRequestValidatorRequest {
   @override
   int get hashCode {
     var _$hash = 0;
-    _$hash = $jc(_$hash, name.hashCode);
     _$hash = $jc(_$hash, restApiId.hashCode);
+    _$hash = $jc(_$hash, name.hashCode);
     _$hash = $jc(_$hash, validateRequestBody.hashCode);
     _$hash = $jc(_$hash, validateRequestParameters.hashCode);
     _$hash = $jf(_$hash);
@@ -67,13 +71,13 @@ class CreateRequestValidatorRequestBuilder
             CreateRequestValidatorRequestBuilder> {
   _$CreateRequestValidatorRequest? _$v;
 
-  String? _name;
-  String? get name => _$this._name;
-  set name(String? name) => _$this._name = name;
-
   String? _restApiId;
   String? get restApiId => _$this._restApiId;
   set restApiId(String? restApiId) => _$this._restApiId = restApiId;
+
+  String? _name;
+  String? get name => _$this._name;
+  set name(String? name) => _$this._name = name;
 
   bool? _validateRequestBody;
   bool? get validateRequestBody => _$this._validateRequestBody;
@@ -92,8 +96,8 @@ class CreateRequestValidatorRequestBuilder
   CreateRequestValidatorRequestBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _name = $v.name;
       _restApiId = $v.restApiId;
+      _name = $v.name;
       _validateRequestBody = $v.validateRequestBody;
       _validateRequestParameters = $v.validateRequestParameters;
       _$v = null;
@@ -118,11 +122,17 @@ class CreateRequestValidatorRequestBuilder
   _$CreateRequestValidatorRequest _build() {
     final _$result = _$v ??
         new _$CreateRequestValidatorRequest._(
-            name: name,
             restApiId: BuiltValueNullFieldError.checkNotNull(
                 restApiId, r'CreateRequestValidatorRequest', 'restApiId'),
-            validateRequestBody: validateRequestBody,
-            validateRequestParameters: validateRequestParameters);
+            name: name,
+            validateRequestBody: BuiltValueNullFieldError.checkNotNull(
+                validateRequestBody,
+                r'CreateRequestValidatorRequest',
+                'validateRequestBody'),
+            validateRequestParameters: BuiltValueNullFieldError.checkNotNull(
+                validateRequestParameters,
+                r'CreateRequestValidatorRequest',
+                'validateRequestParameters'));
     replace(_$result);
     return _$result;
   }
@@ -133,9 +143,9 @@ class _$CreateRequestValidatorRequestPayload
   @override
   final String? name;
   @override
-  final bool? validateRequestBody;
+  final bool validateRequestBody;
   @override
-  final bool? validateRequestParameters;
+  final bool validateRequestParameters;
 
   factory _$CreateRequestValidatorRequestPayload(
           [void Function(CreateRequestValidatorRequestPayloadBuilder)?
@@ -144,8 +154,15 @@ class _$CreateRequestValidatorRequestPayload
           ._build();
 
   _$CreateRequestValidatorRequestPayload._(
-      {this.name, this.validateRequestBody, this.validateRequestParameters})
-      : super._();
+      {this.name,
+      required this.validateRequestBody,
+      required this.validateRequestParameters})
+      : super._() {
+    BuiltValueNullFieldError.checkNotNull(validateRequestBody,
+        r'CreateRequestValidatorRequestPayload', 'validateRequestBody');
+    BuiltValueNullFieldError.checkNotNull(validateRequestParameters,
+        r'CreateRequestValidatorRequestPayload', 'validateRequestParameters');
+  }
 
   @override
   CreateRequestValidatorRequestPayload rebuild(
@@ -230,8 +247,14 @@ class CreateRequestValidatorRequestPayloadBuilder
     final _$result = _$v ??
         new _$CreateRequestValidatorRequestPayload._(
             name: name,
-            validateRequestBody: validateRequestBody,
-            validateRequestParameters: validateRequestParameters);
+            validateRequestBody: BuiltValueNullFieldError.checkNotNull(
+                validateRequestBody,
+                r'CreateRequestValidatorRequestPayload',
+                'validateRequestBody'),
+            validateRequestParameters: BuiltValueNullFieldError.checkNotNull(
+                validateRequestParameters,
+                r'CreateRequestValidatorRequestPayload',
+                'validateRequestParameters'));
     replace(_$result);
     return _$result;
   }

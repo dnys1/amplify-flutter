@@ -13,190 +13,40 @@ part of amplify_interface;
 /// The Amplify CLI helps you to create and configure the storage category
 /// and auth category.
 /// {@endtemplate}
-class StorageCategory<
-    PluginStorageListOperation extends StorageListOperation,
-    PluginStorageListOptions extends StorageListOptions,
-    PluginStorageGetPropertiesOperation extends StorageGetPropertiesOperation,
-    PluginStorageGetPropertiesOptions extends StorageGetPropertiesOptions,
-    PluginStorageGetUrlOperation extends StorageGetUrlOperation,
-    PluginStorageGetUrlOptions extends StorageGetUrlOptions,
-    PluginStorageUploadDataOperation extends StorageUploadDataOperation,
-    PluginStorageUploadDataOptions extends StorageUploadDataOptions,
-    PluginStorageUploadFileOperation extends StorageUploadFileOperation,
-    PluginStorageUploadFileOptions extends StorageUploadFileOptions,
-    PluginStorageDownloadDataOperation extends StorageDownloadDataOperation,
-    PluginStorageDownloadDataOptions extends StorageDownloadDataOptions,
-    PluginStorageDownloadFileOperation extends StorageDownloadFileOperation,
-    PluginStorageDownloadFileOptions extends StorageDownloadFileOptions,
-    PluginStorageCopyOperation extends StorageCopyOperation,
-    PluginStorageCopyOptions extends StorageCopyOptions,
-    PluginStorageMoveOperation extends StorageMoveOperation,
-    PluginStorageMoveOptions extends StorageMoveOptions,
-    PluginStorageRemoveOperation extends StorageRemoveOperation,
-    PluginStorageRemoveOptions extends StorageRemoveOptions,
-    PluginStorageRemoveManyOperation extends StorageRemoveManyOperation,
-    PluginStorageRemoveManyOptions extends StorageRemoveManyOptions,
-    PluginStorageItem extends StorageItem,
-    PluginTransferProgress extends StorageTransferProgress,
-    Plugin extends StoragePluginInterface<
-        PluginStorageListOperation,
-        PluginStorageListOptions,
-        PluginStorageGetPropertiesOperation,
-        PluginStorageGetPropertiesOptions,
-        PluginStorageGetUrlOperation,
-        PluginStorageGetUrlOptions,
-        PluginStorageUploadDataOperation,
-        PluginStorageUploadDataOptions,
-        PluginStorageUploadFileOperation,
-        PluginStorageUploadFileOptions,
-        PluginStorageDownloadDataOperation,
-        PluginStorageDownloadDataOptions,
-        PluginStorageDownloadFileOperation,
-        PluginStorageDownloadFileOptions,
-        PluginStorageCopyOperation,
-        PluginStorageCopyOptions,
-        PluginStorageMoveOperation,
-        PluginStorageMoveOptions,
-        PluginStorageRemoveOperation,
-        PluginStorageRemoveOptions,
-        PluginStorageRemoveManyOperation,
-        PluginStorageRemoveManyOptions,
-        PluginStorageItem,
-        PluginTransferProgress>> extends AmplifyCategory<Plugin> {
-  StorageCategory([Plugin? plugin]) : _pluginOverride = plugin;
-
-  final Plugin? _pluginOverride;
-  Plugin get _plugin => _pluginOverride ?? defaultPlugin;
-
+class StorageCategory extends AmplifyCategory<StoragePluginInterface> {
   @override
   @nonVirtual
   Category get category => Category.storage;
 
-  StorageCategory<
-      GetPluginStorageListOperation,
-      GetPluginStorageListOptions,
-      GetPluginStorageGetPropertiesOperation,
-      GetPluginStorageGetPropertiesOptions,
-      GetPluginStorageGetUrlOperation,
-      GetPluginStorageGetUrlOptions,
-      GetPluginStorageUploadDataOperation,
-      GetPluginStorageUploadDataOptions,
-      GetPluginStorageUploadFileOperation,
-      GetPluginStorageUploadFileOptions,
-      GetPluginStorageDownloadDataOperation,
-      GetPluginStorageDownloadDataOptions,
-      GetPluginStorageDownloadFileOperation,
-      GetPluginStorageDownloadFileOptions,
-      GetPluginStorageCopyOperation,
-      GetPluginStorageCopyOptions,
-      GetPluginStorageMoveOperation,
-      GetPluginStorageMoveOptions,
-      GetPluginStorageRemoveOperation,
-      GetPluginStorageRemoveOptions,
-      GetPluginStorageRemoveManyOperation,
-      GetPluginStorageRemoveManyOptions,
-      GetPluginStorageItem,
-      GetPluginTransferProgress,
-      P> getPlugin<
-          GetPluginStorageListOperation extends StorageListOperation,
-          GetPluginStorageListOptions extends StorageListOptions,
-          GetPluginStorageGetPropertiesOperation extends StorageGetPropertiesOperation,
-          GetPluginStorageGetPropertiesOptions extends StorageGetPropertiesOptions,
-          GetPluginStorageGetUrlOperation extends StorageGetUrlOperation,
-          GetPluginStorageGetUrlOptions extends StorageGetUrlOptions,
-          GetPluginStorageUploadDataOperation extends StorageUploadDataOperation,
-          GetPluginStorageUploadDataOptions extends StorageUploadDataOptions,
-          GetPluginStorageUploadFileOperation extends StorageUploadFileOperation,
-          GetPluginStorageUploadFileOptions extends StorageUploadFileOptions,
-          GetPluginStorageDownloadDataOperation extends StorageDownloadDataOperation,
-          GetPluginStorageDownloadDataOptions extends StorageDownloadDataOptions,
-          GetPluginStorageDownloadFileOperation extends StorageDownloadFileOperation,
-          GetPluginStorageDownloadFileOptions extends StorageDownloadFileOptions,
-          GetPluginStorageCopyOperation extends StorageCopyOperation,
-          GetPluginStorageCopyOptions extends StorageCopyOptions,
-          GetPluginStorageMoveOperation extends StorageMoveOperation,
-          GetPluginStorageMoveOptions extends StorageMoveOptions,
-          GetPluginStorageRemoveOperation extends StorageRemoveOperation,
-          GetPluginStorageRemoveOptions extends StorageRemoveOptions,
-          GetPluginStorageRemoveManyOperation extends StorageRemoveManyOperation,
-          GetPluginStorageRemoveManyOptions extends StorageRemoveManyOptions,
-          GetPluginStorageItem extends StorageItem,
-          GetPluginTransferProgress extends StorageTransferProgress,
-          P extends StoragePluginInterface<
-              GetPluginStorageListOperation,
-              GetPluginStorageListOptions,
-              GetPluginStorageGetPropertiesOperation,
-              GetPluginStorageGetPropertiesOptions,
-              GetPluginStorageGetUrlOperation,
-              GetPluginStorageGetUrlOptions,
-              GetPluginStorageUploadDataOperation,
-              GetPluginStorageUploadDataOptions,
-              GetPluginStorageUploadFileOperation,
-              GetPluginStorageUploadFileOptions,
-              GetPluginStorageDownloadDataOperation,
-              GetPluginStorageDownloadDataOptions,
-              GetPluginStorageDownloadFileOperation,
-              GetPluginStorageDownloadFileOptions,
-              GetPluginStorageCopyOperation,
-              GetPluginStorageCopyOptions,
-              GetPluginStorageMoveOperation,
-              GetPluginStorageMoveOptions,
-              GetPluginStorageRemoveOperation,
-              GetPluginStorageRemoveOptions,
-              GetPluginStorageRemoveManyOperation,
-              GetPluginStorageRemoveManyOptions,
-              GetPluginStorageItem,
-              GetPluginTransferProgress>>(
-    StoragePluginKey<
-            GetPluginStorageListOperation,
-            GetPluginStorageListOptions,
-            GetPluginStorageGetPropertiesOperation,
-            GetPluginStorageGetPropertiesOptions,
-            GetPluginStorageGetUrlOperation,
-            GetPluginStorageGetUrlOptions,
-            GetPluginStorageUploadDataOperation,
-            GetPluginStorageUploadDataOptions,
-            GetPluginStorageUploadFileOperation,
-            GetPluginStorageUploadFileOptions,
-            GetPluginStorageDownloadDataOperation,
-            GetPluginStorageDownloadDataOptions,
-            GetPluginStorageDownloadFileOperation,
-            GetPluginStorageDownloadFileOptions,
-            GetPluginStorageCopyOperation,
-            GetPluginStorageCopyOptions,
-            GetPluginStorageMoveOperation,
-            GetPluginStorageMoveOptions,
-            GetPluginStorageRemoveOperation,
-            GetPluginStorageRemoveOptions,
-            GetPluginStorageRemoveManyOperation,
-            GetPluginStorageRemoveManyOptions,
-            GetPluginStorageItem,
-            GetPluginTransferProgress,
-            P>
-        pluginKey,
+  @override
+  @nonVirtual
+  Set<Category> get categoryDependencies => const {Category.auth};
+
+  P getPlugin<P extends StoragePluginInterface>(
+    StoragePluginKey<P> pluginKey,
   ) =>
-      StorageCategory(
-        plugins.singleWhere(
-          (p) => p is P,
-          orElse: () => throw PluginError(
-            'No plugin registered for $pluginKey',
-          ),
-        ) as P,
-      );
+      plugins.singleWhere(
+        (p) => p is P,
+        orElse: () => throw PluginError(
+          'No plugin registered for $pluginKey',
+        ),
+      ) as P;
 
   /// {@template amplify_core.amplify_storage_category.list}
   /// Lists objects under the [path] with optional [StorageListOptions] and
   /// returns a [StorageListOperation].
   /// {@endtemplate}
-  PluginStorageListOperation list({
+  StorageListOperation list({
     String? path,
-    PluginStorageListOptions? options,
+    StorageListOptions? options,
   }) {
-    final request = StorageListRequest(
-      path: path,
-      options: options,
+    return identifyCall(
+      StorageCategoryMethod.list,
+      () => defaultPlugin.list(
+        path: path,
+        options: options,
+      ),
     );
-    return _plugin.list(request: request);
   }
 
   /// {@template amplify_core.amplify_storage_category.get_properties}
@@ -207,15 +57,17 @@ class StorageCategory<
   /// The result may include the metadata (if any) specified when the object
   /// was uploaded.
   /// {@endtemplate}
-  PluginStorageGetPropertiesOperation getProperties({
+  StorageGetPropertiesOperation getProperties({
     required String key,
-    PluginStorageGetPropertiesOptions? options,
+    StorageGetPropertiesOptions? options,
   }) {
-    final request = StorageGetPropertiesRequest(
-      key: key,
-      options: options,
+    return identifyCall(
+      StorageCategoryMethod.getProperties,
+      () => defaultPlugin.getProperties(
+        key: key,
+        options: options,
+      ),
     );
-    return _plugin.getProperties(request: request);
   }
 
   /// {@template amplify_core.amplify_storage_category.get_url}
@@ -225,15 +77,17 @@ class StorageCategory<
   /// The url is presigned by the aws_signature_v4, and is enforced with scheme
   /// `https`.
   /// {@endtemplate}
-  PluginStorageGetUrlOperation getUrl({
+  StorageGetUrlOperation getUrl({
     required String key,
-    PluginStorageGetUrlOptions? options,
+    StorageGetUrlOptions? options,
   }) {
-    final request = StorageGetUrlRequest(
-      key: key,
-      options: options,
+    return identifyCall(
+      StorageCategoryMethod.getUrl,
+      () => defaultPlugin.getUrl(
+        key: key,
+        options: options,
+      ),
     );
-    return _plugin.getUrl(request: request);
   }
 
   /// {@template amplify_core.amplify_storage_category.download_data}
@@ -244,18 +98,18 @@ class StorageCategory<
   /// Ensure you are managing the data in memory properly to avoid unexpected
   /// memory leaks.
   /// {@endtemplate}
-  PluginStorageDownloadDataOperation downloadData({
+  StorageDownloadDataOperation downloadData({
     required String key,
-    void Function(PluginTransferProgress)? onProgress,
-    PluginStorageDownloadDataOptions? options,
+    void Function(StorageTransferProgress)? onProgress,
+    StorageDownloadDataOptions? options,
   }) {
-    final request = StorageDownloadDataRequest(
-      key: key,
-      options: options,
-    );
-    return _plugin.downloadData(
-      request: request,
-      onProgress: onProgress,
+    return identifyCall(
+      StorageCategoryMethod.downloadData,
+      () => defaultPlugin.downloadData(
+        key: key,
+        onProgress: onProgress,
+        options: options,
+      ),
     );
   }
 
@@ -264,20 +118,20 @@ class StorageCategory<
   /// [onProgress] and [StorageDownloadFileOptions], and returns a
   /// [StorageDownloadFileOperation].
   /// {@endtemplate}
-  PluginStorageDownloadFileOperation downloadFile({
+  StorageDownloadFileOperation downloadFile({
     required String key,
     required AWSFile localFile,
-    void Function(PluginTransferProgress)? onProgress,
-    PluginStorageDownloadFileOptions? options,
+    void Function(StorageTransferProgress)? onProgress,
+    StorageDownloadFileOptions? options,
   }) {
-    final request = StorageDownloadFileRequest(
-      key: key,
-      localFile: localFile,
-      options: options,
-    );
-    return _plugin.downloadFile(
-      request: request,
-      onProgress: onProgress,
+    return identifyCall(
+      StorageCategoryMethod.downloadFile,
+      () => defaultPlugin.downloadFile(
+        key: key,
+        localFile: localFile,
+        onProgress: onProgress,
+        options: options,
+      ),
     );
   }
 
@@ -288,20 +142,20 @@ class StorageCategory<
   ///
   /// See [StorageDataPayload] for supported data formats.
   /// {@endtemplate}
-  PluginStorageUploadDataOperation uploadData({
+  StorageUploadDataOperation uploadData({
     required StorageDataPayload data,
     required String key,
-    void Function(PluginTransferProgress)? onProgress,
-    PluginStorageUploadDataOptions? options,
+    void Function(StorageTransferProgress)? onProgress,
+    StorageUploadDataOptions? options,
   }) {
-    final request = StorageUploadDataRequest(
-      data: data,
-      key: key,
-      options: options,
-    );
-    return _plugin.uploadData(
-      request: request,
-      onProgress: onProgress,
+    return identifyCall(
+      StorageCategoryMethod.uploadData,
+      () => defaultPlugin.uploadData(
+        key: key,
+        data: data,
+        onProgress: onProgress,
+        options: options,
+      ),
     );
   }
 
@@ -313,20 +167,20 @@ class StorageCategory<
   /// [AWSFile] provides various adapters to read file content from file
   /// abstractions, such as `XFile`, `PlatformFile`, `io.File` or `html.File`.
   /// {@endtemplate}
-  PluginStorageUploadFileOperation uploadFile({
+  StorageUploadFileOperation uploadFile({
     required AWSFile localFile,
     required String key,
-    void Function(PluginTransferProgress)? onProgress,
-    PluginStorageUploadFileOptions? options,
+    void Function(StorageTransferProgress)? onProgress,
+    StorageUploadFileOptions? options,
   }) {
-    final request = StorageUploadFileRequest(
-      localFile: localFile,
-      key: key,
-      options: options,
-    );
-    return _plugin.uploadFile(
-      request: request,
-      onProgress: onProgress,
+    return identifyCall(
+      StorageCategoryMethod.uploadFile,
+      () => defaultPlugin.uploadFile(
+        key: key,
+        localFile: localFile,
+        onProgress: onProgress,
+        options: options,
+      ),
     );
   }
 
@@ -339,17 +193,19 @@ class StorageCategory<
   /// The `source` should be readable to the API call originator following
   /// corresponding [StorageAccessLevel].
   /// {@endtemplate}
-  PluginStorageCopyOperation copy({
-    required StorageItemWithAccessLevel<PluginStorageItem> source,
-    required StorageItemWithAccessLevel<PluginStorageItem> destination,
-    PluginStorageCopyOptions? options,
+  StorageCopyOperation copy({
+    required StorageItemWithAccessLevel<StorageItem> source,
+    required StorageItemWithAccessLevel<StorageItem> destination,
+    StorageCopyOptions? options,
   }) {
-    final request = StorageCopyRequest(
-      source: source,
-      destination: destination,
-      options: options,
+    return identifyCall(
+      StorageCategoryMethod.copy,
+      () => defaultPlugin.copy(
+        source: source,
+        destination: destination,
+        options: options,
+      ),
     );
-    return _plugin.copy(request: request);
   }
 
   /// {@template amplify_core.amplify_storage_category.move}
@@ -362,46 +218,49 @@ class StorageCategory<
   ///
   /// {@macro amplify_core.amplify_storage_category.copy_source}
   /// {@endtemplate}
-  PluginStorageMoveOperation move({
-    required StorageItemWithAccessLevel<PluginStorageItem> source,
-    required StorageItemWithAccessLevel<PluginStorageItem> destination,
-    PluginStorageMoveOptions? options,
+  StorageMoveOperation move({
+    required StorageItemWithAccessLevel<StorageItem> source,
+    required StorageItemWithAccessLevel<StorageItem> destination,
+    StorageMoveOptions? options,
   }) {
-    final request = StorageMoveRequest(
-      source: source,
-      destination: destination,
-      options: options,
+    return identifyCall(
+      StorageCategoryMethod.move,
+      () => defaultPlugin.move(
+        source: source,
+        destination: destination,
+        options: options,
+      ),
     );
-    return _plugin.move(request: request);
   }
 
   /// {@template amplify_core.amplify_storage_category.remove}
   /// Removes an object specified by [key] with optional [StorageRemoveOptions],
   /// and returns a [StorageRemoveOperation].
   /// {@endtemplate}
-  PluginStorageRemoveOperation remove({
+  StorageRemoveOperation remove({
     required String key,
-    PluginStorageRemoveOptions? options,
+    StorageRemoveOptions? options,
   }) {
-    final request = StorageRemoveRequest(
-      key: key,
-      options: options,
+    return identifyCall(
+      StorageCategoryMethod.remove,
+      () => defaultPlugin.remove(key: key, options: options),
     );
-    return _plugin.remove(request: request);
   }
 
   /// {@template amplify_core.amplify_storage_category.remove_many}
   /// Removes multiple objects specified by [keys] with optional
   /// [StorageRemoveManyOptions], and returns a [StorageRemoveManyOperation].
   /// {@endtemplate}
-  PluginStorageRemoveManyOperation removeMany({
+  StorageRemoveManyOperation removeMany({
     required List<String> keys,
-    PluginStorageRemoveManyOptions? options,
+    StorageRemoveManyOptions? options,
   }) {
-    final request = StorageRemoveManyRequest(
-      keys: keys,
-      options: options,
+    return identifyCall(
+      StorageCategoryMethod.removeMany,
+      () => defaultPlugin.removeMany(
+        keys: keys,
+        options: options,
+      ),
     );
-    return _plugin.removeMany(request: request);
   }
 }

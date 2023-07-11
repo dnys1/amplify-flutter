@@ -1,12 +1,12 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:amplify_core/amplify_core.dart';
+part of '../amplify_exception.dart';
 
 /// {@template amplify_core.auth.auth_exception}
-/// The base class for Auth category exceptions.
+/// The class for Auth category exceptions.
 /// {@endtemplate}
-abstract class AuthException extends AmplifyException with AWSDebuggable {
+sealed class AuthException extends AmplifyException with AWSDebuggable {
   /// {@macro amplify_core.auth.auth_exception}
   const AuthException(
     super.message, {
@@ -29,14 +29,11 @@ abstract class AuthException extends AmplifyException with AWSDebuggable {
       );
     }
     if (e is AWSHttpException) {
-      return NetworkException(
-        'The request failed due to a network error.',
-        recoverySuggestion: 'Ensure that you have an active network connection',
-        underlyingException: e,
-      );
+      return e.toNetworkException();
     }
     String message;
     try {
+      // ignore: avoid_dynamic_calls
       message = (e as dynamic).message as String;
     } on Object {
       message = _unknownMessage;

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.export_table_to_point_in_time_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,9 +37,8 @@ abstract class ExportTableToPointInTimeOutput
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
-    ExportTableToPointInTimeOutputAwsJson10Serializer()
-  ];
+  static const List<_i3.SmithySerializer<ExportTableToPointInTimeOutput>>
+      serializers = [ExportTableToPointInTimeOutputAwsJson10Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(ExportTableToPointInTimeOutputBuilder b) {}
@@ -49,12 +49,11 @@ abstract class ExportTableToPointInTimeOutput
   List<Object?> get props => [exportDescription];
   @override
   String toString() {
-    final helper =
-        newBuiltValueToStringHelper('ExportTableToPointInTimeOutput');
-    helper.add(
-      'exportDescription',
-      exportDescription,
-    );
+    final helper = newBuiltValueToStringHelper('ExportTableToPointInTimeOutput')
+      ..add(
+        'exportDescription',
+        exportDescription,
+      );
     return helper.toString();
   }
 }
@@ -88,15 +87,15 @@ class ExportTableToPointInTimeOutputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ExportDescription':
-          if (value != null) {
-            result.exportDescription.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.ExportDescription),
-            ) as _i2.ExportDescription));
-          }
-          break;
+          result.exportDescription.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.ExportDescription),
+          ) as _i2.ExportDescription));
       }
     }
 
@@ -106,19 +105,19 @@ class ExportTableToPointInTimeOutputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ExportTableToPointInTimeOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ExportTableToPointInTimeOutput);
-    final result = <Object?>[];
-    if (payload.exportDescription != null) {
-      result
+    final result$ = <Object?>[];
+    final ExportTableToPointInTimeOutput(:exportDescription) = object;
+    if (exportDescription != null) {
+      result$
         ..add('ExportDescription')
         ..add(serializers.serialize(
-          payload.exportDescription!,
+          exportDescription,
           specifiedType: const FullType(_i2.ExportDescription),
         ));
     }
-    return result;
+    return result$;
   }
 }

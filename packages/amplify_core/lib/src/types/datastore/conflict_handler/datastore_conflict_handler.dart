@@ -9,9 +9,6 @@ class ConflictData<
     ModelIdentifier extends Object,
     M extends Model<ModelIdentifier, M>,
     P extends PartialModel<ModelIdentifier, M>> {
-  final M local;
-  final M remote;
-
   const ConflictData(this.local, this.remote);
 
   ConflictData.fromJson(
@@ -24,6 +21,8 @@ class ConflictData<
         remote = modelType.fromJson<M>(
           (remoteJson['serializedData'] as Map).cast<String, dynamic>(),
         );
+  final M local;
+  final M remote;
 }
 
 enum ResolutionStrategy { applyRemote, retryLocal, retry }
@@ -31,9 +30,6 @@ enum ResolutionStrategy { applyRemote, retryLocal, retry }
 @immutable
 class ConflictResolutionDecision<ModelIdentifier extends Object,
     M extends Model<ModelIdentifier, M>> {
-  final ResolutionStrategy _resolutionStrategy;
-  final M? customModel;
-
   const ConflictResolutionDecision(this._resolutionStrategy, this.customModel);
 
   const ConflictResolutionDecision.applyRemote()
@@ -46,6 +42,9 @@ class ConflictResolutionDecision<ModelIdentifier extends Object,
 
   const ConflictResolutionDecision.retry(M this.customModel)
       : _resolutionStrategy = ResolutionStrategy.retry;
+
+  final ResolutionStrategy _resolutionStrategy;
+  final M? customModel;
 
   @override
   String toString() {

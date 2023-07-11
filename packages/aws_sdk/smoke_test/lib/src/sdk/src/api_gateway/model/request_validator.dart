@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.request_validator; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -20,6 +21,8 @@ abstract class RequestValidator
     bool? validateRequestBody,
     bool? validateRequestParameters,
   }) {
+    validateRequestBody ??= false;
+    validateRequestParameters ??= false;
     return _$RequestValidator._(
       id: id,
       name: name,
@@ -41,12 +44,15 @@ abstract class RequestValidator
   ) =>
       payload;
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<RequestValidator>> serializers = [
     RequestValidatorRestJson1Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(RequestValidatorBuilder b) {}
+  static void _init(RequestValidatorBuilder b) {
+    b.validateRequestBody = false;
+    b.validateRequestParameters = false;
+  }
 
   /// The identifier of this RequestValidator.
   String? get id;
@@ -55,10 +61,10 @@ abstract class RequestValidator
   String? get name;
 
   /// A Boolean flag to indicate whether to validate a request body according to the configured Model schema.
-  bool? get validateRequestBody;
+  bool get validateRequestBody;
 
   /// A Boolean flag to indicate whether to validate request parameters (`true`) or not (`false`).
-  bool? get validateRequestParameters;
+  bool get validateRequestParameters;
   @override
   List<Object?> get props => [
         id,
@@ -68,23 +74,23 @@ abstract class RequestValidator
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('RequestValidator');
-    helper.add(
-      'id',
-      id,
-    );
-    helper.add(
-      'name',
-      name,
-    );
-    helper.add(
-      'validateRequestBody',
-      validateRequestBody,
-    );
-    helper.add(
-      'validateRequestParameters',
-      validateRequestParameters,
-    );
+    final helper = newBuiltValueToStringHelper('RequestValidator')
+      ..add(
+        'id',
+        id,
+      )
+      ..add(
+        'name',
+        name,
+      )
+      ..add(
+        'validateRequestBody',
+        validateRequestBody,
+      )
+      ..add(
+        'validateRequestParameters',
+        validateRequestParameters,
+      );
     return helper.toString();
   }
 }
@@ -117,39 +123,30 @@ class RequestValidatorRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'id':
-          if (value != null) {
-            result.id = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.id = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'name':
-          if (value != null) {
-            result.name = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.name = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'validateRequestBody':
-          if (value != null) {
-            result.validateRequestBody = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(bool),
-            ) as bool);
-          }
-          break;
+          result.validateRequestBody = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
         case 'validateRequestParameters':
-          if (value != null) {
-            result.validateRequestParameters = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(bool),
-            ) as bool);
-          }
-          break;
+          result.validateRequestParameters = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
       }
     }
 
@@ -159,43 +156,44 @@ class RequestValidatorRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    RequestValidator object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as RequestValidator);
-    final result = <Object?>[];
-    if (payload.id != null) {
-      result
+    final result$ = <Object?>[];
+    final RequestValidator(
+      :id,
+      :name,
+      :validateRequestBody,
+      :validateRequestParameters
+    ) = object;
+    result$.addAll([
+      'validateRequestBody',
+      serializers.serialize(
+        validateRequestBody,
+        specifiedType: const FullType(bool),
+      ),
+      'validateRequestParameters',
+      serializers.serialize(
+        validateRequestParameters,
+        specifiedType: const FullType(bool),
+      ),
+    ]);
+    if (id != null) {
+      result$
         ..add('id')
         ..add(serializers.serialize(
-          payload.id!,
+          id,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.name != null) {
-      result
+    if (name != null) {
+      result$
         ..add('name')
         ..add(serializers.serialize(
-          payload.name!,
+          name,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.validateRequestBody != null) {
-      result
-        ..add('validateRequestBody')
-        ..add(serializers.serialize(
-          payload.validateRequestBody!,
-          specifiedType: const FullType(bool),
-        ));
-    }
-    if (payload.validateRequestParameters != null) {
-      result
-        ..add('validateRequestParameters')
-        ..add(serializers.serialize(
-          payload.validateRequestParameters!,
-          specifiedType: const FullType(bool),
-        ));
-    }
-    return result;
+    return result$;
   }
 }

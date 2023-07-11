@@ -1,95 +1,213 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_auth_integration_test/amplify_auth_integration_test.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_test/amplify_test.dart';
+import 'package:amplify_integration_test/amplify_integration_test.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 
-import 'utils/mock_data.dart';
-import 'utils/setup_utils.dart';
-import 'utils/test_utils.dart';
+import 'test_runner.dart';
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  testRunner.setupTests();
 
   group('confirmSignIn', () {
-    late String username;
-    late String password;
-    late OtpResult otpResult;
+    for (final environmentName in userPoolEnvironments) {
+      group(environmentName, () {
+        late String username;
+        late String password;
+        late OtpResult otpResult;
 
-    setUpAll(() async {
-      await configureAuth(
-        additionalPlugins: [AmplifyAPI()],
-      );
-    });
+        setUp(() async {
+          await testRunner.configure(
+            environmentName: environmentName,
+          );
 
-    setUp(() async {
-      username = generateUsername();
-      password = generatePassword();
+          username = generateUsername();
+          password = generatePassword();
 
-      otpResult = await getOtpCode(username);
+          otpResult = await getOtpCode(UserAttribute.username(username));
 
-      await adminCreateUser(
-        username,
-        password,
-        autoConfirm: true,
-        enableMfa: true,
-        verifyAttributes: true,
-      );
+          await adminCreateUser(
+            username,
+            password,
+            enableMfa: true,
+            verifyAttributes: true,
+          );
 
-      final signInRes = await Amplify.Auth.signIn(
-        username: username,
-        password: password,
-      );
-      expect(signInRes.isSignedIn, isFalse);
-      expect(
-        signInRes.nextStep.signInStep,
-        AuthSignInStep.confirmSignInWithSmsMfaCode,
-      );
-    });
+          final signInRes = await Amplify.Auth.signIn(
+            username: username,
+            password: password,
+          );
+          expect(signInRes.isSignedIn, isFalse);
+          expect(
+            signInRes.nextStep.signInStep,
+            AuthSignInStep.confirmSignInWithNewPassword,
+          );
+        });
 
-    asyncTest('confirming signs in user', (_) async {
-      final otpCode = await otpResult.code;
+        asyncTest('confirming signs in user', (_) async {
+          final newPassword = generatePassword();
 
-      await expectLater(
-        Amplify.Auth.confirmSignIn(
-          confirmationValue: otpCode,
-        ),
-        completion(
-          isA<SignInResult>().having(
-            (res) => res.isSignedIn,
-            'isSignedIn',
-            isTrue,
+          final confirmRes = await Amplify.Auth.confirmSignIn(
+            confirmationValue: newPassword,
+          );
+          expect(confirmRes.isSignedIn, isFalse);
+          expect(
+            confirmRes.nextStep.signInStep,
+            AuthSignInStep.confirmSignInWithSmsMfaCode,
+          );
+
+          final otpCode = await otpResult.code;
+
+          await expectLater(
+            Amplify.Auth.confirmSignIn(
+              confirmationValue: otpCode,
+            ),
+            completion(
+              isA<SignInResult>().having(
+                (res) => res.isSignedIn,
+                'isSignedIn',
+                isTrue,
+              ),
+            ),
+          );
+        });
+
+        asyncTest('allows retrying on code mismatch', (_) async {
+          final newPassword = generatePassword();
+
+          final confirmRes = await Amplify.Auth.confirmSignIn(
+            confirmationValue: newPassword,
+          );
+          expect(confirmRes.isSignedIn, isFalse);
+          expect(
+            confirmRes.nextStep.signInStep,
+            AuthSignInStep.confirmSignInWithSmsMfaCode,
+          );
+
+          final otpCode = await otpResult.code;
+
+          await expectLater(
+            Amplify.Auth.confirmSignIn(
+              confirmationValue: 'incorrect-code',
+            ),
+            throwsA(isA<CodeMismatchException>()),
+          );
+
+          await expectLater(
+            Amplify.Auth.confirmSignIn(
+              confirmationValue: otpCode,
+            ),
+            completion(
+              isA<SignInResult>().having(
+                (res) => res.isSignedIn,
+                'isSignedIn',
+                isTrue,
+              ),
+            ),
+          );
+        });
+
+        asyncTest('allows retrying on weak password', (_) async {
+          const weakPassword = 'weak';
+          await expectLater(
+            Amplify.Auth.confirmSignIn(
+              confirmationValue: weakPassword,
+            ),
+            throwsA(isA<InvalidPasswordException>()),
+          );
+
+          final newPassword = generatePassword();
+          final confirmRes = await Amplify.Auth.confirmSignIn(
+            confirmationValue: newPassword,
+          );
+          expect(confirmRes.isSignedIn, isFalse);
+          expect(
+            confirmRes.nextStep.signInStep,
+            AuthSignInStep.confirmSignInWithSmsMfaCode,
+          );
+        });
+      });
+
+      asyncTest('includes attributes when setting new password', (_) async {
+        await testRunner.configure(
+          environmentName: environmentName,
+        );
+
+        final username = generateUsername();
+        final password = generatePassword();
+        final phoneNumber = generatePhoneNumber();
+
+        // Sign up user with missing email.
+        await adminCreateUser(
+          username,
+          password,
+          autoConfirm: false,
+          autoFillAttributes: false,
+          attributes: [
+            AuthUserAttribute(
+              userAttributeKey: AuthUserAttributeKey.phoneNumber,
+              value: phoneNumber,
+            ),
+          ],
+        );
+
+        final signInRes = await Amplify.Auth.signIn(
+          username: username,
+          password: password,
+        );
+        expect(
+          signInRes.nextStep.signInStep,
+          AuthSignInStep.confirmSignInWithNewPassword,
+        );
+        expect(
+          signInRes.nextStep.missingAttributes,
+          equals([CognitoUserAttributeKey.email]),
+        );
+
+        final newPassword = generatePassword();
+        final email = generateEmail();
+        const name = 'Test User';
+        final confirmSignInRes = await Amplify.Auth.confirmSignIn(
+          confirmationValue: newPassword,
+          options: ConfirmSignInOptions(
+            pluginOptions: CognitoConfirmSignInPluginOptions(
+              userAttributes: {
+                // Code path 1: a missing required attribute
+                CognitoUserAttributeKey.email: email,
+
+                // Code path 2: a missing non-required attribute
+                CognitoUserAttributeKey.name: name,
+              },
+            ),
           ),
-        ),
-      );
-    });
+        );
+        expect(
+          confirmSignInRes.nextStep.signInStep,
+          AuthSignInStep.done,
+        );
 
-    asyncTest('allows retrying on code mismatch', (_) async {
-      final otpCode = await otpResult.code;
-
-      await expectLater(
-        Amplify.Auth.confirmSignIn(
-          confirmationValue: 'incorrect-code',
-        ),
-        throwsA(isA<CodeMismatchException>()),
-      );
-
-      await expectLater(
-        Amplify.Auth.confirmSignIn(
-          confirmationValue: otpCode,
-        ),
-        completion(
-          isA<SignInResult>().having(
-            (res) => res.isSignedIn,
-            'isSignedIn',
-            isTrue,
-          ),
-        ),
-      );
-    });
+        final userAttributes = await Amplify.Auth.fetchUserAttributes();
+        expect(
+          userAttributes
+              .firstWhereOrNull(
+                (attr) => attr.userAttributeKey == AuthUserAttributeKey.name,
+              )
+              ?.value,
+          name,
+        );
+        expect(
+          userAttributes
+              .firstWhereOrNull(
+                (attr) => attr.userAttributeKey == AuthUserAttributeKey.email,
+              )
+              ?.value,
+          email,
+        );
+      });
+    }
   });
 }

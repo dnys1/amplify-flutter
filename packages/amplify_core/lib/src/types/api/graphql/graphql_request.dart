@@ -163,7 +163,7 @@ class _RawGraphQLRequest<T extends Object?> extends GraphQLRequest<T> {
   T decode(Map<String, Object?> json) {
     final value = decodePath == null ? json : json[decodePath];
     if (value is! T) {
-      throw ApiException(
+      throw ApiOperationException(
         'Expected a value of type $T but received $value',
         recoverySuggestion: 'Check the value of decodePath',
       );
@@ -224,8 +224,9 @@ class _ListGraphQLRequest<
     }
 
     final items = itemsJson
-        .cast<Map?>()
-        .map((el) => el == null ? null : modelType.fromJson<T>(el.cast()))
+        .cast<Map<String, Object?>?>()
+        .nonNulls
+        .map(modelType.fromJson<T>)
         .toList();
 
     final nextToken = json[_nextToken] as String?;

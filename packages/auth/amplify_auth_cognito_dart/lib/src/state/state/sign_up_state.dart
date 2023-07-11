@@ -1,9 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
-import 'package:amplify_auth_cognito_dart/src/state/state.dart';
-import 'package:amplify_core/amplify_core.dart';
+part of 'auth_state.dart';
 
 /// Discrete state types of the sign up flow.
 enum SignUpStateType {
@@ -27,7 +25,7 @@ enum SignUpStateType {
 }
 
 /// Discrete states of the sign up flow.
-abstract class SignUpState extends AuthState<SignUpStateType> {
+sealed class SignUpState extends AuthState<SignUpStateType> {
   const SignUpState._();
 
   /// {@macro amplify_auth_cognito.sign_up_not_started}
@@ -51,7 +49,10 @@ abstract class SignUpState extends AuthState<SignUpStateType> {
   }) = SignUpSuccess;
 
   /// {@macro amplify_auth_cognito.sign_up_failure}
-  const factory SignUpState.failure(Exception exception) = SignUpFailure;
+  const factory SignUpState.failure(
+    Exception exception,
+    StackTrace stackTrace,
+  ) = SignUpFailure;
 
   @override
   String get runtimeTypeName => 'SignUpState';
@@ -60,7 +61,7 @@ abstract class SignUpState extends AuthState<SignUpStateType> {
 /// {@template amplify_auth_cognito.sign_up_not_started}
 /// Sign up flow has not yet started.
 /// {@endtemplate}
-class SignUpNotStarted extends SignUpState {
+final class SignUpNotStarted extends SignUpState {
   /// {@macro amplify_auth_cognito.sign_up_not_started}
   const SignUpNotStarted() : super._();
 
@@ -74,7 +75,7 @@ class SignUpNotStarted extends SignUpState {
 /// {@template amplify_auth_cognito.sign_up_initiating}
 /// Sign up flow is initiating.
 /// {@endtemplate}
-class SignUpInitiating extends SignUpState {
+final class SignUpInitiating extends SignUpState {
   /// {@macro amplify_auth_cognito.sign_up_initiating}
   const SignUpInitiating() : super._();
 
@@ -88,7 +89,7 @@ class SignUpInitiating extends SignUpState {
 /// {@template amplify_auth_cognito.sign_up_needs_confirmation}
 /// The user is signed up but not yet confirmed.
 /// {@endtemplate}
-class SignUpNeedsConfirmation extends SignUpState {
+final class SignUpNeedsConfirmation extends SignUpState {
   /// {@macro amplify_auth_cognito.sign_up_needs_confirmation}
   const SignUpNeedsConfirmation({
     required this.userId,
@@ -111,7 +112,7 @@ class SignUpNeedsConfirmation extends SignUpState {
 /// {@template amplify_auth_cognito.sign_up_confirming}
 /// The user is being confirmed.
 /// {@endtemplate}
-class SignUpConfirming extends SignUpState {
+final class SignUpConfirming extends SignUpState {
   /// {@macro amplify_auth_cognito.sign_up_confirming}
   const SignUpConfirming() : super._();
 
@@ -125,7 +126,7 @@ class SignUpConfirming extends SignUpState {
 /// {@template amplify_auth_cognito.sign_up_success}
 /// The user successfully signed up.
 /// {@endtemplate}
-class SignUpSuccess extends SignUpState with SuccessState {
+final class SignUpSuccess extends SignUpState with SuccessState {
   /// {@macro amplify_auth_cognito.sign_up_success}
   const SignUpSuccess({
     this.userId,
@@ -144,17 +145,20 @@ class SignUpSuccess extends SignUpState with SuccessState {
 /// {@template amplify_auth_cognito.sign_up_failure}
 /// The sign up did not succceed.
 /// {@endtemplate}
-class SignUpFailure extends SignUpState with ErrorState {
+final class SignUpFailure extends SignUpState with ErrorState {
   /// {@macro amplify_auth_cognito.sign_up_failure}
-  const SignUpFailure(this.exception) : super._();
+  const SignUpFailure(this.exception, this.stackTrace) : super._();
 
   /// The exception thrown during sign up.
   @override
   final Exception exception;
 
   @override
+  final StackTrace stackTrace;
+
+  @override
   SignUpStateType get type => SignUpStateType.failure;
 
   @override
-  List<Object?> get props => [type, exception];
+  List<Object?> get props => [type, exception, stackTrace];
 }

@@ -1,0 +1,37 @@
+name: Launch iOS simulator
+description: Launches an iOS simulator and caches it for further action runs
+inputs:
+  ios-version:
+    description: The iOS version
+    default: "16"
+
+runs:
+  using: "composite"
+  steps:
+    - name: List runtimes
+      shell: bash
+      run: |
+        xcrun simctl list runtimes -j
+
+        # Use xcodes (https://github.com/XcodesOrg/xcodes) to list runtimes for all Xcode versions
+        brew install xcodesorg/made/xcodes
+        xcodes runtimes
+
+    - name: Create Simulator
+      shell: bash
+      run: |
+        get_runtime() {
+          xcrun simctl list runtimes -j | jq -r '.runtimes[] | select(.name | startswith("iOS ${{ inputs.ios-version }}")) | .identifier' | head -n 1
+        }
+        # Clears the cache from previous attempts
+        clear_cache() {
+          sudo rm -rf ~/Library/Caches/com.robotsandpencils.xcodes/*
+          sudo rm -rf ~/Downloads/*
+        }
+        if [[ -z "$(get_runtime)" ]]; then
+          echo "No runtime found for iOS ${{ inputs.ios-version }}" >&2
+          clear_cache
+          sudo xcodes runtimes install 'iOS ${{ inputs.ios-version }}'
+        fi
+        xcrun simctl create test "iPhone 11" "$(get_runtime)"
+        xcrun simctl boot test

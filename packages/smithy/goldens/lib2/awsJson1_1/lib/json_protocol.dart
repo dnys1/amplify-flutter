@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 /// # Sample Json 1.1 Protocol Service
 library aws_json1_1_v2.json_protocol;
@@ -9,6 +10,7 @@ export 'package:aws_json1_1_v2/src/json_protocol/model/aws_config.dart';
 export 'package:aws_json1_1_v2/src/json_protocol/model/client_config.dart';
 export 'package:aws_json1_1_v2/src/json_protocol/model/complex_error.dart';
 export 'package:aws_json1_1_v2/src/json_protocol/model/complex_nested_error_data.dart';
+export 'package:aws_json1_1_v2/src/json_protocol/model/datetime_offsets_output.dart';
 export 'package:aws_json1_1_v2/src/json_protocol/model/empty_struct.dart';
 export 'package:aws_json1_1_v2/src/json_protocol/model/environment_config.dart';
 export 'package:aws_json1_1_v2/src/json_protocol/model/error_with_members.dart';
@@ -16,6 +18,7 @@ export 'package:aws_json1_1_v2/src/json_protocol/model/error_without_members.dar
 export 'package:aws_json1_1_v2/src/json_protocol/model/file_config_settings.dart';
 export 'package:aws_json1_1_v2/src/json_protocol/model/foo_enum.dart';
 export 'package:aws_json1_1_v2/src/json_protocol/model/foo_error.dart';
+export 'package:aws_json1_1_v2/src/json_protocol/model/fractional_seconds_output.dart';
 export 'package:aws_json1_1_v2/src/json_protocol/model/greeting_struct.dart';
 export 'package:aws_json1_1_v2/src/json_protocol/model/greeting_with_errors_output.dart';
 export 'package:aws_json1_1_v2/src/json_protocol/model/host_label_input.dart';

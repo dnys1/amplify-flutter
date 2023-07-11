@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.update_time_to_live_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -33,9 +34,8 @@ abstract class UpdateTimeToLiveOutput
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
-    UpdateTimeToLiveOutputAwsJson10Serializer()
-  ];
+  static const List<_i3.SmithySerializer<UpdateTimeToLiveOutput>> serializers =
+      [UpdateTimeToLiveOutputAwsJson10Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(UpdateTimeToLiveOutputBuilder b) {}
@@ -46,11 +46,11 @@ abstract class UpdateTimeToLiveOutput
   List<Object?> get props => [timeToLiveSpecification];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('UpdateTimeToLiveOutput');
-    helper.add(
-      'timeToLiveSpecification',
-      timeToLiveSpecification,
-    );
+    final helper = newBuiltValueToStringHelper('UpdateTimeToLiveOutput')
+      ..add(
+        'timeToLiveSpecification',
+        timeToLiveSpecification,
+      );
     return helper.toString();
   }
 }
@@ -84,15 +84,15 @@ class UpdateTimeToLiveOutputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'TimeToLiveSpecification':
-          if (value != null) {
-            result.timeToLiveSpecification.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.TimeToLiveSpecification),
-            ) as _i2.TimeToLiveSpecification));
-          }
-          break;
+          result.timeToLiveSpecification.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.TimeToLiveSpecification),
+          ) as _i2.TimeToLiveSpecification));
       }
     }
 
@@ -102,19 +102,19 @@ class UpdateTimeToLiveOutputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    UpdateTimeToLiveOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as UpdateTimeToLiveOutput);
-    final result = <Object?>[];
-    if (payload.timeToLiveSpecification != null) {
-      result
+    final result$ = <Object?>[];
+    final UpdateTimeToLiveOutput(:timeToLiveSpecification) = object;
+    if (timeToLiveSpecification != null) {
+      result$
         ..add('TimeToLiveSpecification')
         ..add(serializers.serialize(
-          payload.timeToLiveSpecification!,
+          timeToLiveSpecification,
           specifiedType: const FullType(_i2.TimeToLiveSpecification),
         ));
     }
-    return result;
+    return result$;
   }
 }

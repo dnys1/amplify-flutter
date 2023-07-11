@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.auto_scaling_target_tracking_scaling_policy_configuration_update; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -41,7 +42,10 @@ abstract class AutoScalingTargetTrackingScalingPolicyConfigurationUpdate
 
   const AutoScalingTargetTrackingScalingPolicyConfigurationUpdate._();
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<
+          _i2.SmithySerializer<
+              AutoScalingTargetTrackingScalingPolicyConfigurationUpdate>>
+      serializers = [
     AutoScalingTargetTrackingScalingPolicyConfigurationUpdateAwsJson10Serializer()
   ];
 
@@ -72,23 +76,23 @@ abstract class AutoScalingTargetTrackingScalingPolicyConfigurationUpdate
   @override
   String toString() {
     final helper = newBuiltValueToStringHelper(
-        'AutoScalingTargetTrackingScalingPolicyConfigurationUpdate');
-    helper.add(
-      'disableScaleIn',
-      disableScaleIn,
-    );
-    helper.add(
-      'scaleInCooldown',
-      scaleInCooldown,
-    );
-    helper.add(
-      'scaleOutCooldown',
-      scaleOutCooldown,
-    );
-    helper.add(
-      'targetValue',
-      targetValue,
-    );
+        'AutoScalingTargetTrackingScalingPolicyConfigurationUpdate')
+      ..add(
+        'disableScaleIn',
+        disableScaleIn,
+      )
+      ..add(
+        'scaleInCooldown',
+        scaleInCooldown,
+      )
+      ..add(
+        'scaleOutCooldown',
+        scaleOutCooldown,
+      )
+      ..add(
+        'targetValue',
+        targetValue,
+      );
     return helper.toString();
   }
 }
@@ -124,37 +128,30 @@ class AutoScalingTargetTrackingScalingPolicyConfigurationUpdateAwsJson10Serializ
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'DisableScaleIn':
-          if (value != null) {
-            result.disableScaleIn = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(bool),
-            ) as bool);
-          }
-          break;
+          result.disableScaleIn = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
         case 'ScaleInCooldown':
-          if (value != null) {
-            result.scaleInCooldown = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(int),
-            ) as int);
-          }
-          break;
+          result.scaleInCooldown = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int);
         case 'ScaleOutCooldown':
-          if (value != null) {
-            result.scaleOutCooldown = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(int),
-            ) as int);
-          }
-          break;
+          result.scaleOutCooldown = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int);
         case 'TargetValue':
           result.targetValue = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(double),
           ) as double);
-          break;
       }
     }
 
@@ -164,42 +161,47 @@ class AutoScalingTargetTrackingScalingPolicyConfigurationUpdateAwsJson10Serializ
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    AutoScalingTargetTrackingScalingPolicyConfigurationUpdate object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload =
-        (object as AutoScalingTargetTrackingScalingPolicyConfigurationUpdate);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final AutoScalingTargetTrackingScalingPolicyConfigurationUpdate(
+      :disableScaleIn,
+      :scaleInCooldown,
+      :scaleOutCooldown,
+      :targetValue
+    ) = object;
+    result$.addAll([
       'TargetValue',
       serializers.serialize(
-        payload.targetValue,
+        targetValue,
         specifiedType: const FullType(double),
       ),
-    ];
-    if (payload.disableScaleIn != null) {
-      result
+    ]);
+    if (disableScaleIn != null) {
+      result$
         ..add('DisableScaleIn')
         ..add(serializers.serialize(
-          payload.disableScaleIn!,
+          disableScaleIn,
           specifiedType: const FullType(bool),
         ));
     }
-    if (payload.scaleInCooldown != null) {
-      result
+    if (scaleInCooldown != null) {
+      result$
         ..add('ScaleInCooldown')
         ..add(serializers.serialize(
-          payload.scaleInCooldown!,
+          scaleInCooldown,
           specifiedType: const FullType(int),
         ));
     }
-    if (payload.scaleOutCooldown != null) {
-      result
+    if (scaleOutCooldown != null) {
+      result$
         ..add('ScaleOutCooldown')
         ..add(serializers.serialize(
-          payload.scaleOutCooldown!,
+          scaleOutCooldown,
           specifiedType: const FullType(int),
         ));
     }
-    return result;
+    return result$;
   }
 }

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.invalid_role_exception; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -9,18 +10,18 @@ import 'package:smithy/smithy.dart' as _i2;
 
 part 'invalid_role_exception.g.dart';
 
-/// You have provided a null or empty role ARN.
+/// You have provided a null or empty Amazon Resource Name (ARN) for the IAM role assumed by Config and used by the configuration recorder.
 abstract class InvalidRoleException
     with _i1.AWSEquatable<InvalidRoleException>
     implements
         Built<InvalidRoleException, InvalidRoleExceptionBuilder>,
         _i2.SmithyHttpException {
-  /// You have provided a null or empty role ARN.
+  /// You have provided a null or empty Amazon Resource Name (ARN) for the IAM role assumed by Config and used by the configuration recorder.
   factory InvalidRoleException({String? message}) {
     return _$InvalidRoleException._(message: message);
   }
 
-  /// You have provided a null or empty role ARN.
+  /// You have provided a null or empty Amazon Resource Name (ARN) for the IAM role assumed by Config and used by the configuration recorder.
   factory InvalidRoleException.build(
           [void Function(InvalidRoleExceptionBuilder) updates]) =
       _$InvalidRoleException;
@@ -37,7 +38,7 @@ abstract class InvalidRoleException
         b.headers = response.headers;
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<InvalidRoleException>> serializers = [
     InvalidRoleExceptionAwsJson11Serializer()
   ];
 
@@ -66,11 +67,11 @@ abstract class InvalidRoleException
   List<Object?> get props => [message];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('InvalidRoleException');
-    helper.add(
-      'message',
-      message,
-    );
+    final helper = newBuiltValueToStringHelper('InvalidRoleException')
+      ..add(
+        'message',
+        message,
+      );
     return helper.toString();
   }
 }
@@ -104,15 +105,15 @@ class InvalidRoleExceptionAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'message':
-          if (value != null) {
-            result.message = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.message = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -122,19 +123,19 @@ class InvalidRoleExceptionAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    InvalidRoleException object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as InvalidRoleException);
-    final result = <Object?>[];
-    if (payload.message != null) {
-      result
+    final result$ = <Object?>[];
+    final InvalidRoleException(:message) = object;
+    if (message != null) {
+      result$
         ..add('message')
         ..add(serializers.serialize(
-          payload.message!,
+          message,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

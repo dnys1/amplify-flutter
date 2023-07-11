@@ -1,10 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:amplify_auth_cognito_dart/src/model/cognito_user.dart';
-import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
-import 'package:amplify_auth_cognito_dart/src/state/state.dart';
-import 'package:amplify_core/amplify_core.dart';
+part of 'auth_state.dart';
 
 /// {@template amplify_auth_cognito_dart.sign_in_state_type}
 /// Discrete state types of an auth flow state machine.
@@ -32,7 +29,7 @@ enum SignInStateType {
 /// {@template amplify_auth_cognito_dart.sign_in_state}
 /// Discrete states of an auth flow state machine.
 /// {@endtemplate}
-abstract class SignInState extends AuthState<SignInStateType> {
+sealed class SignInState extends AuthState<SignInStateType> {
   /// {@macro amplify_auth_cognito_dart.sign_in_state}
   const SignInState();
 
@@ -50,13 +47,17 @@ abstract class SignInState extends AuthState<SignInStateType> {
   ) = SignInChallenge;
 
   /// {@macro amplify_auth_cognito_dart.sign_in_success}
-  const factory SignInState.success(CognitoUser user) = SignInSuccess;
+  const factory SignInState.success(AuthUser user) = SignInSuccess;
 
   /// {@macro amplify_auth_cognito_dart.sign_in_cancelling}
   const factory SignInState.cancelling() = SignInCancelling;
 
   /// {@macro amplify_auth_cognito_dart.sign_in_failure}
-  const factory SignInState.failure(Exception exception) = SignInFailure;
+  const factory SignInState.failure({
+    required SignInState previousState,
+    required Exception exception,
+    required StackTrace stackTrace,
+  }) = SignInFailure;
 
   @override
   String get runtimeTypeName => 'SignInState';
@@ -65,7 +66,7 @@ abstract class SignInState extends AuthState<SignInStateType> {
 /// {@template amplify_auth_cognito_dart.sign_in_not_started}
 /// Initial state.
 /// {@endtemplate}
-class SignInNotStarted extends SignInState {
+final class SignInNotStarted extends SignInState {
   /// {@macro amplify_auth_cognito_dart.sign_in_not_started}
   const SignInNotStarted();
 
@@ -79,7 +80,7 @@ class SignInNotStarted extends SignInState {
 /// {@template amplify_auth_cognito_dart.sign_in_initiating}
 /// Sign in is initiating.
 /// {@endtemplate}
-class SignInInitiating extends SignInState {
+final class SignInInitiating extends SignInState {
   /// {@macro amplify_auth_cognito_dart.sign_in_initiating}
   const SignInInitiating();
 
@@ -93,7 +94,7 @@ class SignInInitiating extends SignInState {
 /// {@template amplify_auth_cognito_dart.sign_in_challenge}
 /// Sign in is paused and requires user input to continue.
 /// {@endtemplate}
-class SignInChallenge extends SignInState {
+final class SignInChallenge extends SignInState {
   /// {@macro amplify_auth_cognito.sign_in_challenge}
   const SignInChallenge(
     this.challengeName,
@@ -125,12 +126,12 @@ class SignInChallenge extends SignInState {
 /// {@template amplify_auth_cognito_dart.sign_in_success}
 /// Sign in successfully completed.
 /// {@endtemplate}
-class SignInSuccess extends SignInState with SuccessState {
+final class SignInSuccess extends SignInState with SuccessState {
   /// {@macro amplify_auth_cognito_dart.sign_in_success}
   const SignInSuccess(this.user);
 
   /// The signed in user.
-  final CognitoUser user;
+  final AuthUser user;
 
   @override
   SignInStateType get type => SignInStateType.success;
@@ -142,7 +143,7 @@ class SignInSuccess extends SignInState with SuccessState {
 /// {@template amplify_auth_cognito_dart.sign_in_cancelling}
 /// Sign in is being cancelled by the user.
 /// {@endtemplate}
-class SignInCancelling extends SignInState {
+final class SignInCancelling extends SignInState {
   /// {@macro amplify_auth_cognito_dart.sign_in_cancelling}
   const SignInCancelling();
 
@@ -156,17 +157,27 @@ class SignInCancelling extends SignInState {
 /// {@template amplify_auth_cognito_dart.sign_in_failure}
 /// Sign in failed with an [exception].
 /// {@endtemplate}
-class SignInFailure extends SignInState with ErrorState {
+final class SignInFailure extends SignInState with ErrorState {
   /// {@macro amplify_auth_cognito_dart.sign_in_failure}
-  const SignInFailure(this.exception);
+  const SignInFailure({
+    required this.previousState,
+    required this.exception,
+    required this.stackTrace,
+  });
+
+  /// The state of the machine at the time [exception] was raised.
+  final SignInState previousState;
 
   /// The exception thrown during sign up.
   @override
   final Exception exception;
 
   @override
+  final StackTrace stackTrace;
+
+  @override
   SignInStateType get type => SignInStateType.failure;
 
   @override
-  List<Object?> get props => [type, exception];
+  List<Object?> get props => [type, previousState, exception, stackTrace];
 }

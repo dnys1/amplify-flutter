@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.describe_global_table_settings_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -42,9 +43,8 @@ abstract class DescribeGlobalTableSettingsOutput
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
-    DescribeGlobalTableSettingsOutputAwsJson10Serializer()
-  ];
+  static const List<_i4.SmithySerializer<DescribeGlobalTableSettingsOutput>>
+      serializers = [DescribeGlobalTableSettingsOutputAwsJson10Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DescribeGlobalTableSettingsOutputBuilder b) {}
@@ -62,15 +62,15 @@ abstract class DescribeGlobalTableSettingsOutput
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DescribeGlobalTableSettingsOutput');
-    helper.add(
-      'globalTableName',
-      globalTableName,
-    );
-    helper.add(
-      'replicaSettings',
-      replicaSettings,
-    );
+        newBuiltValueToStringHelper('DescribeGlobalTableSettingsOutput')
+          ..add(
+            'globalTableName',
+            globalTableName,
+          )
+          ..add(
+            'replicaSettings',
+            replicaSettings,
+          );
     return helper.toString();
   }
 }
@@ -104,26 +104,23 @@ class DescribeGlobalTableSettingsOutputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'GlobalTableName':
-          if (value != null) {
-            result.globalTableName = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.globalTableName = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'ReplicaSettings':
-          if (value != null) {
-            result.replicaSettings.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.ReplicaSettingsDescription)],
-              ),
-            ) as _i3.BuiltList<_i2.ReplicaSettingsDescription>));
-          }
-          break;
+          result.replicaSettings.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.ReplicaSettingsDescription)],
+            ),
+          ) as _i3.BuiltList<_i2.ReplicaSettingsDescription>));
       }
     }
 
@@ -133,30 +130,33 @@ class DescribeGlobalTableSettingsOutputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeGlobalTableSettingsOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeGlobalTableSettingsOutput);
-    final result = <Object?>[];
-    if (payload.globalTableName != null) {
-      result
+    final result$ = <Object?>[];
+    final DescribeGlobalTableSettingsOutput(
+      :globalTableName,
+      :replicaSettings
+    ) = object;
+    if (globalTableName != null) {
+      result$
         ..add('GlobalTableName')
         ..add(serializers.serialize(
-          payload.globalTableName!,
+          globalTableName,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.replicaSettings != null) {
-      result
+    if (replicaSettings != null) {
+      result$
         ..add('ReplicaSettings')
         ..add(serializers.serialize(
-          payload.replicaSettings!,
+          replicaSettings,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(_i2.ReplicaSettingsDescription)],
           ),
         ));
     }
-    return result;
+    return result$;
   }
 }

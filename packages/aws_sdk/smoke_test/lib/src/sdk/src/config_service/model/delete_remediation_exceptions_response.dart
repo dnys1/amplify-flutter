@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.delete_remediation_exceptions_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -38,9 +39,8 @@ abstract class DeleteRemediationExceptionsResponse
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
-    DeleteRemediationExceptionsResponseAwsJson11Serializer()
-  ];
+  static const List<_i4.SmithySerializer<DeleteRemediationExceptionsResponse>>
+      serializers = [DeleteRemediationExceptionsResponseAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DeleteRemediationExceptionsResponseBuilder b) {}
@@ -52,11 +52,11 @@ abstract class DeleteRemediationExceptionsResponse
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DeleteRemediationExceptionsResponse');
-    helper.add(
-      'failedBatches',
-      failedBatches,
-    );
+        newBuiltValueToStringHelper('DeleteRemediationExceptionsResponse')
+          ..add(
+            'failedBatches',
+            failedBatches,
+          );
     return helper.toString();
   }
 }
@@ -90,18 +90,18 @@ class DeleteRemediationExceptionsResponseAwsJson11Serializer extends _i4
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'FailedBatches':
-          if (value != null) {
-            result.failedBatches.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.FailedDeleteRemediationExceptionsBatch)],
-              ),
-            ) as _i3.BuiltList<_i2.FailedDeleteRemediationExceptionsBatch>));
-          }
-          break;
+          result.failedBatches.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.FailedDeleteRemediationExceptionsBatch)],
+            ),
+          ) as _i3.BuiltList<_i2.FailedDeleteRemediationExceptionsBatch>));
       }
     }
 
@@ -111,22 +111,22 @@ class DeleteRemediationExceptionsResponseAwsJson11Serializer extends _i4
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteRemediationExceptionsResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DeleteRemediationExceptionsResponse);
-    final result = <Object?>[];
-    if (payload.failedBatches != null) {
-      result
+    final result$ = <Object?>[];
+    final DeleteRemediationExceptionsResponse(:failedBatches) = object;
+    if (failedBatches != null) {
+      result$
         ..add('FailedBatches')
         ..add(serializers.serialize(
-          payload.failedBatches!,
+          failedBatches,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(_i2.FailedDeleteRemediationExceptionsBatch)],
           ),
         ));
     }
-    return result;
+    return result$;
   }
 }

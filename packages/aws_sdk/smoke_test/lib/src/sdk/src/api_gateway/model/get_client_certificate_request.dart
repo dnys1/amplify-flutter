@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.get_client_certificate_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -43,9 +44,8 @@ abstract class GetClientCertificateRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    GetClientCertificateRequestRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<GetClientCertificateRequestPayload>>
+      serializers = [GetClientCertificateRequestRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetClientCertificateRequestBuilder b) {}
@@ -71,11 +71,11 @@ abstract class GetClientCertificateRequest
   List<Object?> get props => [clientCertificateId];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('GetClientCertificateRequest');
-    helper.add(
-      'clientCertificateId',
-      clientCertificateId,
-    );
+    final helper = newBuiltValueToStringHelper('GetClientCertificateRequest')
+      ..add(
+        'clientCertificateId',
+        clientCertificateId,
+      );
     return helper.toString();
   }
 }
@@ -137,7 +137,7 @@ class GetClientCertificateRequestRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetClientCertificateRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) =>
       const <Object?>[];

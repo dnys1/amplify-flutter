@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_storage_s3_dart.s3.model.delete_object_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -20,13 +21,13 @@ abstract class DeleteObjectOutput
         _i2.HasPayload<DeleteObjectOutputPayload> {
   factory DeleteObjectOutput({
     bool? deleteMarker,
-    _i3.RequestCharged? requestCharged,
     String? versionId,
+    _i3.RequestCharged? requestCharged,
   }) {
     return _$DeleteObjectOutput._(
       deleteMarker: deleteMarker,
-      requestCharged: requestCharged,
       versionId: versionId,
+      requestCharged: requestCharged,
     );
   }
 
@@ -54,9 +55,8 @@ abstract class DeleteObjectOutput
         }
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
-    DeleteObjectOutputRestXmlSerializer()
-  ];
+  static const List<_i2.SmithySerializer<DeleteObjectOutputPayload>>
+      serializers = [DeleteObjectOutputRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DeleteObjectOutputBuilder b) {}
@@ -64,34 +64,34 @@ abstract class DeleteObjectOutput
   /// Specifies whether the versioned object that was permanently deleted was (true) or was not (false) a delete marker.
   bool? get deleteMarker;
 
-  /// If present, indicates that the requester was successfully charged for the request.
-  _i3.RequestCharged? get requestCharged;
-
   /// Returns the version ID of the delete marker created as a result of the DELETE operation.
   String? get versionId;
+
+  /// If present, indicates that the requester was successfully charged for the request.
+  _i3.RequestCharged? get requestCharged;
   @override
   DeleteObjectOutputPayload getPayload() => DeleteObjectOutputPayload();
   @override
   List<Object?> get props => [
         deleteMarker,
-        requestCharged,
         versionId,
+        requestCharged,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DeleteObjectOutput');
-    helper.add(
-      'deleteMarker',
-      deleteMarker,
-    );
-    helper.add(
-      'requestCharged',
-      requestCharged,
-    );
-    helper.add(
-      'versionId',
-      versionId,
-    );
+    final helper = newBuiltValueToStringHelper('DeleteObjectOutput')
+      ..add(
+        'deleteMarker',
+        deleteMarker,
+      )
+      ..add(
+        'versionId',
+        versionId,
+      )
+      ..add(
+        'requestCharged',
+        requestCharged,
+      );
     return helper.toString();
   }
 }
@@ -149,15 +149,16 @@ class DeleteObjectOutputRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteObjectOutputPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i2.XmlElementName(
         'DeleteObjectOutput',
         _i2.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    return result;
+
+    return result$;
   }
 }

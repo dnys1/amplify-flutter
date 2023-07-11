@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.redirect; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,7 +37,7 @@ abstract class Redirect
 
   const Redirect._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<Redirect>> serializers = [
     RedirectRestXmlSerializer()
   ];
 
@@ -71,27 +72,27 @@ abstract class Redirect
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('Redirect');
-    helper.add(
-      'hostName',
-      hostName,
-    );
-    helper.add(
-      'httpRedirectCode',
-      httpRedirectCode,
-    );
-    helper.add(
-      'protocol',
-      protocol,
-    );
-    helper.add(
-      'replaceKeyPrefixWith',
-      replaceKeyPrefixWith,
-    );
-    helper.add(
-      'replaceKeyWith',
-      replaceKeyWith,
-    );
+    final helper = newBuiltValueToStringHelper('Redirect')
+      ..add(
+        'hostName',
+        hostName,
+      )
+      ..add(
+        'httpRedirectCode',
+        httpRedirectCode,
+      )
+      ..add(
+        'protocol',
+        protocol,
+      )
+      ..add(
+        'replaceKeyPrefixWith',
+        replaceKeyPrefixWith,
+      )
+      ..add(
+        'replaceKeyWith',
+        replaceKeyWith,
+      );
     return helper.toString();
   }
 }
@@ -121,50 +122,38 @@ class RedirectRestXmlSerializer
     final result = RedirectBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'HostName':
-          if (value != null) {
-            result.hostName = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.hostName = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'HttpRedirectCode':
-          if (value != null) {
-            result.httpRedirectCode = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.httpRedirectCode = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'Protocol':
-          if (value != null) {
-            result.protocol = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.Protocol),
-            ) as _i2.Protocol);
-          }
-          break;
+          result.protocol = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.Protocol),
+          ) as _i2.Protocol);
         case 'ReplaceKeyPrefixWith':
-          if (value != null) {
-            result.replaceKeyPrefixWith = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.replaceKeyPrefixWith = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'ReplaceKeyWith':
-          if (value != null) {
-            result.replaceKeyWith = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.replaceKeyWith = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -174,56 +163,62 @@ class RedirectRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    Redirect object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as Redirect);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i3.XmlElementName(
         'Redirect',
         _i3.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    if (payload.hostName != null) {
-      result
+    final Redirect(
+      :hostName,
+      :httpRedirectCode,
+      :protocol,
+      :replaceKeyPrefixWith,
+      :replaceKeyWith
+    ) = object;
+    if (hostName != null) {
+      result$
         ..add(const _i3.XmlElementName('HostName'))
         ..add(serializers.serialize(
-          payload.hostName!,
+          hostName,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.httpRedirectCode != null) {
-      result
+    if (httpRedirectCode != null) {
+      result$
         ..add(const _i3.XmlElementName('HttpRedirectCode'))
         ..add(serializers.serialize(
-          payload.httpRedirectCode!,
+          httpRedirectCode,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.protocol != null) {
-      result
+    if (protocol != null) {
+      result$
         ..add(const _i3.XmlElementName('Protocol'))
         ..add(serializers.serialize(
-          payload.protocol!,
+          protocol,
           specifiedType: const FullType.nullable(_i2.Protocol),
         ));
     }
-    if (payload.replaceKeyPrefixWith != null) {
-      result
+    if (replaceKeyPrefixWith != null) {
+      result$
         ..add(const _i3.XmlElementName('ReplaceKeyPrefixWith'))
         ..add(serializers.serialize(
-          payload.replaceKeyPrefixWith!,
+          replaceKeyPrefixWith,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.replaceKeyWith != null) {
-      result
+    if (replaceKeyWith != null) {
+      result$
         ..add(const _i3.XmlElementName('ReplaceKeyWith'))
         ..add(serializers.serialize(
-          payload.replaceKeyWith!,
+          replaceKeyWith,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

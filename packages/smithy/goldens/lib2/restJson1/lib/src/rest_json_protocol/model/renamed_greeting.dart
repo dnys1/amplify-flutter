@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v2.rest_json_protocol.model.renamed_greeting; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -21,7 +22,7 @@ abstract class RenamedGreeting
 
   const RenamedGreeting._();
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<RenamedGreeting>> serializers = [
     RenamedGreetingRestJson1Serializer()
   ];
 
@@ -32,11 +33,11 @@ abstract class RenamedGreeting
   List<Object?> get props => [salutation];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('RenamedGreeting');
-    helper.add(
-      'salutation',
-      salutation,
-    );
+    final helper = newBuiltValueToStringHelper('RenamedGreeting')
+      ..add(
+        'salutation',
+        salutation,
+      );
     return helper.toString();
   }
 }
@@ -69,15 +70,15 @@ class RenamedGreetingRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'salutation':
-          if (value != null) {
-            result.salutation = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.salutation = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -87,19 +88,19 @@ class RenamedGreetingRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    RenamedGreeting object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as RenamedGreeting);
-    final result = <Object?>[];
-    if (payload.salutation != null) {
-      result
+    final result$ = <Object?>[];
+    final RenamedGreeting(:salutation) = object;
+    if (salutation != null) {
+      result$
         ..add('salutation')
         ..add(serializers.serialize(
-          payload.salutation!,
+          salutation,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

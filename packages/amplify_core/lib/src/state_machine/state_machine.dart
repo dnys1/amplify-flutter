@@ -5,17 +5,41 @@ import 'dart:async';
 
 import 'package:amplify_core/amplify_core.dart';
 import 'package:meta/meta.dart';
+import 'package:stack_trace/stack_trace.dart';
+
+/// Factory for a state machine under a [Manager].
+typedef StateMachineBuilder<
+        E extends StateMachineEvent,
+        S extends StateMachineState,
+        Manager extends StateMachineManager<E, S, Manager>>
+    = StateMachine Function(Manager);
 
 /// Interface for dispatching an event to a state machine.
 @optionalTypeArgs
-abstract class Dispatcher<E extends StateMachineEvent,
-    S extends StateMachineState> {
-  /// Dispatches an event.
+mixin Dispatcher<E extends StateMachineEvent, S extends StateMachineState> {
+  /// Dispatches an event to the appropriate state machine.
+  @useResult
   EventCompleter<E, S> dispatch(E event);
+
+  /// Dispatches an event to the appropriate state machine and awaits its
+  /// completion.
+  ///
+  /// See also:
+  /// - [dispatch] which returns an [EventCompleter] instead of a [Future].
+  Future<SuccessState> dispatchAndComplete<SuccessState extends S>(
+    E event,
+  ) async {
+    final completer = dispatch(event);
+    final state = await completer.completed;
+    if (state case ErrorState(:final exception, :final stackTrace)) {
+      Error.throwWithStackTrace(exception, stackTrace);
+    }
+    return state as SuccessState;
+  }
 }
 
 /// Interface for emitting a state from a state machine.
-abstract class Emitter<S extends StateMachineState> {
+abstract interface class Emitter<S extends StateMachineState> {
   /// Emits a new state.
   void emit(S state);
 }
@@ -23,7 +47,7 @@ abstract class Emitter<S extends StateMachineState> {
 /// {@template amplify_core.state_machine_type}
 /// A marker for state machine types to improve DX with generic functions.
 /// {@endtemplate}
-class StateMachineToken<
+final class StateMachineToken<
     Event extends ManagerEvent,
     State extends ManagerState,
     ManagerEvent extends StateMachineEvent,
@@ -33,9 +57,6 @@ class StateMachineToken<
         Manager>> extends Token<M> {
   /// {@macro amplify_core.state_machine_type}
   const StateMachineToken();
-
-  @override
-  List<Token> get dependencies => [Token<Manager>()];
 }
 
 /// {@template amplify_core.state_machinedispatcher}
@@ -47,17 +68,19 @@ abstract class StateMachineManager<
         E extends StateMachineEvent,
         S extends StateMachineState,
         Manager extends StateMachineManager<E, S, Manager>>
-    implements DependencyManager, Dispatcher<E, S>, Closeable {
+    with Dispatcher<E, S>
+    implements DependencyManager, Closeable {
   /// {@macro amplify_core.state_machinedispatcher}
   StateMachineManager(
-    Map<StateMachineToken, Function> stateMachineBuilders,
+    Map<StateMachineToken, StateMachineBuilder<E, S, Manager>>
+        stateMachineBuilders,
     this._dependencyManager,
   ) {
     addInstance<Dispatcher<E, S>>(this);
     addInstance<Manager>(this as Manager);
     addInstance<DependencyManager>(this);
     stateMachineBuilders.forEach((token, builder) {
-      addBuilder(builder, token);
+      addBuilder((_) => builder(this as Manager), token);
     });
     _listenForEvents();
   }
@@ -122,6 +145,7 @@ abstract class StateMachineManager<
   /// fully processed by its state machine, the [EventCompleter.completed]
   /// property will complete with the stopping state reached. At this point,
   /// the event is done processing.
+  @useResult
   EventCompleter<E, S> accept(E event) {
     final completer = EventCompleter<E, S>(event);
     _eventController.add(completer);
@@ -137,8 +161,8 @@ abstract class StateMachineManager<
   ) async {
     final completer = accept(event);
     final state = await completer.completed;
-    if (state is ErrorState) {
-      throw state.exception;
+    if (state case ErrorState(:final exception, :final stackTrace)) {
+      Error.throwWithStackTrace(exception, stackTrace);
     }
     return state as SuccessState;
   }
@@ -149,6 +173,7 @@ abstract class StateMachineManager<
   @override
   @protected
   @visibleForTesting
+  @useResult
   EventCompleter<E, S> dispatch(E event, [EventCompleter<E, S>? completer]) {
     final token = mapEventToMachine(event);
     completer ??= EventCompleter(event);
@@ -156,21 +181,13 @@ abstract class StateMachineManager<
     return completer;
   }
 
-  /// Dispatches an event to the appropriate state machine and awaits its
-  /// completion.
-  ///
-  /// See also:
-  /// - [dispatch] which returns an [EventCompleter] instead of a [Future].
+  @override
+  @protected
+  @visibleForTesting
   Future<SuccessState> dispatchAndComplete<SuccessState extends S>(
     E event,
-  ) async {
-    final completer = dispatch(event);
-    final state = await completer.completed;
-    if (state is ErrorState) {
-      throw state.exception;
-    }
-    return state as SuccessState;
-  }
+  ) =>
+      super.dispatchAndComplete(event);
 
   /// Maps [event] to its state machine.
   StateMachineToken mapEventToMachine(E event);
@@ -204,7 +221,7 @@ abstract class StateMachine<
         DependencyManager {
   /// {@macro amplify_core.state_machine}
   StateMachine(this.manager, this._token) {
-    addBuilder<AmplifyLogger>(AmplifyLogger.new);
+    addBuilder<AmplifyLogger>((_) => AmplifyLogger());
     _init();
   }
 
@@ -224,22 +241,24 @@ abstract class StateMachine<
   // blocking on the current event until it has finished processing.
   Future<void> _listenForEvents() async {
     await for (final completer in _eventStream) {
-      completer.accept();
-      try {
-        final event = completer.event;
-        _currentCompleter = completer;
-        _currentEvent = event as Event;
-        if (!_checkPrecondition(event)) {
-          continue;
+      await completer.run(() async {
+        completer.accept();
+        try {
+          final event = completer.event;
+          _currentCompleter = completer;
+          _currentEvent = event as Event;
+          if (!_checkPrecondition(event)) {
+            return;
+          }
+          // Resolve in the next event loop since `emit` is synchronous and may
+          // fire before listeners are registered.
+          await Future<void>.delayed(Duration.zero, () => resolve(event));
+        } on Object catch (error, st) {
+          _emitError(error, st);
+        } finally {
+          completer.complete(_currentState);
         }
-        // Resolve in the next event loop since `emit` is synchronous and may
-        // fire before listeners are registered.
-        await Future<void>.delayed(Duration.zero, () => resolve(event));
-      } on Object catch (error, st) {
-        _emitError(error, st);
-      } finally {
-        completer.complete(_currentState);
-      }
+      });
     }
   }
 
@@ -264,16 +283,23 @@ abstract class StateMachine<
     _currentState = state;
   }
 
-  void _emitError(Object error, StackTrace st) {
-    logger.error('Emitted error', error, st);
+  /// Emits an [error] and corresponding [stackTrace].
+  void _emitError(Object error, StackTrace stackTrace) {
+    // Chain the stack trace of [_currentEvent]'s creation and the state machine
+    // error to create a full picture of the error's lifecycle.
+    final eventTrace = Trace.from(_currentCompleter.stackTrace);
+    final stateMachineTrace = Trace.from(stackTrace);
+    stackTrace = Chain([stateMachineTrace, eventTrace]);
 
-    final resolution = resolveError(error, st);
+    logger.debug('Emitted error', error, stackTrace);
+
+    final resolution = resolveError(error, stackTrace);
 
     // Add the error to the state stream if it cannot be resolved to a new
     // state internally.
     if (resolution == null) {
-      _currentCompleter.completeError(error, st);
-      _stateController.addError(error, st);
+      _currentCompleter.completeError(error, stackTrace);
+      _stateController.addError(error, stackTrace);
       return;
     }
 
@@ -285,10 +311,12 @@ abstract class StateMachine<
   bool _checkPrecondition(Event event) {
     final precondError = event.checkPrecondition(currentState);
     if (precondError != null) {
-      logger.debug(
-        'Precondition not met for event ($event):\n'
-        '${precondError.precondition}',
-      );
+      if (precondError.shouldLog) {
+        logger.debug(
+          'Precondition not met for event ($event):\n'
+          '${precondError.precondition}',
+        );
+      }
       if (precondError.shouldEmit) {
         _emitError(precondError, StackTrace.current);
       }
@@ -334,7 +362,7 @@ abstract class StateMachine<
   ///
   /// If the error cannot be resolved, return `null` and the error will be
   /// rethrown.
-  State? resolveError(Object error, [StackTrace? st]);
+  State? resolveError(Object error, StackTrace st);
 
   /// Logger for the state machine.
   @override
@@ -380,8 +408,15 @@ abstract class StateMachine<
 
   /// Dispatches an event to the state machine.
   @override
+  @useResult
   EventCompleter<ManagerEvent, ManagerState> dispatch(ManagerEvent event) =>
       manager.dispatch(event);
+
+  @override
+  Future<SuccessState> dispatchAndComplete<SuccessState extends ManagerState>(
+    ManagerEvent event,
+  ) =>
+      manager.dispatchAndComplete(event);
 
   /// Closes the state machine and all stream controllers.
   @override

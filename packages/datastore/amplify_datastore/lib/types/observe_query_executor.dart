@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'package:amplify_core/amplify_core.dart';
+import 'package:amplify_datastore/stream_utils/throttle.dart';
 import 'package:async/async.dart';
-
-import '../stream_utils/throttle.dart';
 
 typedef Query<
         ModelIdentifier extends Object,

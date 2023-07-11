@@ -3,6 +3,7 @@
 
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_api_example/graphql_api_view.dart';
+import 'package:amplify_api_example/models/ModelProvider.dart';
 import 'package:amplify_api_example/rest_api_view.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
@@ -33,20 +34,21 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _configureAmplify() async {
-    final secureStorage = AmplifySecureStorage(
-      config: AmplifySecureStorageConfig(
-        scope: 'api',
-        // FIXME: In your app, make sure to remove this line and set up
-        /// Keychain Sharing in Xcode as described in the docs:
-        /// https://docs.amplify.aws/lib/project-setup/platform-setup/q/platform/flutter/#enable-keychain
-        // ignore: invalid_use_of_visible_for_testing_member
-        macOSOptions: MacOSSecureStorageOptions(useDataProtection: false),
+    final authPlugin = AmplifyAuthCognito(
+      // FIXME: In your app, make sure to remove this line and set up
+      /// Keychain Sharing in Xcode as described in the docs:
+      /// https://docs.amplify.aws/lib/project-setup/platform-setup/q/platform/flutter/#enable-keychain
+      secureStorageFactory: AmplifySecureStorage.factoryFrom(
+        macOSOptions:
+            // ignore: invalid_use_of_visible_for_testing_member
+            MacOSSecureStorageOptions(useDataProtection: false),
       ),
     );
-    final authPlugin = AmplifyAuthCognito(credentialStorage: secureStorage);
     await Amplify.addPlugins([
       authPlugin,
-      AmplifyAPI(),
+      // FIXME: In your app, make sure to run `amplify codegen models` to generate
+      // the models and provider
+      AmplifyAPI(modelProvider: ModelProvider.instance),
     ]);
 
     try {
@@ -86,6 +88,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Authenticator(
       child: MaterialApp(
+        theme: ThemeData.light(useMaterial3: true),
+        darkTheme: ThemeData.dark(useMaterial3: true),
         builder: Authenticator.builder(),
         home: Scaffold(
           appBar: AppBar(

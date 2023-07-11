@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.base_path_mapping; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -39,7 +40,7 @@ abstract class BasePathMapping
   ) =>
       payload;
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<BasePathMapping>> serializers = [
     BasePathMappingRestJson1Serializer()
   ];
 
@@ -62,19 +63,19 @@ abstract class BasePathMapping
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('BasePathMapping');
-    helper.add(
-      'basePath',
-      basePath,
-    );
-    helper.add(
-      'restApiId',
-      restApiId,
-    );
-    helper.add(
-      'stage',
-      stage,
-    );
+    final helper = newBuiltValueToStringHelper('BasePathMapping')
+      ..add(
+        'basePath',
+        basePath,
+      )
+      ..add(
+        'restApiId',
+        restApiId,
+      )
+      ..add(
+        'stage',
+        stage,
+      );
     return helper.toString();
   }
 }
@@ -107,31 +108,25 @@ class BasePathMappingRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'basePath':
-          if (value != null) {
-            result.basePath = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.basePath = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'restApiId':
-          if (value != null) {
-            result.restApiId = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.restApiId = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'stage':
-          if (value != null) {
-            result.stage = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.stage = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -141,35 +136,35 @@ class BasePathMappingRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    BasePathMapping object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as BasePathMapping);
-    final result = <Object?>[];
-    if (payload.basePath != null) {
-      result
+    final result$ = <Object?>[];
+    final BasePathMapping(:basePath, :restApiId, :stage) = object;
+    if (basePath != null) {
+      result$
         ..add('basePath')
         ..add(serializers.serialize(
-          payload.basePath!,
+          basePath,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.restApiId != null) {
-      result
+    if (restApiId != null) {
+      result$
         ..add('restApiId')
         ..add(serializers.serialize(
-          payload.restApiId!,
+          restApiId,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.stage != null) {
-      result
+    if (stage != null) {
+      result$
         ..add('stage')
         ..add(serializers.serialize(
-          payload.stage!,
+          stage,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

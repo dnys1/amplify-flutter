@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library custom_v2.s3.operation.copy_object_operation; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -106,7 +107,7 @@ class CopyObjectOperation extends _i1.HttpOperation<
       );
   @override
   List<_i1.SmithyError> get errorTypes => const [
-        _i1.SmithyError(
+        _i1.SmithyError<_i10.CopyObjectError, _i10.CopyObjectError>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.s3',
             shape: 'CopyObjectError',
@@ -155,7 +156,7 @@ class CopyObjectOperation extends _i1.HttpOperation<
       ),
       zoneValues: {
         ...?_awsEndpoint.credentialScope?.zoneValues,
-        ...{_i8.AWSHeaders.sdkInvocationId: _i8.uuid(secure: true)}
+        ...{_i8.AWSHeaders.sdkInvocationId: _i8.uuid(secure: true)},
       },
     );
   }

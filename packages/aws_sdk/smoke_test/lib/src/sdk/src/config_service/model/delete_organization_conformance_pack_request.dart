@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.delete_organization_conformance_pack_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -35,7 +36,9 @@ abstract class DeleteOrganizationConformancePackRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<
+          _i1.SmithySerializer<DeleteOrganizationConformancePackRequest>>
+      serializers = [
     DeleteOrganizationConformancePackRequestAwsJson11Serializer()
   ];
 
@@ -51,11 +54,11 @@ abstract class DeleteOrganizationConformancePackRequest
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DeleteOrganizationConformancePackRequest');
-    helper.add(
-      'organizationConformancePackName',
-      organizationConformancePackName,
-    );
+        newBuiltValueToStringHelper('DeleteOrganizationConformancePackRequest')
+          ..add(
+            'organizationConformancePackName',
+            organizationConformancePackName,
+          );
     return helper.toString();
   }
 }
@@ -89,13 +92,15 @@ class DeleteOrganizationConformancePackRequestAwsJson11Serializer extends _i1
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'OrganizationConformancePackName':
           result.organizationConformancePackName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -105,17 +110,20 @@ class DeleteOrganizationConformancePackRequestAwsJson11Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteOrganizationConformancePackRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DeleteOrganizationConformancePackRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final DeleteOrganizationConformancePackRequest(
+      :organizationConformancePackName
+    ) = object;
+    result$.addAll([
       'OrganizationConformancePackName',
       serializers.serialize(
-        payload.organizationConformancePackName,
+        organizationConformancePackName,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.import_table_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -32,7 +33,7 @@ abstract class ImportTableOutput
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<ImportTableOutput>> serializers = [
     ImportTableOutputAwsJson10Serializer()
   ];
 
@@ -45,11 +46,11 @@ abstract class ImportTableOutput
   List<Object?> get props => [importTableDescription];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ImportTableOutput');
-    helper.add(
-      'importTableDescription',
-      importTableDescription,
-    );
+    final helper = newBuiltValueToStringHelper('ImportTableOutput')
+      ..add(
+        'importTableDescription',
+        importTableDescription,
+      );
     return helper.toString();
   }
 }
@@ -82,13 +83,15 @@ class ImportTableOutputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ImportTableDescription':
           result.importTableDescription.replace((serializers.deserialize(
             value,
             specifiedType: const FullType(_i2.ImportTableDescription),
           ) as _i2.ImportTableDescription));
-          break;
       }
     }
 
@@ -98,17 +101,18 @@ class ImportTableOutputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ImportTableOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ImportTableOutput);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final ImportTableOutput(:importTableDescription) = object;
+    result$.addAll([
       'ImportTableDescription',
       serializers.serialize(
-        payload.importTableDescription,
+        importTableDescription,
         specifiedType: const FullType(_i2.ImportTableDescription),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

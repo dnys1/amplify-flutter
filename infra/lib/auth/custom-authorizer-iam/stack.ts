@@ -3,7 +3,7 @@
 
 import * as apigw from "aws-cdk-lib/aws-apigateway";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
-import * as cognito from "aws-cdk-lib/aws-cognito";
+import * as cognito_identity from "@aws-cdk/aws-cognito-identitypool-alpha";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambda_nodejs from "aws-cdk-lib/aws-lambda-nodejs";
@@ -11,6 +11,7 @@ import * as route53 from "aws-cdk-lib/aws-route53";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
 import { Construct } from "constructs";
 import { IntegrationTestStackEnvironment } from "../../common";
+import { CUSTOM_HEADERS } from "../common";
 import {
   AuthBaseEnvironmentProps,
   AuthCustomAuthorizerEnvironmentProps
@@ -83,7 +84,13 @@ export class CustomAuthorizerIamStackEnvironment extends IntegrationTestStackEnv
       handler: apiHandler,
       defaultCorsPreflightOptions: {
         allowOrigins: apigw.Cors.ALL_ORIGINS,
-        allowHeaders: [...apigw.Cors.DEFAULT_HEADERS, "x-amz-content-sha256"],
+        allowHeaders: [
+          ...apigw.Cors.DEFAULT_HEADERS,
+          ...CUSTOM_HEADERS
+        ],
+        exposeHeaders: CUSTOM_HEADERS,
+        allowCredentials: true,
+        disableCache: true,
       },
       defaultMethodOptions: {
         authorizationType: apigw.AuthorizationType.IAM,
@@ -99,56 +106,32 @@ export class CustomAuthorizerIamStackEnvironment extends IntegrationTestStackEnv
           new targets.ApiGateway(apiGateway)
         ),
       });
+      new route53.AaaaRecord(this, "CustomDomainAaaaRecord", {
+        zone: domainProperties.hostedZone,
+        recordName: domainProperties.domainName,
+        target: route53.RecordTarget.fromAlias(
+          new targets.ApiGateway(apiGateway)
+        ),
+      })
     }
 
     // Create the Cognito Identity Pool with permissions to invoke the API.
 
-    const identityPool = new cognito.CfnIdentityPool(this, "IdentityPool", {
+    const identityPool = new cognito_identity.IdentityPool(this, "IdentityPool", {
       identityPoolName: this.name,
       allowUnauthenticatedIdentities: true,
     });
 
-    const unauthenticatedRole = new iam.Role(this, "UnauthenticatedRole", {
-      description: "Default role for anonymous users",
-      assumedBy: new iam.FederatedPrincipal(
-        "cognito-identity.amazonaws.com",
-        {
-          StringEquals: {
-            "cognito-identity.amazonaws.com:aud": identityPool.ref,
-          },
-          "ForAnyValue:StringLike": {
-            "cognito-identity.amazonaws.com:amr": "unauthenticated",
-          },
-        },
-        "sts:AssumeRoleWithWebIdentity"
-      ),
-      inlinePolicies: {
-        "api-gateway-invoke": new iam.PolicyDocument({
-          statements: [
-            new iam.PolicyStatement({
-              effect: iam.Effect.ALLOW,
-              actions: ["execute-api:Invoke"],
-              resources: [apiGateway.arnForExecuteApi()],
-            }),
-          ],
-        }),
-      },
+    const apiGwStatement = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["execute-api:Invoke"],
+      resources: [apiGateway.arnForExecuteApi()],
     });
-
-    new cognito.CfnIdentityPoolRoleAttachment(
-      this,
-      "IdentityPoolRoleAttachment",
-      {
-        identityPoolId: identityPool.ref,
-        roles: {
-          unauthenticated: unauthenticatedRole.roleArn,
-        },
-      }
-    );
+    identityPool.unauthenticatedRole.addToPrincipalPolicy(apiGwStatement);
 
     let domainName = apiGateway.url;
     if (apiGateway.domainName?.domainName) {
-      domainName = `https://${apiGateway.domainName?.domainName}`;
+      domainName = `https://${apiGateway.domainName?.domainName}/prod/`;
     }
 
     this.config = {
@@ -157,13 +140,13 @@ export class CustomAuthorizerIamStackEnvironment extends IntegrationTestStackEnv
           [apiGateway.restApiName]: {
             endpointType: "REST",
             endpoint: domainName,
-            authorizationType: "AMAZON_COGNITO_USER_POOLS",
+            authorizationType: "AWS_IAM",
           },
         },
       },
       authConfig: {
         identityPoolConfig: {
-          identityPoolId: identityPool.ref,
+          identityPoolId: identityPool.identityPoolId,
         },
       },
     };

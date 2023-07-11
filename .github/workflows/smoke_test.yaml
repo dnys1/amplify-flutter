@@ -6,12 +6,14 @@ on:
       - stable
       - next
     paths:
-      - 'packages/aws_sdk/**/*.dart'
-      - 'packages/smithy/**/*.dart'
+      - "packages/aws_sdk/**/*.dart"
+      - "packages/aws_sdk/smoke_test/workflow.yaml"
+      - "packages/smithy/**/*.dart"
   pull_request:
     paths:
-      - 'packages/aws_sdk/**/*.dart'
-      - 'packages/smithy/**/*.dart'
+      - "packages/aws_sdk/**/*.dart"
+      - "packages/aws_sdk/smoke_test/workflow.yaml"
+      - "packages/smithy/**/*.dart"
   schedule:
     - cron: "0 0 * * 0" # Every Sunday at 00:00
 defaults:
@@ -25,13 +27,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # 3.1.0
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # 3.5.3
 
       - name: Git Submodules
         run: git submodule update --init
 
       - name: Setup Dart
-        uses: dart-lang/setup-dart@196f54580e9eee2797c57e85e289339f85e6779d # main
+        uses: dart-lang/setup-dart@007c7cbb377cdbdf8922e2f8c4172dc60fbaaf9a # main
         with:
           sdk: stable
 
@@ -52,9 +54,9 @@ jobs:
           # https://github.com/localstack/localstack/pull/6831
           pip install pyOpenSSL --upgrade
           pip install cryptography --upgrade
-
           pip install localstack
-          docker pull localstack/localstack
+
+          docker pull localstack/localstack:latest
           localstack start --detached
           echo "Waiting for localstack startup..."
           localstack wait -t 30

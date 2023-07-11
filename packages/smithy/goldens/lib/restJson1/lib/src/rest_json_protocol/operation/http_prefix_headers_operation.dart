@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v1.rest_json_protocol.operation.http_prefix_headers_operation; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -18,7 +19,7 @@ import 'package:smithy_aws/smithy_aws.dart' as _i4;
 
 /// This examples adds headers to the input of a request and response by prefix.///
 /// See also:
-/// - [httpPrefixHeaders Trait](https://awslabs.github.io/smithy/1.0/spec/http.html#httpprefixheaders-trait)
+/// - [httpPrefixHeaders Trait](https://smithy.io/2.0/spec/http-bindings.html#httpprefixheaders-trait)
 
 class HttpPrefixHeadersOperation extends _i1.HttpOperation<
     _i2.HttpPrefixHeadersInputPayload,
@@ -27,7 +28,7 @@ class HttpPrefixHeadersOperation extends _i1.HttpOperation<
     _i3.HttpPrefixHeadersOutput> {
   /// This examples adds headers to the input of a request and response by prefix.///
   /// See also:
-  /// - [httpPrefixHeaders Trait](https://awslabs.github.io/smithy/1.0/spec/http.html#httpprefixheaders-trait)
+  /// - [httpPrefixHeaders Trait](https://smithy.io/2.0/spec/http-bindings.html#httpprefixheaders-trait)
 
   HttpPrefixHeadersOperation({
     required String region,
@@ -89,7 +90,7 @@ class HttpPrefixHeadersOperation extends _i1.HttpOperation<
         if (input.fooMap != null) {
           for (var entry in input.fooMap!.toMap().entries) {
             if (entry.value.isNotEmpty) {
-              b.headers['X-Foo-' + entry.key] = entry.value;
+              b.headers['X-Foo-${entry.key}'] = entry.value;
             }
           }
         }
@@ -129,7 +130,7 @@ class HttpPrefixHeadersOperation extends _i1.HttpOperation<
       ),
       zoneValues: {
         ...?_awsEndpoint.credentialScope?.zoneValues,
-        ...{_i7.AWSHeaders.sdkInvocationId: _i7.uuid(secure: true)}
+        ...{_i7.AWSHeaders.sdkInvocationId: _i7.uuid(secure: true)},
       },
     );
   }

@@ -5,37 +5,35 @@ import 'dart:async';
 
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:amplify_auth_cognito_dart/src/credentials/cognito_keys.dart';
+import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_platform.dart';
+import 'package:amplify_auth_cognito_dart/src/model/hosted_ui/oauth_parameters.dart';
+import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';
+import 'package:amplify_auth_cognito_test/amplify_auth_cognito_test.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_secure_storage_dart/amplify_secure_storage_dart.dart';
 import 'package:http/http.dart' as http;
 import 'package:stream_transform/stream_transform.dart';
 import 'package:test/test.dart';
 
-import '../common/mock_config.dart';
-import '../common/mock_dispatcher.dart';
-import '../common/mock_hosted_ui.dart';
-import '../common/mock_oauth_server.dart';
-import '../common/mock_secure_storage.dart';
-
-late Completer<String> _launchUrl;
+late Completer<Uri> _launchUrl;
 
 class MockHostedUiPlatform extends HostedUiPlatform {
   MockHostedUiPlatform(super.dependencyManager) : super.protected();
 
   @override
   Future<void> signIn({
-    required CognitoSignInWithWebUIOptions options,
+    required CognitoSignInWithWebUIPluginOptions options,
     AuthProvider? provider,
   }) async {
-    final signInUrl = getSignInUri(provider: provider).toString();
+    final signInUrl = await getSignInUri(provider: provider);
     _launchUrl.complete(signInUrl);
   }
 
   @override
   Future<void> signOut({
-    required CognitoSignOutWithWebUIOptions options,
-    required bool isPreferPrivateSession,
+    required CognitoSignInWithWebUIPluginOptions options,
   }) async {}
 
   @override
@@ -50,7 +48,7 @@ class FailingHostedUiPlatform extends HostedUiPlatform {
 
   @override
   Future<void> signIn({
-    required CognitoSignInWithWebUIOptions options,
+    required CognitoSignInWithWebUIPluginOptions options,
     AuthProvider? provider,
   }) async {
     throw Exception();
@@ -58,8 +56,7 @@ class FailingHostedUiPlatform extends HostedUiPlatform {
 
   @override
   Future<void> signOut({
-    required CognitoSignOutWithWebUIOptions options,
-    required bool isPreferPrivateSession,
+    required CognitoSignInWithWebUIPluginOptions options,
   }) {
     throw Exception();
   }
@@ -72,6 +69,7 @@ class FailingHostedUiPlatform extends HostedUiPlatform {
 }
 
 void main() {
+  AWSLogger().logLevel = LogLevel.verbose;
   const keys = HostedUiKeys(hostedUiConfig);
 
   group('HostedUiStateMachine', () {
@@ -87,7 +85,7 @@ void main() {
       stateMachine = CognitoAuthStateMachine()
         ..addInstance<http.Client>(server.httpClient)
         ..addInstance(secureStorage)
-        ..addBuilder(MockHostedUiPlatform.new, HostedUiPlatform.token);
+        ..addBuilder<HostedUiPlatform>(MockHostedUiPlatform.new);
     });
 
     test('getAuthorizationUrl', () async {
@@ -97,8 +95,8 @@ void main() {
         )
         ..addInstance<CognitoOAuthConfig>(hostedUiConfig);
 
-      final platform = stateMachine.create(HostedUiPlatform.token);
-      final authorizationUri = platform.getSignInUri();
+      final platform = stateMachine.create<HostedUiPlatform>();
+      final authorizationUri = await platform.getSignInUri();
 
       expect(authorizationUri.pathSegments.last, 'authorize');
 
@@ -125,9 +123,11 @@ void main() {
 
     group('onFoundState', () {
       test('nothing in storage', () {
-        stateMachine.dispatch(
-          ConfigurationEvent.configure(mockConfig),
-        );
+        stateMachine
+            .dispatch(
+              ConfigurationEvent.configure(mockConfig),
+            )
+            .ignore();
 
         final sm = stateMachine.getOrCreate(HostedUiStateMachine.type);
         expect(
@@ -146,7 +146,9 @@ void main() {
             value: codeVerifier,
           );
 
-        stateMachine.dispatch(ConfigurationEvent.configure(mockConfig));
+        stateMachine
+            .dispatch(ConfigurationEvent.configure(mockConfig))
+            .ignore();
 
         final sm = stateMachine.getOrCreate(HostedUiStateMachine.type);
         await expectLater(
@@ -165,7 +167,9 @@ void main() {
     group('onConfigure', () {
       test('logged in', () async {
         seedStorage(secureStorage, hostedUiKeys: keys);
-        stateMachine.dispatch(ConfigurationEvent.configure(mockConfig));
+        stateMachine
+            .dispatch(ConfigurationEvent.configure(mockConfig))
+            .ignore();
 
         final sm = stateMachine.getOrCreate(HostedUiStateMachine.type);
         await expectLater(
@@ -184,7 +188,9 @@ void main() {
 
     group('onSignIn', () {
       test('no provider', () async {
-        stateMachine.dispatch(ConfigurationEvent.configure(mockConfig));
+        stateMachine
+            .dispatch(ConfigurationEvent.configure(mockConfig))
+            .ignore();
 
         final sm = stateMachine.getOrCreate(HostedUiStateMachine.type);
         await expectLater(
@@ -195,12 +201,14 @@ void main() {
           ]),
         );
 
-        stateMachine.dispatch(const HostedUiEvent.signIn());
+        stateMachine.dispatch(const HostedUiEvent.signIn()).ignore();
         expect(_launchUrl.future, completes);
       });
 
       test('w/ provider', () async {
-        stateMachine.dispatch(ConfigurationEvent.configure(mockConfig));
+        stateMachine
+            .dispatch(ConfigurationEvent.configure(mockConfig))
+            .ignore();
 
         final sm = stateMachine.getOrCreate(HostedUiStateMachine.type);
         await expectLater(
@@ -211,21 +219,20 @@ void main() {
           ]),
         );
 
-        stateMachine.dispatch(
-          const HostedUiEvent.signIn(
-            provider: AuthProvider.amazon,
-          ),
-        );
+        stateMachine
+            .dispatch(
+              const HostedUiEvent.signIn(
+                provider: AuthProvider.amazon,
+              ),
+            )
+            .ignore();
         expect(_launchUrl.future, completes);
       });
 
       test('fails', () async {
         stateMachine
-          ..addBuilder(
-            FailingHostedUiPlatform.new,
-            HostedUiPlatform.token,
-          )
-          ..dispatch(ConfigurationEvent.configure(mockConfig));
+          ..addBuilder<HostedUiPlatform>(FailingHostedUiPlatform.new)
+          ..dispatch(ConfigurationEvent.configure(mockConfig)).ignore();
 
         final sm = stateMachine.getOrCreate(HostedUiStateMachine.type);
         await expectLater(
@@ -236,11 +243,13 @@ void main() {
           ]),
         );
 
-        stateMachine.dispatch(
-          const HostedUiEvent.signIn(
-            provider: AuthProvider.amazon,
-          ),
-        );
+        stateMachine
+            .dispatch(
+              const HostedUiEvent.signIn(
+                provider: AuthProvider.amazon,
+              ),
+            )
+            .ignore();
         expect(
           sm.stream,
           emitsInOrder(<Matcher>[
@@ -252,8 +261,10 @@ void main() {
     });
 
     group('onExchange', () {
-      test('no provider', () async {
-        stateMachine.dispatch(ConfigurationEvent.configure(mockConfig));
+      setUp(() async {
+        stateMachine
+            .dispatch(ConfigurationEvent.configure(mockConfig))
+            .ignore();
 
         final sm = stateMachine.getOrCreate(HostedUiStateMachine.type);
         await expectLater(
@@ -264,13 +275,39 @@ void main() {
           ]),
         );
 
-        stateMachine.dispatch(const HostedUiEvent.signIn());
-        final params =
-            await server.authorize(Uri.parse(await _launchUrl.future));
-        stateMachine.dispatch(HostedUiEvent.exchange(params));
+        stateMachine.addInstance<CognitoIdentityClient>(
+          MockCognitoIdentityClient(
+            getId: () async => GetIdResponse(
+              identityId: identityId,
+            ),
+            getCredentialsForIdentity: () async =>
+                GetCredentialsForIdentityResponse(
+              credentials: Credentials(
+                accessKeyId: accessKeyId,
+                secretKey: secretAccessKey,
+                sessionToken: sessionToken,
+                expiration: expiration,
+              ),
+            ),
+          ),
+        );
+      });
+
+      test('no provider', () async {
+        await expectLater(
+          secureStorage.read(
+            key: identityPoolKeys[CognitoIdentityPoolKey.sessionToken],
+          ),
+          isNull,
+          reason: "Shouldn't have AWS credentials before sign in",
+        );
+
+        stateMachine.dispatch(const HostedUiEvent.signIn()).ignore();
+        final params = await server.authorize(await _launchUrl.future);
+        stateMachine.dispatch(HostedUiEvent.exchange(params)).ignore();
 
         expect(
-          sm.stream,
+          stateMachine.stream.whereType<HostedUiState>(),
           emitsInOrder(<Matcher>[
             isA<HostedUiSigningIn>(),
             isA<HostedUiSignedIn>().having(
@@ -282,44 +319,51 @@ void main() {
         );
         expect(
           stateMachine.stream.whereType<CredentialStoreState>(),
-          emitsThrough(
-            isA<CredentialStoreSuccess>()
-                .having(
-                  (state) => state.data.userPoolTokens,
-                  'tokens',
-                  isNotNull,
-                )
-                .having(
-                  (state) => state.data.userPoolTokens!.signInMethod,
-                  'signInMethod',
-                  CognitoSignInMethod.hostedUi,
-                ),
-          ),
+          allOf([
+            emitsThrough(
+              isA<CredentialStoreSuccess>()
+                  .having(
+                    (state) => state.data.userPoolTokens,
+                    'tokens',
+                    isNotNull,
+                  )
+                  .having(
+                    (state) => state.data.userPoolTokens!.signInMethod,
+                    'signInMethod',
+                    CognitoSignInMethod.hostedUi,
+                  ),
+            ),
+            emitsThrough(
+              isA<CredentialStoreSuccess>().having(
+                (state) => state.data.awsCredentials?.sessionToken,
+                'sessionToken',
+                sessionToken,
+              ),
+            ),
+          ]),
         );
       });
 
       test('w/ provider', () async {
-        stateMachine.dispatch(ConfigurationEvent.configure(mockConfig));
-
-        final sm = stateMachine.getOrCreate(HostedUiStateMachine.type);
         await expectLater(
-          sm.stream,
-          emitsInOrder(<Matcher>[
-            isA<HostedUiConfiguring>(),
-            isA<HostedUiSignedOut>(),
-          ]),
+          secureStorage.read(
+            key: identityPoolKeys[CognitoIdentityPoolKey.sessionToken],
+          ),
+          isNull,
+          reason: "Shouldn't have AWS credentials before sign in",
         );
 
         const provider = AuthProvider.oidc('providerName', 'issuer');
-        stateMachine.dispatch(
-          const HostedUiEvent.signIn(provider: provider),
-        );
-        final params =
-            await server.authorize(Uri.parse(await _launchUrl.future));
-        stateMachine.dispatch(HostedUiEvent.exchange(params));
+        stateMachine
+            .dispatch(
+              const HostedUiEvent.signIn(provider: provider),
+            )
+            .ignore();
+        final params = await server.authorize(await _launchUrl.future);
+        stateMachine.dispatch(HostedUiEvent.exchange(params)).ignore();
 
         expect(
-          sm.stream,
+          stateMachine.stream.whereType<HostedUiState>(),
           emitsInOrder(<Matcher>[
             isA<HostedUiSigningIn>(),
             isA<HostedUiSignedIn>().having(
@@ -335,50 +379,50 @@ void main() {
         );
         expect(
           stateMachine.stream.whereType<CredentialStoreState>(),
-          emitsThrough(
-            isA<CredentialStoreSuccess>()
-                .having(
-                  (state) => state.data.userPoolTokens,
-                  'tokens',
-                  isNotNull,
-                )
-                .having(
-                  (state) => state.data.userPoolTokens!.signInMethod,
-                  'signInMethod',
-                  CognitoSignInMethod.hostedUi,
-                ),
-          ),
+          allOf([
+            emitsThrough(
+              isA<CredentialStoreSuccess>()
+                  .having(
+                    (state) => state.data.userPoolTokens,
+                    'tokens',
+                    isNotNull,
+                  )
+                  .having(
+                    (state) => state.data.userPoolTokens!.signInMethod,
+                    'signInMethod',
+                    CognitoSignInMethod.hostedUi,
+                  ),
+            ),
+            emitsThrough(
+              isA<CredentialStoreSuccess>().having(
+                (state) => state.data.awsCredentials?.sessionToken,
+                'sessionToken',
+                sessionToken,
+              ),
+            ),
+          ]),
         );
       });
 
       test('fails with remote error', () async {
-        stateMachine.dispatch(ConfigurationEvent.configure(mockConfig));
-
-        final sm = stateMachine.getOrCreate(HostedUiStateMachine.type);
-        await expectLater(
-          sm.stream,
-          emitsInOrder(<Matcher>[
-            isA<HostedUiConfiguring>(),
-            isA<HostedUiSignedOut>(),
-          ]),
-        );
-
-        stateMachine.dispatch(const HostedUiEvent.signIn());
-        await server.authorize(Uri.parse(await _launchUrl.future));
+        stateMachine.dispatch(const HostedUiEvent.signIn()).ignore();
+        await server.authorize(await _launchUrl.future);
 
         final state = await secureStorage.read(key: keys[HostedUiKey.state]);
-        stateMachine.dispatch(
-          HostedUiEvent.exchange(
-            OAuthParameters(
-              (b) => b
-                ..error = OAuthErrorCode.invalidRequest
-                ..state = state,
-            ),
-          ),
-        );
+        stateMachine
+            .dispatch(
+              HostedUiEvent.exchange(
+                OAuthParameters(
+                  (b) => b
+                    ..error = OAuthErrorCode.invalidRequest
+                    ..state = state,
+                ),
+              ),
+            )
+            .ignore();
 
         expect(
-          sm.stream,
+          stateMachine.stream.whereType<HostedUiState>(),
           emitsInOrder(<Matcher>[
             isA<HostedUiSigningIn>(),
             isA<HostedUiFailure>(),
@@ -387,31 +431,22 @@ void main() {
       });
 
       test('fails with bad code', () async {
-        stateMachine.dispatch(ConfigurationEvent.configure(mockConfig));
-
-        final sm = stateMachine.getOrCreate(HostedUiStateMachine.type);
-        await expectLater(
-          sm.stream,
-          emitsInOrder(<Matcher>[
-            isA<HostedUiConfiguring>(),
-            isA<HostedUiSignedOut>(),
-          ]),
-        );
-
-        stateMachine.dispatch(const HostedUiEvent.signIn());
-        await server.authorize(Uri.parse(await _launchUrl.future));
-        stateMachine.dispatch(
-          HostedUiEvent.exchange(
-            OAuthParameters(
-              (b) => b
-                ..code = 'badCode'
-                ..state = 'badState',
-            ),
-          ),
-        );
+        stateMachine.dispatch(const HostedUiEvent.signIn()).ignore();
+        await server.authorize(await _launchUrl.future);
+        stateMachine
+            .dispatch(
+              HostedUiEvent.exchange(
+                OAuthParameters(
+                  (b) => b
+                    ..code = 'badCode'
+                    ..state = 'badState',
+                ),
+              ),
+            )
+            .ignore();
 
         expect(
-          sm.stream,
+          stateMachine.stream.whereType<HostedUiState>(),
           emitsInOrder(<Matcher>[
             isA<HostedUiSigningIn>(),
             isA<HostedUiFailure>(),
@@ -423,7 +458,9 @@ void main() {
     group('onSignOut', () {
       test('succeeds', () async {
         seedStorage(secureStorage, hostedUiKeys: keys);
-        stateMachine.dispatch(ConfigurationEvent.configure(mockConfig));
+        stateMachine
+            .dispatch(ConfigurationEvent.configure(mockConfig))
+            .ignore();
         await expectLater(
           stateMachine.stream.whereType<HostedUiState>(),
           emitsInOrder(<Matcher>[
@@ -432,7 +469,7 @@ void main() {
           ]),
         );
 
-        stateMachine.dispatch(const HostedUiEvent.signOut());
+        stateMachine.dispatch(const HostedUiEvent.signOut()).ignore();
         expect(
           stateMachine.stream.whereType<HostedUiState>(),
           emitsInOrder(<Matcher>[
@@ -444,7 +481,9 @@ void main() {
 
       test('multiple events are ignored', () async {
         seedStorage(secureStorage, hostedUiKeys: keys);
-        stateMachine.dispatch(ConfigurationEvent.configure(mockConfig));
+        stateMachine
+            .dispatch(ConfigurationEvent.configure(mockConfig))
+            .ignore();
         await expectLater(
           stateMachine.stream.whereType<HostedUiState>(),
           emitsInOrder(<Matcher>[
@@ -454,8 +493,8 @@ void main() {
         );
 
         stateMachine
-          ..dispatch(const HostedUiEvent.signOut())
-          ..dispatch(const HostedUiEvent.signOut());
+          ..dispatch(const HostedUiEvent.signOut()).ignore()
+          ..dispatch(const HostedUiEvent.signOut()).ignore();
         expect(
           stateMachine.stream.whereType<HostedUiState>(),
           emitsInOrder(<Matcher>[
@@ -468,11 +507,8 @@ void main() {
       test('fails', () async {
         seedStorage(secureStorage, hostedUiKeys: keys);
         stateMachine
-          ..addBuilder(
-            FailingHostedUiPlatform.new,
-            HostedUiPlatform.token,
-          )
-          ..dispatch(ConfigurationEvent.configure(mockConfig));
+          ..addBuilder<HostedUiPlatform>(FailingHostedUiPlatform.new)
+          ..dispatch(ConfigurationEvent.configure(mockConfig)).ignore();
         await expectLater(
           stateMachine.stream.whereType<HostedUiState>(),
           emitsInOrder(<Matcher>[
@@ -481,7 +517,7 @@ void main() {
           ]),
         );
 
-        stateMachine.dispatch(const HostedUiEvent.signOut());
+        stateMachine.dispatch(const HostedUiEvent.signOut()).ignore();
         expect(
           stateMachine.stream.whereType<HostedUiState>(),
           emitsInOrder(<Matcher>[
@@ -493,28 +529,26 @@ void main() {
 
       test('preserves options', () async {
         stateMachine
-          ..addBuilder(
+          ..addBuilder<HostedUiPlatform>(
             createHostedUiFactory(
               signIn: (
                 HostedUiPlatform platform,
-                CognitoSignInWithWebUIOptions options,
+                CognitoSignInWithWebUIPluginOptions options,
                 AuthProvider? provider,
               ) async {
                 final signInUrl =
-                    platform.getSignInUri(provider: provider).toString();
+                    await platform.getSignInUri(provider: provider);
                 _launchUrl.complete(signInUrl);
               },
-              signOut: expectAsync3((
+              signOut: expectAsync2((
                 platform,
                 options,
-                isPreferPrivateSession,
               ) async {
-                expect(isPreferPrivateSession, isTrue);
+                expect(options.isPreferPrivateSession, isTrue);
               }),
             ),
-            HostedUiPlatform.token,
           )
-          ..dispatch(ConfigurationEvent.configure(mockConfig));
+          ..dispatch(ConfigurationEvent.configure(mockConfig)).ignore();
 
         await expectLater(
           stateMachine.stream.whereType<HostedUiState>(),
@@ -524,16 +558,17 @@ void main() {
           ]),
         );
 
-        stateMachine.dispatch(
-          const HostedUiEvent.signIn(
-            options: CognitoSignInWithWebUIOptions(
-              isPreferPrivateSession: true,
-            ),
-          ),
-        );
-        final params =
-            await server.authorize(Uri.parse(await _launchUrl.future));
-        stateMachine.dispatch(HostedUiEvent.exchange(params));
+        stateMachine
+            .dispatch(
+              const HostedUiEvent.signIn(
+                options: CognitoSignInWithWebUIPluginOptions(
+                  isPreferPrivateSession: true,
+                ),
+              ),
+            )
+            .ignore();
+        final params = await server.authorize(await _launchUrl.future);
+        stateMachine.dispatch(HostedUiEvent.exchange(params)).ignore();
 
         await expectLater(
           stateMachine.stream.whereType<HostedUiState>(),
@@ -543,7 +578,7 @@ void main() {
           ]),
         );
 
-        stateMachine.dispatch(const HostedUiEvent.signOut());
+        stateMachine.dispatch(const HostedUiEvent.signOut()).ignore();
       });
     });
   });

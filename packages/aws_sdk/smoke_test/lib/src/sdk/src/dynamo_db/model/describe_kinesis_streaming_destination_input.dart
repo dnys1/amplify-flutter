@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.describe_kinesis_streaming_destination_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -34,7 +35,9 @@ abstract class DescribeKinesisStreamingDestinationInput
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<
+          _i1.SmithySerializer<DescribeKinesisStreamingDestinationInput>>
+      serializers = [
     DescribeKinesisStreamingDestinationInputAwsJson10Serializer()
   ];
 
@@ -50,11 +53,11 @@ abstract class DescribeKinesisStreamingDestinationInput
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DescribeKinesisStreamingDestinationInput');
-    helper.add(
-      'tableName',
-      tableName,
-    );
+        newBuiltValueToStringHelper('DescribeKinesisStreamingDestinationInput')
+          ..add(
+            'tableName',
+            tableName,
+          );
     return helper.toString();
   }
 }
@@ -88,13 +91,15 @@ class DescribeKinesisStreamingDestinationInputAwsJson10Serializer extends _i1
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'TableName':
           result.tableName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -104,17 +109,18 @@ class DescribeKinesisStreamingDestinationInputAwsJson10Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeKinesisStreamingDestinationInput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeKinesisStreamingDestinationInput);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final DescribeKinesisStreamingDestinationInput(:tableName) = object;
+    result$.addAll([
       'TableName',
       serializers.serialize(
-        payload.tableName,
+        tableName,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

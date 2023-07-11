@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.delete_delivery_channel_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -37,9 +38,8 @@ abstract class DeleteDeliveryChannelRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    DeleteDeliveryChannelRequestAwsJson11Serializer()
-  ];
+  static const List<_i1.SmithySerializer<DeleteDeliveryChannelRequest>>
+      serializers = [DeleteDeliveryChannelRequestAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DeleteDeliveryChannelRequestBuilder b) {}
@@ -52,11 +52,11 @@ abstract class DeleteDeliveryChannelRequest
   List<Object?> get props => [deliveryChannelName];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DeleteDeliveryChannelRequest');
-    helper.add(
-      'deliveryChannelName',
-      deliveryChannelName,
-    );
+    final helper = newBuiltValueToStringHelper('DeleteDeliveryChannelRequest')
+      ..add(
+        'deliveryChannelName',
+        deliveryChannelName,
+      );
     return helper.toString();
   }
 }
@@ -90,13 +90,15 @@ class DeleteDeliveryChannelRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'DeliveryChannelName':
           result.deliveryChannelName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -106,17 +108,18 @@ class DeleteDeliveryChannelRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteDeliveryChannelRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DeleteDeliveryChannelRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final DeleteDeliveryChannelRequest(:deliveryChannelName) = object;
+    result$.addAll([
       'DeliveryChannelName',
       serializers.serialize(
-        payload.deliveryChannelName,
+        deliveryChannelName,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

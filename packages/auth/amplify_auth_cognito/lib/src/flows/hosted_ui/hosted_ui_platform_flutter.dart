@@ -7,8 +7,14 @@ import 'dart:io';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_auth_cognito/src/native_auth_plugin.g.dart';
 // ignore: implementation_imports
+import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_platform.dart';
+// ignore: implementation_imports
 import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_platform_io.dart'
     as io;
+// ignore: implementation_imports
+import 'package:amplify_auth_cognito_dart/src/model/hosted_ui/oauth_parameters.dart';
+// ignore: implementation_imports, invalid_use_of_internal_member
+import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/services.dart';
 
@@ -60,13 +66,13 @@ class HostedUiPlatformImpl extends io.HostedUiPlatformImpl {
 
   @override
   Future<void> signIn({
-    required CognitoSignInWithWebUIOptions options,
+    required CognitoSignInWithWebUIPluginOptions options,
     AuthProvider? provider,
   }) async {
     if (!_isMobile) {
       return super.signIn(options: options, provider: provider);
     }
-    final signInUri = getSignInUri(provider: provider);
+    final signInUri = await getSignInUri(provider: provider);
     try {
       final queryParameters = await _nativeAuthBridge.signInWithUrl(
         signInUri.toString(),
@@ -74,13 +80,17 @@ class HostedUiPlatformImpl extends io.HostedUiPlatformImpl {
         options.isPreferPrivateSession,
         options.browserPackageName,
       );
-      dispatcher.dispatch(
-        HostedUiEvent.exchange(
-          OAuthParameters.fromJson(queryParameters.cast()),
+      unawaited(
+        dispatcher.dispatchAndComplete(
+          HostedUiEvent.exchange(
+            OAuthParameters.fromJson(queryParameters.cast()),
+          ),
         ),
       );
     } on Exception catch (e) {
-      dispatcher.dispatch(const HostedUiEvent.cancelSignIn());
+      unawaited(
+        dispatcher.dispatchAndComplete(const HostedUiEvent.cancelSignIn()),
+      );
       if (e is PlatformException) {
         if (e.code == 'CANCELLED') {
           throw const UserCancelledException(
@@ -108,20 +118,19 @@ class HostedUiPlatformImpl extends io.HostedUiPlatformImpl {
 
   @override
   Future<void> signOut({
-    required CognitoSignOutWithWebUIOptions options,
-    required bool isPreferPrivateSession,
+    required CognitoSignInWithWebUIPluginOptions options,
   }) async {
     if (!_isMobile) {
-      return super.signOut(
-        options: options,
-        isPreferPrivateSession: isPreferPrivateSession,
-      );
+      return super.signOut(options: options);
     }
+    // Launching the sign out url is not needed on iOS if isPreferPrivateSession
+    // is true.
+    if (Platform.isIOS && options.isPreferPrivateSession) return;
     final signOutUri = getSignOutUri();
     await _nativeAuthBridge.signOutWithUrl(
       signOutUri.toString(),
       signOutRedirectUri.scheme,
-      isPreferPrivateSession,
+      options.isPreferPrivateSession,
       options.browserPackageName,
     );
   }

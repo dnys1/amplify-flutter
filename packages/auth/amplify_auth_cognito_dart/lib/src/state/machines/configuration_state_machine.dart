@@ -3,20 +3,22 @@
 
 import 'dart:async';
 
-import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
+// ignore: implementation_imports
+import 'package:amplify_analytics_pinpoint_dart/src/impl/analytics_client/endpoint_client/endpoint_info_store_manager.dart';
 import 'package:amplify_auth_cognito_dart/src/credentials/auth_plugin_credentials_provider.dart';
 import 'package:amplify_auth_cognito_dart/src/model/auth_configuration.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/sdk_bridge.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart';
 
 /// {@template amplify_auth_cognito.configuration_state_machine}
 /// Manages configuration of the Auth category.
 /// {@endtemplate}
-class ConfigurationStateMachine extends StateMachine<ConfigurationEvent,
-    ConfigurationState, AuthEvent, AuthState, CognitoAuthStateMachine> {
+final class ConfigurationStateMachine
+    extends AuthStateMachine<ConfigurationEvent, ConfigurationState> {
   /// {@macro amplify_auth_cognito.configuration_state_machine}
   ConfigurationStateMachine(CognitoAuthStateMachine manager)
       : super(manager, type);
@@ -38,35 +40,24 @@ class ConfigurationStateMachine extends StateMachine<ConfigurationEvent,
   String get runtimeTypeName => 'ConfigurationStateMachine';
 
   /// The credentials provider for SDK calls.
-  AuthPluginCredentialsProvider get _credentialsProvider => getOrCreate(
-        AuthPluginCredentialsProvider.token,
-      );
+  AuthPluginCredentialsProvider get _credentialsProvider => getOrCreate();
 
   @override
   Future<void> resolve(ConfigurationEvent event) async {
-    switch (event.type) {
-      case ConfigurationEventType.configure:
-        final castEvent = event as Configure;
+    switch (event) {
+      case Configure _:
         emit(const ConfigurationState.configuring());
-        await onConfigure(castEvent);
-        return;
-      case ConfigurationEventType.configureSucceeded:
-        final castEvent = event as ConfigureSucceeded;
-        emit(ConfigurationState.configured(event.config));
-        await onConfigureSucceeded(castEvent);
-        return;
-      case ConfigurationEventType.configureFailed:
-        final castEvent = event as ConfigureFailed;
-        emit(ConfigurationState.failure(castEvent.exception));
-        await onConfigureFailed(castEvent);
-        return;
+        await onConfigure(event);
+      case ConfigureSucceeded(:final config):
+        emit(ConfigurationState.configured(config));
+        await onConfigureSucceeded(event);
     }
   }
 
   @override
-  ConfigurationState? resolveError(Object error, [StackTrace? st]) {
+  ConfigurationState? resolveError(Object error, StackTrace st) {
     if (error is Exception) {
-      return ConfigureFailure(error);
+      return ConfigureFailure(error, st);
     }
     return null;
   }
@@ -117,25 +108,36 @@ class ConfigurationStateMachine extends StateMachine<ConfigurationEvent,
     waiters.add(manager.loadCredentials());
 
     await _waitForConfiguration(cognitoConfig, waiters);
+
+    // Setup AnalyticsMetadataType
+    await _registerAnalyticsMetadata(config);
   }
 
   Future<void> _waitForConfiguration(
     CognitoPluginConfig config,
     List<Future<void>> futures,
   ) async {
-    try {
-      await Future.wait<void>(futures, eagerError: true);
-      emit(ConfigurationState.configured(config));
-    } on Exception catch (e) {
-      emit(
-        ConfigurationState.failure(AuthException.fromException(e)),
-      );
-    }
+    await Future.wait<void>(futures, eagerError: true);
+    emit(ConfigurationState.configured(config));
   }
 
   /// State machine callback for the [ConfigureSucceeded] event.
   Future<void> onConfigureSucceeded(ConfigureSucceeded event) async {}
 
-  /// State machine callback for the [ConfigureFailed] event.
-  Future<void> onConfigureFailed(ConfigureFailed event) async {}
+  Future<void> _registerAnalyticsMetadata(AuthConfiguration config) async {
+    final analyticsConfig = config.pinpointConfig;
+    if (analyticsConfig == null) {
+      return;
+    }
+    final appId = analyticsConfig.appId;
+
+    final endpointStoreManager = getOrCreate<EndpointInfoStoreManager>();
+    await endpointStoreManager.init(pinpointAppId: appId);
+
+    addInstance<AnalyticsMetadataType>(
+      AnalyticsMetadataType(
+        analyticsEndpointId: endpointStoreManager.endpointId,
+      ),
+    );
+  }
 }

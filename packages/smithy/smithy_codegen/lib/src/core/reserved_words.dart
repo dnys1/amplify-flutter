@@ -102,6 +102,7 @@ const enumReservedWords = [
 ];
 
 const unionReservedWords = [
+  'name',
   'value',
   'sdkUnknown',
   'unknown',
@@ -115,6 +116,7 @@ const structReservedWords = [
   'serializer',
   'replace',
   'toBuilder',
+  'object',
 ];
 
 const reservedTypeNames = [

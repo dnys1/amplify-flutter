@@ -8,15 +8,16 @@ import 'package:amplify_auth_cognito_dart/src/model/cognito_device_secrets.dart'
 import 'package:amplify_auth_cognito_dart/src/model/sign_in_parameters.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart'
     as cognito_idp;
-import 'package:amplify_auth_cognito_dart/src/state/machines/sign_in_state_machine.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
+import 'package:amplify_auth_cognito_dart/src/state/state.dart';
+import 'package:amplify_auth_cognito_test/common/mock_clients.dart';
+import 'package:amplify_auth_cognito_test/common/mock_config.dart';
+import 'package:amplify_auth_cognito_test/common/mock_secure_storage.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_secure_storage_dart/amplify_secure_storage_dart.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:test/test.dart';
 
-import '../common/mock_clients.dart';
-import '../common/mock_config.dart';
-import '../common/mock_secure_storage.dart';
 import '../flows/srp/srp_helper_test.dart';
 
 void main() {
@@ -57,9 +58,11 @@ void main() {
           },
         ),
       );
-      stateMachine.dispatch(
-        const ConfigurationEvent.configure(config),
-      );
+      stateMachine
+          .dispatch(
+            const ConfigurationEvent.configure(config),
+          )
+          .ignore();
       await expectLater(
         stateMachine.stream.whereType<ConfigurationState>().firstWhere(
               (event) => event is Configured || event is ConfigureFailure,
@@ -85,7 +88,7 @@ void main() {
                 ..password = 'password',
             ),
           ),
-        );
+        ).ignore();
 
       final signInStateMachine = stateMachine.expect(SignInStateMachine.type);
       await signInStateMachine.stream.whereType<SignInChallenge>().first;
@@ -96,9 +99,11 @@ void main() {
     });
 
     test('smoke test', () async {
-      stateMachine.dispatch(
-        ConfigurationEvent.configure(userPoolOnlyConfig),
-      );
+      stateMachine
+          .dispatch(
+            ConfigurationEvent.configure(userPoolOnlyConfig),
+          )
+          .ignore();
       await expectLater(
         stateMachine.stream.whereType<ConfigurationState>().firstWhere(
               (event) => event is Configured || event is ConfigureFailure,
@@ -128,7 +133,7 @@ void main() {
                 ..password = 'password',
             ),
           ),
-        );
+        ).ignore();
 
       final signInStateMachine = stateMachine.expect(SignInStateMachine.type);
       expect(
@@ -146,9 +151,11 @@ void main() {
 
     group('custom auth', () {
       test('customAuthWithSrp requires password', () async {
-        stateMachine.dispatch(
-          ConfigurationEvent.configure(userPoolOnlyConfig),
-        );
+        stateMachine
+            .dispatch(
+              ConfigurationEvent.configure(userPoolOnlyConfig),
+            )
+            .ignore();
         await expectLater(
           stateMachine.stream.whereType<ConfigurationState>().firstWhere(
                 (event) => event is Configured || event is ConfigureFailure,
@@ -156,14 +163,16 @@ void main() {
           completion(isA<Configured>()),
         );
 
-        stateMachine.dispatch(
-          SignInEvent.initiate(
-            authFlowType: AuthenticationFlowType.customAuthWithSrp,
-            parameters: SignInParameters(
-              (p) => p..username = 'username',
-            ),
-          ),
-        );
+        stateMachine
+            .dispatch(
+              SignInEvent.initiate(
+                authFlowType: AuthenticationFlowType.customAuthWithSrp,
+                parameters: SignInParameters(
+                  (p) => p..username = 'username',
+                ),
+              ),
+            )
+            .ignore();
         final signInStateMachine = stateMachine.expect(SignInStateMachine.type);
         expect(
           signInStateMachine.stream,
@@ -179,9 +188,11 @@ void main() {
       });
 
       test('customAuthWithoutSrp forbids password', () async {
-        stateMachine.dispatch(
-          ConfigurationEvent.configure(userPoolOnlyConfig),
-        );
+        stateMachine
+            .dispatch(
+              ConfigurationEvent.configure(userPoolOnlyConfig),
+            )
+            .ignore();
         await expectLater(
           stateMachine.stream.whereType<ConfigurationState>().firstWhere(
                 (event) => event is Configured || event is ConfigureFailure,
@@ -189,16 +200,18 @@ void main() {
           completion(isA<Configured>()),
         );
 
-        stateMachine.dispatch(
-          SignInEvent.initiate(
-            authFlowType: AuthenticationFlowType.customAuthWithoutSrp,
-            parameters: SignInParameters(
-              (p) => p
-                ..username = 'username'
-                ..password = 'password',
-            ),
-          ),
-        );
+        stateMachine
+            .dispatch(
+              SignInEvent.initiate(
+                authFlowType: AuthenticationFlowType.customAuthWithoutSrp,
+                parameters: SignInParameters(
+                  (p) => p
+                    ..username = 'username'
+                    ..password = 'password',
+                ),
+              ),
+            )
+            .ignore();
         final signInStateMachine = stateMachine.expect(SignInStateMachine.type);
         expect(
           signInStateMachine.stream,
@@ -214,9 +227,11 @@ void main() {
       });
 
       test('customAuth uses old behavior', () async {
-        stateMachine.dispatch(
-          ConfigurationEvent.configure(userPoolOnlyConfig),
-        );
+        stateMachine
+            .dispatch(
+              ConfigurationEvent.configure(userPoolOnlyConfig),
+            )
+            .ignore();
         await expectLater(
           stateMachine.stream.whereType<ConfigurationState>().firstWhere(
                 (event) => event is Configured || event is ConfigureFailure,
@@ -247,7 +262,7 @@ void main() {
                   ..password = 'password',
               ),
             ),
-          );
+          ).ignore();
 
         final signInStateMachine = stateMachine.expect(SignInStateMachine.type);
         expect(
@@ -264,9 +279,11 @@ void main() {
       late DeviceMetadataRepository deviceRepo;
 
       setUp(() async {
-        stateMachine.dispatch(
-          ConfigurationEvent.configure(mockConfig),
-        );
+        stateMachine
+            .dispatch(
+              ConfigurationEvent.configure(mockConfig),
+            )
+            .ignore();
         await expectLater(
           stateMachine.stream.whereType<ConfigurationState>().firstWhere(
                 (event) => event is Configured || event is ConfigureFailure,
@@ -274,7 +291,7 @@ void main() {
           completion(isA<Configured>()),
         );
         deviceRepo = DeviceMetadataRepository(userPoolConfig, secureStorage);
-        stateMachine.addInstance(deviceRepo, DeviceMetadataRepository.token);
+        stateMachine.addInstance<DeviceMetadataRepository>(deviceRepo);
       });
 
       test('should fail when verification fails', () async {
@@ -502,6 +519,231 @@ void main() {
 
         expect(await deviceRepo.get(username), isNotNull);
       });
+
+      test(
+          'analyticsMetadata sent with InitiateAuthRequest and RespondToAuthChallengeRequest.',
+          () async {
+        const analyticsEndpointId = 'analyticsEndpointId';
+
+        final mockClient = MockCognitoIdentityProviderClient(
+          initiateAuth: expectAsync1((request) async {
+            expect(
+              request.analyticsMetadata?.analyticsEndpointId,
+              analyticsEndpointId,
+            );
+            return cognito_idp.InitiateAuthResponse(
+              challengeName: cognito_idp.ChallengeNameType.passwordVerifier,
+              challengeParameters: {
+                CognitoConstants.challengeParamUsername: username,
+                CognitoConstants.challengeParamUserIdForSrp: username,
+                CognitoConstants.challengeParamSecretBlock: secretBlock,
+                CognitoConstants.challengeParamSalt: salt,
+                CognitoConstants.challengeParamSrpB: publicB,
+              },
+            );
+          }),
+          respondToAuthChallenge: expectAsync1(max: -1, (request) async {
+            expect(
+              request.analyticsMetadata?.analyticsEndpointId,
+              analyticsEndpointId,
+            );
+            return cognito_idp.RespondToAuthChallengeResponse(
+              authenticationResult: cognito_idp.AuthenticationResultType(
+                accessToken: accessToken.raw,
+                refreshToken: refreshToken,
+                idToken: idToken.raw,
+                newDeviceMetadata: cognito_idp.NewDeviceMetadataType(
+                  deviceKey: deviceKey,
+                  deviceGroupKey: deviceGroupKey,
+                ),
+              ),
+            );
+          }),
+          confirmDevice: expectAsync0(() async {
+            return cognito_idp.ConfirmDeviceResponse(
+              userConfirmationNecessary: false,
+            );
+          }),
+        );
+
+        stateMachine
+          ..addInstance<cognito_idp.CognitoIdentityProviderClient>(mockClient)
+          ..addInstance<cognito_idp.AnalyticsMetadataType>(
+            cognito_idp.AnalyticsMetadataType(
+              analyticsEndpointId: analyticsEndpointId,
+            ),
+          );
+
+        await expectLater(
+          stateMachine
+              .accept(
+                SignInEvent.initiate(
+                  parameters: SignInParameters(
+                    (b) => b
+                      ..username = username
+                      ..password = password,
+                  ),
+                ),
+              )
+              .completed,
+          completion(isA<SignInSuccess>()),
+        );
+
+        expect(await deviceRepo.get(username), isNotNull);
+      });
+    });
+
+    group('exception handling', () {
+      setUp(() async {
+        await stateMachine.acceptAndComplete(
+          ConfigurationEvent.configure(mockConfig),
+        );
+      });
+
+      test('exceptions during sign-in are unrecoverable', () async {
+        var retry = false;
+        final mockClient = MockCognitoIdentityProviderClient(
+          initiateAuth: expectAsync1(max: -1, (_) async {
+            if (retry) {
+              return cognito_idp.InitiateAuthResponse(
+                challengeName:
+                    cognito_idp.ChallengeNameType.newPasswordRequired,
+                challengeParameters: {
+                  CognitoConstants.challengeParamUsername: username,
+                  CognitoConstants.challengeParamUserIdForSrp: username,
+                },
+              );
+            } else {
+              retry = true;
+              throw const _SignInException();
+            }
+          }),
+          respondToAuthChallenge: expectAsync1((_) async {
+            return cognito_idp.RespondToAuthChallengeResponse(
+              authenticationResult: cognito_idp.AuthenticationResultType(
+                accessToken: accessToken.raw,
+                refreshToken: refreshToken,
+                idToken: idToken.raw,
+              ),
+            );
+          }),
+        );
+        stateMachine
+            .addInstance<cognito_idp.CognitoIdentityProviderClient>(mockClient);
+
+        await expectLater(
+          stateMachine.acceptAndComplete(
+            SignInEvent.initiate(
+              parameters: SignInParameters(
+                (b) => b
+                  ..username = username
+                  ..password = password,
+              ),
+            ),
+          ),
+          throwsA(const _SignInException()),
+        );
+
+        await expectLater(
+          stateMachine.acceptAndComplete(
+            const SignInEvent.respondToChallenge(answer: 'attempt'),
+          ),
+          throwsA(isA<AuthPreconditionException>()),
+          reason: 'Attempting to call confirmSignIn before a successful '
+              'signIn call should throw',
+        );
+
+        // Replace the old state machine.
+        stateMachine.create(SignInStateMachine.type);
+
+        await expectLater(
+          stateMachine.acceptAndComplete(
+            SignInEvent.initiate(
+              parameters: SignInParameters(
+                (b) => b
+                  ..username = username
+                  ..password = password,
+              ),
+            ),
+          ),
+          completion(isA<SignInChallenge>()),
+        );
+
+        await expectLater(
+          stateMachine.acceptAndComplete(
+            const SignInEvent.respondToChallenge(answer: 'good-answer'),
+          ),
+          completion(isA<SignInSuccess>()),
+        );
+      });
+
+      test('exceptions during confirm sign-in are recoverable', () async {
+        var retry = false;
+        final mockClient = MockCognitoIdentityProviderClient(
+          initiateAuth: expectAsync1((_) async {
+            return cognito_idp.InitiateAuthResponse(
+              challengeName: cognito_idp.ChallengeNameType.newPasswordRequired,
+              challengeParameters: {
+                CognitoConstants.challengeParamUsername: username,
+                CognitoConstants.challengeParamUserIdForSrp: username,
+              },
+            );
+          }),
+          respondToAuthChallenge: expectAsync1(max: -1, (_) async {
+            if (retry) {
+              return cognito_idp.RespondToAuthChallengeResponse(
+                authenticationResult: cognito_idp.AuthenticationResultType(
+                  accessToken: accessToken.raw,
+                  refreshToken: refreshToken,
+                  idToken: idToken.raw,
+                ),
+              );
+            } else {
+              retry = true;
+              throw const _ConfirmSignInException();
+            }
+          }),
+        );
+        stateMachine
+            .addInstance<cognito_idp.CognitoIdentityProviderClient>(mockClient);
+
+        await expectLater(
+          stateMachine.acceptAndComplete(
+            SignInEvent.initiate(
+              parameters: SignInParameters(
+                (b) => b
+                  ..username = username
+                  ..password = password,
+              ),
+            ),
+          ),
+          completion(isA<SignInChallenge>()),
+        );
+
+        await expectLater(
+          stateMachine.acceptAndComplete(
+            const SignInEvent.respondToChallenge(answer: 'bad-answer'),
+          ),
+          throwsA(const _ConfirmSignInException()),
+        );
+
+        await expectLater(
+          stateMachine.acceptAndComplete(
+            const SignInEvent.respondToChallenge(answer: 'good-answer'),
+          ),
+          completion(isA<SignInSuccess>()),
+          reason: 'Attempting to confirmSignIn after any exception is thrown '
+              'should be permitted',
+        );
+      });
     });
   });
+}
+
+class _SignInException implements Exception {
+  const _SignInException();
+}
+
+class _ConfirmSignInException implements Exception {
+  const _ConfirmSignInException();
 }

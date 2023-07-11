@@ -44,7 +44,8 @@ _RelatedFields _getRelatedFields(ModelTypeDefinition modelSchema) {
 }
 
 Iterable<ModelField> getBelongsToFieldFromModelSchema(
-    ModelTypeDefinition modelSchema) {
+  ModelTypeDefinition modelSchema,
+) {
   return _getRelatedFields(modelSchema).singleFields.where(
         (entry) =>
             entry.association?.associationType ==
@@ -60,7 +61,7 @@ ModelTypeDefinition getModelSchemaByModelName(
   // ignore: invalid_use_of_protected_member
   final provider = Amplify.API.defaultPlugin.modelProvider;
   if (provider == null) {
-    throw const ApiException(
+    throw const ApiOperationException(
       'No modelProvider found',
       recoverySuggestion:
           'Pass in a modelProvider instance while instantiating APIPlugin',
@@ -68,7 +69,7 @@ ModelTypeDefinition getModelSchemaByModelName(
   }
   final schema = provider.modelSchemas.firstWhere(
     (elem) => elem.name == modelName,
-    orElse: () => throw ApiException(
+    orElse: () => throw ApiOperationException(
       'No schema found for the ModelType provided: $modelName',
       recoverySuggestion: 'Pass in a valid modelProvider instance while '
           'instantiating APIPlugin or provide a valid ModelType',
@@ -150,7 +151,7 @@ Map<String, dynamic> transformAppSyncJsonToModelJson(
     final type = childField.type.asLegacyType;
     final ofModelName = type.ofModelName;
     final dynamic inputValue = input[childField.name];
-    var inputItems = (inputValue is Map) ? inputValue[items] as List? : null;
+    final inputItems = (inputValue is Map) ? inputValue[items] as List? : null;
     if (inputItems is List && ofModelName != null) {
       final childSchema = getModelSchemaByModelName(ofModelName, null);
       final transformedItems = inputItems

@@ -42,7 +42,7 @@ export class AmplifyFlutterIntegStack extends cdk.Stack {
               aggregateKeyType: "IP",
               // The number of requests which can be performed by
               // a single IP in a 5-minute window.
-              limit: 1000,
+              limit: 3000,
             },
           },
           visibilityConfig: {
@@ -65,20 +65,18 @@ export class AmplifyFlutterIntegStack extends cdk.Stack {
     // and do not block the concurrent creation of environments.
     const associateWithWaf = (name: string, resourceArn: string) => {
       wafAssociations.push(
-        new wafv2.CfnWebACLAssociation(
-          this,
-          `WAFAssociation-${name}`,
-          {
-            resourceArn,
-            webAclArn: waf.attrArn,
-          }
-        )
+        new wafv2.CfnWebACLAssociation(this, `WAFAssociation-${name}`, {
+          resourceArn,
+          webAclArn: waf.attrArn,
+        })
       );
     };
 
     // The Analytics stack
     const analytics = new AnalyticsIntegrationTestStack(this, [
       { environmentName: "main" },
+      { environmentName: "no-unauth-access", allowUnauthAccess: false },
+      { environmentName: "no-unauth-identities", allowUnauthIdentites: false }
     ]);
 
     // The Auth stack
@@ -104,7 +102,7 @@ export class AmplifyFlutterIntegStack extends cdk.Stack {
       challengeRequiredOnNewDevice: true,
       // Always track
       deviceOnlyRememberedOnUserPrompt: false,
-    }
+    };
     const auth = new AuthIntegrationTestStack(this, [
       { associateWithWaf, type: "FULL", environmentName: "main" },
       {
@@ -126,7 +124,21 @@ export class AmplifyFlutterIntegStack extends cdk.Stack {
         deviceTracking: deviceTrackingAlways,
         signInAliases: {
           email: true,
-        }
+        },
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "sign-in-with-username",
+        signInAliases: {
+          username: true,
+        },
+        standardAttributes: {
+          email: {
+            mutable: true,
+            required: true,
+          },
+        },
       },
       {
         associateWithWaf,
@@ -135,6 +147,100 @@ export class AmplifyFlutterIntegStack extends cdk.Stack {
         signInAliases: {
           phone: true,
         },
+        standardAttributes: {
+          phoneNumber: {
+            mutable: true,
+            required: true,
+          },
+        },
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "sign-in-with-email",
+        signInAliases: {
+          email: true,
+        },
+        standardAttributes: {
+          email: {
+            mutable: true,
+            required: true,
+          },
+        },
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "sign-in-with-email-or-phone",
+        signInAliases: {
+          phone: true,
+          email: true,
+        },
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "sign-in-with-email-lambda-trigger",
+        signInAliases: {
+          email: true,
+        },
+        autoConfirm: true,
+        standardAttributes: {
+          email: {
+            mutable: true,
+            required: true,
+          },
+        },
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "hosted-ui",
+        enableHostedUI: true,
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "user-pool-only",
+        includeIdentityPool: false,
+        deviceTracking: deviceTrackingOptIn,
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "identity-pool-only",
+        includeUserPool: false,
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "authenticated-users-only",
+        allowUnauthenticatedIdentities: false,
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "custom-auth-with-srp",
+        customAuth: "WITH_SRP",
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "custom-auth-without-srp",
+        customAuth: "WITHOUT_SRP",
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "with-client-secret",
+        withClientSecret: true,
+        deviceTracking: deviceTrackingOptIn,
+      },
+      {
+        associateWithWaf,
+        type: "FULL",
+        environmentName: "asf-audit",
+        advancedSecurityMode: cognito.AdvancedSecurityMode.AUDIT,
       },
       {
         associateWithWaf,
@@ -151,9 +257,13 @@ export class AmplifyFlutterIntegStack extends cdk.Stack {
 
     // The Storage stack
     const storage = new StorageIntegrationTestStack(this, [
-      { environmentName: "main" },
+      {
+        environmentName: "main",
+        enableTransferAcceleration: true,
+      },
       {
         environmentName: "custom-prefix",
+        enableTransferAcceleration: true,
         prefixResolver(accessLevel, identityId) {
           switch (accessLevel) {
             case StorageAccessLevel.public:
@@ -169,6 +279,11 @@ export class AmplifyFlutterIntegStack extends cdk.Stack {
           [StorageAccessLevel.protected]: "shared",
           [StorageAccessLevel.private]: "private",
         },
+      },
+      {
+        environmentName: "dots-in-name",
+        enableTransferAcceleration: false,
+        bucketNamePrefix: "amplify.integ-test.stack",
       },
     ]);
 

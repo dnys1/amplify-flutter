@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.describe_aggregation_authorizations_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -43,7 +44,9 @@ abstract class DescribeAggregationAuthorizationsResponse
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
+  static const List<
+          _i4.SmithySerializer<DescribeAggregationAuthorizationsResponse>>
+      serializers = [
     DescribeAggregationAuthorizationsResponseAwsJson11Serializer()
   ];
 
@@ -62,16 +65,16 @@ abstract class DescribeAggregationAuthorizationsResponse
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper(
-        'DescribeAggregationAuthorizationsResponse');
-    helper.add(
-      'aggregationAuthorizations',
-      aggregationAuthorizations,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+    final helper =
+        newBuiltValueToStringHelper('DescribeAggregationAuthorizationsResponse')
+          ..add(
+            'aggregationAuthorizations',
+            aggregationAuthorizations,
+          )
+          ..add(
+            'nextToken',
+            nextToken,
+          );
     return helper.toString();
   }
 }
@@ -105,26 +108,23 @@ class DescribeAggregationAuthorizationsResponseAwsJson11Serializer extends _i4
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'AggregationAuthorizations':
-          if (value != null) {
-            result.aggregationAuthorizations.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.AggregationAuthorization)],
-              ),
-            ) as _i3.BuiltList<_i2.AggregationAuthorization>));
-          }
-          break;
+          result.aggregationAuthorizations.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.AggregationAuthorization)],
+            ),
+          ) as _i3.BuiltList<_i2.AggregationAuthorization>));
         case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -134,30 +134,33 @@ class DescribeAggregationAuthorizationsResponseAwsJson11Serializer extends _i4
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeAggregationAuthorizationsResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeAggregationAuthorizationsResponse);
-    final result = <Object?>[];
-    if (payload.aggregationAuthorizations != null) {
-      result
+    final result$ = <Object?>[];
+    final DescribeAggregationAuthorizationsResponse(
+      :aggregationAuthorizations,
+      :nextToken
+    ) = object;
+    if (aggregationAuthorizations != null) {
+      result$
         ..add('AggregationAuthorizations')
         ..add(serializers.serialize(
-          payload.aggregationAuthorizations!,
+          aggregationAuthorizations,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(_i2.AggregationAuthorization)],
           ),
         ));
     }
-    if (payload.nextToken != null) {
-      result
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

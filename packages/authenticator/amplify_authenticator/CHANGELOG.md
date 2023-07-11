@@ -1,3 +1,77 @@
+## 1.2.1
+
+- Minor bug fixes and improvements
+
+## 1.2.0
+
+### Fixes
+- fix(authenticator): Only call `setState` if mounted ([#3076](https://github.com/aws-amplify/amplify-flutter/pull/3076))
+- fix(authenticator): alphabetize country codes
+
+### Features
+- feat(authenticator, m3): use SearchAnchor for country code
+- feat(authenticator, m3): use `FilledButton` for primary buttons
+
+## 1.1.0
+
+### Features
+- Dart 3 support (must update Dart SDK constraint to `^3.0.0`)
+
+## 1.0.1
+
+### Fixes
+- fix(repo): Flutter 3.3 support
+
+## 1.0.0
+
+We are thrilled to release version 1.0 of the Amplify Flutter libraries!
+
+This release introduces a full rewrite of the Amplify libraries in Dart, allowing you to build AWS cloud-connected
+applications on every platform Flutter supports (iOS, Android, Web, macOS, Windows, and Linux).
+
+If you've been using v0 in production, you can now safely migrate to v1. Check out our 
+[migration guide](https://docs.amplify.aws/lib/project-setup/upgrade-guide/q/platform/flutter/) for 
+more information.
+
+As always, you can find us on [GitHub](https://github.com/aws-amplify/amplify-flutter/) and 
+[Discord](https://discord.gg/jWVbPfC) to answer any questions.
+
+### Bug Fixes
+
+The following issues have been fixed in this release:
+
+- When working offline, id/access/refresh token expiration time is not honored. ([#2398](https://github.com/aws-amplify/amplify-flutter/issues/2398))
+- NotAuthorizedException exception message are different on android and iOS ([#2231](https://github.com/aws-amplify/amplify-flutter/issues/2231))
+
+## 1.0.0-next.5+2
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.5+1
+
+### Fixes
+- fix: prevent duplicate calls to onFieldSubmitted ([#2828](https://github.com/aws-amplify/amplify-flutter/pull/2828))
+
+## 1.0.0-next.5
+
+### Fixes
+- fix(authenticator): Hub event processing
+- fix(authenticator): Verify attribute state
+
+### Features
+- feat(authenticator): Add AutoFill Capabilities ([#2306](https://github.com/aws-amplify/amplify-flutter/pull/2306))
+
+### Breaking Changes
+- refactor(auth)!: Plugin options ([#2691](https://github.com/aws-amplify/amplify-flutter/pull/2691))
+
+## 1.0.0-next.4+2
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.4+1
+
+- Minor bug fixes and improvements
+
 ## 1.0.0-next.4
 
 ### Breaking Changes

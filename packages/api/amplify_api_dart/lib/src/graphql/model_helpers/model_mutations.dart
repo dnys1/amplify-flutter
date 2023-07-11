@@ -55,10 +55,13 @@ class ModelMutations {
     );
   }
 
-  /// Generates a request to delete a model by ID.
+  /// Generates a request to delete a model by [ModelIdentifier].
   ///
   /// ```dart
-  /// final request = ModelMutations.deleteById(Todo.classType, 'some-todo-id-123');
+  /// final request = ModelMutations.deleteById(
+  ///   Todo.classType,
+  ///   TodoModelIdentifier(id: 'some-todo-id-123'),
+  /// );
   /// ```
   ///
   /// An optional `where` parameter can be supplied as a condition for the deletion to be evaluated on the server.
@@ -75,7 +78,7 @@ class ModelMutations {
   }) {
     return ModelMutationsFactory.instance.deleteById<ModelIdentifier, M>(
       modelType,
-      id,
+      modelIdentifier,
       where: where,
       apiName: apiName,
       authorizationMode: authorizationMode,

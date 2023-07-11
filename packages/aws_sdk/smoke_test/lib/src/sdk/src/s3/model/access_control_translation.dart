@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.access_control_translation; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -27,9 +28,8 @@ abstract class AccessControlTranslation
 
   const AccessControlTranslation._();
 
-  static const List<_i3.SmithySerializer> serializers = [
-    AccessControlTranslationRestXmlSerializer()
-  ];
+  static const List<_i3.SmithySerializer<AccessControlTranslation>>
+      serializers = [AccessControlTranslationRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(AccessControlTranslationBuilder b) {}
@@ -40,11 +40,11 @@ abstract class AccessControlTranslation
   List<Object?> get props => [owner];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('AccessControlTranslation');
-    helper.add(
-      'owner',
-      owner,
-    );
+    final helper = newBuiltValueToStringHelper('AccessControlTranslation')
+      ..add(
+        'owner',
+        owner,
+      );
     return helper.toString();
   }
 }
@@ -75,16 +75,18 @@ class AccessControlTranslationRestXmlSerializer
     final result = AccessControlTranslationBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'Owner':
           result.owner = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(_i2.OwnerOverride),
           ) as _i2.OwnerOverride);
-          break;
       }
     }
 
@@ -94,22 +96,22 @@ class AccessControlTranslationRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    AccessControlTranslation object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as AccessControlTranslation);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i3.XmlElementName(
         'AccessControlTranslation',
         _i3.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    result
+    final AccessControlTranslation(:owner) = object;
+    result$
       ..add(const _i3.XmlElementName('Owner'))
       ..add(serializers.serialize(
-        payload.owner,
+        owner,
         specifiedType: const FullType.nullable(_i2.OwnerOverride),
       ));
-    return result;
+    return result$;
   }
 }

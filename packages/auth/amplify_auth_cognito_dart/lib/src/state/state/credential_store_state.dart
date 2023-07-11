@@ -1,9 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
-import 'package:amplify_auth_cognito_dart/src/state/state.dart';
-import 'package:amplify_core/amplify_core.dart';
+part of 'auth_state.dart';
 
 /// Discrete state types of the credential store state machine.
 enum CredentialStoreStateType {
@@ -30,8 +28,7 @@ enum CredentialStoreStateType {
 }
 
 /// Discrete states of the credential store state machine.
-abstract class CredentialStoreState
-    extends AuthState<CredentialStoreStateType> {
+sealed class CredentialStoreState extends AuthState<CredentialStoreStateType> {
   const CredentialStoreState._();
 
   /// {@macro amplify_auth_cognito.credential_store_not_configured}
@@ -59,8 +56,10 @@ abstract class CredentialStoreState
       CredentialStoreSuccess;
 
   /// {@macro amplify_auth_cognito.credential_store_failure}
-  const factory CredentialStoreState.failure(Exception exception) =
-      CredentialStoreFailure;
+  const factory CredentialStoreState.failure(
+    Exception exception,
+    StackTrace stackTrace,
+  ) = CredentialStoreFailure;
 
   @override
   String get runtimeTypeName => 'CredentialStoreState';
@@ -69,7 +68,7 @@ abstract class CredentialStoreState
 /// {@template amplify_auth_cognito.credential_store_not_configured}
 /// The credential store has not yet been configured.
 /// {@endtemplate}
-class CredentialStoreNotConfigured extends CredentialStoreState {
+final class CredentialStoreNotConfigured extends CredentialStoreState {
   /// {@macro amplify_auth_cognito.credential_store_not_configured}
   const CredentialStoreNotConfigured() : super._();
 
@@ -83,7 +82,7 @@ class CredentialStoreNotConfigured extends CredentialStoreState {
 /// {@template amplify_auth_cognito.credential_store_migrating_legacy_store}
 /// Credentials are being migrated from the V1 credential store.
 /// {@endtemplate}
-class CredentialStoreMigratingLegacyStore extends CredentialStoreState {
+final class CredentialStoreMigratingLegacyStore extends CredentialStoreState {
   /// {@macro amplify_auth_cognito.credential_store_migrating_legacy_store}
   const CredentialStoreMigratingLegacyStore() : super._();
 
@@ -98,7 +97,8 @@ class CredentialStoreMigratingLegacyStore extends CredentialStoreState {
 /// {@template amplify_auth_cognito.credential_store_loading_stored_credentials}
 /// Credentials are being loading from the credential store.
 /// {@endtemplate}
-class CredentialStoreLoadingStoredCredentials extends CredentialStoreState {
+final class CredentialStoreLoadingStoredCredentials
+    extends CredentialStoreState {
   /// {@macro amplify_auth_cognito.credential_store_loading_stored_credentials}
   const CredentialStoreLoadingStoredCredentials() : super._();
 
@@ -113,7 +113,7 @@ class CredentialStoreLoadingStoredCredentials extends CredentialStoreState {
 /// {@template amplify_auth_cognito.credential_store_storing_credentials}
 /// Credentials are being written to the credential store.
 /// {@endtemplate}
-class CredentialStoreStoringCredentials extends CredentialStoreState {
+final class CredentialStoreStoringCredentials extends CredentialStoreState {
   /// {@macro amplify_auth_cognito.credential_store_storing_credentials}
   const CredentialStoreStoringCredentials() : super._();
 
@@ -128,7 +128,7 @@ class CredentialStoreStoringCredentials extends CredentialStoreState {
 /// {@template amplify_auth_cognito.credential_store_clearing_credentials}
 /// Credentials are being cleared from the credential store.
 /// {@endtemplate}
-class CredentialStoreClearingCredentials extends CredentialStoreState {
+final class CredentialStoreClearingCredentials extends CredentialStoreState {
   /// {@macro amplify_auth_cognito.credential_store_clearing_credentials}
   const CredentialStoreClearingCredentials() : super._();
 
@@ -143,7 +143,8 @@ class CredentialStoreClearingCredentials extends CredentialStoreState {
 /// {@template amplify_auth_cognito.credential_store_success}
 /// A successful result to a requested save/load of credentials.
 /// {@endtemplate}
-class CredentialStoreSuccess extends CredentialStoreState with SuccessState {
+final class CredentialStoreSuccess extends CredentialStoreState
+    with SuccessState {
   /// {@macro amplify_auth_cognito.credential_store_success}
   const CredentialStoreSuccess(this.data) : super._();
 
@@ -163,25 +164,33 @@ class CredentialStoreSuccess extends CredentialStoreState with SuccessState {
 /// {@template amplify_auth_cognito.credential_store_failure}
 /// A failure saving/loading data from the credential store.
 /// {@endtemplate}
-class CredentialStoreFailure extends CredentialStoreState with ErrorState {
+final class CredentialStoreFailure extends CredentialStoreState
+    with ErrorState {
   /// {@macro amplify_auth_cognito.credential_store_failure}
-  const CredentialStoreFailure(this.exception) : super._();
+  const CredentialStoreFailure(this.exception, this.stackTrace) : super._();
 
   /// The exception thrown during credential storage.
   @override
   final Exception exception;
 
   @override
+  final StackTrace stackTrace;
+
+  @override
   CredentialStoreStateType get type => CredentialStoreStateType.failure;
 
   @override
-  List<Object?> get props => [type, exception];
+  List<Object?> get props => [type, exception, stackTrace];
 }
 
 /// {@template amplify_auth_cognito_dart.credential_store_state.credential_store_data}
 /// Data stored by the Credential Store.
 /// {@endtemplate}
-class CredentialStoreData with AWSEquatable<CredentialStoreData> {
+@zAmplifySerializable
+class CredentialStoreData
+    with
+        AWSEquatable<CredentialStoreData>,
+        AWSSerializable<Map<String, Object?>> {
   /// {@macro amplify_auth_cognito_dart.credential_store_state.credential_store_data}
   const CredentialStoreData({
     this.identityId,
@@ -189,6 +198,10 @@ class CredentialStoreData with AWSEquatable<CredentialStoreData> {
     this.userPoolTokens,
     this.signInDetails,
   });
+
+  /// {@macro amplify_auth_cognito_dart.credential_store_state.credential_store_data}
+  factory CredentialStoreData.fromJson(Map<String, Object?> json) =>
+      _$CredentialStoreDataFromJson(json);
 
   /// AWS Identity ID
   final String? identityId;
@@ -209,4 +222,7 @@ class CredentialStoreData with AWSEquatable<CredentialStoreData> {
         userPoolTokens,
         signInDetails,
       ];
+
+  @override
+  Map<String, Object?> toJson() => _$CredentialStoreDataToJson(this);
 }

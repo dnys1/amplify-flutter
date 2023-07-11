@@ -26,7 +26,7 @@ class GraphQLResponseDecoder {
     }
     // From here, it appears this is a response that must be parsed into a non-string object.
     if (request.decodePath == null) {
-      throw const ApiException(
+      throw const ApiOperationException(
         'No decodePath found',
         recoverySuggestion: 'Include decodePath when creating a request',
       );
@@ -42,7 +42,7 @@ class GraphQLResponseDecoder {
     }
     request.decodePath!.split('.').forEach((element) {
       if (!dataJson!.containsKey(element)) {
-        throw const ApiException(
+        throw const ApiOperationException(
           'decodePath did not match the structure of the JSON response',
           recoverySuggestion: 'Include decodePath when creating a request '
               'that includes a modelType.',

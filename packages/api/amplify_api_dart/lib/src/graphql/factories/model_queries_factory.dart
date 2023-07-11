@@ -6,7 +6,7 @@
 import 'package:amplify_api_dart/src/graphql/factories/graphql_request_factory.dart';
 import 'package:amplify_core/amplify_core.dart';
 
-class ModelQueriesFactory extends ModelQueriesInterface {
+class ModelQueriesFactory {
   // Singleton methods/properties
   // usage: ModelQueriesFactory.instance;
   ModelQueriesFactory._();
@@ -29,6 +29,7 @@ class ModelQueriesFactory extends ModelQueriesInterface {
     final variables = <String, Object>{idFieldName: id};
     return GraphQLRequestFactory.instance.buildRequest<ModelIdentifier, M>(
       modelType: modelType,
+      modelIdentifier: modelIdentifier,
       variables: variables,
       requestType: GraphQLRequestType.query,
       requestOperation: GraphQLRequestOperation.get,

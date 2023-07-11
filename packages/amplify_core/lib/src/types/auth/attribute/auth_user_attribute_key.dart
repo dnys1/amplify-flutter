@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'package:amplify_core/amplify_core.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
-// TODO(dnys1): Remove at GA
 @Deprecated('Use AuthUserAttributeKey instead')
 typedef UserAttributeKey = AuthUserAttributeKey;
 
@@ -13,7 +13,10 @@ typedef UserAttributeKey = AuthUserAttributeKey;
 /// {@endtemplate}
 @immutable
 abstract class AuthUserAttributeKey
-    with AWSSerializable<String>
+    with
+        AWSSerializable<String>,
+        AWSEquatable<AuthUserAttributeKey>,
+        AWSDebuggable
     implements Comparable<AuthUserAttributeKey> {
   /// {@macro amplify_core.auth_user_attribute_key}
   const AuthUserAttributeKey();
@@ -140,18 +143,17 @@ abstract class AuthUserAttributeKey
   String toJson() => key;
 
   @override
-  int compareTo(AuthUserAttributeKey other) => key.compareTo(other.key);
+  int compareTo(AuthUserAttributeKey other) =>
+      key.toLowerCase().compareTo(other.key.toLowerCase());
 
   @override
   String toString() => key;
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AuthUserAttributeKey && key == other.key;
+  List<Object?> get props => [key.toLowerCase()];
 
   @override
-  int get hashCode => key.hashCode;
+  String get runtimeTypeName => 'AuthUserAttributeKey';
 }
 
 class _AuthUserAttributeKey extends AuthUserAttributeKey {
@@ -159,4 +161,15 @@ class _AuthUserAttributeKey extends AuthUserAttributeKey {
 
   @override
   final String key;
+}
+
+class AuthUserAttributeKeyConverter
+    implements JsonConverter<AuthUserAttributeKey, String> {
+  const AuthUserAttributeKeyConverter();
+
+  @override
+  AuthUserAttributeKey fromJson(String json) => _AuthUserAttributeKey(json);
+
+  @override
+  String toJson(AuthUserAttributeKey object) => object.toJson();
 }

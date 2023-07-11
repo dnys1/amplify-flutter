@@ -1,3 +1,70 @@
+## 0.10.1
+
+### Fixes
+- fix(auth): `signOut` after user deletion ([#3162](https://github.com/aws-amplify/amplify-flutter/pull/3162))
+
+## 0.10.0+1
+
+### Fixes
+- fix(auth): User attribute serialization
+
+## 0.10.0
+
+### Features
+- Dart 3 support (must update Dart SDK constraint to `^3.0.0`)
+
+### Fixes
+- fix(auth): Fetch AWS credentials after Hosted UI login ([#2956](https://github.com/aws-amplify/amplify-flutter/pull/2956))
+- fix(auth): Transform network exceptions ([#2967](https://github.com/aws-amplify/amplify-flutter/pull/2967))
+
+## 0.9.0+3
+
+### Fixes
+- fix(repo): Flutter 3.3 support
+- fix: convert AuthUserAttributeKey in updateUserAttributes
+
+## 0.9.0+2
+
+- Minor bug fixes and improvements
+
+## 0.9.0+1
+
+### Fixes
+- fix(auth): Cancel sign in ([#2840](https://github.com/aws-amplify/amplify-flutter/pull/2840))
+
+## 0.9.0
+
+### Breaking Changes
+- chore(auth)!: send Pinpoint Endpoint id to Cognito
+- refactor(auth)!: Remove generic types ([#2804](https://github.com/aws-amplify/amplify-flutter/pull/2804))
+
+### Fixes
+- fix(auth): Always allow repeated `confirmSignIn` attempts
+- fix(auth): Client secret support
+- fix(auth): Process sign-in events once
+- fix(auth): User pool-only support
+- fix(smithy): Add missing `@optionalAuth` traits
+
+## 0.8.0
+
+### Breaking Changes
+- refactor(auth)!: Plugin options ([#2691](https://github.com/aws-amplify/amplify-flutter/pull/2691))
+
+### Fixes
+- fix(auth): Always pass client metadata
+
+## 0.7.0
+
+### Fixes
+- fix(auth): Transform session expired exceptions ([#2688](https://github.com/aws-amplify/amplify-flutter/pull/2688))
+
+### Breaking Changes
+- chore(auth)!: Chain stack traces in state machine
+
+## 0.6.0+1
+
+- Minor bug fixes and improvements
+
 ## 0.6.0
 
 ### Breaking Changes

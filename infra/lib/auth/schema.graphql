@@ -1,5 +1,6 @@
 type Query {
   listMFACodes: [MFACode] @aws_api_key
+  listAuthEvents(username: String): AWSJSON @aws_api_key
 }
 
 type Mutation {
@@ -32,11 +33,6 @@ type CreateUserResponse {
   error: String
 }
 
-input DeleteMFACodeInput {
-  username: String!
-  code: String!
-}
-
 type DeleteUserResponse {
   success: Boolean!
   error: String
@@ -45,11 +41,13 @@ type DeleteUserResponse {
 input CreateMFACodeInput {
   username: String!
   code: String!
+  userAttributes: AWSJSON!
 }
 
 type MFACode {
   username: String!
   code: String!
+  userAttributes: AWSJSON!
 }
 
 input DeleteDeviceInput {

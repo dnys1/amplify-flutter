@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.output_location; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -25,7 +26,7 @@ abstract class OutputLocation
 
   const OutputLocation._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<OutputLocation>> serializers = [
     OutputLocationRestXmlSerializer()
   ];
 
@@ -38,11 +39,11 @@ abstract class OutputLocation
   List<Object?> get props => [s3];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('OutputLocation');
-    helper.add(
-      's3',
-      s3,
-    );
+    final helper = newBuiltValueToStringHelper('OutputLocation')
+      ..add(
+        's3',
+        s3,
+      );
     return helper.toString();
   }
 }
@@ -72,18 +73,18 @@ class OutputLocationRestXmlSerializer
     final result = OutputLocationBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'S3':
-          if (value != null) {
-            result.s3.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.S3Location),
-            ) as _i2.S3Location));
-          }
-          break;
+          result.s3.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.S3Location),
+          ) as _i2.S3Location));
       }
     }
 
@@ -93,24 +94,24 @@ class OutputLocationRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    OutputLocation object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as OutputLocation);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i3.XmlElementName(
         'OutputLocation',
         _i3.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    if (payload.s3 != null) {
-      result
+    final OutputLocation(:s3) = object;
+    if (s3 != null) {
+      result$
         ..add(const _i3.XmlElementName('S3'))
         ..add(serializers.serialize(
-          payload.s3!,
+          s3,
           specifiedType: const FullType(_i2.S3Location),
         ));
     }
-    return result;
+    return result$;
   }
 }

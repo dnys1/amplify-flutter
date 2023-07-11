@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.ssekms; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -23,24 +24,24 @@ abstract class Ssekms
 
   const Ssekms._();
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<Ssekms>> serializers = [
     SsekmsRestXmlSerializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(SsekmsBuilder b) {}
 
-  /// Specifies the ID of the Amazon Web Services Key Management Service (Amazon Web Services KMS) symmetric customer managed key to use for encrypting inventory reports.
+  /// Specifies the ID of the Key Management Service (KMS) symmetric encryption customer managed key to use for encrypting inventory reports.
   String get keyId;
   @override
   List<Object?> get props => [keyId];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('Ssekms');
-    helper.add(
-      'keyId',
-      '***SENSITIVE***',
-    );
+    final helper = newBuiltValueToStringHelper('Ssekms')
+      ..add(
+        'keyId',
+        '***SENSITIVE***',
+      );
     return helper.toString();
   }
 }
@@ -69,16 +70,18 @@ class SsekmsRestXmlSerializer extends _i2.StructuredSmithySerializer<Ssekms> {
     final result = SsekmsBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'KeyId':
           result.keyId = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -88,22 +91,22 @@ class SsekmsRestXmlSerializer extends _i2.StructuredSmithySerializer<Ssekms> {
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    Ssekms object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as Ssekms);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i2.XmlElementName(
         'SSE-KMS',
         _i2.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    result
+    final Ssekms(:keyId) = object;
+    result$
       ..add(const _i2.XmlElementName('KeyId'))
       ..add(serializers.serialize(
-        payload.keyId,
+        keyId,
         specifiedType: const FullType(String),
       ));
-    return result;
+    return result$;
   }
 }

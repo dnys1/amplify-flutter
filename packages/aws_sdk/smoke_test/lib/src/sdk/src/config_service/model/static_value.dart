@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.static_value; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -25,7 +26,7 @@ abstract class StaticValue
 
   const StaticValue._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<StaticValue>> serializers = [
     StaticValueAwsJson11Serializer()
   ];
 
@@ -38,11 +39,11 @@ abstract class StaticValue
   List<Object?> get props => [values];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('StaticValue');
-    helper.add(
-      'values',
-      values,
-    );
+    final helper = newBuiltValueToStringHelper('StaticValue')
+      ..add(
+        'values',
+        values,
+      );
     return helper.toString();
   }
 }
@@ -75,6 +76,9 @@ class StaticValueAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'Values':
           result.values.replace((serializers.deserialize(
@@ -84,7 +88,6 @@ class StaticValueAwsJson11Serializer
               [FullType(String)],
             ),
           ) as _i2.BuiltList<String>));
-          break;
       }
     }
 
@@ -94,20 +97,21 @@ class StaticValueAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    StaticValue object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as StaticValue);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final StaticValue(:values) = object;
+    result$.addAll([
       'Values',
       serializers.serialize(
-        payload.values,
+        values,
         specifiedType: const FullType(
           _i2.BuiltList,
           [FullType(String)],
         ),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

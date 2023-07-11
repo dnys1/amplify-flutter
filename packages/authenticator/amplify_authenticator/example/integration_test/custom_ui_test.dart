@@ -3,19 +3,16 @@
 
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_authenticator_test/amplify_authenticator_test.dart';
-import 'package:amplify_test/amplify_test.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_integration_test/amplify_integration_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 
-import 'config.dart';
-import 'utils/mock_data.dart';
+import 'test_runner.dart';
 import 'utils/test_utils.dart';
 
 void main() {
-  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  // resolves issue on iOS. See: https://github.com/flutter/flutter/issues/89651
-  binding.deferFirstFrame();
+  testRunner.setupTests();
 
   final authenticator = Authenticator(
     authenticatorBuilder: (context, state) {
@@ -46,6 +43,7 @@ void main() {
     child: MaterialApp(
       builder: Authenticator.builder(),
       home: const Scaffold(
+        key: authenticatedAppKey,
         body: Center(
           child: SignOutButton(),
         ),
@@ -55,13 +53,11 @@ void main() {
 
   group('custom ui', () {
     // Given I'm running the example "ui/components/authenticator/sign-in-with-email.feature"
-    setUpAll(() async {
-      await loadConfiguration(
-        'ui/components/authenticator/sign-in-with-email',
+    setUp(() async {
+      await testRunner.configure(
+        environmentName: 'sign-in-with-email',
       );
     });
-
-    tearDown(signOut);
 
     // Scenario: Sign in then sign out
     testWidgets('Sign in then sign out', (tester) async {
@@ -72,9 +68,27 @@ void main() {
         password,
         autoConfirm: true,
         verifyAttributes: true,
+        attributes: [
+          AuthUserAttribute(
+            userAttributeKey: AuthUserAttributeKey.email,
+            value: username,
+          ),
+        ],
       );
+
       await loadAuthenticator(tester: tester, authenticator: authenticator);
-      final SignInPage signInPage = SignInPage(tester: tester);
+
+      expect(
+        tester.bloc.stream,
+        emitsInOrder([
+          UnauthenticatedState.signIn,
+          isA<AuthenticatedState>(),
+          UnauthenticatedState.signIn,
+          emitsDone,
+        ]),
+      );
+
+      final signInPage = SignInPage(tester: tester);
       signInPage.expectUsername(label: 'Email');
 
       // When I type my "email" with status "CONFIRMED"
@@ -94,6 +108,8 @@ void main() {
 
       // Then I see "Sign in"
       signInPage.expectUsername(label: 'Email');
+
+      await tester.bloc.close();
     });
   });
 }

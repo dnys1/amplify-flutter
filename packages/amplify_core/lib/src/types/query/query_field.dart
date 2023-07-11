@@ -157,7 +157,9 @@ abstract class QueryField<ModelIdentifier extends Object,
   /// {@endtemplate}
   QueryPredicateOperation<ModelIdentifier, M> lt(Comparable<T> value) =>
       QueryPredicateOperation(
-          fieldName, LessThanQueryOperator<Comparable<T>>(value));
+        fieldName,
+        LessThanQueryOperator<Comparable<T>>(value),
+      );
 
   /// {@macro amplify_core.query_field.lt}
   QueryPredicateOperation<ModelIdentifier, M> operator <(Comparable<T> value) =>
@@ -190,11 +192,14 @@ abstract class QueryField<ModelIdentifier extends Object,
   /// {@endtemplate}
   QueryPredicateOperation<ModelIdentifier, M> ge(Comparable<T> value) =>
       QueryPredicateOperation(
-          fieldName, GreaterOrEqualQueryOperator<Comparable<T>>(value));
+        fieldName,
+        GreaterOrEqualQueryOperator<Comparable<T>>(value),
+      );
 
   /// {@macro amplify_core.query_field.ge}
   QueryPredicateOperation<ModelIdentifier, M> operator >=(
-          Comparable<T> value) =>
+    Comparable<T> value,
+  ) =>
       ge(value);
 
   /// {@template amplify_core.query_field.gt}
@@ -223,7 +228,9 @@ abstract class QueryField<ModelIdentifier extends Object,
   /// {@endtemplate}
   QueryPredicateOperation<ModelIdentifier, M> gt(Comparable<T> value) =>
       QueryPredicateOperation(
-          fieldName, GreaterThanQueryOperator<Comparable<T>>(value));
+        fieldName,
+        GreaterThanQueryOperator<Comparable<T>>(value),
+      );
 
   /// {@macro amplify_core.query_field.gt}
   QueryPredicateOperation<ModelIdentifier, M> operator >(Comparable<T> value) =>
@@ -274,9 +281,13 @@ abstract class QueryField<ModelIdentifier extends Object,
   /// );
   /// ```
   QueryPredicateOperation<ModelIdentifier, M> between(
-          Comparable<T> start, Comparable<T> end) =>
+    Comparable<T> start,
+    Comparable<T> end,
+  ) =>
       QueryPredicateOperation(
-          fieldName, BetweenQueryOperator<Comparable<T>>(start, end));
+        fieldName,
+        BetweenQueryOperator<Comparable<T>>(start, end),
+      );
 
   /// A **beginsWith** operation.
   ///

@@ -58,8 +58,24 @@ void main() {
     setUpAll(() {
       storageS3Service = MockStorageS3Service();
 
-      registerFallbackValue(const S3GetUrlOptions());
-      registerFallbackValue(const S3GetPropertiesOptions());
+      registerFallbackValue(
+        StorageGetUrlOptions(
+          accessLevel: testS3pluginConfig.defaultAccessLevel,
+        ),
+      );
+
+      registerFallbackValue(
+        StorageGetPropertiesOptions(
+          accessLevel: testS3pluginConfig.defaultAccessLevel,
+        ),
+      );
+
+      when(
+        () => storageS3Service.getProperties(
+          key: testKey,
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer((_) async => testGetPropertiesResult);
 
       when(
         () => storageS3Service.getUrl(
@@ -70,123 +86,94 @@ void main() {
     });
 
     test(
-        'should invoke StorageS3Service.getUrl with S3GetUrlOptions with the default storage access level',
-        () {
-      final testRequest = StorageDownloadFileRequest(
-        key: testKey,
-        localFile: AWSFile.fromPath('file_name.jpg'),
-      );
-
-      downloadFile(
-        request: testRequest,
-        s3pluginConfig: testS3pluginConfig,
-        storageS3Service: storageS3Service,
-        appPathProvider: const DummyPathProvider(),
-      );
-
-      final capturedOptions = verify(
-        () => storageS3Service.getUrl(
-          key: testKey,
-          options: captureAny<S3GetUrlOptions>(named: 'options'),
-        ),
-      ).captured.last;
-
-      expect(
-        capturedOptions,
-        isA<S3GetUrlOptions>().having(
-          (o) => o.accessLevel,
-          'accessLevel',
-          testS3pluginConfig.defaultAccessLevel,
-        ),
-      );
-    });
-
-    test(
-        'should invoke StorageS3Service.getUrl with converted S3DownloadFileOptions',
-        () {
-      const testTargetIdentity = 'someone-else';
-      final testRequest = StorageDownloadFileRequest(
-        key: testKey,
-        localFile: AWSFile.fromPath('file_name.jpg'),
-        options: const S3DownloadFileOptions.forIdentity(
-          testTargetIdentity,
-        ),
-      );
-
-      downloadFile(
-        request: testRequest,
-        s3pluginConfig: testS3pluginConfig,
-        storageS3Service: storageS3Service,
-        appPathProvider: const DummyPathProvider(),
-      );
-
-      final capturedOptions = verify(
-        () => storageS3Service.getUrl(
-          key: testKey,
-          options: captureAny<S3GetUrlOptions>(named: 'options'),
-        ),
-      ).captured.last;
-
-      expect(
-        capturedOptions,
-        isA<S3GetUrlOptions>().having(
-          (o) => o.accessLevel,
-          'accessLevel',
-          StorageAccessLevel.protected,
-        ),
-      );
-
-      expect(
-        capturedOptions,
-        isA<S3GetUrlOptions>().having(
-          (o) => o.targetIdentityId,
-          'targetIdentityId',
-          testTargetIdentity,
-        ),
-      );
-    });
-
-    test(
-        'should invoke StorageS3Service.getProperties with expected parameters when getProperties is set as true in the options',
+        'should invoke StorageS3Service.getUrl with converted S3DownloadFilePluginOptions',
         () async {
-      final testRequest = StorageDownloadFileRequest(
+      const testTargetIdentity = 'someone-else';
+      final operation = downloadFile(
         key: testKey,
-        localFile: AWSFile.fromPath('download.jpg'),
-        options: const S3DownloadFileOptions(
-          getProperties: true,
-          accessLevel: StorageAccessLevel.private,
+        localFile: AWSFile.fromPath('file_name.jpg'),
+        options: StorageDownloadFileOptions(
+          accessLevel: testS3pluginConfig.defaultAccessLevel,
+          pluginOptions:
+              const S3DownloadFilePluginOptions.forIdentity(testTargetIdentity),
         ),
-      );
-
-      when(
-        () => storageS3Service.getProperties(
-          key: testKey,
-          options: any(
-            named: 'options',
-          ),
-        ),
-      ).thenAnswer((_) async => testGetPropertiesResult);
-
-      final result = await downloadFile(
-        request: testRequest,
         s3pluginConfig: testS3pluginConfig,
         storageS3Service: storageS3Service,
         appPathProvider: const DummyPathProvider(),
-      ).result;
+      );
+
+      await operation.result;
 
       final capturedGetPropertiesOptions = verify(
         () => storageS3Service.getProperties(
           key: testKey,
-          options: captureAny<S3GetPropertiesOptions>(named: 'options'),
+          options: captureAny<StorageGetPropertiesOptions>(
+            named: 'options',
+          ),
         ),
       ).captured.last;
 
       expect(
         capturedGetPropertiesOptions,
-        isA<S3GetPropertiesOptions>(),
+        isA<StorageGetPropertiesOptions>()
+            .having(
+              (o) => o.accessLevel,
+              'accessLevel',
+              testS3pluginConfig.defaultAccessLevel,
+            )
+            .having(
+              (o) => (o.pluginOptions! as S3GetPropertiesPluginOptions)
+                  .targetIdentityId,
+              'targetIdentityId',
+              testTargetIdentity,
+            ),
       );
 
-      expect(result.downloadedItem, testItem);
+      final capturedUrlOptions = verify(
+        () => storageS3Service.getUrl(
+          key: testKey,
+          options: captureAny<StorageGetUrlOptions>(
+            named: 'options',
+          ),
+        ),
+      ).captured.last;
+
+      expect(
+        capturedUrlOptions,
+        isA<StorageGetUrlOptions>()
+            .having(
+              (o) => o.accessLevel,
+              'accessLevel',
+              testS3pluginConfig.defaultAccessLevel,
+            )
+            .having(
+              (o) =>
+                  (o.pluginOptions! as S3GetUrlPluginOptions).targetIdentityId,
+              'targetIdentityId',
+              testTargetIdentity,
+            ),
+      );
+    });
+
+    test(
+        'download result should include metadata when options.getProperties is set to true',
+        () async {
+      const options = StorageDownloadFileOptions(
+        accessLevel: StorageAccessLevel.private,
+        pluginOptions: S3DownloadFilePluginOptions(
+          getProperties: true,
+        ),
+      );
+      final result = await downloadFile(
+        key: testKey,
+        localFile: AWSFile.fromPath('download.jpg'),
+        options: options,
+        s3pluginConfig: testS3pluginConfig,
+        storageS3Service: storageS3Service,
+        appPathProvider: const DummyPathProvider(),
+      ).result;
+
+      expect(result.downloadedItem.metadata, testItem.metadata);
     });
   });
 }

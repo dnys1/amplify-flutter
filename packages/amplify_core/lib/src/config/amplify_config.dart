@@ -11,6 +11,19 @@ part 'amplify_config.g.dart';
 /// {@endtemplate}
 @zAmplifySerializable
 class AmplifyConfig with AWSEquatable<AmplifyConfig>, AWSSerializable {
+  /// {@macro amplify_core.amplify_config}
+  const AmplifyConfig({
+    this.userAgent = 'aws-amplify-cli/2.0',
+    this.version = '1.0',
+    this.api,
+    this.analytics,
+    this.auth,
+    this.notifications,
+    this.storage,
+  });
+
+  factory AmplifyConfig.fromJson(Map<String, Object?> json) =>
+      _$AmplifyConfigFromJson(json);
   @JsonKey(name: 'UserAgent')
   final String userAgent;
 
@@ -26,18 +39,11 @@ class AmplifyConfig with AWSEquatable<AmplifyConfig>, AWSSerializable {
   /// The Auth category configuration, if available.
   final AuthConfig? auth;
 
+  /// The Notifications category configuration, if available.
+  final NotificationsConfig? notifications;
+
   /// The Storage category configuration, if available.
   final StorageConfig? storage;
-
-  /// {@macro amplify_core.amplify_config}
-  const AmplifyConfig({
-    this.userAgent = 'aws-amplify-cli/2.0',
-    this.version = '1.0',
-    this.api,
-    this.analytics,
-    this.auth,
-    this.storage,
-  });
 
   @override
   List<Object?> get props => [
@@ -46,16 +52,15 @@ class AmplifyConfig with AWSEquatable<AmplifyConfig>, AWSSerializable {
         api,
         analytics,
         auth,
+        notifications,
         storage,
       ];
-
-  factory AmplifyConfig.fromJson(Map<String, Object?> json) =>
-      _$AmplifyConfigFromJson(json);
 
   AmplifyConfig copyWith({
     ApiConfig? api,
     AnalyticsConfig? analytics,
     AuthConfig? auth,
+    NotificationsConfig? notifications,
     StorageConfig? storage,
   }) {
     return AmplifyConfig(
@@ -64,6 +69,7 @@ class AmplifyConfig with AWSEquatable<AmplifyConfig>, AWSSerializable {
       api: api ?? this.api,
       analytics: analytics ?? this.analytics,
       auth: auth ?? this.auth,
+      notifications: notifications ?? this.notifications,
       storage: storage ?? this.storage,
     );
   }

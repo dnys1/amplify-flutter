@@ -18,7 +18,7 @@ export 'conflict_handler/datastore_conflict_handler.dart';
 
 /// Exception
 export 'exception/data_store_exception_messages.dart';
-export 'exception/datstore_exception.dart';
+export 'exception/datastore_exception.dart';
 
 /// Hub
 export 'hub/datstore_hub_event.dart';

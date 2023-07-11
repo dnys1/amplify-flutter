@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v2.rest_json_protocol.model.http_prefix_headers_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -55,9 +56,8 @@ abstract class HttpPrefixHeadersInput
                 )));
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    HttpPrefixHeadersInputRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<HttpPrefixHeadersInputPayload>>
+      serializers = [HttpPrefixHeadersInputRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(HttpPrefixHeadersInputBuilder b) {}
@@ -72,15 +72,15 @@ abstract class HttpPrefixHeadersInput
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('HttpPrefixHeadersInput');
-    helper.add(
-      'foo',
-      foo,
-    );
-    helper.add(
-      'fooMap',
-      fooMap,
-    );
+    final helper = newBuiltValueToStringHelper('HttpPrefixHeadersInput')
+      ..add(
+        'foo',
+        foo,
+      )
+      ..add(
+        'fooMap',
+        fooMap,
+      );
     return helper.toString();
   }
 }
@@ -141,7 +141,7 @@ class HttpPrefixHeadersInputRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    HttpPrefixHeadersInputPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) =>
       const <Object?>[];

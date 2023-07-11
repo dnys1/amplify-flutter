@@ -1,11 +1,12 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:amplify_analytics_pinpoint_dart/amplify_analytics_pinpoint_dart.dart';
+// ignore: implementation_imports
+import 'package:amplify_analytics_pinpoint_dart/src/impl/flutter_provider_interfaces/app_lifecycle_provider.dart';
 import 'package:flutter/material.dart';
 
 /// {@template amplify_analytics_pinpoint.flutter_app_lifecycle_provider}
-/// Provides callbacks to notify listeners when app is foregrounded or backgrounded
+/// Provides callbacks to notify listeners when app is foregrounded or backgrounded.
 /// {@endtemplate}
 class FlutterAppLifecycleProvider extends WidgetsBindingObserver
     implements AppLifecycleProvider {
@@ -17,6 +18,7 @@ class FlutterAppLifecycleProvider extends WidgetsBindingObserver
   @override
   void setOnForegroundListener(void Function() onForeground) =>
       _onForeground = onForeground;
+
   @override
   void setOnBackgroundListener(void Function() onBackground) =>
       _onBackground = onBackground;
@@ -35,25 +37,26 @@ class FlutterAppLifecycleProvider extends WidgetsBindingObserver
     WidgetsBinding.instance.removeObserver(this);
   }
 
-  // Current implementation based on Android
-  // TODO(fjnoyp): consider supporting session pause like iOS
-  // If app paused for X seconds, on app resume, a new session is created
-  // But the old session is sent as session end
+  // Current implementation based on Android.
+  // TODO(fjnoyp): consider supporting session pause like iOS:
+  // If app paused for X seconds, on app resume, a new session is created.
+  // But the old session is sent as session end.
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
         _onForeground?.call();
-        break;
       // backgrounded
       case AppLifecycleState.paused:
         _onBackground?.call();
-        break;
       // flutter engine running without view
       case AppLifecycleState.detached:
         break;
       // foreground inactive due to phone call / etc.
       case AppLifecycleState.inactive:
+        break;
+      default: /* AppLifecycleState.hidden */
+        // TODO(fjnoyp): Remove when AppLifecycleState.hidden is added
         break;
     }
   }

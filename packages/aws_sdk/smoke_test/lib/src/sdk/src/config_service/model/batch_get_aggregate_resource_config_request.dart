@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.batch_get_aggregate_resource_config_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -42,7 +43,9 @@ abstract class BatchGetAggregateResourceConfigRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<
+          _i1.SmithySerializer<BatchGetAggregateResourceConfigRequest>>
+      serializers = [
     BatchGetAggregateResourceConfigRequestAwsJson11Serializer()
   ];
 
@@ -64,15 +67,15 @@ abstract class BatchGetAggregateResourceConfigRequest
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('BatchGetAggregateResourceConfigRequest');
-    helper.add(
-      'configurationAggregatorName',
-      configurationAggregatorName,
-    );
-    helper.add(
-      'resourceIdentifiers',
-      resourceIdentifiers,
-    );
+        newBuiltValueToStringHelper('BatchGetAggregateResourceConfigRequest')
+          ..add(
+            'configurationAggregatorName',
+            configurationAggregatorName,
+          )
+          ..add(
+            'resourceIdentifiers',
+            resourceIdentifiers,
+          );
     return helper.toString();
   }
 }
@@ -106,13 +109,15 @@ class BatchGetAggregateResourceConfigRequestAwsJson11Serializer extends _i1
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ConfigurationAggregatorName':
           result.configurationAggregatorName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'ResourceIdentifiers':
           result.resourceIdentifiers.replace((serializers.deserialize(
             value,
@@ -121,7 +126,6 @@ class BatchGetAggregateResourceConfigRequestAwsJson11Serializer extends _i1
               [FullType(_i3.AggregateResourceIdentifier)],
             ),
           ) as _i4.BuiltList<_i3.AggregateResourceIdentifier>));
-          break;
       }
     }
 
@@ -131,25 +135,29 @@ class BatchGetAggregateResourceConfigRequestAwsJson11Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    BatchGetAggregateResourceConfigRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as BatchGetAggregateResourceConfigRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final BatchGetAggregateResourceConfigRequest(
+      :configurationAggregatorName,
+      :resourceIdentifiers
+    ) = object;
+    result$.addAll([
       'ConfigurationAggregatorName',
       serializers.serialize(
-        payload.configurationAggregatorName,
+        configurationAggregatorName,
         specifiedType: const FullType(String),
       ),
       'ResourceIdentifiers',
       serializers.serialize(
-        payload.resourceIdentifiers,
+        resourceIdentifiers,
         specifiedType: const FullType(
           _i4.BuiltList,
           [FullType(_i3.AggregateResourceIdentifier)],
         ),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

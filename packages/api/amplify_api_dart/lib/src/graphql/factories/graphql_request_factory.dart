@@ -1,14 +1,25 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
+
 import 'package:amplify_api_dart/src/graphql/utils.dart';
 import 'package:amplify_core/amplify_core.dart';
+import 'package:collection/collection.dart';
 
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, deprecated_member_use
 
-/// `"id"`, the name of the id field in every compatible model/schema.
-/// Eventually needs to be dynamic to accommodate custom primary keys.
-const idFieldName = 'id';
+/// `"id"`, the name of the id field when a primary key not specified in schema
+/// with `@primaryKey` annotation.
+const _defaultIdFieldName = 'id';
+// other string constants
+const _commaSpace = ', ';
+const _openParen = '(';
+const _closeParen = ')';
 
+/// Contains expressions for mapping request variables to expected places in the
+/// request.
+///
+/// Some examples include ids or indexes for simple queries, filters, and input
+/// variables/conditions for mutations.
 class DocumentInputs {
   const DocumentInputs(this.upper, this.lower);
 
@@ -90,7 +101,14 @@ class GraphQLRequestFactory {
       }
     }
 
-    final fieldSelection = fields.join(' '); // e.g. "id name createdAt"
+    // Get owner fields if present in auth rules
+    final ownerFields = (schema.authRules ?? [])
+        .map((authRule) => authRule.ownerField)
+        .whereNotNull()
+        .toList();
+
+    final fieldSelection =
+        [...fields, ...ownerFields].join(' '); // e.g. "id name createdAt"
 
     if (operation == GraphQLRequestOperation.list) {
       return '$items { $fieldSelection } nextToken';
@@ -107,6 +125,8 @@ class GraphQLRequestFactory {
   DocumentInputs _buildDocumentInputs(
     ModelTypeDefinition schema,
     GraphQLRequestOperation operation,
+    ModelIdentifier? modelIdentifier,
+    Map<String, dynamic> variables,
   ) {
     var upperOutput = '';
     var lowerOutput = '';
@@ -115,15 +135,39 @@ class GraphQLRequestFactory {
     // build inputs based on request operation
     switch (operation) {
       case GraphQLRequestOperation.get:
-        upperOutput = r'($id: ID!)';
-        lowerOutput = r'(id: $id)';
-        break;
+        final indexes = schema.indexes;
+        final modelIndex =
+            indexes.firstWhereOrNull((index) => index.name == null);
+        if (modelIndex != null) {
+          // custom index(es), e.g.
+          // upperOutput: no change (empty string)
+          // lowerOutput: (customId: 'abc-123, name: 'lorem')
+
+          // Do not reference variables because scalar types not available in
+          // codegen. Instead, just write the value to the document.
+          final bLowerOutput = StringBuffer(_openParen);
+          for (final field in modelIndex.fields) {
+            var value = modelIdentifier!.serializeAsMap()[field];
+            if (value is String) {
+              value = '"$value"';
+            }
+            bLowerOutput.write('$field: $value');
+            if (field != modelIndex.fields.last) {
+              bLowerOutput.write(_commaSpace);
+            }
+          }
+          bLowerOutput.write(_closeParen);
+          lowerOutput = bLowerOutput.toString();
+        } else {
+          // simple, single identifier
+          upperOutput = r'($id: ID!)';
+          lowerOutput = r'(id: $id)';
+        }
       case GraphQLRequestOperation.list:
         upperOutput =
             '(\$filter: Model${modelName}FilterInput, \$limit: Int, \$nextToken: String)';
         lowerOutput =
             r'(filter: $filter, limit: $limit, nextToken: $nextToken)';
-        break;
       case GraphQLRequestOperation.create:
       case GraphQLRequestOperation.update:
       case GraphQLRequestOperation.delete:
@@ -132,14 +176,16 @@ class GraphQLRequestFactory {
         upperOutput =
             '(\$input: $operationValue${modelName}Input!, \$condition:  Model${modelName}ConditionInput)';
         lowerOutput = r'(input: $input, condition: $condition)';
-        break;
       case GraphQLRequestOperation.onCreate:
       case GraphQLRequestOperation.onUpdate:
       case GraphQLRequestOperation.onDelete:
-        // upperOutput and lowerOutput already '', done
-        break;
+        // Only add filter variable when present to support older backends that do not support filtering.
+        if (variables.containsKey('filter')) {
+          upperOutput = '(\$filter: ModelSubscription${modelName}FilterInput)';
+          lowerOutput = r'(filter: $filter)';
+        }
       default:
-        throw const ApiException(
+        throw const ApiOperationException(
           'GraphQL Request Operation is currently unsupported',
           recoverySuggestion: 'please use a supported GraphQL operation',
         );
@@ -165,7 +211,12 @@ class GraphQLRequestFactory {
     // e.g. "get" or "list"
     final requestOperationVal = requestOperation.name;
     // e.g. "{upper: "($id: ID!)", lower: "(id: $id)"}"
-    final documentInputs = _buildDocumentInputs(schema, requestOperation);
+    final documentInputs = _buildDocumentInputs(
+      schema,
+      requestOperation,
+      modelIdentifier,
+      variables,
+    );
     // e.g. "id name createdAt" - fields to retrieve
     final fields = _getSelectionSetFromModelSchema(schema, requestOperation);
     // e.g. "getBlog"
@@ -229,6 +280,20 @@ class GraphQLRequestFactory {
     };
   }
 
+  Map<String, dynamic> buildVariablesForSubscriptionRequest({
+    required ModelType modelType,
+    QueryPredicate? where,
+  }) {
+    if (where == null) {
+      return {};
+    }
+    final filter = GraphQLRequestFactory.instance
+        .queryPredicateToGraphQLFilter(where, modelType);
+    return <String, dynamic>{
+      'filter': filter,
+    };
+  }
+
   /// Translates a `QueryPredicate` to a map representing a GraphQL filter
   /// which AppSync will accept. Example:
   /// `queryPredicateToGraphQLFilter(Blog.NAME.eq('foo'));` // =>
@@ -246,16 +311,17 @@ class GraphQLRequestFactory {
 
     // e.g. { 'name': { 'eq': 'foo }}
     if (queryPredicate is QueryPredicateOperation) {
-      final association = schema.fields?[queryPredicate.field]?.association;
-      // TODO(ragingsquirrel3): Change key logic when supporting CPK.
+      final association = schema.fields[queryPredicate.field]?.association;
       final associatedTargetName =
           association?.targetNames?.first ?? association?.targetName;
       var fieldName = queryPredicate.field;
       if (queryPredicate.field ==
-          '${_lowerCaseFirstCharacter(schema.name)}.$idFieldName') {
-        // check for the IDs where fieldName set to e.g. "blog.id" and convert to "id"
-        fieldName = idFieldName;
+          '${_lowerCaseFirstCharacter(schema.name)}.$_defaultIdFieldName') {
+        // very old schemas where fieldName is "blog.id"
+        fieldName = _defaultIdFieldName;
       } else if (associatedTargetName != null) {
+        // most schemas from more recent CLI codegen versions
+
         // when querying for the ID of another model, use the targetName from the schema
         fieldName = associatedTargetName;
       }
@@ -285,7 +351,7 @@ class GraphQLRequestFactory {
         }
         // Public not() API only allows 1 condition but QueryPredicateGroup
         // technically allows multiple conditions so explicitly disallow multiple.
-        throw const ApiException(
+        throw const ApiOperationException(
           'Unable to translate not() with multiple conditions.',
         );
       }
@@ -301,7 +367,7 @@ class GraphQLRequestFactory {
       };
     }
 
-    throw ApiException(
+    throw ApiOperationException(
       'Unable to translate the QueryPredicate $queryPredicate to a GraphQL filter.',
     );
   }
@@ -321,15 +387,20 @@ class GraphQLRequestFactory {
         getModelSchemaByModelName(model.getInstanceType().modelName(), null);
     final modelJson = model.toJson();
 
-    // If the model has a parent in the schema, get the ID of parent and field name.
+    // Get the primary key field name from parent schema(s) so it can be taken from
+    // JSON. For schemas with `@primaryKey` defined, it will be the first key in
+    // the index where name is null. If no such definition in schema, use
+    // default primary key "id."
     final allBelongsTo = getBelongsToFieldsFromModelSchema(schema);
     for (final belongsTo in allBelongsTo) {
       final belongsToModelName = belongsTo.name;
-      // TODO(ragingsquirrel3): Change key logic when supporting CPK.
-      final belongsToKey = belongsTo.association?.targetNames?.first ??
-          belongsTo.association?.targetName;
-      final belongsToValue =
-          (modelJson[belongsToModelName] as Map?)?[idFieldName] as String?;
+      final parentSchema = getModelSchemaByModelName(
+        belongsTo.type.ofModelName!,
+        operation,
+      );
+      final primaryKeyIndex = parentSchema.indexes.firstWhereOrNull(
+        (modelIndex) => modelIndex.name == null,
+      );
 
     // Assign the parent ID if the model has a parent.
     if (belongsToKey != null) {
@@ -337,19 +408,25 @@ class GraphQLRequestFactory {
       if (belongsToValue != null) {
         modelJson[belongsToKey] = belongsToValue;
       }
+      modelJson.remove(belongsToModelName);
     }
   }
 
+    final ownerFieldNames = (schema.authRules ?? [])
+        .map((authRule) => authRule.ownerField)
+        .whereNotNull()
+        .toSet();
     // Remove some fields from input.
-    final fieldsToRemove = schema.fields!.entries
+    final fieldsToRemove = schema.fields.entries
         .where(
           (entry) =>
               // relational fields
               entry.value.association != null ||
               // read-only
               entry.value.isReadOnly ||
-              // null values on create operations
+              // null values for owner fields on create operations
               (operation == GraphQLRequestOperation.create &&
+                  ownerFieldNames.contains(entry.value.name) &&
                   modelJson[entry.value.name] == null),
         )
         .map((entry) => entry.key)
@@ -379,7 +456,7 @@ Map<String, dynamic> _queryFieldOperatorToPartialGraphQLFilter(
     };
   }
 
-  throw ApiException(
+  throw ApiOperationException(
     'Unable to translate the QueryFieldOperator ${queryFieldOperator.type} to a GraphQL filter.',
   );
 }
@@ -398,7 +475,7 @@ String _getGraphQLFilterExpression(QueryFieldOperatorType operatorType) {
   };
   final result = dictionary[operatorType];
   if (result == null) {
-    throw ApiException(
+    throw ApiOperationException(
       '$operatorType does not have a defined GraphQL filter string.',
     );
   }

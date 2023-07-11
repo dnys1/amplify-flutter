@@ -18,17 +18,11 @@ mixin NamedMembersGenerationContext<S extends NamedMembersShape, U>
   /// All members on [shape] which are generated.
   ///
   /// Can be overriden to limit the members to be code generated.
-  Iterable<MemberShape> get members => shape.members.values;
-
-  /// Members sorted by their re-cased Dart name.
-  late final List<MemberShape> sortedMembers = members.toList()
-    ..sort((a, b) {
-      return a.dartName(shape.getType()).compareTo(b.dartName(shape.getType()));
-    });
+  late final List<MemberShape> members = shape.members.values.toList();
 
   /// Member shapes and their [Reference] types.
   late final Map<MemberShape, Reference> memberSymbols = {
-    for (var member in sortedMembers)
+    for (final member in members)
       member: context
           .symbolFor(member.target, shape)
           .withBoxed(member.isNullable(context, shape)),
@@ -46,7 +40,7 @@ mixin UnionGenerationContext<U> on ShapeGenerator<UnionShape, U>
   );
   late final Reference unknownMemberSymbol = DartTypes.core.object.unboxed;
 
-  late final List<MemberShape> allMembers = [...sortedMembers, unknownMember];
+  late final List<MemberShape> allMembers = [...members, unknownMember];
 
   /// Whether this represents the unknown value type.
   bool isUnknownMember(MemberShape member) => member.memberName == sdkUnknown;
@@ -113,7 +107,10 @@ mixin StructureGenerationContext<U> on ShapeGenerator<StructureShape, U>
       shape.httpOutputTraits(context);
 
   /// The resolved HTTP error traits.
-  late final HttpErrorTraits? httpErrorTraits = shape.httpErrorTraits(context);
+  late final HttpErrorTraits? httpErrorTraits = shape.httpErrorTraits(
+    context,
+    shape.httpPayload(context).symbol,
+  );
 
   /// The member shape to serialize when [HttpPayloadTrait] is used.
   late final MemberShape? payloadMember = shape.httpPayload(context).member;
@@ -153,7 +150,7 @@ mixin OperationGenerationContext<U> on ShapeGenerator<OperationShape, U> {
     ...shape.errors,
   ].whereType<ShapeRef>().map((error) {
     final shape = context.shapeFor(error.target) as StructureShape;
-    return shape.httpErrorTraits(context)!;
+    return shape.httpErrorTraits(context, shape.httpPayload(context).symbol)!;
   }).toList();
 
   late final HttpTrait? httpTrait = shape.httpTrait(context);

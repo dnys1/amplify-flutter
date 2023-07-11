@@ -1,3 +1,44 @@
+## 0.3.0+1
+
+- Minor bug fixes and improvements
+
+## 0.3.0
+
+### Features
+- Dart 3 support (must update Dart SDK constraint to `^3.0.0`)
+
+## 0.2.0+3
+
+### Fixes
+- fix(repo): Flutter 3.3 support
+
+## 0.2.0+2
+
+- Minor bug fixes and improvements
+
+## 0.2.0+1
+
+- Minor bug fixes and improvements
+
+## 0.2.0
+
+### Breaking Changes
+- chore(analytics)!: Remove Analytics Prefix ([#2753](https://github.com/aws-amplify/amplify-flutter/pull/2753))
+- chore(analytics)!: export endpointManager, redo exports
+
+## 0.1.4+3
+
+### Fixes
+- fix(analytics): event retry logic & max fail tries ([#2713](https://github.com/aws-amplify/amplify-flutter/pull/2713))
+
+## 0.1.4+2
+
+- Minor bug fixes and improvements
+
+## 0.1.4+1
+
+- Minor bug fixes and improvements
+
 ## 0.1.4
 
 ### Features

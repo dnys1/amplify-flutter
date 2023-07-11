@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.update_client_certificate_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -55,9 +56,8 @@ abstract class UpdateClientCertificateRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    UpdateClientCertificateRequestRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<UpdateClientCertificateRequestPayload>>
+      serializers = [UpdateClientCertificateRequestRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(UpdateClientCertificateRequestBuilder b) {}
@@ -93,16 +93,15 @@ abstract class UpdateClientCertificateRequest
       ];
   @override
   String toString() {
-    final helper =
-        newBuiltValueToStringHelper('UpdateClientCertificateRequest');
-    helper.add(
-      'clientCertificateId',
-      clientCertificateId,
-    );
-    helper.add(
-      'patchOperations',
-      patchOperations,
-    );
+    final helper = newBuiltValueToStringHelper('UpdateClientCertificateRequest')
+      ..add(
+        'clientCertificateId',
+        clientCertificateId,
+      )
+      ..add(
+        'patchOperations',
+        patchOperations,
+      );
     return helper.toString();
   }
 }
@@ -130,11 +129,11 @@ abstract class UpdateClientCertificateRequestPayload
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('UpdateClientCertificateRequestPayload');
-    helper.add(
-      'patchOperations',
-      patchOperations,
-    );
+        newBuiltValueToStringHelper('UpdateClientCertificateRequestPayload')
+          ..add(
+            'patchOperations',
+            patchOperations,
+          );
     return helper.toString();
   }
 }
@@ -170,18 +169,18 @@ class UpdateClientCertificateRequestRestJson1Serializer extends _i1
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'patchOperations':
-          if (value != null) {
-            result.patchOperations.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i4.BuiltList,
-                [FullType(_i3.PatchOperation)],
-              ),
-            ) as _i4.BuiltList<_i3.PatchOperation>));
-          }
-          break;
+          result.patchOperations.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i4.BuiltList,
+              [FullType(_i3.PatchOperation)],
+            ),
+          ) as _i4.BuiltList<_i3.PatchOperation>));
       }
     }
 
@@ -191,24 +190,22 @@ class UpdateClientCertificateRequestRestJson1Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    UpdateClientCertificateRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is UpdateClientCertificateRequest
-        ? object.getPayload()
-        : (object as UpdateClientCertificateRequestPayload);
-    final result = <Object?>[];
-    if (payload.patchOperations != null) {
-      result
+    final result$ = <Object?>[];
+    final UpdateClientCertificateRequestPayload(:patchOperations) = object;
+    if (patchOperations != null) {
+      result$
         ..add('patchOperations')
         ..add(serializers.serialize(
-          payload.patchOperations!,
+          patchOperations,
           specifiedType: const FullType(
             _i4.BuiltList,
             [FullType(_i3.PatchOperation)],
           ),
         ));
     }
-    return result;
+    return result$;
   }
 }

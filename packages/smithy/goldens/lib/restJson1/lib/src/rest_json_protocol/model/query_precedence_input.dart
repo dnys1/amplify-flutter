@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v1.rest_json_protocol.model.query_precedence_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -20,12 +21,12 @@ abstract class QueryPrecedenceInput
         _i1.EmptyPayload,
         _i1.HasPayload<QueryPrecedenceInputPayload> {
   factory QueryPrecedenceInput({
-    Map<String, String>? baz,
     String? foo,
+    Map<String, String>? baz,
   }) {
     return _$QueryPrecedenceInput._(
-      baz: baz == null ? null : _i3.BuiltMap(baz),
       foo: foo,
+      baz: baz == null ? null : _i3.BuiltMap(baz),
     );
   }
 
@@ -46,32 +47,31 @@ abstract class QueryPrecedenceInput
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    QueryPrecedenceInputRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<QueryPrecedenceInputPayload>>
+      serializers = [QueryPrecedenceInputRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(QueryPrecedenceInputBuilder b) {}
-  _i3.BuiltMap<String, String>? get baz;
   String? get foo;
+  _i3.BuiltMap<String, String>? get baz;
   @override
   QueryPrecedenceInputPayload getPayload() => QueryPrecedenceInputPayload();
   @override
   List<Object?> get props => [
-        baz,
         foo,
+        baz,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('QueryPrecedenceInput');
-    helper.add(
-      'baz',
-      baz,
-    );
-    helper.add(
-      'foo',
-      foo,
-    );
+    final helper = newBuiltValueToStringHelper('QueryPrecedenceInput')
+      ..add(
+        'foo',
+        foo,
+      )
+      ..add(
+        'baz',
+        baz,
+      );
     return helper.toString();
   }
 }
@@ -130,7 +130,7 @@ class QueryPrecedenceInputRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    QueryPrecedenceInputPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) =>
       const <Object?>[];

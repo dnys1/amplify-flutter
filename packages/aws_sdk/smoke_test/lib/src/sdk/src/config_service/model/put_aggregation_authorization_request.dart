@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.put_aggregation_authorization_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -43,9 +44,8 @@ abstract class PutAggregationAuthorizationRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    PutAggregationAuthorizationRequestAwsJson11Serializer()
-  ];
+  static const List<_i1.SmithySerializer<PutAggregationAuthorizationRequest>>
+      serializers = [PutAggregationAuthorizationRequestAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(PutAggregationAuthorizationRequestBuilder b) {}
@@ -69,19 +69,19 @@ abstract class PutAggregationAuthorizationRequest
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('PutAggregationAuthorizationRequest');
-    helper.add(
-      'authorizedAccountId',
-      authorizedAccountId,
-    );
-    helper.add(
-      'authorizedAwsRegion',
-      authorizedAwsRegion,
-    );
-    helper.add(
-      'tags',
-      tags,
-    );
+        newBuiltValueToStringHelper('PutAggregationAuthorizationRequest')
+          ..add(
+            'authorizedAccountId',
+            authorizedAccountId,
+          )
+          ..add(
+            'authorizedAwsRegion',
+            authorizedAwsRegion,
+          )
+          ..add(
+            'tags',
+            tags,
+          );
     return helper.toString();
   }
 }
@@ -115,30 +115,28 @@ class PutAggregationAuthorizationRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'AuthorizedAccountId':
           result.authorizedAccountId = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'AuthorizedAwsRegion':
           result.authorizedAwsRegion = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'Tags':
-          if (value != null) {
-            result.tags.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i4.BuiltList,
-                [FullType(_i3.Tag)],
-              ),
-            ) as _i4.BuiltList<_i3.Tag>));
-          }
-          break;
+          result.tags.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i4.BuiltList,
+              [FullType(_i3.Tag)],
+            ),
+          ) as _i4.BuiltList<_i3.Tag>));
       }
     }
 
@@ -148,33 +146,38 @@ class PutAggregationAuthorizationRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    PutAggregationAuthorizationRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as PutAggregationAuthorizationRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final PutAggregationAuthorizationRequest(
+      :authorizedAccountId,
+      :authorizedAwsRegion,
+      :tags
+    ) = object;
+    result$.addAll([
       'AuthorizedAccountId',
       serializers.serialize(
-        payload.authorizedAccountId,
+        authorizedAccountId,
         specifiedType: const FullType(String),
       ),
       'AuthorizedAwsRegion',
       serializers.serialize(
-        payload.authorizedAwsRegion,
+        authorizedAwsRegion,
         specifiedType: const FullType(String),
       ),
-    ];
-    if (payload.tags != null) {
-      result
+    ]);
+    if (tags != null) {
+      result$
         ..add('Tags')
         ..add(serializers.serialize(
-          payload.tags!,
+          tags,
           specifiedType: const FullType(
             _i4.BuiltList,
             [FullType(_i3.Tag)],
           ),
         ));
     }
-    return result;
+    return result$;
   }
 }

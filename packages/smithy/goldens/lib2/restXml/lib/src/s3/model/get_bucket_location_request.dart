@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_xml_v2.s3.model.get_bucket_location_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -39,9 +40,8 @@ abstract class GetBucketLocationRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    GetBucketLocationRequestRestXmlSerializer()
-  ];
+  static const List<_i1.SmithySerializer<GetBucketLocationRequestPayload>>
+      serializers = [GetBucketLocationRequestRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetBucketLocationRequestBuilder b) {}
@@ -65,11 +65,11 @@ abstract class GetBucketLocationRequest
   List<Object?> get props => [bucket];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('GetBucketLocationRequest');
-    helper.add(
-      'bucket',
-      bucket,
-    );
+    final helper = newBuiltValueToStringHelper('GetBucketLocationRequest')
+      ..add(
+        'bucket',
+        bucket,
+      );
     return helper.toString();
   }
 }
@@ -131,15 +131,16 @@ class GetBucketLocationRequestRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetBucketLocationRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName(
         'GetBucketLocationRequest',
         _i1.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    return result;
+
+    return result$;
   }
 }

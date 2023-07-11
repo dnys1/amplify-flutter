@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_auth_cognito_dart.cognito_identity_provider.model.confirm_sign_up_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -22,26 +23,26 @@ abstract class ConfirmSignUpRequest
     implements Built<ConfirmSignUpRequest, ConfirmSignUpRequestBuilder> {
   /// Represents the request to confirm registration of a user.
   factory ConfirmSignUpRequest({
-    _i3.AnalyticsMetadataType? analyticsMetadata,
     required String clientId,
-    Map<String, String>? clientMetadata,
+    String? secretHash,
+    required String username,
     required String confirmationCode,
     bool? forceAliasCreation,
-    String? secretHash,
+    _i3.AnalyticsMetadataType? analyticsMetadata,
     _i4.UserContextDataType? userContextData,
-    required String username,
+    Map<String, String>? clientMetadata,
   }) {
     forceAliasCreation ??= false;
     return _$ConfirmSignUpRequest._(
-      analyticsMetadata: analyticsMetadata,
       clientId: clientId,
-      clientMetadata:
-          clientMetadata == null ? null : _i5.BuiltMap(clientMetadata),
+      secretHash: secretHash,
+      username: username,
       confirmationCode: confirmationCode,
       forceAliasCreation: forceAliasCreation,
-      secretHash: secretHash,
+      analyticsMetadata: analyticsMetadata,
       userContextData: userContextData,
-      username: username,
+      clientMetadata:
+          clientMetadata == null ? null : _i5.BuiltMap(clientMetadata),
     );
   }
 
@@ -59,7 +60,7 @@ abstract class ConfirmSignUpRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<_i1.SmithySerializer<ConfirmSignUpRequest>> serializers = [
     ConfirmSignUpRequestAwsJson11Serializer()
   ];
 
@@ -68,11 +69,26 @@ abstract class ConfirmSignUpRequest
     b.forceAliasCreation = false;
   }
 
+  /// The ID of the app client associated with the user pool.
+  String get clientId;
+
+  /// A keyed-hash message authentication code (HMAC) calculated using the secret key of a user pool client and username plus the client ID in the message.
+  String? get secretHash;
+
+  /// The user name of the user whose registration you want to confirm.
+  String get username;
+
+  /// The confirmation code sent by a user's request to confirm registration.
+  String get confirmationCode;
+
+  /// Boolean to be specified to force user confirmation irrespective of existing alias. By default set to `False`. If this parameter is set to `True` and the phone number/email used for sign up confirmation already exists as an alias with a different user, the API call will migrate the alias from the previous user to the newly created user being confirmed. If set to `False`, the API will throw an **AliasExistsException** error.
+  bool get forceAliasCreation;
+
   /// The Amazon Pinpoint analytics metadata for collecting metrics for `ConfirmSignUp` calls.
   _i3.AnalyticsMetadataType? get analyticsMetadata;
 
-  /// The ID of the app client associated with the user pool.
-  String get clientId;
+  /// Contextual data about your user session, such as the device fingerprint, IP address, or location. Amazon Cognito advanced security evaluates the risk of an authentication event based on the context that your app generates and passes to Amazon Cognito when it makes API requests.
+  _i4.UserContextDataType? get userContextData;
 
   /// A map of custom key-value pairs that you can provide as input for any custom workflows that this action triggers.
   ///
@@ -88,69 +104,54 @@ abstract class ConfirmSignUpRequest
   ///
   /// *   Encrypt the ClientMetadata value. Don't use Amazon Cognito to provide sensitive information.
   _i5.BuiltMap<String, String>? get clientMetadata;
-
-  /// The confirmation code sent by a user's request to confirm registration.
-  String get confirmationCode;
-
-  /// Boolean to be specified to force user confirmation irrespective of existing alias. By default set to `False`. If this parameter is set to `True` and the phone number/email used for sign up confirmation already exists as an alias with a different user, the API call will migrate the alias from the previous user to the newly created user being confirmed. If set to `False`, the API will throw an **AliasExistsException** error.
-  bool get forceAliasCreation;
-
-  /// A keyed-hash message authentication code (HMAC) calculated using the secret key of a user pool client and username plus the client ID in the message.
-  String? get secretHash;
-
-  /// Contextual data about your user session, such as the device fingerprint, IP address, or location. Amazon Cognito advanced security evaluates the risk of an authentication event based on the context that your app generates and passes to Amazon Cognito when it makes API requests.
-  _i4.UserContextDataType? get userContextData;
-
-  /// The user name of the user whose registration you want to confirm.
-  String get username;
   @override
   ConfirmSignUpRequest getPayload() => this;
   @override
   List<Object?> get props => [
-        analyticsMetadata,
         clientId,
-        clientMetadata,
+        secretHash,
+        username,
         confirmationCode,
         forceAliasCreation,
-        secretHash,
+        analyticsMetadata,
         userContextData,
-        username,
+        clientMetadata,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ConfirmSignUpRequest');
-    helper.add(
-      'analyticsMetadata',
-      analyticsMetadata,
-    );
-    helper.add(
-      'clientId',
-      '***SENSITIVE***',
-    );
-    helper.add(
-      'clientMetadata',
-      clientMetadata,
-    );
-    helper.add(
-      'confirmationCode',
-      confirmationCode,
-    );
-    helper.add(
-      'forceAliasCreation',
-      forceAliasCreation,
-    );
-    helper.add(
-      'secretHash',
-      '***SENSITIVE***',
-    );
-    helper.add(
-      'userContextData',
-      userContextData,
-    );
-    helper.add(
-      'username',
-      '***SENSITIVE***',
-    );
+    final helper = newBuiltValueToStringHelper('ConfirmSignUpRequest')
+      ..add(
+        'clientId',
+        '***SENSITIVE***',
+      )
+      ..add(
+        'secretHash',
+        '***SENSITIVE***',
+      )
+      ..add(
+        'username',
+        '***SENSITIVE***',
+      )
+      ..add(
+        'confirmationCode',
+        confirmationCode,
+      )
+      ..add(
+        'forceAliasCreation',
+        forceAliasCreation,
+      )
+      ..add(
+        'analyticsMetadata',
+        analyticsMetadata,
+      )
+      ..add(
+        'userContextData',
+        userContextData,
+      )
+      ..add(
+        'clientMetadata',
+        clientMetadata,
+      );
     return helper.toString();
   }
 }
@@ -184,69 +185,56 @@ class ConfirmSignUpRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
-        case 'AnalyticsMetadata':
-          if (value != null) {
-            result.analyticsMetadata.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i3.AnalyticsMetadataType),
-            ) as _i3.AnalyticsMetadataType));
-          }
-          break;
         case 'ClientId':
           result.clientId = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
-        case 'ClientMetadata':
-          if (value != null) {
-            result.clientMetadata.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i5.BuiltMap,
-                [
-                  FullType(String),
-                  FullType(String),
-                ],
-              ),
-            ) as _i5.BuiltMap<String, String>));
-          }
-          break;
-        case 'ConfirmationCode':
-          result.confirmationCode = (serializers.deserialize(
-            value!,
-            specifiedType: const FullType(String),
-          ) as String);
-          break;
-        case 'ForceAliasCreation':
-          result.forceAliasCreation = (serializers.deserialize(
-            value!,
-            specifiedType: const FullType(bool),
-          ) as bool);
-          break;
         case 'SecretHash':
-          if (value != null) {
-            result.secretHash = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
-        case 'UserContextData':
-          if (value != null) {
-            result.userContextData.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i4.UserContextDataType),
-            ) as _i4.UserContextDataType));
-          }
-          break;
+          result.secretHash = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'Username':
           result.username = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
+        case 'ConfirmationCode':
+          result.confirmationCode = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'ForceAliasCreation':
+          result.forceAliasCreation = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
+        case 'AnalyticsMetadata':
+          result.analyticsMetadata.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i3.AnalyticsMetadataType),
+          ) as _i3.AnalyticsMetadataType));
+        case 'UserContextData':
+          result.userContextData.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i4.UserContextDataType),
+          ) as _i4.UserContextDataType));
+        case 'ClientMetadata':
+          result.clientMetadata.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i5.BuiltMap,
+              [
+                FullType(String),
+                FullType(String),
+              ],
+            ),
+          ) as _i5.BuiltMap<String, String>));
       }
     }
 
@@ -256,45 +244,71 @@ class ConfirmSignUpRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ConfirmSignUpRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ConfirmSignUpRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final ConfirmSignUpRequest(
+      :clientId,
+      :secretHash,
+      :username,
+      :confirmationCode,
+      :forceAliasCreation,
+      :analyticsMetadata,
+      :userContextData,
+      :clientMetadata
+    ) = object;
+    result$.addAll([
       'ClientId',
       serializers.serialize(
-        payload.clientId,
+        clientId,
+        specifiedType: const FullType(String),
+      ),
+      'Username',
+      serializers.serialize(
+        username,
         specifiedType: const FullType(String),
       ),
       'ConfirmationCode',
       serializers.serialize(
-        payload.confirmationCode,
+        confirmationCode,
         specifiedType: const FullType(String),
       ),
       'ForceAliasCreation',
       serializers.serialize(
-        payload.forceAliasCreation,
+        forceAliasCreation,
         specifiedType: const FullType(bool),
       ),
-      'Username',
-      serializers.serialize(
-        payload.username,
-        specifiedType: const FullType(String),
-      ),
-    ];
-    if (payload.analyticsMetadata != null) {
-      result
+    ]);
+    if (secretHash != null) {
+      result$
+        ..add('SecretHash')
+        ..add(serializers.serialize(
+          secretHash,
+          specifiedType: const FullType(String),
+        ));
+    }
+    if (analyticsMetadata != null) {
+      result$
         ..add('AnalyticsMetadata')
         ..add(serializers.serialize(
-          payload.analyticsMetadata!,
+          analyticsMetadata,
           specifiedType: const FullType(_i3.AnalyticsMetadataType),
         ));
     }
-    if (payload.clientMetadata != null) {
-      result
+    if (userContextData != null) {
+      result$
+        ..add('UserContextData')
+        ..add(serializers.serialize(
+          userContextData,
+          specifiedType: const FullType(_i4.UserContextDataType),
+        ));
+    }
+    if (clientMetadata != null) {
+      result$
         ..add('ClientMetadata')
         ..add(serializers.serialize(
-          payload.clientMetadata!,
+          clientMetadata,
           specifiedType: const FullType(
             _i5.BuiltMap,
             [
@@ -304,22 +318,6 @@ class ConfirmSignUpRequestAwsJson11Serializer
           ),
         ));
     }
-    if (payload.secretHash != null) {
-      result
-        ..add('SecretHash')
-        ..add(serializers.serialize(
-          payload.secretHash!,
-          specifiedType: const FullType(String),
-        ));
-    }
-    if (payload.userContextData != null) {
-      result
-        ..add('UserContextData')
-        ..add(serializers.serialize(
-          payload.userContextData!,
-          specifiedType: const FullType(_i4.UserContextDataType),
-        ));
-    }
-    return result;
+    return result$;
   }
 }

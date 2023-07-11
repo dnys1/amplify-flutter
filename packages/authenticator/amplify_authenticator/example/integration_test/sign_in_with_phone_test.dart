@@ -4,60 +4,44 @@
 // This test follows the Amplify UI feature "sign-in-with-username"
 // https://github.com/aws-amplify/amplify-ui/blob/main/packages/e2e/features/ui/components/authenticator/sign-up-with-username.feature
 
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_authenticator_test/amplify_authenticator_test.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_test/amplify_test.dart';
-import 'package:flutter/material.dart';
+import 'package:amplify_integration_test/amplify_integration_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 
-import 'config.dart';
-import 'utils/mock_data.dart';
+import 'test_runner.dart';
 import 'utils/test_utils.dart';
 
 void main() {
-  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  // resolves issue on iOS. See: https://github.com/flutter/flutter/issues/89651
-  binding.deferFirstFrame();
-
-  final authenticator = Authenticator(
-    child: MaterialApp(
-      builder: Authenticator.builder(),
-      home: const Scaffold(
-        body: Center(
-          child: SignOutButton(),
-        ),
-      ),
-    ),
-  );
+  testRunner.setupTests();
 
   group('sign-in-with-phone', () {
     late PhoneNumber phoneNumber;
     late String password;
 
     // Given I'm running the example "ui/components/authenticator/sign-in-with-phone.feature"
-    setUpAll(() async {
-      await loadConfiguration(
-        'ui/components/authenticator/sign-in-with-phone',
+    setUp(() async {
+      await testRunner.configure(
+        environmentName: 'sign-in-with-phone',
       );
-    });
-
-    setUp(() {
       phoneNumber = generateUSPhoneNumber();
       password = generatePassword();
-    });
-
-    tearDown(() async {
-      await Amplify.Auth.signOut();
     });
 
     // Scenario: Sign in with unknown credentials
     testWidgets('Sign in with unknown credentials', (tester) async {
       final phoneNumber = generateUSPhoneNumber();
-      await loadAuthenticator(tester: tester, authenticator: authenticator);
-      SignInPage signInPage = SignInPage(tester: tester);
+      await loadAuthenticator(tester: tester);
+
+      expect(
+        tester.bloc.stream,
+        emitsInOrder([
+          UnauthenticatedState.signIn,
+          emitsDone,
+        ]),
+      );
+
+      final signInPage = SignInPage(tester: tester);
 
       // When I select my country code
       await signInPage.selectCountryCode();
@@ -72,7 +56,9 @@ void main() {
       await signInPage.submitSignIn();
 
       // Then I see "User does not exist"
-      await signInPage.expectUserNotFound();
+      signInPage.expectUserNotFound();
+
+      await tester.bloc.close();
     });
 
     // Scenario: Sign in with unconfirmed credentials
@@ -83,15 +69,26 @@ void main() {
       await Amplify.Auth.signUp(
         username: phoneNumber.toE164(),
         password: password,
-        options: CognitoSignUpOptions(
+        options: SignUpOptions(
           userAttributes: {
-            CognitoUserAttributeKey.email: email,
+            AuthUserAttributeKey.email: email,
           },
         ),
       );
-      await loadAuthenticator(tester: tester, authenticator: authenticator);
-      SignInPage signInPage = SignInPage(tester: tester);
-      ConfirmSignUpPage confirmSignUpPage = ConfirmSignUpPage(tester: tester);
+
+      await loadAuthenticator(tester: tester);
+
+      expect(
+        tester.bloc.stream,
+        emitsInOrder([
+          UnauthenticatedState.signIn,
+          UnauthenticatedState.confirmSignUp,
+          emitsDone,
+        ]),
+      );
+
+      final signInPage = SignInPage(tester: tester);
+      final confirmSignUpPage = ConfirmSignUpPage(tester: tester);
 
       signInPage.expectUsername(label: 'Phone Number');
 
@@ -109,6 +106,8 @@ void main() {
 
       // Then I see "Confirmation Code"
       confirmSignUpPage.expectConfirmationCodeIsPresent();
+
+      await tester.bloc.close();
     });
 
     // Scenario: Sign in with confirmed credentials then sign out
@@ -121,13 +120,25 @@ void main() {
         verifyAttributes: true,
         attributes: [
           AuthUserAttribute(
-            userAttributeKey: CognitoUserAttributeKey.phoneNumber,
+            userAttributeKey: AuthUserAttributeKey.phoneNumber,
             value: phoneNumber.toE164(),
           ),
         ],
       );
-      await loadAuthenticator(tester: tester, authenticator: authenticator);
-      SignInPage signInPage = SignInPage(tester: tester);
+
+      await loadAuthenticator(tester: tester);
+
+      expect(
+        tester.bloc.stream,
+        emitsInOrder([
+          UnauthenticatedState.signIn,
+          isA<AuthenticatedState>(),
+          UnauthenticatedState.signIn,
+          emitsDone,
+        ]),
+      );
+
+      final signInPage = SignInPage(tester: tester);
       signInPage.expectUsername(label: 'Phone Number');
 
       // When I type my "username" with status "UNKNOWN"
@@ -148,7 +159,7 @@ void main() {
       // Then I see "Sign in"
       signInPage.expectUsername(label: 'Phone Number');
 
-      await deleteUser(phoneNumber.toE164());
+      await tester.bloc.close();
     });
 
     // Scenario: Sign in with force change password credentials
@@ -159,14 +170,25 @@ void main() {
         password,
         attributes: [
           AuthUserAttribute(
-            userAttributeKey: CognitoUserAttributeKey.phoneNumber,
+            userAttributeKey: AuthUserAttributeKey.phoneNumber,
             value: phoneNumber.toE164(),
           ),
         ],
       );
-      await loadAuthenticator(tester: tester, authenticator: authenticator);
-      SignInPage signInPage = SignInPage(tester: tester);
-      ConfirmSignInPage confirmSignInPage = ConfirmSignInPage(tester: tester);
+
+      await loadAuthenticator(tester: tester);
+
+      expect(
+        tester.bloc.stream,
+        emitsInOrder([
+          UnauthenticatedState.signIn,
+          UnauthenticatedState.confirmSignInNewPassword,
+          emitsDone,
+        ]),
+      );
+
+      final signInPage = SignInPage(tester: tester);
+      final confirmSignInPage = ConfirmSignInPage(tester: tester);
       signInPage.expectUsername(label: 'Phone Number');
 
       // When I type my "username"
@@ -182,7 +204,7 @@ void main() {
       await confirmSignInPage.expectConfirmSignInNewPasswordIsPresent();
       confirmSignInPage.expectNewPasswordIsPresent();
 
-      await deleteUser(phoneNumber.toE164());
+      await tester.bloc.close();
     });
   });
 }

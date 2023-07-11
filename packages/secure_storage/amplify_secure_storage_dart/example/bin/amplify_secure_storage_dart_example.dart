@@ -12,6 +12,7 @@ enum InputMode {
   delete,
 }
 
+// ignore: invalid_use_of_internal_member
 final storage = AmplifySecureStorageDart(
   config: AmplifySecureStorageConfig(
     scope: 'default',
@@ -38,13 +39,10 @@ Future<void> main() async {
   switch (inputMode) {
     case InputMode.read:
       await _read();
-      break;
     case InputMode.write:
       await _write();
-      break;
     case InputMode.delete:
       await _delete();
-      break;
   }
 }
 

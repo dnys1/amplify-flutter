@@ -3,6 +3,11 @@
 
 import * as cdk from "aws-cdk-lib";
 import { Fn, RemovalPolicy } from "aws-cdk-lib";
+import * as cognito from "aws-cdk-lib/aws-cognito";
+import * as events from 'aws-cdk-lib/aws-events';
+import * as targets from 'aws-cdk-lib/aws-events-targets';
+import { Runtime } from "aws-cdk-lib/aws-lambda";
+import * as lambda_nodejs from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as s3 from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 import { StorageAccessLevel } from "./storage/stack";
@@ -75,27 +80,16 @@ export abstract class IntegrationTestStack<
   public get bucket(): s3.Bucket {
     if (!this._bucket) {
       this._bucket = new s3.Bucket(this, "Bucket", {
-        bucketName: this.bucketName,
+        bucketName: randomBucketName({
+          prefix: `amplify-test-${this.baseName.toLowerCase()}`,
+          stack: this,
+        }),
         removalPolicy: RemovalPolicy.DESTROY,
         autoDeleteObjects: true,
         enforceSSL: true,
       });
     }
     return this._bucket;
-  }
-
-  /**
-   * The bucket name for this stack where configuration files can be saved.
-   *
-   * Naming matches Amplify CLI for discoverability, suffixed with a segment of the stack ID.
-   * https://github.com/aws-amplify/amplify-ci-support/blob/1abe7f7a1d75fa19675ad8ca17ab625a299b765e/src/integ_test_resources/flutter/amplify/cloudformation_template.yaml#L32
-   */
-  private get bucketName(): string {
-    return Fn.join("-", [
-      `amplify-test-${this.baseName.toLowerCase()}`,
-      // https://stackoverflow.com/questions/54897459/how-to-set-semi-random-name-for-s3-bucket-using-cloud-formation
-      Fn.select(0, Fn.split("-", Fn.select(2, Fn.split("/", this.stackId)))),
-    ]);
   }
 
   /**
@@ -135,6 +129,46 @@ export abstract class IntegrationTestStackEnvironment<
    * The Amplify configuration description for this environment.
    */
   public config: AmplifyConfig;
+
+  /**
+   * Creates a cron-scheduled Lambda which cleans up user pool users
+   * every day.
+   * 
+   * @param userPool The user pool to clean up.
+   */
+  protected createUserCleanupJob(userPool: cognito.IUserPool) {
+    const lambda = new lambda_nodejs.NodejsFunction(this, 'cleanup-users', {
+      entry: './lib/cleanup-users.ts',
+      runtime: Runtime.NODEJS_18_X,
+      environment: {
+        USER_POOL_ID: userPool.userPoolId,
+      },
+      timeout: cdk.Duration.minutes(5),
+      memorySize: 512,
+    });
+    userPool.grant(lambda, "cognito-idp:ListUsers", "cognito-idp:AdminDeleteUser");
+
+    const cronRule = new events.Rule(this, 'cleanup-users-rule', {
+      // Run daily at midnight
+      schedule: events.Schedule.expression('cron(0 0 ? * * *)'),
+    });
+    cronRule.addTarget(new targets.LambdaFunction(lambda));
+  }
+}
+
+/**
+ * Creates a semi-random bucket name which is stable for a particular stack and guaranteed to
+ * not conflict with other buckets of the same prefix.
+ *
+ * Naming matches Amplify CLI for discoverability, suffixed with a segment of the stack ID.
+ * https://github.com/aws-amplify/amplify-ci-support/blob/1abe7f7a1d75fa19675ad8ca17ab625a299b765e/src/integ_test_resources/flutter/amplify/cloudformation_template.yaml#L32
+ */
+export const randomBucketName = ({ prefix, stack }: { prefix: string, stack: cdk.Stack }): string => {
+  return Fn.join("-", [
+    prefix,
+    // https://stackoverflow.com/questions/54897459/how-to-set-semi-random-name-for-s3-bucket-using-cloud-formation
+    Fn.select(0, Fn.split("-", Fn.select(2, Fn.split("/", stack.stackId)))),
+  ]);
 }
 
 /**
@@ -185,7 +219,7 @@ export const createAmplifyConfig = (
   }
   const auth: any = {};
   if (authConfig) {
-    const { identityPoolConfig, userPoolConfig } = authConfig;
+    const { identityPoolConfig, userPoolConfig, hostedUiConfig } = authConfig;
     const identityPool: any = {};
     if (identityPoolConfig) {
       identityPool.CredentialsProvider = {
@@ -198,13 +232,52 @@ export const createAmplifyConfig = (
       };
     }
     const userPool: any = {};
+    let defaultAuth: any = {};
     if (userPoolConfig) {
       userPool.CognitoUserPool = {
         Default: {
           PoolId: userPoolConfig.userPoolId,
           AppClientId: userPoolConfig.userPoolClientId,
+          AppClientSecret: userPoolConfig.userPoolClientSecret,
           Region: region,
         },
+      };
+      const {
+        standardAttributes,
+        signInAliases,
+        mfa,
+        verificationMechanisms = [],
+      } = userPoolConfig;
+      const userNameAttributes: string[] = [];
+      if (signInAliases?.email) {
+        userNameAttributes.push("email");
+      }
+      if (signInAliases?.phone) {
+        userNameAttributes.push("phone_number");
+      }
+      const signupAttributes: string[] = [];
+      if (standardAttributes?.email?.required) {
+        signupAttributes.push("email");
+      }
+      if (standardAttributes?.phoneNumber?.required) {
+        signupAttributes.push("phone_number");
+      }
+      defaultAuth = {
+        authenticationFlowType: "USER_SRP_AUTH",
+        usernameAttributes: userNameAttributes,
+        signupAttributes: signupAttributes,
+        passwordProtectionSettings: {
+          passwordPolicyMinLength: 8,
+          passwordPolicyCharacters: [
+            "REQUIRES_LOWERCASE",
+            "REQUIRES_UPPERCASE",
+            "REQUIRES_NUMBERS",
+            "REQUIRES_SYMBOLS",
+          ],
+        },
+        mfaConfiguration: mfa,
+        mfaTypes: ["SMS"],
+        verificationMechanisms: verificationMechanisms,
       };
     }
     const pinpointConfig: any = {};
@@ -230,6 +303,16 @@ export const createAmplifyConfig = (
         },
       };
     }
+    const oauth: any = {};
+    if (hostedUiConfig) {
+      oauth.OAuth = {
+        WebDomain: hostedUiConfig.webDomain,
+        AppClientId: userPoolConfig!.userPoolClientId,
+        SignInRedirectURI: hostedUiConfig.signInRedirectUris.join(","),
+        SignOutRedirectURI: hostedUiConfig.signOutRedirectUris.join(","),
+        Scopes: hostedUiConfig.scopes,
+      };
+    }
     auth.auth = {
       plugins: {
         awsCognitoAuthPlugin: {
@@ -241,21 +324,8 @@ export const createAmplifyConfig = (
           ...storage,
           Auth: {
             Default: {
-              authenticationFlowType: "USER_SRP_AUTH",
-              usernameAttributes: [],
-              signupAttributes: [],
-              passwordProtectionSettings: {
-                passwordPolicyMinLength: 8,
-                passwordPolicyCharacters: [
-                  "REQUIRES_LOWERCASE",
-                  "REQUIRES_UPPERCASE",
-                  "REQUIRES_NUMBERS",
-                  "REQUIRES_SYMBOLS",
-                ],
-              },
-              mfaConfiguration: "OPTIONAL",
-              mfaTypes: ["SMS"],
-              verificationMechanisms: ["EMAIL", "PHONE_NUMBER"],
+              ...oauth,
+              ...defaultAuth,
             },
           },
         },
@@ -299,35 +369,51 @@ export type APIAuthorizationType =
   | "OPENID_CONNECT"
   | "AWS_LAMBDA";
 
-export type ApiConfig = {
+export type ApiEndpointConfig = {
   endpointType: "GraphQL" | "REST";
   endpoint: string;
   authorizationType: APIAuthorizationType;
   apiKey?: string;
 };
 
+export type UserPoolConfig = {
+  userPoolId: string;
+  userPoolClientId: string;
+  userPoolClientSecret?: string;
+  signInAliases?: cognito.SignInAliases;
+  standardAttributes?: cognito.StandardAttributes;
+  mfa: cognito.Mfa;
+  verificationMechanisms?: string[];
+};
+export type IdentityPoolConfig = {
+  identityPoolId: string;
+};
+export type HostedUIConfig = {
+  webDomain: string;
+  signInRedirectUris: string[];
+  signOutRedirectUris: string[];
+  scopes: string[];
+};
+
 export type AuthConfig = {
-  userPoolConfig?: {
-    userPoolId: string;
-    userPoolClientId: string;
-  };
-  identityPoolConfig?: {
-    identityPoolId: string;
-  };
+  userPoolConfig?: UserPoolConfig;
+  hostedUiConfig?: HostedUIConfig;
+  identityPoolConfig?: IdentityPoolConfig;
 };
 
 export type AnalyticsConfig = {
   appId: string;
 };
+export type ApiConfig = {
+  apis: {
+    [apiName: string]: ApiEndpointConfig;
+  };
+};
 
 export type AmplifyConfig = {
   analyticsConfig?: AnalyticsConfig;
   authConfig?: AuthConfig;
-  apiConfig?: {
-    apis: {
-      [apiName: string]: ApiConfig;
-    };
-  };
+  apiConfig?: ApiConfig;
   storageConfig?: {
     bucket: string;
     defaultAccessLevel: StorageAccessLevel;

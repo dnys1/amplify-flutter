@@ -8,9 +8,25 @@ part of 'auth_next_update_attribute_step.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+AuthNextUpdateAttributeStep _$AuthNextUpdateAttributeStepFromJson(
+        Map<String, dynamic> json) =>
+    AuthNextUpdateAttributeStep(
+      additionalInfo: (json['additionalInfo'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, e as String),
+      ),
+      codeDeliveryDetails: json['codeDeliveryDetails'] == null
+          ? null
+          : AuthCodeDeliveryDetails.fromJson(
+              json['codeDeliveryDetails'] as Map<String, dynamic>),
+      updateAttributeStep: $enumDecode(
+          _$AuthUpdateAttributeStepEnumMap, json['updateAttributeStep']),
+    );
+
 Map<String, dynamic> _$AuthNextUpdateAttributeStepToJson(
     AuthNextUpdateAttributeStep instance) {
-  final val = <String, dynamic>{};
+  final val = <String, dynamic>{
+    'additionalInfo': instance.additionalInfo,
+  };
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -18,7 +34,6 @@ Map<String, dynamic> _$AuthNextUpdateAttributeStepToJson(
     }
   }
 
-  writeNotNull('additionalInfo', instance.additionalInfo);
   writeNotNull('codeDeliveryDetails', instance.codeDeliveryDetails?.toJson());
   val['updateAttributeStep'] =
       _$AuthUpdateAttributeStepEnumMap[instance.updateAttributeStep]!;

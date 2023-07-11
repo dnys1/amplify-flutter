@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v1.rest_json_protocol.model.malformed_list_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -31,7 +32,7 @@ abstract class MalformedListInput
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<_i1.SmithySerializer<MalformedListInput>> serializers = [
     MalformedListInputRestJson1Serializer()
   ];
 
@@ -44,11 +45,11 @@ abstract class MalformedListInput
   List<Object?> get props => [bodyList];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('MalformedListInput');
-    helper.add(
-      'bodyList',
-      bodyList,
-    );
+    final helper = newBuiltValueToStringHelper('MalformedListInput')
+      ..add(
+        'bodyList',
+        bodyList,
+      );
     return helper.toString();
   }
 }
@@ -81,18 +82,18 @@ class MalformedListInputRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'bodyList':
-          if (value != null) {
-            result.bodyList.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(String)],
-              ),
-            ) as _i3.BuiltList<String>));
-          }
-          break;
+          result.bodyList.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(String)],
+            ),
+          ) as _i3.BuiltList<String>));
       }
     }
 
@@ -102,22 +103,22 @@ class MalformedListInputRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    MalformedListInput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as MalformedListInput);
-    final result = <Object?>[];
-    if (payload.bodyList != null) {
-      result
+    final result$ = <Object?>[];
+    final MalformedListInput(:bodyList) = object;
+    if (bodyList != null) {
+      result$
         ..add('bodyList')
         ..add(serializers.serialize(
-          payload.bodyList!,
+          bodyList,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(String)],
           ),
         ));
     }
-    return result;
+    return result$;
   }
 }

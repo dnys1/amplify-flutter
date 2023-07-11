@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.put_bucket_metrics_configuration_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -22,15 +23,15 @@ abstract class PutBucketMetricsConfigurationRequest
         _i1.HasPayload<_i2.MetricsConfiguration> {
   factory PutBucketMetricsConfigurationRequest({
     required String bucket,
-    String? expectedBucketOwner,
     required String id,
     required _i2.MetricsConfiguration metricsConfiguration,
+    String? expectedBucketOwner,
   }) {
     return _$PutBucketMetricsConfigurationRequest._(
       bucket: bucket,
-      expectedBucketOwner: expectedBucketOwner,
       id: id,
       metricsConfiguration: metricsConfiguration,
+      expectedBucketOwner: expectedBucketOwner,
     );
   }
 
@@ -59,9 +60,8 @@ abstract class PutBucketMetricsConfigurationRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    PutBucketMetricsConfigurationRequestRestXmlSerializer()
-  ];
+  static const List<_i1.SmithySerializer<_i2.MetricsConfiguration>>
+      serializers = [PutBucketMetricsConfigurationRequestRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(PutBucketMetricsConfigurationRequestBuilder b) {}
@@ -69,14 +69,14 @@ abstract class PutBucketMetricsConfigurationRequest
   /// The name of the bucket for which the metrics configuration is set.
   String get bucket;
 
-  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
-  String? get expectedBucketOwner;
-
-  /// The ID used to identify the metrics configuration.
+  /// The ID used to identify the metrics configuration. The ID has a 64 character limit and can only contain letters, numbers, periods, dashes, and underscores.
   String get id;
 
   /// Specifies the metrics configuration.
   _i2.MetricsConfiguration get metricsConfiguration;
+
+  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
+  String? get expectedBucketOwner;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -94,30 +94,30 @@ abstract class PutBucketMetricsConfigurationRequest
   @override
   List<Object?> get props => [
         bucket,
-        expectedBucketOwner,
         id,
         metricsConfiguration,
+        expectedBucketOwner,
       ];
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('PutBucketMetricsConfigurationRequest');
-    helper.add(
-      'bucket',
-      bucket,
-    );
-    helper.add(
-      'expectedBucketOwner',
-      expectedBucketOwner,
-    );
-    helper.add(
-      'id',
-      id,
-    );
-    helper.add(
-      'metricsConfiguration',
-      metricsConfiguration,
-    );
+        newBuiltValueToStringHelper('PutBucketMetricsConfigurationRequest')
+          ..add(
+            'bucket',
+            bucket,
+          )
+          ..add(
+            'id',
+            id,
+          )
+          ..add(
+            'metricsConfiguration',
+            metricsConfiguration,
+          )
+          ..add(
+            'expectedBucketOwner',
+            expectedBucketOwner,
+          );
     return helper.toString();
   }
 }
@@ -148,24 +148,23 @@ class PutBucketMetricsConfigurationRequestRestXmlSerializer
     final result = _i2.MetricsConfigurationBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'Id':
           result.id = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'Filter':
-          if (value != null) {
-            result.filter = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i4.MetricsFilter),
-            ) as _i4.MetricsFilter);
-          }
-          break;
+          result.filter = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i4.MetricsFilter),
+          ) as _i4.MetricsFilter);
       }
     }
 
@@ -175,32 +174,30 @@ class PutBucketMetricsConfigurationRequestRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    _i2.MetricsConfiguration object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is PutBucketMetricsConfigurationRequest
-        ? object.getPayload()
-        : (object as _i2.MetricsConfiguration);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName(
         'MetricsConfiguration',
         _i1.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    result
+    final _i2.MetricsConfiguration(:id, :filter) = object;
+    result$
       ..add(const _i1.XmlElementName('Id'))
       ..add(serializers.serialize(
-        payload.id,
+        id,
         specifiedType: const FullType(String),
       ));
-    if (payload.filter != null) {
-      result
+    if (filter != null) {
+      result$
         ..add(const _i1.XmlElementName('Filter'))
         ..add(serializers.serialize(
-          payload.filter!,
+          filter,
           specifiedType: const FullType(_i4.MetricsFilter),
         ));
     }
-    return result;
+    return result$;
   }
 }

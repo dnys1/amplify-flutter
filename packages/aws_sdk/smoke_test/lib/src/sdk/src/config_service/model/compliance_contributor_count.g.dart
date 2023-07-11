@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of smoke_test.config_service.model.compliance_contributor_count;
+part of 'compliance_contributor_count.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
@@ -8,16 +8,22 @@ part of smoke_test.config_service.model.compliance_contributor_count;
 
 class _$ComplianceContributorCount extends ComplianceContributorCount {
   @override
-  final bool? capExceeded;
+  final int cappedCount;
   @override
-  final int? cappedCount;
+  final bool capExceeded;
 
   factory _$ComplianceContributorCount(
           [void Function(ComplianceContributorCountBuilder)? updates]) =>
       (new ComplianceContributorCountBuilder()..update(updates))._build();
 
-  _$ComplianceContributorCount._({this.capExceeded, this.cappedCount})
-      : super._();
+  _$ComplianceContributorCount._(
+      {required this.cappedCount, required this.capExceeded})
+      : super._() {
+    BuiltValueNullFieldError.checkNotNull(
+        cappedCount, r'ComplianceContributorCount', 'cappedCount');
+    BuiltValueNullFieldError.checkNotNull(
+        capExceeded, r'ComplianceContributorCount', 'capExceeded');
+  }
 
   @override
   ComplianceContributorCount rebuild(
@@ -32,15 +38,15 @@ class _$ComplianceContributorCount extends ComplianceContributorCount {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is ComplianceContributorCount &&
-        capExceeded == other.capExceeded &&
-        cappedCount == other.cappedCount;
+        cappedCount == other.cappedCount &&
+        capExceeded == other.capExceeded;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
-    _$hash = $jc(_$hash, capExceeded.hashCode);
     _$hash = $jc(_$hash, cappedCount.hashCode);
+    _$hash = $jc(_$hash, capExceeded.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -51,13 +57,13 @@ class ComplianceContributorCountBuilder
         Builder<ComplianceContributorCount, ComplianceContributorCountBuilder> {
   _$ComplianceContributorCount? _$v;
 
-  bool? _capExceeded;
-  bool? get capExceeded => _$this._capExceeded;
-  set capExceeded(bool? capExceeded) => _$this._capExceeded = capExceeded;
-
   int? _cappedCount;
   int? get cappedCount => _$this._cappedCount;
   set cappedCount(int? cappedCount) => _$this._cappedCount = cappedCount;
+
+  bool? _capExceeded;
+  bool? get capExceeded => _$this._capExceeded;
+  set capExceeded(bool? capExceeded) => _$this._capExceeded = capExceeded;
 
   ComplianceContributorCountBuilder() {
     ComplianceContributorCount._init(this);
@@ -66,8 +72,8 @@ class ComplianceContributorCountBuilder
   ComplianceContributorCountBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _capExceeded = $v.capExceeded;
       _cappedCount = $v.cappedCount;
+      _capExceeded = $v.capExceeded;
       _$v = null;
     }
     return this;
@@ -90,7 +96,10 @@ class ComplianceContributorCountBuilder
   _$ComplianceContributorCount _build() {
     final _$result = _$v ??
         new _$ComplianceContributorCount._(
-            capExceeded: capExceeded, cappedCount: cappedCount);
+            cappedCount: BuiltValueNullFieldError.checkNotNull(
+                cappedCount, r'ComplianceContributorCount', 'cappedCount'),
+            capExceeded: BuiltValueNullFieldError.checkNotNull(
+                capExceeded, r'ComplianceContributorCount', 'capExceeded'));
     replace(_$result);
     return _$result;
   }

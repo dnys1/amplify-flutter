@@ -9,10 +9,13 @@ import 'package:amplify_core/amplify_core.dart';
 class ModelQueries {
   ModelQueries._(); // only static methods here, prevent calling constructor
 
-  /// Generates a request for a single instance of the `modelType` by `id`.
+  /// Generates a request for a single instance of the `modelType` by [ModelIdentifier].
   ///
   /// ```dart
-  /// final request = ModelQueries.get(Todo.classType, 'some-todo-id-123');
+  /// final request = ModelQueries.get(
+  ///   Todo.classType,
+  ///   TodoModelIdentifier(id: 'some-todo-id-123'),
+  /// );
   /// ```
   static GraphQLRequest<M> get<
       ModelIdentifier extends Object,
@@ -26,7 +29,7 @@ class ModelQueries {
   }) {
     return ModelQueriesFactory.instance.get<ModelIdentifier, M, P>(
       modelType,
-      id,
+      modelIdentifier,
       apiName: apiName,
       authorizationMode: authorizationMode,
       headers: headers,

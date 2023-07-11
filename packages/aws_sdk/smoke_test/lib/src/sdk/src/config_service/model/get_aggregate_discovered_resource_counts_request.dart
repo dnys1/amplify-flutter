@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.get_aggregate_discovered_resource_counts_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -27,6 +28,7 @@ abstract class GetAggregateDiscoveredResourceCountsRequest
     int? limit,
     String? nextToken,
   }) {
+    limit ??= 0;
     return _$GetAggregateDiscoveredResourceCountsRequest._(
       configurationAggregatorName: configurationAggregatorName,
       filters: filters,
@@ -49,12 +51,16 @@ abstract class GetAggregateDiscoveredResourceCountsRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<
+          _i1.SmithySerializer<GetAggregateDiscoveredResourceCountsRequest>>
+      serializers = [
     GetAggregateDiscoveredResourceCountsRequestAwsJson11Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(GetAggregateDiscoveredResourceCountsRequestBuilder b) {}
+  static void _init(GetAggregateDiscoveredResourceCountsRequestBuilder b) {
+    b.limit = 0;
+  }
 
   /// The name of the configuration aggregator.
   String get configurationAggregatorName;
@@ -66,7 +72,7 @@ abstract class GetAggregateDiscoveredResourceCountsRequest
   _i4.ResourceCountGroupKey? get groupByKey;
 
   /// The maximum number of GroupedResourceCount objects returned on each page. The default is 1000. You cannot specify a number greater than 1000. If you specify 0, Config uses the default.
-  int? get limit;
+  int get limit;
 
   /// The `nextToken` string returned on a previous page that you use to get the next page of results in a paginated response.
   String? get nextToken;
@@ -83,27 +89,27 @@ abstract class GetAggregateDiscoveredResourceCountsRequest
   @override
   String toString() {
     final helper = newBuiltValueToStringHelper(
-        'GetAggregateDiscoveredResourceCountsRequest');
-    helper.add(
-      'configurationAggregatorName',
-      configurationAggregatorName,
-    );
-    helper.add(
-      'filters',
-      filters,
-    );
-    helper.add(
-      'groupByKey',
-      groupByKey,
-    );
-    helper.add(
-      'limit',
-      limit,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+        'GetAggregateDiscoveredResourceCountsRequest')
+      ..add(
+        'configurationAggregatorName',
+        configurationAggregatorName,
+      )
+      ..add(
+        'filters',
+        filters,
+      )
+      ..add(
+        'groupByKey',
+        groupByKey,
+      )
+      ..add(
+        'limit',
+        limit,
+      )
+      ..add(
+        'nextToken',
+        nextToken,
+      );
     return helper.toString();
   }
 }
@@ -137,45 +143,35 @@ class GetAggregateDiscoveredResourceCountsRequestAwsJson11Serializer extends _i1
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ConfigurationAggregatorName':
           result.configurationAggregatorName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'Filters':
-          if (value != null) {
-            result.filters.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i3.ResourceCountFilters),
-            ) as _i3.ResourceCountFilters));
-          }
-          break;
+          result.filters.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i3.ResourceCountFilters),
+          ) as _i3.ResourceCountFilters));
         case 'GroupByKey':
-          if (value != null) {
-            result.groupByKey = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i4.ResourceCountGroupKey),
-            ) as _i4.ResourceCountGroupKey);
-          }
-          break;
+          result.groupByKey = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i4.ResourceCountGroupKey),
+          ) as _i4.ResourceCountGroupKey);
         case 'Limit':
-          if (value != null) {
-            result.limit = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(int),
-            ) as int);
-          }
-          break;
+          result.limit = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int);
         case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -185,49 +181,53 @@ class GetAggregateDiscoveredResourceCountsRequestAwsJson11Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetAggregateDiscoveredResourceCountsRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as GetAggregateDiscoveredResourceCountsRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final GetAggregateDiscoveredResourceCountsRequest(
+      :configurationAggregatorName,
+      :filters,
+      :groupByKey,
+      :limit,
+      :nextToken
+    ) = object;
+    result$.addAll([
       'ConfigurationAggregatorName',
       serializers.serialize(
-        payload.configurationAggregatorName,
+        configurationAggregatorName,
         specifiedType: const FullType(String),
       ),
-    ];
-    if (payload.filters != null) {
-      result
+      'Limit',
+      serializers.serialize(
+        limit,
+        specifiedType: const FullType(int),
+      ),
+    ]);
+    if (filters != null) {
+      result$
         ..add('Filters')
         ..add(serializers.serialize(
-          payload.filters!,
+          filters,
           specifiedType: const FullType(_i3.ResourceCountFilters),
         ));
     }
-    if (payload.groupByKey != null) {
-      result
+    if (groupByKey != null) {
+      result$
         ..add('GroupByKey')
         ..add(serializers.serialize(
-          payload.groupByKey!,
+          groupByKey,
           specifiedType: const FullType(_i4.ResourceCountGroupKey),
         ));
     }
-    if (payload.limit != null) {
-      result
-        ..add('Limit')
-        ..add(serializers.serialize(
-          payload.limit!,
-          specifiedType: const FullType(int),
-        ));
-    }
-    if (payload.nextToken != null) {
-      result
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

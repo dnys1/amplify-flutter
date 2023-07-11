@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.delete_aggregation_authorization_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -39,7 +40,8 @@ abstract class DeleteAggregationAuthorizationRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<_i1.SmithySerializer<DeleteAggregationAuthorizationRequest>>
+      serializers = [
     DeleteAggregationAuthorizationRequestAwsJson11Serializer()
   ];
 
@@ -61,15 +63,15 @@ abstract class DeleteAggregationAuthorizationRequest
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DeleteAggregationAuthorizationRequest');
-    helper.add(
-      'authorizedAccountId',
-      authorizedAccountId,
-    );
-    helper.add(
-      'authorizedAwsRegion',
-      authorizedAwsRegion,
-    );
+        newBuiltValueToStringHelper('DeleteAggregationAuthorizationRequest')
+          ..add(
+            'authorizedAccountId',
+            authorizedAccountId,
+          )
+          ..add(
+            'authorizedAwsRegion',
+            authorizedAwsRegion,
+          );
     return helper.toString();
   }
 }
@@ -103,19 +105,20 @@ class DeleteAggregationAuthorizationRequestAwsJson11Serializer extends _i1
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'AuthorizedAccountId':
           result.authorizedAccountId = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'AuthorizedAwsRegion':
           result.authorizedAwsRegion = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -125,22 +128,26 @@ class DeleteAggregationAuthorizationRequestAwsJson11Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteAggregationAuthorizationRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DeleteAggregationAuthorizationRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final DeleteAggregationAuthorizationRequest(
+      :authorizedAccountId,
+      :authorizedAwsRegion
+    ) = object;
+    result$.addAll([
       'AuthorizedAccountId',
       serializers.serialize(
-        payload.authorizedAccountId,
+        authorizedAccountId,
         specifiedType: const FullType(String),
       ),
       'AuthorizedAwsRegion',
       serializers.serialize(
-        payload.authorizedAwsRegion,
+        authorizedAwsRegion,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

@@ -8,6 +8,7 @@ import 'package:amplify_authenticator/src/blocs/auth/auth_data.dart';
 import 'package:amplify_authenticator/src/state/auth_state.dart';
 import 'package:amplify_authenticator/src/utils/country_code.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 @visibleForTesting
 typedef BlocEventPredicate = bool Function(AuthState state);
@@ -51,7 +52,7 @@ class AuthenticatorState extends ChangeNotifier {
 
   /// The current step of the authentication flow (signIn, signUp, confirmSignUp, etc.)
   AuthenticatorStep get currentStep {
-    AuthState state = _authBloc.currentState;
+    final state = _authBloc.currentState;
     if (state is LoadingState) {
       return AuthenticatorStep.loading;
     } else if (state is UnauthenticatedState) {
@@ -184,7 +185,7 @@ class AuthenticatorState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Country _country = countryCodes.first;
+  Country _country = initialCountryCode;
 
   final Map<CognitoUserAttributeKey, String> authAttributes = {};
 
@@ -278,7 +279,7 @@ class AuthenticatorState extends ChangeNotifier {
     notifyListeners();
   }
 
-  CognitoUserAttributeKey _attributeKeyToVerify = CognitoUserAttributeKey.email;
+  late CognitoUserAttributeKey _attributeKeyToVerify;
   CognitoUserAttributeKey get attributeKeyToVerify => _attributeKeyToVerify;
 
   set attributeKeyToVerify(CognitoUserAttributeKey attributeKey) {
@@ -292,8 +293,12 @@ class AuthenticatorState extends ChangeNotifier {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
     _setIsBusy(true);
-    var confirm = AuthConfirmSignInData(
+
+    TextInput.finishAutofillContext(shouldSave: true);
+
+    final confirm = AuthConfirmSignInData(
       confirmationValue: _confirmationCode.trim(),
       attributes: authAttributes,
     );
@@ -309,8 +314,12 @@ class AuthenticatorState extends ChangeNotifier {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
     _setIsBusy(true);
-    var confirm = AuthConfirmSignInData(
+
+    TextInput.finishAutofillContext(shouldSave: true);
+
+    final confirm = AuthConfirmSignInData(
       confirmationValue: _confirmationCode.trim(),
       attributes: authAttributes,
     );
@@ -325,8 +334,12 @@ class AuthenticatorState extends ChangeNotifier {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
     _setIsBusy(true);
-    var confirm = AuthConfirmSignInData(
+
+    TextInput.finishAutofillContext(shouldSave: true);
+
+    final confirm = AuthConfirmSignInData(
       confirmationValue: _newPassword.trim(),
       attributes: authAttributes,
     );
@@ -341,7 +354,11 @@ class AuthenticatorState extends ChangeNotifier {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
     _setIsBusy(true);
+
+    TextInput.finishAutofillContext(shouldSave: true);
+
     final confirmation = AuthConfirmSignUpData(
       code: _confirmationCode.trim(),
       username: _username.trim(),
@@ -358,8 +375,12 @@ class AuthenticatorState extends ChangeNotifier {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
     _setIsBusy(true);
-    AuthSignInData signIn = AuthUsernamePasswordSignInData(
+
+    TextInput.finishAutofillContext(shouldSave: true);
+
+    final signIn = AuthUsernamePasswordSignInData(
       username: _username.trim(),
       password: _password.trim(),
     );
@@ -387,7 +408,11 @@ class AuthenticatorState extends ChangeNotifier {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
     _setIsBusy(true);
+
+    TextInput.finishAutofillContext(shouldSave: true);
+
     final resetPasswordData = AuthResetPasswordData(username: _username.trim());
     _authBloc.add(AuthResetPassword(resetPasswordData));
     await nextBlocEvent(
@@ -402,9 +427,12 @@ class AuthenticatorState extends ChangeNotifier {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
     _setIsBusy(true);
-    AuthConfirmResetPasswordData confirmResetPasswordData =
-        AuthConfirmResetPasswordData(
+
+    TextInput.finishAutofillContext(shouldSave: true);
+
+    final confirmResetPasswordData = AuthConfirmResetPasswordData(
       username: _username.trim(),
       confirmationCode: _confirmationCode.trim(),
       newPassword: _newPassword.trim(),
@@ -422,6 +450,8 @@ class AuthenticatorState extends ChangeNotifier {
       return;
     }
     _setIsBusy(true);
+
+    TextInput.finishAutofillContext(shouldSave: true);
 
     final signUp = AuthSignUpData(
       username: _username.trim(),
@@ -441,13 +471,16 @@ class AuthenticatorState extends ChangeNotifier {
   }
 
   Future<void> confirmVerifyUser(
-      CognitoUserAttributeKey userAttributeKey) async {
+    CognitoUserAttributeKey userAttributeKey,
+  ) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
     _setIsBusy(true);
-    AuthConfirmVerifyUserData authConfirmVerifyUserData =
-        AuthConfirmVerifyUserData(
+
+    TextInput.finishAutofillContext(shouldSave: true);
+
+    final authConfirmVerifyUserData = AuthConfirmVerifyUserData(
       userAttributeKey: userAttributeKey,
       code: _confirmationCode,
     );
@@ -463,8 +496,12 @@ class AuthenticatorState extends ChangeNotifier {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
     _setIsBusy(true);
-    AuthVerifyUserData authVerifyUserData = AuthVerifyUserData(
+
+    TextInput.finishAutofillContext(shouldSave: true);
+
+    final authVerifyUserData = AuthVerifyUserData(
       userAttributeKey: attributeKeyToVerify,
     );
 

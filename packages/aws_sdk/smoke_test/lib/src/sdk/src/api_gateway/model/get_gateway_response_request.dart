@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.get_gateway_response_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -23,12 +24,12 @@ abstract class GetGatewayResponseRequest
         _i1.HasPayload<GetGatewayResponseRequestPayload> {
   /// Gets a GatewayResponse of a specified response type on the given RestApi.
   factory GetGatewayResponseRequest({
-    required _i3.GatewayResponseType responseType,
     required String restApiId,
+    required _i3.GatewayResponseType responseType,
   }) {
     return _$GetGatewayResponseRequest._(
-      responseType: responseType,
       restApiId: restApiId,
+      responseType: responseType,
     );
   }
 
@@ -54,18 +55,17 @@ abstract class GetGatewayResponseRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    GetGatewayResponseRequestRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<GetGatewayResponseRequestPayload>>
+      serializers = [GetGatewayResponseRequestRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetGatewayResponseRequestBuilder b) {}
 
-  /// The response type of the associated GatewayResponse.
-  _i3.GatewayResponseType get responseType;
-
   /// The string identifier of the associated RestApi.
   String get restApiId;
+
+  /// The response type of the associated GatewayResponse.
+  _i3.GatewayResponseType get responseType;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -85,20 +85,20 @@ abstract class GetGatewayResponseRequest
       GetGatewayResponseRequestPayload();
   @override
   List<Object?> get props => [
-        responseType,
         restApiId,
+        responseType,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('GetGatewayResponseRequest');
-    helper.add(
-      'responseType',
-      responseType,
-    );
-    helper.add(
-      'restApiId',
-      restApiId,
-    );
+    final helper = newBuiltValueToStringHelper('GetGatewayResponseRequest')
+      ..add(
+        'restApiId',
+        restApiId,
+      )
+      ..add(
+        'responseType',
+        responseType,
+      );
     return helper.toString();
   }
 }
@@ -160,7 +160,7 @@ class GetGatewayResponseRequestRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetGatewayResponseRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) =>
       const <Object?>[];

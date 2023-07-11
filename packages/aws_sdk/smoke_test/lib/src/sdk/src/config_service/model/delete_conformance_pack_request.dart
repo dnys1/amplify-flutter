@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.delete_conformance_pack_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -34,9 +35,8 @@ abstract class DeleteConformancePackRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    DeleteConformancePackRequestAwsJson11Serializer()
-  ];
+  static const List<_i1.SmithySerializer<DeleteConformancePackRequest>>
+      serializers = [DeleteConformancePackRequestAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DeleteConformancePackRequestBuilder b) {}
@@ -49,11 +49,11 @@ abstract class DeleteConformancePackRequest
   List<Object?> get props => [conformancePackName];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DeleteConformancePackRequest');
-    helper.add(
-      'conformancePackName',
-      conformancePackName,
-    );
+    final helper = newBuiltValueToStringHelper('DeleteConformancePackRequest')
+      ..add(
+        'conformancePackName',
+        conformancePackName,
+      );
     return helper.toString();
   }
 }
@@ -87,13 +87,15 @@ class DeleteConformancePackRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ConformancePackName':
           result.conformancePackName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -103,17 +105,18 @@ class DeleteConformancePackRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteConformancePackRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DeleteConformancePackRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final DeleteConformancePackRequest(:conformancePackName) = object;
+    result$.addAll([
       'ConformancePackName',
       serializers.serialize(
-        payload.conformancePackName,
+        conformancePackName,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

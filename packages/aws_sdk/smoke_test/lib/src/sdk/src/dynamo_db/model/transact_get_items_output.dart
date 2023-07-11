@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.transact_get_items_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -41,9 +42,8 @@ abstract class TransactGetItemsOutput
   ) =>
       payload;
 
-  static const List<_i5.SmithySerializer> serializers = [
-    TransactGetItemsOutputAwsJson10Serializer()
-  ];
+  static const List<_i5.SmithySerializer<TransactGetItemsOutput>> serializers =
+      [TransactGetItemsOutputAwsJson10Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(TransactGetItemsOutputBuilder b) {}
@@ -62,15 +62,15 @@ abstract class TransactGetItemsOutput
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('TransactGetItemsOutput');
-    helper.add(
-      'consumedCapacity',
-      consumedCapacity,
-    );
-    helper.add(
-      'responses',
-      responses,
-    );
+    final helper = newBuiltValueToStringHelper('TransactGetItemsOutput')
+      ..add(
+        'consumedCapacity',
+        consumedCapacity,
+      )
+      ..add(
+        'responses',
+        responses,
+      );
     return helper.toString();
   }
 }
@@ -104,29 +104,26 @@ class TransactGetItemsOutputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ConsumedCapacity':
-          if (value != null) {
-            result.consumedCapacity.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i4.BuiltList,
-                [FullType(_i2.ConsumedCapacity)],
-              ),
-            ) as _i4.BuiltList<_i2.ConsumedCapacity>));
-          }
-          break;
+          result.consumedCapacity.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i4.BuiltList,
+              [FullType(_i2.ConsumedCapacity)],
+            ),
+          ) as _i4.BuiltList<_i2.ConsumedCapacity>));
         case 'Responses':
-          if (value != null) {
-            result.responses.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i4.BuiltList,
-                [FullType(_i3.ItemResponse)],
-              ),
-            ) as _i4.BuiltList<_i3.ItemResponse>));
-          }
-          break;
+          result.responses.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i4.BuiltList,
+              [FullType(_i3.ItemResponse)],
+            ),
+          ) as _i4.BuiltList<_i3.ItemResponse>));
       }
     }
 
@@ -136,33 +133,33 @@ class TransactGetItemsOutputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    TransactGetItemsOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as TransactGetItemsOutput);
-    final result = <Object?>[];
-    if (payload.consumedCapacity != null) {
-      result
+    final result$ = <Object?>[];
+    final TransactGetItemsOutput(:consumedCapacity, :responses) = object;
+    if (consumedCapacity != null) {
+      result$
         ..add('ConsumedCapacity')
         ..add(serializers.serialize(
-          payload.consumedCapacity!,
+          consumedCapacity,
           specifiedType: const FullType(
             _i4.BuiltList,
             [FullType(_i2.ConsumedCapacity)],
           ),
         ));
     }
-    if (payload.responses != null) {
-      result
+    if (responses != null) {
+      result$
         ..add('Responses')
         ..add(serializers.serialize(
-          payload.responses!,
+          responses,
           specifiedType: const FullType(
             _i4.BuiltList,
             [FullType(_i3.ItemResponse)],
           ),
         ));
     }
-    return result;
+    return result$;
   }
 }

@@ -1,8 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-library model;
-
 import 'package:amplify_core/amplify_core.dart';
 
 /// {@template subscription_event}

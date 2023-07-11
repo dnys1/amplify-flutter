@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.get_bucket_analytics_configuration_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -21,13 +22,13 @@ abstract class GetBucketAnalyticsConfigurationRequest
         _i1.HasPayload<GetBucketAnalyticsConfigurationRequestPayload> {
   factory GetBucketAnalyticsConfigurationRequest({
     required String bucket,
-    String? expectedBucketOwner,
     required String id,
+    String? expectedBucketOwner,
   }) {
     return _$GetBucketAnalyticsConfigurationRequest._(
       bucket: bucket,
-      expectedBucketOwner: expectedBucketOwner,
       id: id,
+      expectedBucketOwner: expectedBucketOwner,
     );
   }
 
@@ -55,9 +56,9 @@ abstract class GetBucketAnalyticsConfigurationRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    GetBucketAnalyticsConfigurationRequestRestXmlSerializer()
-  ];
+  static const List<
+          _i1.SmithySerializer<GetBucketAnalyticsConfigurationRequestPayload>>
+      serializers = [GetBucketAnalyticsConfigurationRequestRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetBucketAnalyticsConfigurationRequestBuilder b) {}
@@ -65,11 +66,11 @@ abstract class GetBucketAnalyticsConfigurationRequest
   /// The name of the bucket from which an analytics configuration is retrieved.
   String get bucket;
 
-  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
-  String? get expectedBucketOwner;
-
   /// The ID that identifies the analytics configuration.
   String get id;
+
+  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
+  String? get expectedBucketOwner;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -88,25 +89,25 @@ abstract class GetBucketAnalyticsConfigurationRequest
   @override
   List<Object?> get props => [
         bucket,
-        expectedBucketOwner,
         id,
+        expectedBucketOwner,
       ];
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('GetBucketAnalyticsConfigurationRequest');
-    helper.add(
-      'bucket',
-      bucket,
-    );
-    helper.add(
-      'expectedBucketOwner',
-      expectedBucketOwner,
-    );
-    helper.add(
-      'id',
-      id,
-    );
+        newBuiltValueToStringHelper('GetBucketAnalyticsConfigurationRequest')
+          ..add(
+            'bucket',
+            bucket,
+          )
+          ..add(
+            'id',
+            id,
+          )
+          ..add(
+            'expectedBucketOwner',
+            expectedBucketOwner,
+          );
     return helper.toString();
   }
 }
@@ -168,15 +169,16 @@ class GetBucketAnalyticsConfigurationRequestRestXmlSerializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetBucketAnalyticsConfigurationRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName(
         'GetBucketAnalyticsConfigurationRequest',
         _i1.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    return result;
+
+    return result$;
   }
 }

@@ -1,11 +1,11 @@
 name: e2e_flutter_test
 description: Flutter testbed for worker_bee
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  flutter: ">=3.8.0-10.1.pre"
-  sdk: ">=3.0.0-0 <4.0.0"
+  flutter: ">=3.10.0"
+  sdk: ^3.0.0
 
 dependencies:
   e2e:

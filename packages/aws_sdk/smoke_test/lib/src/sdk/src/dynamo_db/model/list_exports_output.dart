@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.list_exports_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -38,7 +39,7 @@ abstract class ListExportsOutput
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
+  static const List<_i4.SmithySerializer<ListExportsOutput>> serializers = [
     ListExportsOutputAwsJson10Serializer()
   ];
 
@@ -57,15 +58,15 @@ abstract class ListExportsOutput
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ListExportsOutput');
-    helper.add(
-      'exportSummaries',
-      exportSummaries,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+    final helper = newBuiltValueToStringHelper('ListExportsOutput')
+      ..add(
+        'exportSummaries',
+        exportSummaries,
+      )
+      ..add(
+        'nextToken',
+        nextToken,
+      );
     return helper.toString();
   }
 }
@@ -98,26 +99,23 @@ class ListExportsOutputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ExportSummaries':
-          if (value != null) {
-            result.exportSummaries.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.ExportSummary)],
-              ),
-            ) as _i3.BuiltList<_i2.ExportSummary>));
-          }
-          break;
+          result.exportSummaries.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.ExportSummary)],
+            ),
+          ) as _i3.BuiltList<_i2.ExportSummary>));
         case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -127,30 +125,30 @@ class ListExportsOutputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ListExportsOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ListExportsOutput);
-    final result = <Object?>[];
-    if (payload.exportSummaries != null) {
-      result
+    final result$ = <Object?>[];
+    final ListExportsOutput(:exportSummaries, :nextToken) = object;
+    if (exportSummaries != null) {
+      result$
         ..add('ExportSummaries')
         ..add(serializers.serialize(
-          payload.exportSummaries!,
+          exportSummaries,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(_i2.ExportSummary)],
           ),
         ));
     }
-    if (payload.nextToken != null) {
-      result
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

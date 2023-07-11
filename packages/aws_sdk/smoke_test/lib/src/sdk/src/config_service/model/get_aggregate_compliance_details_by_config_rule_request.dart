@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.get_aggregate_compliance_details_by_config_rule_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -19,20 +20,21 @@ abstract class GetAggregateComplianceDetailsByConfigRuleRequest
         Built<GetAggregateComplianceDetailsByConfigRuleRequest,
             GetAggregateComplianceDetailsByConfigRuleRequestBuilder> {
   factory GetAggregateComplianceDetailsByConfigRuleRequest({
+    required String configurationAggregatorName,
+    required String configRuleName,
     required String accountId,
     required String awsRegion,
     _i3.ComplianceType? complianceType,
-    required String configRuleName,
-    required String configurationAggregatorName,
     int? limit,
     String? nextToken,
   }) {
+    limit ??= 0;
     return _$GetAggregateComplianceDetailsByConfigRuleRequest._(
+      configurationAggregatorName: configurationAggregatorName,
+      configRuleName: configRuleName,
       accountId: accountId,
       awsRegion: awsRegion,
       complianceType: complianceType,
-      configRuleName: configRuleName,
-      configurationAggregatorName: configurationAggregatorName,
       limit: limit,
       nextToken: nextToken,
     );
@@ -51,13 +53,22 @@ abstract class GetAggregateComplianceDetailsByConfigRuleRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<
+      _i1.SmithySerializer<
+          GetAggregateComplianceDetailsByConfigRuleRequest>> serializers = [
     GetAggregateComplianceDetailsByConfigRuleRequestAwsJson11Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(
-      GetAggregateComplianceDetailsByConfigRuleRequestBuilder b) {}
+  static void _init(GetAggregateComplianceDetailsByConfigRuleRequestBuilder b) {
+    b.limit = 0;
+  }
+
+  /// The name of the configuration aggregator.
+  String get configurationAggregatorName;
+
+  /// The name of the Config rule for which you want compliance information.
+  String get configRuleName;
 
   /// The 12-digit account ID of the source account.
   String get accountId;
@@ -70,14 +81,8 @@ abstract class GetAggregateComplianceDetailsByConfigRuleRequest
   /// For the `GetAggregateComplianceDetailsByConfigRuleRequest` data type, Config supports only the `COMPLIANT` and `NON_COMPLIANT`. Config does not support the `NOT_APPLICABLE` and `INSUFFICIENT_DATA` values.
   _i3.ComplianceType? get complianceType;
 
-  /// The name of the Config rule for which you want compliance information.
-  String get configRuleName;
-
-  /// The name of the configuration aggregator.
-  String get configurationAggregatorName;
-
   /// The maximum number of evaluation results returned on each page. The default is 50. You cannot specify a number greater than 100. If you specify 0, Config uses the default.
-  int? get limit;
+  int get limit;
 
   /// The `nextToken` string returned on a previous page that you use to get the next page of results in a paginated response.
   String? get nextToken;
@@ -85,46 +90,46 @@ abstract class GetAggregateComplianceDetailsByConfigRuleRequest
   GetAggregateComplianceDetailsByConfigRuleRequest getPayload() => this;
   @override
   List<Object?> get props => [
+        configurationAggregatorName,
+        configRuleName,
         accountId,
         awsRegion,
         complianceType,
-        configRuleName,
-        configurationAggregatorName,
         limit,
         nextToken,
       ];
   @override
   String toString() {
     final helper = newBuiltValueToStringHelper(
-        'GetAggregateComplianceDetailsByConfigRuleRequest');
-    helper.add(
-      'accountId',
-      accountId,
-    );
-    helper.add(
-      'awsRegion',
-      awsRegion,
-    );
-    helper.add(
-      'complianceType',
-      complianceType,
-    );
-    helper.add(
-      'configRuleName',
-      configRuleName,
-    );
-    helper.add(
-      'configurationAggregatorName',
-      configurationAggregatorName,
-    );
-    helper.add(
-      'limit',
-      limit,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+        'GetAggregateComplianceDetailsByConfigRuleRequest')
+      ..add(
+        'configurationAggregatorName',
+        configurationAggregatorName,
+      )
+      ..add(
+        'configRuleName',
+        configRuleName,
+      )
+      ..add(
+        'accountId',
+        accountId,
+      )
+      ..add(
+        'awsRegion',
+        awsRegion,
+      )
+      ..add(
+        'complianceType',
+        complianceType,
+      )
+      ..add(
+        'limit',
+        limit,
+      )
+      ..add(
+        'nextToken',
+        nextToken,
+      );
     return helper.toString();
   }
 }
@@ -159,55 +164,45 @@ class GetAggregateComplianceDetailsByConfigRuleRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
-        case 'AccountId':
-          result.accountId = (serializers.deserialize(
-            value!,
-            specifiedType: const FullType(String),
-          ) as String);
-          break;
-        case 'AwsRegion':
-          result.awsRegion = (serializers.deserialize(
-            value!,
-            specifiedType: const FullType(String),
-          ) as String);
-          break;
-        case 'ComplianceType':
-          if (value != null) {
-            result.complianceType = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i3.ComplianceType),
-            ) as _i3.ComplianceType);
-          }
-          break;
-        case 'ConfigRuleName':
-          result.configRuleName = (serializers.deserialize(
-            value!,
-            specifiedType: const FullType(String),
-          ) as String);
-          break;
         case 'ConfigurationAggregatorName':
           result.configurationAggregatorName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
+        case 'ConfigRuleName':
+          result.configRuleName = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'AccountId':
+          result.accountId = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'AwsRegion':
+          result.awsRegion = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'ComplianceType':
+          result.complianceType = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i3.ComplianceType),
+          ) as _i3.ComplianceType);
         case 'Limit':
-          if (value != null) {
-            result.limit = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(int),
-            ) as int);
-          }
-          break;
+          result.limit = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int);
         case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -217,57 +212,62 @@ class GetAggregateComplianceDetailsByConfigRuleRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetAggregateComplianceDetailsByConfigRuleRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload =
-        (object as GetAggregateComplianceDetailsByConfigRuleRequest);
-    final result = <Object?>[
-      'AccountId',
+    final result$ = <Object?>[];
+    final GetAggregateComplianceDetailsByConfigRuleRequest(
+      :configurationAggregatorName,
+      :configRuleName,
+      :accountId,
+      :awsRegion,
+      :complianceType,
+      :limit,
+      :nextToken
+    ) = object;
+    result$.addAll([
+      'ConfigurationAggregatorName',
       serializers.serialize(
-        payload.accountId,
-        specifiedType: const FullType(String),
-      ),
-      'AwsRegion',
-      serializers.serialize(
-        payload.awsRegion,
+        configurationAggregatorName,
         specifiedType: const FullType(String),
       ),
       'ConfigRuleName',
       serializers.serialize(
-        payload.configRuleName,
+        configRuleName,
         specifiedType: const FullType(String),
       ),
-      'ConfigurationAggregatorName',
+      'AccountId',
       serializers.serialize(
-        payload.configurationAggregatorName,
+        accountId,
         specifiedType: const FullType(String),
       ),
-    ];
-    if (payload.complianceType != null) {
-      result
+      'AwsRegion',
+      serializers.serialize(
+        awsRegion,
+        specifiedType: const FullType(String),
+      ),
+      'Limit',
+      serializers.serialize(
+        limit,
+        specifiedType: const FullType(int),
+      ),
+    ]);
+    if (complianceType != null) {
+      result$
         ..add('ComplianceType')
         ..add(serializers.serialize(
-          payload.complianceType!,
+          complianceType,
           specifiedType: const FullType(_i3.ComplianceType),
         ));
     }
-    if (payload.limit != null) {
-      result
-        ..add('Limit')
-        ..add(serializers.serialize(
-          payload.limit!,
-          specifiedType: const FullType(int),
-        ));
-    }
-    if (payload.nextToken != null) {
-      result
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

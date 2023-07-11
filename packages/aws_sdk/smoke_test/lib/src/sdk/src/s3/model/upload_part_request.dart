@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.upload_part_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -7,9 +8,9 @@ import 'dart:async' as _i2;
 import 'package:aws_common/aws_common.dart' as _i3;
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:fixnum/fixnum.dart' as _i5;
+import 'package:fixnum/fixnum.dart' as _i4;
 import 'package:smithy/smithy.dart' as _i1;
-import 'package:smoke_test/src/sdk/src/s3/model/checksum_algorithm.dart' as _i4;
+import 'package:smoke_test/src/sdk/src/s3/model/checksum_algorithm.dart' as _i5;
 import 'package:smoke_test/src/sdk/src/s3/model/request_payer.dart' as _i6;
 
 part 'upload_part_request.g.dart';
@@ -24,41 +25,41 @@ abstract class UploadPartRequest
   factory UploadPartRequest({
     _i2.Stream<List<int>>? body,
     required String bucket,
-    _i4.ChecksumAlgorithm? checksumAlgorithm,
+    _i4.Int64? contentLength,
+    String? contentMd5,
+    _i5.ChecksumAlgorithm? checksumAlgorithm,
     String? checksumCrc32,
     String? checksumCrc32C,
     String? checksumSha1,
     String? checksumSha256,
-    _i5.Int64? contentLength,
-    String? contentMd5,
-    String? expectedBucketOwner,
     required String key,
     int? partNumber,
-    _i6.RequestPayer? requestPayer,
+    required String uploadId,
     String? sseCustomerAlgorithm,
     String? sseCustomerKey,
     String? sseCustomerKeyMd5,
-    required String uploadId,
+    _i6.RequestPayer? requestPayer,
+    String? expectedBucketOwner,
   }) {
-    partNumber ??= 0;
+    body ??= const _i2.Stream.empty();
     return _$UploadPartRequest._(
       body: body,
       bucket: bucket,
+      contentLength: contentLength,
+      contentMd5: contentMd5,
       checksumAlgorithm: checksumAlgorithm,
       checksumCrc32: checksumCrc32,
       checksumCrc32C: checksumCrc32C,
       checksumSha1: checksumSha1,
       checksumSha256: checksumSha256,
-      contentLength: contentLength,
-      contentMd5: contentMd5,
-      expectedBucketOwner: expectedBucketOwner,
       key: key,
       partNumber: partNumber,
-      requestPayer: requestPayer,
+      uploadId: uploadId,
       sseCustomerAlgorithm: sseCustomerAlgorithm,
       sseCustomerKey: sseCustomerKey,
       sseCustomerKeyMd5: sseCustomerKeyMd5,
-      uploadId: uploadId,
+      requestPayer: requestPayer,
+      expectedBucketOwner: expectedBucketOwner,
     );
   }
 
@@ -76,13 +77,13 @@ abstract class UploadPartRequest
         b.body = payload;
         if (request.headers['Content-Length'] != null) {
           b.contentLength =
-              _i5.Int64.parseInt(request.headers['Content-Length']!);
+              _i4.Int64.parseInt(request.headers['Content-Length']!);
         }
         if (request.headers['Content-MD5'] != null) {
           b.contentMd5 = request.headers['Content-MD5']!;
         }
         if (request.headers['x-amz-sdk-checksum-algorithm'] != null) {
-          b.checksumAlgorithm = _i4.ChecksumAlgorithm.values
+          b.checksumAlgorithm = _i5.ChecksumAlgorithm.values
               .byValue(request.headers['x-amz-sdk-checksum-algorithm']!);
         }
         if (request.headers['x-amz-checksum-crc32'] != null) {
@@ -135,13 +136,12 @@ abstract class UploadPartRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    UploadPartRequestRestXmlSerializer()
-  ];
+  static const List<_i1.SmithySerializer<_i2.Stream<List<int>>?>> serializers =
+      [UploadPartRequestRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(UploadPartRequestBuilder b) {
-    b.partNumber = 0;
+    b.body = const _i2.Stream.empty();
   }
 
   /// Object data.
@@ -151,15 +151,21 @@ abstract class UploadPartRequest
   ///
   /// When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
   ///
-  /// When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `_AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com`. When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using Amazon S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
+  /// When you use this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `_AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com`. When you use this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts access point ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [What is S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
   String get bucket;
+
+  /// Size of the body in bytes. This parameter is useful when the size of the body cannot be determined automatically.
+  _i4.Int64? get contentLength;
+
+  /// The base64-encoded 128-bit MD5 digest of the part data. This parameter is auto-populated when using the command from the CLI. This parameter is required if object lock parameters are specified.
+  String? get contentMd5;
 
   /// Indicates the algorithm used to create the checksum for the object when using the SDK. This header will not provide any additional functionality if not using the SDK. When sending this header, there must be a corresponding `x-amz-checksum` or `x-amz-trailer` header sent. Otherwise, Amazon S3 fails the request with the HTTP status code `400 Bad Request`. For more information, see [Checking object integrity](https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html) in the _Amazon S3 User Guide_.
   ///
   /// If you provide an individual checksum, Amazon S3 ignores any provided `ChecksumAlgorithm` parameter.
   ///
   /// This checksum algorithm must be the same for all parts and it match the checksum value supplied in the `CreateMultipartUpload` request.
-  _i4.ChecksumAlgorithm? get checksumAlgorithm;
+  _i5.ChecksumAlgorithm? get checksumAlgorithm;
 
   /// This header can be used as a data integrity check to verify that the data received is the same data that was originally sent. This header specifies the base64-encoded, 32-bit CRC32 checksum of the object. For more information, see [Checking object integrity](https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html) in the _Amazon S3 User Guide_.
   String? get checksumCrc32;
@@ -173,23 +179,14 @@ abstract class UploadPartRequest
   /// This header can be used as a data integrity check to verify that the data received is the same data that was originally sent. This header specifies the base64-encoded, 256-bit SHA-256 digest of the object. For more information, see [Checking object integrity](https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html) in the _Amazon S3 User Guide_.
   String? get checksumSha256;
 
-  /// Size of the body in bytes. This parameter is useful when the size of the body cannot be determined automatically.
-  _i5.Int64? get contentLength;
-
-  /// The base64-encoded 128-bit MD5 digest of the part data. This parameter is auto-populated when using the command from the CLI. This parameter is required if object lock parameters are specified.
-  String? get contentMd5;
-
-  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
-  String? get expectedBucketOwner;
-
   /// Object key for which the multipart upload was initiated.
   String get key;
 
   /// Part number of part being uploaded. This is a positive integer between 1 and 10,000.
-  int get partNumber;
+  int? get partNumber;
 
-  /// Confirms that the requester knows that they will be charged for the request. Bucket owners need not specify this parameter in their requests. For information about downloading objects from Requester Pays buckets, see [Downloading Objects in Requester Pays Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html) in the _Amazon S3 User Guide_.
-  _i6.RequestPayer? get requestPayer;
+  /// Upload ID identifying the multipart upload whose part is being uploaded.
+  String get uploadId;
 
   /// Specifies the algorithm to use to when encrypting the object (for example, AES256).
   String? get sseCustomerAlgorithm;
@@ -200,8 +197,11 @@ abstract class UploadPartRequest
   /// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure that the encryption key was transmitted without error.
   String? get sseCustomerKeyMd5;
 
-  /// Upload ID identifying the multipart upload whose part is being uploaded.
-  String get uploadId;
+  /// Confirms that the requester knows that they will be charged for the request. Bucket owners need not specify this parameter in their requests. For information about downloading objects from Requester Pays buckets, see [Downloading Objects in Requester Pays Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html) in the _Amazon S3 User Guide_.
+  _i6.RequestPayer? get requestPayer;
+
+  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
+  String? get expectedBucketOwner;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -222,93 +222,93 @@ abstract class UploadPartRequest
   List<Object?> get props => [
         body,
         bucket,
+        contentLength,
+        contentMd5,
         checksumAlgorithm,
         checksumCrc32,
         checksumCrc32C,
         checksumSha1,
         checksumSha256,
-        contentLength,
-        contentMd5,
-        expectedBucketOwner,
         key,
         partNumber,
-        requestPayer,
+        uploadId,
         sseCustomerAlgorithm,
         sseCustomerKey,
         sseCustomerKeyMd5,
-        uploadId,
+        requestPayer,
+        expectedBucketOwner,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('UploadPartRequest');
-    helper.add(
-      'body',
-      body,
-    );
-    helper.add(
-      'bucket',
-      bucket,
-    );
-    helper.add(
-      'checksumAlgorithm',
-      checksumAlgorithm,
-    );
-    helper.add(
-      'checksumCrc32',
-      checksumCrc32,
-    );
-    helper.add(
-      'checksumCrc32C',
-      checksumCrc32C,
-    );
-    helper.add(
-      'checksumSha1',
-      checksumSha1,
-    );
-    helper.add(
-      'checksumSha256',
-      checksumSha256,
-    );
-    helper.add(
-      'contentLength',
-      contentLength,
-    );
-    helper.add(
-      'contentMd5',
-      contentMd5,
-    );
-    helper.add(
-      'expectedBucketOwner',
-      expectedBucketOwner,
-    );
-    helper.add(
-      'key',
-      key,
-    );
-    helper.add(
-      'partNumber',
-      partNumber,
-    );
-    helper.add(
-      'requestPayer',
-      requestPayer,
-    );
-    helper.add(
-      'sseCustomerAlgorithm',
-      sseCustomerAlgorithm,
-    );
-    helper.add(
-      'sseCustomerKey',
-      '***SENSITIVE***',
-    );
-    helper.add(
-      'sseCustomerKeyMd5',
-      sseCustomerKeyMd5,
-    );
-    helper.add(
-      'uploadId',
-      uploadId,
-    );
+    final helper = newBuiltValueToStringHelper('UploadPartRequest')
+      ..add(
+        'body',
+        body,
+      )
+      ..add(
+        'bucket',
+        bucket,
+      )
+      ..add(
+        'contentLength',
+        contentLength,
+      )
+      ..add(
+        'contentMd5',
+        contentMd5,
+      )
+      ..add(
+        'checksumAlgorithm',
+        checksumAlgorithm,
+      )
+      ..add(
+        'checksumCrc32',
+        checksumCrc32,
+      )
+      ..add(
+        'checksumCrc32C',
+        checksumCrc32C,
+      )
+      ..add(
+        'checksumSha1',
+        checksumSha1,
+      )
+      ..add(
+        'checksumSha256',
+        checksumSha256,
+      )
+      ..add(
+        'key',
+        key,
+      )
+      ..add(
+        'partNumber',
+        partNumber,
+      )
+      ..add(
+        'uploadId',
+        uploadId,
+      )
+      ..add(
+        'sseCustomerAlgorithm',
+        sseCustomerAlgorithm,
+      )
+      ..add(
+        'sseCustomerKey',
+        '***SENSITIVE***',
+      )
+      ..add(
+        'sseCustomerKeyMd5',
+        sseCustomerKeyMd5,
+      )
+      ..add(
+        'requestPayer',
+        requestPayer,
+      )
+      ..add(
+        'expectedBucketOwner',
+        expectedBucketOwner,
+      );
     return helper.toString();
   }
 }
@@ -352,23 +352,18 @@ class UploadPartRequestRestXmlSerializer
   @override
   Object serialize(
     Serializers serializers,
-    Object? object, {
+    _i2.Stream<List<int>> object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is UploadPartRequest
-        ? object.getPayload()
-        : (object as _i2.Stream<List<int>>?);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName(
         'UploadPartRequest',
         _i1.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    if (payload == null) {
-      return result;
-    }
-    result.add(serializers.serialize(
-      payload,
+
+    result$.add(serializers.serialize(
+      object,
       specifiedType: const FullType(
         _i2.Stream,
         [
@@ -379,6 +374,6 @@ class UploadPartRequestRestXmlSerializer
         ],
       ),
     ));
-    return result;
+    return result$;
   }
 }

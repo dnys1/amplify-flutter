@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'package:amplify_authenticator/amplify_authenticator.dart';
+import 'package:amplify_authenticator/src/l10n/authenticator_localizations.dart';
+import 'package:amplify_authenticator/src/l10n/resolver.dart';
 import 'package:flutter/material.dart';
-
-import 'authenticator_localizations.dart';
-import 'resolver.dart';
 
 enum InputField {
   username,
@@ -40,12 +39,20 @@ enum InputResolverKeyType {
   hint,
   confirmHint,
   empty,
+  usernameRequirements,
   passwordRequirements,
   format,
   mismatch
 }
 
 class InputResolverKey {
+  const InputResolverKey.passwordRequirementsUnmet(
+    PasswordProtectionSettings requirements,
+  ) : this._(
+          InputResolverKeyType.passwordRequirements,
+          field: InputField.password,
+          unmetPasswordRequirements: requirements,
+        );
   const InputResolverKey._(
     this.type, {
     required this.field,
@@ -66,6 +73,10 @@ class InputResolverKey {
   );
   static const usernameEmpty = InputResolverKey._(
     InputResolverKeyType.empty,
+    field: InputField.username,
+  );
+  static const usernameRequirementsUnmet = InputResolverKey._(
+    InputResolverKeyType.usernameRequirements,
     field: InputField.username,
   );
   static const passwordTitle = InputResolverKey._(
@@ -104,13 +115,6 @@ class InputResolverKey {
     InputResolverKeyType.mismatch,
     field: InputField.passwordConfirmation,
   );
-  const InputResolverKey.passwordRequirementsUnmet(
-    PasswordProtectionSettings requirements,
-  ) : this._(
-          InputResolverKeyType.passwordRequirements,
-          field: InputField.password,
-          unmetPasswordRequirements: requirements,
-        );
   static const emailTitle = InputResolverKey._(
     InputResolverKeyType.title,
     field: InputField.email,
@@ -465,30 +469,36 @@ class InputResolver extends Resolver<InputResolverKey> {
         .warnInvalidFormat(title(context, field).toLowerCase());
   }
 
+  /// Returns the text displayed when the username requirements are not met
+  String usernameRequires(BuildContext context) {
+    return AuthenticatorLocalizations.inputsOf(context).usernameRequirements;
+  }
+
   /// Returns the text displayed when a password input does match the password requirements
   /// defined in the amplify configuration.
   String passwordRequires(
     BuildContext context,
     PasswordProtectionSettings requirements,
   ) {
-    var minLength = requirements.passwordPolicyMinLength;
-    var characterReqs = requirements.passwordPolicyCharacters;
+    final minLength = requirements.passwordPolicyMinLength;
+    final characterReqs = requirements.passwordPolicyCharacters;
     if (minLength == null && (characterReqs.isEmpty)) {
       return '';
     }
-    var sb = StringBuffer();
-    sb.writeln(
-      AuthenticatorLocalizations.inputsOf(context).passwordRequirementsPreamble,
-    );
+    final sb = StringBuffer()
+      ..writeln(
+        AuthenticatorLocalizations.inputsOf(context)
+            .passwordRequirementsPreamble,
+      );
     if (minLength != null) {
-      var atLeast = AuthenticatorLocalizations.inputsOf(context)
+      final atLeast = AuthenticatorLocalizations.inputsOf(context)
           .passwordRequirementsAtLeast(minLength, '');
       sb.writeln('* $atLeast');
     }
-    for (var characterReq in characterReqs) {
-      var characterType = AuthenticatorLocalizations.inputsOf(context)
-          .passwordRequirementsCharacterType(characterReq);
-      var atLeast = AuthenticatorLocalizations.inputsOf(context)
+    for (final characterReq in characterReqs) {
+      final characterType = AuthenticatorLocalizations.inputsOf(context)
+          .passwordRequirementsCharacterType(characterReq.name);
+      final atLeast = AuthenticatorLocalizations.inputsOf(context)
           .passwordRequirementsAtLeast(1, characterType);
       sb.writeln('* $atLeast');
     }
@@ -511,6 +521,8 @@ class InputResolver extends Resolver<InputResolverKey> {
         return confirmHint(context, key.field);
       case InputResolverKeyType.empty:
         return empty(context, key.field);
+      case InputResolverKeyType.usernameRequirements:
+        return usernameRequires(context);
       case InputResolverKeyType.passwordRequirements:
         return passwordRequires(context, key.unmetPasswordRequirements!);
       case InputResolverKeyType.mismatch:

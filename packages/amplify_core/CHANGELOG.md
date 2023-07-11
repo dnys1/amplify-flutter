@@ -1,3 +1,131 @@
+## 1.2.0
+
+### Fixes
+- fix(api): GraphQL subscription with custom domain formats URI correctly ([#3148](https://github.com/aws-amplify/amplify-flutter/pull/3148))
+- fix(auth): Attribute key equality ([#3136](https://github.com/aws-amplify/amplify-flutter/pull/3136))
+- fix(auth): `signOut` after user deletion ([#3162](https://github.com/aws-amplify/amplify-flutter/pull/3162))
+- fix(storage): API doc errors
+
+### Features
+- feat(storage): using path style URLs when bucket name contains dots
+
+## 1.1.1
+
+### Fixes
+- fix(auth): User attribute serialization
+- fix(datastore): support nested predicates for observe and observeQuery ([#3029](https://github.com/aws-amplify/amplify-flutter/pull/3029))
+
+## 1.1.0
+
+### Features
+- Dart 3 support (must update Dart SDK constraint to `^3.0.0`)
+- feat(core): add granular model read operations ([#2611](https://github.com/aws-amplify/amplify-flutter/pull/2611))
+
+### Fixes
+- fix(auth): Fetch AWS credentials after Hosted UI login ([#2956](https://github.com/aws-amplify/amplify-flutter/pull/2956))
+- fix(auth): Transform network exceptions ([#2967](https://github.com/aws-amplify/amplify-flutter/pull/2967))
+- fix: wait for addPlugin prior to configuration ([#3018](https://github.com/aws-amplify/amplify-flutter/pull/3018))
+
+## 1.0.1
+
+### Fixes
+- fix(repo): Flutter 3.3 support
+- fix(storage): API doc errors
+- fix: convert AuthUserAttributeKey in updateUserAttributes
+
+## 1.0.0
+
+We are thrilled to release version 1.0 of the Amplify Flutter libraries!
+
+This release introduces a full rewrite of the Amplify libraries in Dart, allowing you to build AWS cloud-connected
+applications on every platform Flutter supports (iOS, Android, Web, macOS, Windows, and Linux).
+
+If you've been using v0 in production, you can now safely migrate to v1. Check out our 
+[migration guide](https://docs.amplify.aws/lib/project-setup/upgrade-guide/q/platform/flutter/) for 
+more information.
+
+As always, you can find us on [GitHub](https://github.com/aws-amplify/amplify-flutter/) and 
+[Discord](https://discord.gg/jWVbPfC) to answer any questions.
+
+## 1.0.0-next.8+1
+
+### Features
+- feat(notifications): implement push notification Flutter iOS module ([#2707](https://github.com/aws-amplify/amplify-flutter/pull/2707))
+- feat(notifications): killed state notification handling and Analytics integration ([#2747](https://github.com/aws-amplify/amplify-flutter/pull/2747))
+- feat(push): interfaces, category function and types added for push
+
+### Fixes
+- fix(auth): Cancel sign in ([#2840](https://github.com/aws-amplify/amplify-flutter/pull/2840))
+- fix(core): formatting issues in notifications data types
+- fix(notifications): Analytics naming updates, Android test fixes and token received bug fix ([#2824](https://github.com/aws-amplify/amplify-flutter/pull/2824))
+
+## 1.0.0-next.8
+
+### Breaking Changes
+- chore(analytics)!: Remove Analytics Prefix ([#2753](https://github.com/aws-amplify/amplify-flutter/pull/2753))
+- chore(analytics)!: export endpointManager, redo exports
+- chore(auth)!: send Pinpoint Endpoint id to Cognito
+- feat(storage)!: update upload APIs options to add metadata field ([#2815](https://github.com/aws-amplify/amplify-flutter/pull/2815))
+- fix(storage)!: make S3Exception internal
+- refactor(auth)!: Remove generic types ([#2804](https://github.com/aws-amplify/amplify-flutter/pull/2804))
+- refactor(core)!: Dependency management
+- refactor(storage)!: rename checkObjectExistence to validateObjectExistence
+- refactor(storage)!: simplify storage s3 exceptions throwing
+- refactor(storage)!: storage category APIs to use category level plugin options ([#2754](https://github.com/aws-amplify/amplify-flutter/pull/2754))
+
+### Fixes
+- fix(api): Auth provider registration
+- fix(api): Include owner field in selection set ([#2795](https://github.com/aws-amplify/amplify-flutter/pull/2795))
+- fix(api): Support model definition target name ([#2814](https://github.com/aws-amplify/amplify-flutter/pull/2814))
+- fix(api): Supported protocols should be set on base client only
+- fix(auth): Always allow repeated `confirmSignIn` attempts
+- fix(auth): Client secret support
+- fix(auth): Process sign-in events once
+- fix(auth): User pool-only support
+- fix(smithy): Add missing `@optionalAuth` traits
+- fix(storage): Use `reifyPluginOptions` as instance method
+- fix(storage): add handling of AWSHttpException
+- fix(storage): remove unnecessary exception for resuming a canceled task
+
+### Features
+- feat(storage): add generic StorageOperationCanceledException in core
+- feat(storage): add handling of non-ascii object metadata values
+- feat(storage): make access level optional for storage APIs ([#2793](https://github.com/aws-amplify/amplify-flutter/pull/2793))
+- feat(storage): promote StorageTransferState to amplify_core
+
+## 1.0.0-next.7
+
+### Breaking Changes
+- refactor(auth)!: Plugin options ([#2691](https://github.com/aws-amplify/amplify-flutter/pull/2691))
+
+### Fixes
+- fix(analytics): event retry logic & max fail tries ([#2713](https://github.com/aws-amplify/amplify-flutter/pull/2713))
+- fix(auth): Always pass client metadata
+- fix(core): Refine `toJson` outputs when `createFactory = false`
+
+## 1.0.0-next.6
+
+### Breaking Changes
+- chore(auth)!: Chain stack traces in state machine
+- chore(core)!: Chain stack traces for state machines
+- feat(api)!: custom primary key support for GraphQL model helpers ([#2606](https://github.com/aws-amplify/amplify-flutter/pull/2606))
+
+### Fixes
+- fix(api): early call of Amplify creates wrong instance of AmplifyClass
+- fix(api): write null values in ModelMutations.create() unless owner field ([#2679](https://github.com/aws-amplify/amplify-flutter/pull/2679))
+- fix(auth): Transform session expired exceptions ([#2688](https://github.com/aws-amplify/amplify-flutter/pull/2688))
+- fix(storage): GetUrl signing
+
+### Features
+- feat(api): GraphQL Subscription Where Filter ([#2650](https://github.com/aws-amplify/amplify-flutter/pull/2650))
+- feat(storage): optimize part size for multipart upload
+- feat(storage): web implementation of transfer database using local storage ([#2631](https://github.com/aws-amplify/amplify-flutter/pull/2631))
+
+## 1.0.0-next.5+1
+
+### Fixes
+- fix(api): include parent IDs in selection set for model helpers ([#2655](https://github.com/aws-amplify/amplify-flutter/pull/2655))
+
 ## 1.0.0-next.5
 
 ### Breaking Changes

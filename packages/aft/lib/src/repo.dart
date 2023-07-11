@@ -17,20 +17,24 @@ import 'package:pub_semver/pub_semver.dart';
 /// management.
 class Repo {
   Repo(
-    this.rootDir, {
-    required this.allPackages,
-    required this.aftConfig,
+    this.aftConfig, {
     AWSLogger? logger,
   }) : logger = logger ?? AWSLogger().createChild('Repo');
 
+  final AftConfig aftConfig;
+
+  Map<String, PackageInfo> get allPackages => aftConfig.allPackages;
+
+  Map<String, AftComponent> get components => aftConfig.components;
+
   /// The root directory of the repository.
-  final Directory rootDir;
+  late final Directory rootDir = Directory.fromUri(aftConfig.rootDirectory);
+
+  /// The current working directory.
+  late final Directory workingDirectory =
+      Directory.fromUri(aftConfig.workingDirectory);
 
   final AWSLogger logger;
-
-  final Map<String, PackageInfo> allPackages;
-
-  final AftConfig aftConfig;
 
   /// All packages which can be published to `pub.dev`.
   List<PackageInfo> publishablePackages([
@@ -42,41 +46,6 @@ class Repo {
             .where((pkg) => pkg.isPublishable)
             .toList(),
       );
-
-  /// The components of the repository.
-  late final Map<String, AftRepoComponent> components = () {
-    final components = Map.fromEntries(
-      aftConfig.components.map((component) {
-        final summaryPackage =
-            component.summary == null ? null : allPackages[component.summary]!;
-        final packages =
-            component.packages.map((name) => allPackages[name]!).toList();
-        final packageGraph = UnmodifiableMapView({
-          for (final package in packages)
-            package: package.pubspecInfo.pubspec.dependencies.keys
-                .map(
-                  (packageName) => packages.firstWhereOrNull(
-                    (pkg) => pkg.name == packageName,
-                  ),
-                )
-                .whereType<PackageInfo>()
-                .toList(),
-        });
-        return MapEntry(
-          component.name,
-          AftRepoComponent(
-            name: component.name,
-            summary: summaryPackage,
-            packages: packages,
-            packageGraph: packageGraph,
-            propagate: component.propagate,
-          ),
-        );
-      }),
-    );
-    logger.verbose('Components: $components');
-    return components;
-  }();
 
   /// The libgit repository.
   late final Repository repo = Repository.open(rootDir.path);
@@ -119,22 +88,44 @@ class Repo {
     return null;
   }
 
+  /// Returns the directed graph of packages to the packages it depends on.
+  ///
+  /// Will include dev dependencies if [includeDevDependencies] is `true`.
+  Map<PackageInfo, List<PackageInfo>> getPackageGraph({
+    bool includeDevDependencies = false,
+  }) =>
+      UnmodifiableMapView({
+        for (final package in allPackages.values)
+          package: [
+            ...package.pubspecInfo.pubspec.dependencies.keys,
+            if (includeDevDependencies)
+              ...package.pubspecInfo.pubspec.devDependencies.keys,
+          ]
+              .map((packageName) => allPackages[packageName])
+              .whereType<PackageInfo>()
+              .toList(),
+      });
+
   /// The directed graph of packages to the packages it depends on.
   late final Map<PackageInfo, List<PackageInfo>> packageGraph =
-      UnmodifiableMapView({
-    for (final package in allPackages.values)
-      package: package.pubspecInfo.pubspec.dependencies.keys
-          .map((packageName) => allPackages[packageName])
-          .whereType<PackageInfo>()
-          .toList(),
-  });
+      getPackageGraph();
 
   /// The reversed (transposed) [packageGraph].
   ///
   /// Provides a mapping from each packages to the packages which directly
   /// depend on it.
-  late final Map<PackageInfo, List<PackageInfo>> reversedPackageGraph = () {
-    final packageGraph = this.packageGraph;
+  late final Map<PackageInfo, List<PackageInfo>> reversedPackageGraph =
+      getReversedPackageGraph();
+
+  /// Returns the directed graph of packages to the packages which depend on it.
+  ///
+  /// Will include dev dependencies if [includeDevDependencies] is `true`.
+  Map<PackageInfo, List<PackageInfo>> getReversedPackageGraph({
+    bool includeDevDependencies = false,
+  }) {
+    final packageGraph = getPackageGraph(
+      includeDevDependencies: includeDevDependencies,
+    );
     final reversedPackageGraph = <PackageInfo, List<PackageInfo>>{
       for (final package in allPackages.values) package: [],
     };
@@ -144,7 +135,7 @@ class Repo {
       }
     }
     return UnmodifiableMapView(reversedPackageGraph);
-  }();
+  }
 
   /// The git diff between [oldTree] and [newTree].
   ///
@@ -240,14 +231,17 @@ class Repo {
   final Map<PackageInfo, ChangelogUpdate> changelogUpdates = {};
 
   /// Bumps the version for all packages in the repo.
-  void bumpAllVersions({
+  void bumpAllVersions(
+    Map<String, PackageInfo> packages, {
     required GitChanges Function(PackageInfo) changesForPackage,
+    VersionBumpType? forcedBumpType,
   }) {
-    final sortedPackages = List.of(publishablePackages());
+    final sortedPackages = List.of(publishablePackages(packages));
     sortPackagesTopologically(
       sortedPackages,
       (PackageInfo pkg) => pkg.pubspecInfo.pubspec,
     );
+    bool canBump(PackageInfo package) => packages.containsKey(package.name);
     for (final package in sortedPackages) {
       final changes = changesForPackage(package);
       final commits = (changes.commitsByPackage[package]?.toList() ?? const [])
@@ -256,12 +250,13 @@ class Repo {
         if (commit.type == CommitType.version) {
           continue;
         }
-        final bumpType = commit.bumpType;
+        final bumpType = forcedBumpType ?? commit.bumpType;
         if (bumpType != null) {
           bumpVersion(
             package,
             commit: commit,
             type: bumpType,
+            canBump: canBump,
             includeInChangelog: commit.includeInChangelog,
           );
         }
@@ -291,6 +286,7 @@ class Repo {
     PackageInfo package, {
     required CommitMessage commit,
     required VersionBumpType type,
+    required bool Function(PackageInfo) canBump,
     required bool includeInChangelog,
     bool? propagateToComponent,
   }) {
@@ -347,6 +343,12 @@ class Repo {
         ['version'],
         newVersion.toString(),
       );
+      // Packages which depend on the package being bumped.
+      final packageDependents = allPackages.values.where(
+        (pkg) =>
+            pkg.pubspecInfo.pubspec.dependencies.keys.contains(package.name) ||
+            pkg.pubspecInfo.pubspec.devDependencies.keys.contains(package.name),
+      );
       if (commit.isBreakingChange) {
         // Back-propagate to all dependent packages for breaking changes.
         //
@@ -355,22 +357,23 @@ class Repo {
         logger.verbose(
           'Breaking change. Performing dfs on dependent packages...',
         );
-        for (final dependent in allPackages.values.where(
-          (pkg) =>
-              pkg.pubspecInfo.pubspec.dependencies.keys
-                  .contains(package.name) ||
-              pkg.pubspecInfo.pubspec.devDependencies.keys
-                  .contains(package.name),
-        )) {
+        for (final dependent in packageDependents) {
           logger.verbose('found dependent package ${dependent.name}');
-          if (dependent.isPublishable && type != VersionBumpType.patch) {
+          if (dependent.isPublishable && canBump(dependent)) {
             bumpVersion(
               dependent,
               commit: commit,
               type: VersionBumpType.patch,
+              canBump: canBump,
               includeInChangelog: false,
             );
           }
+          updateConstraint(package, dependent);
+        }
+      } else if (type == VersionBumpType.nonBreaking) {
+        // For non-breaking changes, we still need to update all constraints
+        // since we "pin" to minor versions.
+        for (final dependent in packageDependents) {
           updateConstraint(package, dependent);
         }
       }
@@ -379,9 +382,13 @@ class Repo {
       final componentPackages = component?.packageGraph;
       if (propagateToComponent && componentPackages != null) {
         dfs<PackageInfo>(
-          componentPackages,
+          componentPackages.map((name, dependents) {
+            return MapEntry(allPackages[name]!, dependents);
+          }),
           (componentPackage) {
-            if (componentPackage == package) return;
+            if (componentPackage == package || !canBump(componentPackage)) {
+              return;
+            }
             logger.verbose(
               'Bumping component package ${componentPackage.name}',
             );
@@ -389,6 +396,7 @@ class Repo {
               componentPackage,
               commit: commit,
               type: type,
+              canBump: canBump,
               includeInChangelog: false,
               propagateToComponent: false,
             );
@@ -422,7 +430,10 @@ class Repo {
 
   /// Updates the constraint for [package] in [dependent].
   void updateConstraint(PackageInfo package, PackageInfo dependent) {
-    final newVersion = versionChanges.proposedVersion(package.name)!;
+    final newVersion = versionChanges.proposedVersion(package.name);
+    if (newVersion == null) {
+      return;
+    }
     final hasDependency =
         dependent.pubspecInfo.pubspec.dependencies.containsKey(package.name);
     final hasDevDependency =
@@ -432,7 +443,7 @@ class Repo {
         minVersion: newVersion,
       );
       logger.verbose(
-        'Bumping dependency on ${dependent.name} in ${package.name} '
+        'Bumping dependency on ${package.name} in ${dependent.name} '
         'to $newConstraint',
       );
       dependent.pubspecInfo.pubspecYamlEditor.update(

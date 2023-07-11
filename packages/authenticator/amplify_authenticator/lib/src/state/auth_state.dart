@@ -1,29 +1,35 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/src/enums/authenticator_step.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class AuthState {
   const AuthState();
 }
 
-class LoadingState extends AuthState {
+class LoadingState extends AuthState with AWSDebuggable {
   const LoadingState();
 
   AuthenticatorStep get step => AuthenticatorStep.loading;
+
+  @override
+  String get runtimeTypeName => 'LoadingState';
 }
 
-class AuthenticatedState extends AuthState {
+class AuthenticatedState extends AuthState with AWSDebuggable {
   const AuthenticatedState();
+
+  @override
+  String get runtimeTypeName => 'AuthenticatedState';
 }
 
 @immutable
-class UnauthenticatedState extends AuthState {
-  final AuthenticatorStep _step;
-
+class UnauthenticatedState extends AuthState
+    with AWSEquatable<UnauthenticatedState>, AWSDebuggable {
   const UnauthenticatedState({required AuthenticatorStep step}) : _step = step;
+  final AuthenticatorStep _step;
 
   AuthenticatorStep get step => _step;
 
@@ -40,16 +46,11 @@ class UnauthenticatedState extends AuthState {
   static const confirmResetPassword =
       UnauthenticatedState(step: AuthenticatorStep.confirmResetPassword);
 
-  static const verifyUser =
-      UnauthenticatedState(step: AuthenticatorStep.verifyUser);
+  @override
+  List<Object?> get props => [step];
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is UnauthenticatedState && other.step == step;
-
-  @override
-  int get hashCode => step.hashCode;
+  String get runtimeTypeName => 'UnauthenticatedState';
 }
 
 class AttributeVerificationSent extends UnauthenticatedState {
@@ -57,32 +58,35 @@ class AttributeVerificationSent extends UnauthenticatedState {
       : super(step: AuthenticatorStep.confirmVerifyUser);
 
   final CognitoUserAttributeKey userAttributeKey;
+
+  @override
+  List<Object?> get props => [step, userAttributeKey];
+
+  @override
+  String get runtimeTypeName => 'AttributeVerificationSent';
 }
 
 class VerifyUserFlow extends UnauthenticatedState {
-  final List<CognitoUserAttributeKey> unverifiedAttributeKeys;
-
   const VerifyUserFlow({required this.unverifiedAttributeKeys})
       : super(step: AuthenticatorStep.verifyUser);
+  final List<CognitoUserAttributeKey> unverifiedAttributeKeys;
+
+  @override
+  List<Object?> get props => [step, unverifiedAttributeKeys];
+
+  @override
+  String get runtimeTypeName => 'VerifyUserFlow';
 }
 
 class ConfirmSignInCustom extends UnauthenticatedState {
-  final Map<String, String> publicParameters;
-
   const ConfirmSignInCustom({
     this.publicParameters = const <String, String>{},
   }) : super(step: AuthenticatorStep.confirmSignInCustomAuth);
-}
+  final Map<String, String> publicParameters;
 
-/// A state that indicates that there is a check to
-/// determine the user's verification state in progress.
-///
-/// This indicates that either Sign In OR Confirm Sign In
-/// has completed, but it is currently unknown if the user needs
-/// to be taken to the `veryUser` step or to an authenticated state
-/// because the call to fetch user attributes is pending.
-class PendingVerificationCheckState extends UnauthenticatedState {
-  const PendingVerificationCheckState({
-    required super.step,
-  });
+  @override
+  List<Object?> get props => [step, publicParameters];
+
+  @override
+  String get runtimeTypeName => 'ConfirmSignInCustom';
 }

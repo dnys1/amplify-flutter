@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.list_bucket_metrics_configurations_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -55,9 +56,9 @@ abstract class ListBucketMetricsConfigurationsRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    ListBucketMetricsConfigurationsRequestRestXmlSerializer()
-  ];
+  static const List<
+          _i1.SmithySerializer<ListBucketMetricsConfigurationsRequestPayload>>
+      serializers = [ListBucketMetricsConfigurationsRequestRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(ListBucketMetricsConfigurationsRequestBuilder b) {}
@@ -94,19 +95,19 @@ abstract class ListBucketMetricsConfigurationsRequest
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('ListBucketMetricsConfigurationsRequest');
-    helper.add(
-      'bucket',
-      bucket,
-    );
-    helper.add(
-      'continuationToken',
-      continuationToken,
-    );
-    helper.add(
-      'expectedBucketOwner',
-      expectedBucketOwner,
-    );
+        newBuiltValueToStringHelper('ListBucketMetricsConfigurationsRequest')
+          ..add(
+            'bucket',
+            bucket,
+          )
+          ..add(
+            'continuationToken',
+            continuationToken,
+          )
+          ..add(
+            'expectedBucketOwner',
+            expectedBucketOwner,
+          );
     return helper.toString();
   }
 }
@@ -168,15 +169,16 @@ class ListBucketMetricsConfigurationsRequestRestXmlSerializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ListBucketMetricsConfigurationsRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName(
         'ListBucketMetricsConfigurationsRequest',
         _i1.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    return result;
+
+    return result$;
   }
 }

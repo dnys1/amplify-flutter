@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'access_level.dart';
+import 'package:amplify_core/src/types/storage/access_level.dart';
 
 /// {@template amplify_core.storage.storage_item}
 /// Presents a storage object.
@@ -13,12 +13,14 @@ class StorageItem {
     this.size,
     this.lastModified,
     this.eTag,
+    this.metadata = const <String, String>{},
   });
 
   final String key;
   final int? size;
   final DateTime? lastModified;
   final String? eTag;
+  final Map<String, String> metadata;
 }
 
 /// {@template amplify_core.storage.storage_item_access_level}

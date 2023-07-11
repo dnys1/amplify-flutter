@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.get_resource_config_history_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -45,9 +46,8 @@ abstract class GetResourceConfigHistoryResponse
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
-    GetResourceConfigHistoryResponseAwsJson11Serializer()
-  ];
+  static const List<_i4.SmithySerializer<GetResourceConfigHistoryResponse>>
+      serializers = [GetResourceConfigHistoryResponseAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetResourceConfigHistoryResponseBuilder b) {}
@@ -65,15 +65,15 @@ abstract class GetResourceConfigHistoryResponse
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('GetResourceConfigHistoryResponse');
-    helper.add(
-      'configurationItems',
-      configurationItems,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+        newBuiltValueToStringHelper('GetResourceConfigHistoryResponse')
+          ..add(
+            'configurationItems',
+            configurationItems,
+          )
+          ..add(
+            'nextToken',
+            nextToken,
+          );
     return helper.toString();
   }
 }
@@ -107,26 +107,23 @@ class GetResourceConfigHistoryResponseAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'configurationItems':
-          if (value != null) {
-            result.configurationItems.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.ConfigurationItem)],
-              ),
-            ) as _i3.BuiltList<_i2.ConfigurationItem>));
-          }
-          break;
+          result.configurationItems.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.ConfigurationItem)],
+            ),
+          ) as _i3.BuiltList<_i2.ConfigurationItem>));
         case 'nextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -136,30 +133,31 @@ class GetResourceConfigHistoryResponseAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetResourceConfigHistoryResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as GetResourceConfigHistoryResponse);
-    final result = <Object?>[];
-    if (payload.configurationItems != null) {
-      result
+    final result$ = <Object?>[];
+    final GetResourceConfigHistoryResponse(:configurationItems, :nextToken) =
+        object;
+    if (configurationItems != null) {
+      result$
         ..add('configurationItems')
         ..add(serializers.serialize(
-          payload.configurationItems!,
+          configurationItems,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(_i2.ConfigurationItem)],
           ),
         ));
     }
-    if (payload.nextToken != null) {
-      result
+    if (nextToken != null) {
+      result$
         ..add('nextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

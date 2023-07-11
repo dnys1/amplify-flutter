@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.describe_conformance_pack_status_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -22,6 +23,7 @@ abstract class DescribeConformancePackStatusRequest
     int? limit,
     String? nextToken,
   }) {
+    limit ??= 0;
     return _$DescribeConformancePackStatusRequest._(
       conformancePackNames: conformancePackNames == null
           ? null
@@ -44,18 +46,19 @@ abstract class DescribeConformancePackStatusRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    DescribeConformancePackStatusRequestAwsJson11Serializer()
-  ];
+  static const List<_i1.SmithySerializer<DescribeConformancePackStatusRequest>>
+      serializers = [DescribeConformancePackStatusRequestAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(DescribeConformancePackStatusRequestBuilder b) {}
+  static void _init(DescribeConformancePackStatusRequestBuilder b) {
+    b.limit = 0;
+  }
 
   /// Comma-separated list of conformance pack names.
   _i3.BuiltList<String>? get conformancePackNames;
 
   /// The maximum number of conformance packs status returned on each page.
-  int? get limit;
+  int get limit;
 
   /// The `nextToken` string returned in a previous request that you use to request the next page of results in a paginated response.
   String? get nextToken;
@@ -70,19 +73,19 @@ abstract class DescribeConformancePackStatusRequest
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DescribeConformancePackStatusRequest');
-    helper.add(
-      'conformancePackNames',
-      conformancePackNames,
-    );
-    helper.add(
-      'limit',
-      limit,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+        newBuiltValueToStringHelper('DescribeConformancePackStatusRequest')
+          ..add(
+            'conformancePackNames',
+            conformancePackNames,
+          )
+          ..add(
+            'limit',
+            limit,
+          )
+          ..add(
+            'nextToken',
+            nextToken,
+          );
     return helper.toString();
   }
 }
@@ -116,34 +119,28 @@ class DescribeConformancePackStatusRequestAwsJson11Serializer extends _i1
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ConformancePackNames':
-          if (value != null) {
-            result.conformancePackNames.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(String)],
-              ),
-            ) as _i3.BuiltList<String>));
-          }
-          break;
+          result.conformancePackNames.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(String)],
+            ),
+          ) as _i3.BuiltList<String>));
         case 'Limit':
-          if (value != null) {
-            result.limit = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(int),
-            ) as int);
-          }
-          break;
+          result.limit = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int);
         case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -153,38 +150,41 @@ class DescribeConformancePackStatusRequestAwsJson11Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeConformancePackStatusRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeConformancePackStatusRequest);
-    final result = <Object?>[];
-    if (payload.conformancePackNames != null) {
-      result
+    final result$ = <Object?>[];
+    final DescribeConformancePackStatusRequest(
+      :conformancePackNames,
+      :limit,
+      :nextToken
+    ) = object;
+    result$.addAll([
+      'Limit',
+      serializers.serialize(
+        limit,
+        specifiedType: const FullType(int),
+      ),
+    ]);
+    if (conformancePackNames != null) {
+      result$
         ..add('ConformancePackNames')
         ..add(serializers.serialize(
-          payload.conformancePackNames!,
+          conformancePackNames,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(String)],
           ),
         ));
     }
-    if (payload.limit != null) {
-      result
-        ..add('Limit')
-        ..add(serializers.serialize(
-          payload.limit!,
-          specifiedType: const FullType(int),
-        ));
-    }
-    if (payload.nextToken != null) {
-      result
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

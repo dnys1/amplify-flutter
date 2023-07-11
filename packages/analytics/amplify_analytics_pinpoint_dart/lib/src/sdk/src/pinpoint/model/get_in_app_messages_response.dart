@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_analytics_pinpoint_dart.pinpoint.model.get_in_app_messages_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -37,9 +38,8 @@ abstract class GetInAppMessagesResponse
         b.inAppMessagesResponse.replace(payload);
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
-    GetInAppMessagesResponseRestJson1Serializer()
-  ];
+  static const List<_i2.SmithySerializer<_i3.InAppMessagesResponse>>
+      serializers = [GetInAppMessagesResponseRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetInAppMessagesResponseBuilder b) {}
@@ -52,11 +52,11 @@ abstract class GetInAppMessagesResponse
   List<Object?> get props => [inAppMessagesResponse];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('GetInAppMessagesResponse');
-    helper.add(
-      'inAppMessagesResponse',
-      inAppMessagesResponse,
-    );
+    final helper = newBuiltValueToStringHelper('GetInAppMessagesResponse')
+      ..add(
+        'inAppMessagesResponse',
+        inAppMessagesResponse,
+      );
     return helper.toString();
   }
 }
@@ -93,15 +93,12 @@ class GetInAppMessagesResponseRestJson1Serializer
   @override
   Object serialize(
     Serializers serializers,
-    Object? object, {
+    _i3.InAppMessagesResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is GetInAppMessagesResponse
-        ? object.getPayload()
-        : (object as _i3.InAppMessagesResponse);
-    return (serializers.serialize(
-      payload,
+    return serializers.serialize(
+      object,
       specifiedType: const FullType(_i3.InAppMessagesResponse),
-    ) as Object);
+    )!;
   }
 }

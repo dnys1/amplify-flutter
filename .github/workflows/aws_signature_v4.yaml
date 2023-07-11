@@ -5,19 +5,22 @@ on:
     branches:
       - main
       - stable
-      - next
   pull_request:
     paths:
+      - '.github/composite_actions/setup_firefox/action.yaml'
+      - '.github/workflows/aws_signature_v4.yaml'
+      - '.github/workflows/dart_dart2js.yaml'
+      - '.github/workflows/dart_ddc.yaml'
+      - '.github/workflows/dart_native.yaml'
+      - '.github/workflows/dart_vm.yaml'
+      - 'packages/amplify_lints/lib/**/*.yaml'
+      - 'packages/amplify_lints/pubspec.yaml'
+      - 'packages/aws_common/lib/**/*.dart'
+      - 'packages/aws_common/pubspec.yaml'
       - 'packages/aws_signature_v4/**/*.dart'
       - 'packages/aws_signature_v4/**/*.yaml'
       - 'packages/aws_signature_v4/lib/**/*'
       - 'packages/aws_signature_v4/test/**/*'
-      - '.github/composite_actions/setup_firefox/action.yaml'
-      - '.github/workflows/dart_vm.yaml'
-      - '.github/workflows/dart_native.yaml'
-      - '.github/workflows/dart_ddc.yaml'
-      - '.github/workflows/dart_dart2js.yaml'
-      - '.github/workflows/aws_signature_v4.yaml'
   schedule:
     - cron: "0 0 * * 0" # Every Sunday at 00:00
 defaults:
@@ -29,19 +32,23 @@ jobs:
   test:
     uses: ./.github/workflows/dart_vm.yaml
     with:
+      package-name: aws_signature_v4
       working-directory: packages/aws_signature_v4
   native_test:
     needs: test
     uses: ./.github/workflows/dart_native.yaml
     with:
+      package-name: aws_signature_v4
       working-directory: packages/aws_signature_v4
   ddc_test:
     needs: test
     uses: ./.github/workflows/dart_ddc.yaml
     with:
+      package-name: aws_signature_v4
       working-directory: packages/aws_signature_v4
   dart2js_test:
     needs: test
     uses: ./.github/workflows/dart_dart2js.yaml
     with:
+      package-name: aws_signature_v4
       working-directory: packages/aws_signature_v4

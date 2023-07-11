@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.provisioned_throughput; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -40,7 +41,7 @@ abstract class ProvisionedThroughput
 
   const ProvisionedThroughput._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<ProvisionedThroughput>> serializers = [
     ProvisionedThroughputAwsJson10Serializer()
   ];
 
@@ -50,12 +51,12 @@ abstract class ProvisionedThroughput
     b.writeCapacityUnits = _i2.Int64.ZERO;
   }
 
-  /// The maximum number of strongly consistent reads consumed per second before DynamoDB returns a `ThrottlingException`. For more information, see [Specifying Read and Write Requirements](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithTables.html#ProvisionedThroughput) in the _Amazon DynamoDB Developer Guide_.
+  /// The maximum number of strongly consistent reads consumed per second before DynamoDB returns a `ThrottlingException`. For more information, see [Specifying Read and Write Requirements](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ProvisionedThroughput.html) in the _Amazon DynamoDB Developer Guide_.
   ///
   /// If read/write capacity mode is `PAY\_PER\_REQUEST` the value is set to 0.
   _i2.Int64 get readCapacityUnits;
 
-  /// The maximum number of writes consumed per second before DynamoDB returns a `ThrottlingException`. For more information, see [Specifying Read and Write Requirements](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithTables.html#ProvisionedThroughput) in the _Amazon DynamoDB Developer Guide_.
+  /// The maximum number of writes consumed per second before DynamoDB returns a `ThrottlingException`. For more information, see [Specifying Read and Write Requirements](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ProvisionedThroughput.html) in the _Amazon DynamoDB Developer Guide_.
   ///
   /// If read/write capacity mode is `PAY\_PER\_REQUEST` the value is set to 0.
   _i2.Int64 get writeCapacityUnits;
@@ -66,15 +67,15 @@ abstract class ProvisionedThroughput
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ProvisionedThroughput');
-    helper.add(
-      'readCapacityUnits',
-      readCapacityUnits,
-    );
-    helper.add(
-      'writeCapacityUnits',
-      writeCapacityUnits,
-    );
+    final helper = newBuiltValueToStringHelper('ProvisionedThroughput')
+      ..add(
+        'readCapacityUnits',
+        readCapacityUnits,
+      )
+      ..add(
+        'writeCapacityUnits',
+        writeCapacityUnits,
+      );
     return helper.toString();
   }
 }
@@ -108,19 +109,20 @@ class ProvisionedThroughputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ReadCapacityUnits':
           result.readCapacityUnits = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(_i2.Int64),
           ) as _i2.Int64);
-          break;
         case 'WriteCapacityUnits':
           result.writeCapacityUnits = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(_i2.Int64),
           ) as _i2.Int64);
-          break;
       }
     }
 
@@ -130,22 +132,24 @@ class ProvisionedThroughputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ProvisionedThroughput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ProvisionedThroughput);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final ProvisionedThroughput(:readCapacityUnits, :writeCapacityUnits) =
+        object;
+    result$.addAll([
       'ReadCapacityUnits',
       serializers.serialize(
-        payload.readCapacityUnits,
+        readCapacityUnits,
         specifiedType: const FullType(_i2.Int64),
       ),
       'WriteCapacityUnits',
       serializers.serialize(
-        payload.writeCapacityUnits,
+        writeCapacityUnits,
         specifiedType: const FullType(_i2.Int64),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

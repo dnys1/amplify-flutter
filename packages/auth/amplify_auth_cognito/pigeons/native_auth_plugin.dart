@@ -7,19 +7,12 @@
   PigeonOptions(
     copyrightHeader: '../../../tool/license.txt',
     dartOut: 'lib/src/native_auth_plugin.g.dart',
-    javaOptions: JavaOptions(
-      className: 'NativeAuthPluginBindingsPigeon',
+    kotlinOptions: KotlinOptions(
       package: 'com.amazonaws.amplify.amplify_auth_cognito',
     ),
-    javaOut:
-        '../amplify_auth_cognito_android/android/src/main/kotlin/com/amazonaws/amplify/amplify_auth_cognito/NativeAuthPluginBindingsPigeon.java',
-    objcOptions: ObjcOptions(
-      headerIncludePath: 'NativeAuthPlugin.h',
-    ),
-    objcHeaderOut:
-        '../amplify_auth_cognito_ios/ios/Classes/pigeons/NativeAuthPlugin.h',
-    objcSourceOut:
-        '../amplify_auth_cognito_ios/ios/Classes/pigeons/NativeAuthPlugin.m',
+    kotlinOut:
+        'android/src/main/kotlin/com/amazonaws/amplify/amplify_auth_cognito/pigeons/NativeAuthPluginBindingsPigeon.kt',
+    swiftOut: 'darwin/classes/pigeons/messages.g.swift',
   ),
 )
 library native_auth_plugin;
@@ -32,20 +25,10 @@ abstract class NativeAuthPlugin {
   /// was closed and a redirect happened to the custom URI scheme (iOS) or an
   /// intent was launched with the redirect parameters (Android).
   void exchange(Map<String, String> params);
-
-  @async
-  NativeAuthSession fetchAuthSession();
 }
 
 @HostApi()
 abstract class NativeAuthBridge {
-  /// Adds the native platform/plugin.
-  ///
-  /// On iOS/Android, this calls `Amplify.addPlugin` with the [NativeAuthPlugin]
-  /// implementation.
-  @async
-  void addPlugin();
-
   /// Sign in by presenting [url] and waiting for a response to a URL with
   /// [callbackUrlScheme].
   ///
@@ -71,10 +54,10 @@ abstract class NativeAuthBridge {
   /// Retrieves the validation data for the current iOS/Android device.
   Map<String, String> getValidationData();
 
-  String getBundleId();
+  /// Retrieves context data as required for advanced security features (ASF).
+  NativeUserContextData getContextData();
 
-  /// Updates the native cache of the current user.
-  void updateCurrentUser(NativeAuthUser? user);
+  String getBundleId();
 
   /// Fetch legacy credentials stored by native SDKs.
   @async
@@ -88,32 +71,16 @@ abstract class NativeAuthBridge {
   void clearLegacyCredentials();
 }
 
-class NativeAuthSession {
-  late bool isSignedIn;
-
-  String? userSub;
-  NativeUserPoolTokens? userPoolTokens;
-
-  String? identityId;
-  NativeAWSCredentials? awsCredentials;
-}
-
-class NativeAuthUser {
-  late String userId;
-  late String username;
-}
-
-class NativeUserPoolTokens {
-  late String accessToken;
-  late String refreshToken;
-  late String idToken;
-}
-
-class NativeAWSCredentials {
-  late String accessKeyId;
-  late String secretAccessKey;
-  String? sessionToken;
-  String? expirationIso8601Utc;
+class NativeUserContextData {
+  String? deviceName;
+  String? thirdPartyDeviceId;
+  String? deviceFingerprint;
+  String? applicationName;
+  String? applicationVersion;
+  String? deviceLanguage;
+  String? deviceOsReleaseVersion;
+  int? screenHeightPixels;
+  int? screenWidthPixels;
 }
 
 class LegacyCredentialStoreData {

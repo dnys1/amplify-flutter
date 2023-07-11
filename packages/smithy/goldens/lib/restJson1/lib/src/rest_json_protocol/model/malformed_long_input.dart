@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v1.rest_json_protocol.model.malformed_long_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -20,16 +21,16 @@ abstract class MalformedLongInput
         _i1.HasPayload<MalformedLongInputPayload> {
   factory MalformedLongInput({
     _i3.Int64? longInBody,
-    _i3.Int64? longInHeader,
     _i3.Int64? longInPath,
     _i3.Int64? longInQuery,
+    _i3.Int64? longInHeader,
   }) {
     longInPath ??= _i3.Int64.ZERO;
     return _$MalformedLongInput._(
       longInBody: longInBody,
-      longInHeader: longInHeader,
       longInPath: longInPath,
       longInQuery: longInQuery,
+      longInHeader: longInHeader,
     );
   }
 
@@ -58,9 +59,8 @@ abstract class MalformedLongInput
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    MalformedLongInputRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<MalformedLongInputPayload>>
+      serializers = [MalformedLongInputRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(MalformedLongInputBuilder b) {
@@ -68,9 +68,9 @@ abstract class MalformedLongInput
   }
 
   _i3.Int64? get longInBody;
-  _i3.Int64? get longInHeader;
   _i3.Int64 get longInPath;
   _i3.Int64? get longInQuery;
+  _i3.Int64? get longInHeader;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -90,29 +90,29 @@ abstract class MalformedLongInput
   @override
   List<Object?> get props => [
         longInBody,
-        longInHeader,
         longInPath,
         longInQuery,
+        longInHeader,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('MalformedLongInput');
-    helper.add(
-      'longInBody',
-      longInBody,
-    );
-    helper.add(
-      'longInHeader',
-      longInHeader,
-    );
-    helper.add(
-      'longInPath',
-      longInPath,
-    );
-    helper.add(
-      'longInQuery',
-      longInQuery,
-    );
+    final helper = newBuiltValueToStringHelper('MalformedLongInput')
+      ..add(
+        'longInBody',
+        longInBody,
+      )
+      ..add(
+        'longInPath',
+        longInPath,
+      )
+      ..add(
+        'longInQuery',
+        longInQuery,
+      )
+      ..add(
+        'longInHeader',
+        longInHeader,
+      );
     return helper.toString();
   }
 }
@@ -135,11 +135,11 @@ abstract class MalformedLongInputPayload
   List<Object?> get props => [longInBody];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('MalformedLongInputPayload');
-    helper.add(
-      'longInBody',
-      longInBody,
-    );
+    final helper = newBuiltValueToStringHelper('MalformedLongInputPayload')
+      ..add(
+        'longInBody',
+        longInBody,
+      );
     return helper.toString();
   }
 }
@@ -174,15 +174,15 @@ class MalformedLongInputRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'longInBody':
-          if (value != null) {
-            result.longInBody = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i3.Int64),
-            ) as _i3.Int64);
-          }
-          break;
+          result.longInBody = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i3.Int64),
+          ) as _i3.Int64);
       }
     }
 
@@ -192,21 +192,19 @@ class MalformedLongInputRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    MalformedLongInputPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is MalformedLongInput
-        ? object.getPayload()
-        : (object as MalformedLongInputPayload);
-    final result = <Object?>[];
-    if (payload.longInBody != null) {
-      result
+    final result$ = <Object?>[];
+    final MalformedLongInputPayload(:longInBody) = object;
+    if (longInBody != null) {
+      result$
         ..add('longInBody')
         ..add(serializers.serialize(
-          payload.longInBody!,
+          longInBody,
           specifiedType: const FullType(_i3.Int64),
         ));
     }
-    return result;
+    return result$;
   }
 }

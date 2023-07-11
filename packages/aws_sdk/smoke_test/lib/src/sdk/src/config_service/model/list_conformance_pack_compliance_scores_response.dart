@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.list_conformance_pack_compliance_scores_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -19,14 +20,14 @@ abstract class ListConformancePackComplianceScoresResponse
         Built<ListConformancePackComplianceScoresResponse,
             ListConformancePackComplianceScoresResponseBuilder> {
   factory ListConformancePackComplianceScoresResponse({
+    String? nextToken,
     required List<_i2.ConformancePackComplianceScore>
         conformancePackComplianceScores,
-    String? nextToken,
   }) {
     return _$ListConformancePackComplianceScoresResponse._(
+      nextToken: nextToken,
       conformancePackComplianceScores:
           _i3.BuiltList(conformancePackComplianceScores),
-      nextToken: nextToken,
     );
   }
 
@@ -43,36 +44,38 @@ abstract class ListConformancePackComplianceScoresResponse
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
+  static const List<
+          _i4.SmithySerializer<ListConformancePackComplianceScoresResponse>>
+      serializers = [
     ListConformancePackComplianceScoresResponseAwsJson11Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(ListConformancePackComplianceScoresResponseBuilder b) {}
 
+  /// The `nextToken` string that you can use to get the next page of results in a paginated response.
+  String? get nextToken;
+
   /// A list of `ConformancePackComplianceScore` objects.
   _i3.BuiltList<_i2.ConformancePackComplianceScore>
       get conformancePackComplianceScores;
-
-  /// The `nextToken` string that you can use to get the next page of results in a paginated response.
-  String? get nextToken;
   @override
   List<Object?> get props => [
-        conformancePackComplianceScores,
         nextToken,
+        conformancePackComplianceScores,
       ];
   @override
   String toString() {
     final helper = newBuiltValueToStringHelper(
-        'ListConformancePackComplianceScoresResponse');
-    helper.add(
-      'conformancePackComplianceScores',
-      conformancePackComplianceScores,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+        'ListConformancePackComplianceScoresResponse')
+      ..add(
+        'nextToken',
+        nextToken,
+      )
+      ..add(
+        'conformancePackComplianceScores',
+        conformancePackComplianceScores,
+      );
     return helper.toString();
   }
 }
@@ -106,7 +109,15 @@ class ListConformancePackComplianceScoresResponseAwsJson11Serializer extends _i4
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
+        case 'NextToken':
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'ConformancePackComplianceScores':
           result.conformancePackComplianceScores
               .replace((serializers.deserialize(
@@ -116,15 +127,6 @@ class ListConformancePackComplianceScoresResponseAwsJson11Serializer extends _i4
               [FullType(_i2.ConformancePackComplianceScore)],
             ),
           ) as _i3.BuiltList<_i2.ConformancePackComplianceScore>));
-          break;
-        case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
       }
     }
 
@@ -134,28 +136,32 @@ class ListConformancePackComplianceScoresResponseAwsJson11Serializer extends _i4
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ListConformancePackComplianceScoresResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ListConformancePackComplianceScoresResponse);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final ListConformancePackComplianceScoresResponse(
+      :nextToken,
+      :conformancePackComplianceScores
+    ) = object;
+    result$.addAll([
       'ConformancePackComplianceScores',
       serializers.serialize(
-        payload.conformancePackComplianceScores,
+        conformancePackComplianceScores,
         specifiedType: const FullType(
           _i3.BuiltList,
           [FullType(_i2.ConformancePackComplianceScore)],
         ),
       ),
-    ];
-    if (payload.nextToken != null) {
-      result
+    ]);
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

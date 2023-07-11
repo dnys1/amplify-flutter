@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_auth_cognito_dart.cognito_identity_provider.model.verify_software_token_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -17,15 +18,15 @@ abstract class VerifySoftwareTokenRequest
         Built<VerifySoftwareTokenRequest, VerifySoftwareTokenRequestBuilder> {
   factory VerifySoftwareTokenRequest({
     String? accessToken,
-    String? friendlyDeviceName,
     String? session,
     required String userCode,
+    String? friendlyDeviceName,
   }) {
     return _$VerifySoftwareTokenRequest._(
       accessToken: accessToken,
-      friendlyDeviceName: friendlyDeviceName,
       session: session,
       userCode: userCode,
+      friendlyDeviceName: friendlyDeviceName,
     );
   }
 
@@ -42,9 +43,8 @@ abstract class VerifySoftwareTokenRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    VerifySoftwareTokenRequestAwsJson11Serializer()
-  ];
+  static const List<_i1.SmithySerializer<VerifySoftwareTokenRequest>>
+      serializers = [VerifySoftwareTokenRequestAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(VerifySoftwareTokenRequestBuilder b) {}
@@ -52,42 +52,42 @@ abstract class VerifySoftwareTokenRequest
   /// A valid access token that Amazon Cognito issued to the user whose software token you want to verify.
   String? get accessToken;
 
-  /// The friendly device name.
-  String? get friendlyDeviceName;
-
   /// The session that should be passed both ways in challenge-response calls to the service.
   String? get session;
 
   /// The one- time password computed using the secret code returned by [AssociateSoftwareToken](https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_AssociateSoftwareToken.html).
   String get userCode;
+
+  /// The friendly device name.
+  String? get friendlyDeviceName;
   @override
   VerifySoftwareTokenRequest getPayload() => this;
   @override
   List<Object?> get props => [
         accessToken,
-        friendlyDeviceName,
         session,
         userCode,
+        friendlyDeviceName,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('VerifySoftwareTokenRequest');
-    helper.add(
-      'accessToken',
-      '***SENSITIVE***',
-    );
-    helper.add(
-      'friendlyDeviceName',
-      friendlyDeviceName,
-    );
-    helper.add(
-      'session',
-      session,
-    );
-    helper.add(
-      'userCode',
-      userCode,
-    );
+    final helper = newBuiltValueToStringHelper('VerifySoftwareTokenRequest')
+      ..add(
+        'accessToken',
+        '***SENSITIVE***',
+      )
+      ..add(
+        'session',
+        session,
+      )
+      ..add(
+        'userCode',
+        userCode,
+      )
+      ..add(
+        'friendlyDeviceName',
+        friendlyDeviceName,
+      );
     return helper.toString();
   }
 }
@@ -121,37 +121,30 @@ class VerifySoftwareTokenRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'AccessToken':
-          if (value != null) {
-            result.accessToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
-        case 'FriendlyDeviceName':
-          if (value != null) {
-            result.friendlyDeviceName = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
-        case 'Session':
-          if (value != null) {
-            result.session = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
-        case 'UserCode':
-          result.userCode = (serializers.deserialize(
-            value!,
+          result.accessToken = (serializers.deserialize(
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
+        case 'Session':
+          result.session = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'UserCode':
+          result.userCode = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'FriendlyDeviceName':
+          result.friendlyDeviceName = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -161,41 +154,47 @@ class VerifySoftwareTokenRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    VerifySoftwareTokenRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as VerifySoftwareTokenRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final VerifySoftwareTokenRequest(
+      :accessToken,
+      :session,
+      :userCode,
+      :friendlyDeviceName
+    ) = object;
+    result$.addAll([
       'UserCode',
       serializers.serialize(
-        payload.userCode,
+        userCode,
         specifiedType: const FullType(String),
       ),
-    ];
-    if (payload.accessToken != null) {
-      result
+    ]);
+    if (accessToken != null) {
+      result$
         ..add('AccessToken')
         ..add(serializers.serialize(
-          payload.accessToken!,
+          accessToken,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.friendlyDeviceName != null) {
-      result
-        ..add('FriendlyDeviceName')
-        ..add(serializers.serialize(
-          payload.friendlyDeviceName!,
-          specifiedType: const FullType(String),
-        ));
-    }
-    if (payload.session != null) {
-      result
+    if (session != null) {
+      result$
         ..add('Session')
         ..add(serializers.serialize(
-          payload.session!,
+          session,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    if (friendlyDeviceName != null) {
+      result$
+        ..add('FriendlyDeviceName')
+        ..add(serializers.serialize(
+          friendlyDeviceName,
+          specifiedType: const FullType(String),
+        ));
+    }
+    return result$;
   }
 }

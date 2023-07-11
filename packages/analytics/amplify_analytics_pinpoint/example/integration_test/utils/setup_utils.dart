@@ -17,44 +17,37 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:amplify_analytics_pinpoint/amplify_analytics_pinpoint.dart';
-import 'package:amplify_analytics_pinpoint_dart/amplify_analytics_pinpoint_dart.dart';
+import 'package:amplify_analytics_pinpoint_dart/src/impl/flutter_provider_interfaces/app_lifecycle_provider.dart';
 import 'package:amplify_analytics_pinpoint_example/amplifyconfiguration.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'mock_key_value_store.dart';
+import 'mock_secure_storage.dart';
 import 'test_event.dart';
 
 Future<void> configureAnalytics({
+  String environmentName = 'main',
   AppLifecycleProvider? appLifecycleProvider,
 }) async {
+  storageFactory(scope) => mockPersistedSecuredStorage;
   await Amplify.addPlugins([
     AmplifyAuthCognito(
-      credentialStorage: AmplifySecureStorage(
-        config: AmplifySecureStorageConfig(
-          scope: 'analyticsAuth',
-          macOSOptions: MacOSSecureStorageOptions(useDataProtection: false),
-        ),
-      ),
+      secureStorageFactory: storageFactory,
     ),
     AmplifyAnalyticsPinpoint(
       appLifecycleProvider: appLifecycleProvider,
-      endpointInfoStore: mockEndpointInfoStore,
+      secureStorageFactory: storageFactory,
     ),
     AmplifyAPI(),
   ]);
-  await Amplify.configure(amplifyconfig);
+  await Amplify.configure(amplifyEnvironments[environmentName]!);
 
   addTearDown(() async {
     // Flush pending events.
     await Amplify.Analytics.flushEvents();
-    try {
-      await Amplify.Auth.signOut();
-    } on Exception {
-      // ok
-    }
+    await Amplify.Auth.signOut();
     await Amplify.reset();
   });
 }

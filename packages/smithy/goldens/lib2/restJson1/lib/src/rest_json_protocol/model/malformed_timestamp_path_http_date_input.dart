@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v2.rest_json_protocol.model.malformed_timestamp_path_http_date_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -43,9 +44,9 @@ abstract class MalformedTimestampPathHttpDateInput
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    MalformedTimestampPathHttpDateInputRestJson1Serializer()
-  ];
+  static const List<
+          _i1.SmithySerializer<MalformedTimestampPathHttpDateInputPayload>>
+      serializers = [MalformedTimestampPathHttpDateInputRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(MalformedTimestampPathHttpDateInputBuilder b) {}
@@ -72,11 +73,11 @@ abstract class MalformedTimestampPathHttpDateInput
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('MalformedTimestampPathHttpDateInput');
-    helper.add(
-      'timestamp',
-      timestamp,
-    );
+        newBuiltValueToStringHelper('MalformedTimestampPathHttpDateInput')
+          ..add(
+            'timestamp',
+            timestamp,
+          );
     return helper.toString();
   }
 }
@@ -138,7 +139,7 @@ class MalformedTimestampPathHttpDateInputRestJson1Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    MalformedTimestampPathHttpDateInputPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) =>
       const <Object?>[];

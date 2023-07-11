@@ -1,7 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
@@ -10,12 +9,14 @@ import 'package:aft/src/repo.dart';
 import 'package:args/command_runner.dart';
 import 'package:aws_common/aws_common.dart';
 import 'package:checked_yaml/checked_yaml.dart';
+import 'package:cli_util/cli_util.dart';
+import 'package:collection/collection.dart';
 import 'package:git/git.dart' as git;
-import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
-import 'package:pub/pub.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:yaml/yaml.dart';
+import 'package:yaml_edit/yaml_edit.dart';
 
 /// Base class for all commands in this package providing common functionality.
 abstract class AmplifyCommand extends Command<void>
@@ -53,13 +54,14 @@ abstract class AmplifyCommand extends Command<void>
       case LogLevel.debug:
       case LogLevel.info:
         stdout.writeln(message);
-        break;
       case LogLevel.warn:
       case LogLevel.error:
         stderr.writeln(message);
-        break;
       case LogLevel.none:
         break;
+    }
+    if (logEntry.error case final error?) {
+      stderr.writeln(error);
     }
   }
 
@@ -77,10 +79,8 @@ abstract class AmplifyCommand extends Command<void>
     return Directory(directory);
   }();
 
-  _PubHttpClient? _httpClient;
-
   /// HTTP client for remote operations.
-  http.Client get httpClient => _httpClient ??= _PubHttpClient();
+  final AWSHttpClient httpClient = AWSHttpClient();
 
   /// The root directory of the Amplify Flutter repo.
   late final Directory rootDir = () {
@@ -107,22 +107,14 @@ abstract class AmplifyCommand extends Command<void>
         .whereType<Directory>();
     final allPackages = <PackageInfo>[];
     for (final dir in allDirs) {
-      final pubspecInfo = dir.pubspec;
-      if (pubspecInfo == null) {
+      final package = PackageInfo.fromDirectory(dir);
+      if (package == null) {
         continue;
       }
-      final pubspec = pubspecInfo.pubspec;
-      if (aftConfig.ignore.contains(pubspec.name)) {
+      if (rawAftConfig.ignore.contains(package.name)) {
         continue;
       }
-      allPackages.add(
-        PackageInfo(
-          name: pubspec.name,
-          path: dir.path,
-          pubspecInfo: pubspecInfo,
-          flavor: pubspec.flavor,
-        ),
-      );
+      allPackages.add(package);
     }
     return UnmodifiableMapView({
       for (final package in allPackages..sort()) package.name: package,
@@ -135,34 +127,107 @@ abstract class AmplifyCommand extends Command<void>
   /// [repoPackages].
   late final Map<String, PackageInfo> commandPackages = repoPackages;
 
-  /// The absolute path to the `aft.yaml` document.
+  /// The absolute path to the root `aft.yaml` document.
   late final String aftConfigPath = () {
     final rootDir = this.rootDir;
     return p.join(rootDir.path, 'aft.yaml');
   }();
 
+  String _loadFile(String path) {
+    final file = File(path);
+    if (!file.existsSync()) {
+      throw StateError(
+        'Could not find `${p.basename(path)}`. Expected it to be at: $path',
+      );
+    }
+    return file.readAsStringSync();
+  }
+
   /// The global `aft` configuration for the repo.
   ///
   /// Should not be `late final` to allow re-reading from disk, e.g. when
   /// updated as part of a command.
-  AftConfig get aftConfig {
-    final configFile = File(aftConfigPath);
-    assert(configFile.existsSync(), 'Could not find aft.yaml');
-    final configYaml = configFile.readAsStringSync();
-    final config = checkedYamlDecode(configYaml, AftConfig.fromJson);
+  RawAftConfig get rawAftConfig {
+    var configYaml = _loadFile(aftConfigPath);
+
+    // Merge in the extra config options if provided.
+    final extraConfig = globalResults?['config'] as String?;
+    if (extraConfig != null) {
+      final extraConfigYaml = _loadFile(p.join(rootDir.path, extraConfig));
+      final rootEditor = YamlEditor(configYaml)
+        ..merge(loadYamlNode(extraConfigYaml));
+      configYaml = rootEditor.toString();
+    }
+
+    final config = checkedYamlDecode(configYaml, RawAftConfig.fromJson);
     return config;
+  }
+
+  /// The processed `aft` configuration for the repo with packages and
+  /// components linked.
+  AftConfig get aftConfig {
+    final rawConfig = rawAftConfig;
+    final components = Map.fromEntries(
+      rawConfig.components.map((component) {
+        final summaryPackage =
+            component.summary == null ? null : repoPackages[component.summary]!;
+        final packages =
+            component.packages.map((name) => repoPackages[name]!).toList();
+        final packageGraph = UnmodifiableMapView({
+          for (final package in packages)
+            package.name: package.pubspecInfo.pubspec.dependencies.keys
+                .map(
+                  (packageName) => packages.firstWhereOrNull(
+                    (pkg) => pkg.name == packageName,
+                  ),
+                )
+                .whereType<PackageInfo>()
+                .toList(),
+        });
+        return MapEntry(
+          component.name,
+          AftComponent(
+            name: component.name,
+            summary: summaryPackage,
+            packages: packages,
+            packageGraph: packageGraph,
+            propagate: component.propagate,
+          ),
+        );
+      }),
+    );
+    return AftConfig(
+      rootDirectory: rootDir.uri,
+      workingDirectory: workingDirectory.uri,
+      allPackages: repoPackages,
+      dependencies: rawConfig.dependencies,
+      environment: rawConfig.environment,
+      ignore: rawConfig.ignore,
+      components: components,
+      scripts: rawConfig.scripts,
+    );
   }
 
   /// The environment to inject into subcommands.
   late final Map<String, String> environment = {
     ...Platform.environment,
     'AFT_ROOT': rootDir.uri.toFilePath(),
+    // Needed for running `dart doc` for Flutter packages.
+    if (flutterRoot != null) 'FLUTTER_ROOT': flutterRoot!,
   };
 
+  /// The path to the Flutter SDK, if installed.
+  late final String? flutterRoot = () {
+    final dartSdkPath = getSdkPath();
+    final flutterBin = p.dirname(p.dirname(dartSdkPath));
+    if (File(p.join(flutterBin, 'flutter')).existsSync()) {
+      return p.dirname(flutterBin);
+    }
+    return null;
+  }();
+
   late final Repo repo = Repo(
-    rootDir,
-    allPackages: repoPackages,
-    aftConfig: aftConfig,
+    aftConfig,
     logger: logger,
   );
 
@@ -185,11 +250,6 @@ abstract class AmplifyCommand extends Command<void>
     return configFile.readAsStringSync();
   }
 
-  /// A command runner for `pub`.
-  PubCommandRunner createPubRunner() => PubCommandRunner(
-        pubCommand(isVerbose: () => verbose),
-      );
-
   /// Displays a prompt to the user and waits for a response on stdin.
   String prompt(String prompt) {
     String? response;
@@ -210,20 +270,22 @@ abstract class AmplifyCommand extends Command<void>
   Future<PubVersionInfo?> resolveVersionInfo(String package) async {
     // Get the currently published version of the package.
     final uri = Uri.parse('https://pub.dev/api/packages/$package');
-    final resp = await httpClient.get(
+    final request = AWSHttpRequest.get(
       uri,
-      headers: {AWSHeaders.accept: 'application/vnd.pub.v2+json'},
+      headers: const {AWSHeaders.accept: 'application/vnd.pub.v2+json'},
     );
+    final resp = await httpClient.send(request).response;
+    final body = await resp.decodeBody();
 
     // Package is unpublished
     if (resp.statusCode == 404) {
       return null;
     }
     if (resp.statusCode != 200) {
-      throw http.ClientException(resp.body, uri);
+      throw AWSHttpException(request, body);
     }
 
-    final respJson = jsonDecode(resp.body) as Map<String, Object?>;
+    final respJson = jsonDecode(body) as Map<String, Object?>;
     final versions = (respJson['versions'] as List<Object?>?) ?? <Object?>[];
     final semvers = <Version>[];
     for (final version in versions) {
@@ -244,34 +306,32 @@ abstract class AmplifyCommand extends Command<void>
     if (globalResults?['verbose'] as bool? ?? false) {
       AWSLogger().logLevel = LogLevel.verbose;
     }
+    logger.verbose('Got configuration: $rawAftConfig');
   }
 
   @override
   @mustCallSuper
   void close() {
-    _httpClient?._close();
+    httpClient.close();
   }
 }
 
-/// An HTTP client which can be used by processes which call `client.close()`
-/// outside our control, like `pub`.
-class _PubHttpClient extends http.BaseClient {
-  _PubHttpClient([http.Client? inner]) : _inner = inner ?? http.Client();
-
-  final http.Client _inner;
-
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) {
-    return _inner.send(request);
-  }
-
-  @override
-  void close() {
-    // Do nothing
-  }
-
-  // Actually close
-  void _close() {
-    _inner.close();
+extension on YamlEditor {
+  /// Merges [node] into `this` at the given [path].
+  ///
+  /// This differs from [update] in that it recurses into the tree to only add
+  /// or override leaf nodes (i.e. [YamlScalar] values) for maps.
+  ///
+  /// Lists cannot be safely merged, so they are overridden as with [update].
+  void merge(YamlNode node, [List<Object?> path = const []]) {
+    if (node is YamlMap) {
+      for (final key in node.keys) {
+        merge(node.nodes[key]!, [...path, key]);
+      }
+      return;
+    } else if (node is YamlList) {
+      safePrint('WARNING: Cannot merge YAML list values');
+    }
+    update(path, node);
   }
 }

@@ -7,7 +7,7 @@ import 'package:amplify_core/amplify_core.dart';
 /// Exception thrown when the configuration of the signed in account does not
 /// support the requested operation.
 /// {@endtemplate}
-class InvalidAccountTypeException extends AuthException {
+final class InvalidAccountTypeException extends AuthServiceException {
   /// {@macro amplify_core.auth.invalid_account_type_exception}
   const InvalidAccountTypeException(
     super.message, {
@@ -22,6 +22,14 @@ class InvalidAccountTypeException extends AuthException {
   }) : this(
           'No identity pool registered for this account',
           recoverySuggestion: recoverySuggestion,
+        );
+
+  /// Thrown when no user pool is available, but a user pool operation
+  /// was explicitly requested.
+  const InvalidAccountTypeException.noUserPool()
+      : this(
+          'No user pool registered for this account',
+          recoverySuggestion: 'Register a user pool using the CLI',
         );
 
   @override

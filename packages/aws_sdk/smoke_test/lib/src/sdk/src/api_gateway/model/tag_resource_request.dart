@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.tag_resource_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -49,9 +50,8 @@ abstract class TagResourceRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    TagResourceRequestRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<TagResourceRequestPayload>>
+      serializers = [TagResourceRequestRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(TagResourceRequestBuilder b) {}
@@ -84,15 +84,15 @@ abstract class TagResourceRequest
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('TagResourceRequest');
-    helper.add(
-      'resourceArn',
-      resourceArn,
-    );
-    helper.add(
-      'tags',
-      tags,
-    );
+    final helper = newBuiltValueToStringHelper('TagResourceRequest')
+      ..add(
+        'resourceArn',
+        resourceArn,
+      )
+      ..add(
+        'tags',
+        tags,
+      );
     return helper.toString();
   }
 }
@@ -117,11 +117,11 @@ abstract class TagResourceRequestPayload
   List<Object?> get props => [tags];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('TagResourceRequestPayload');
-    helper.add(
-      'tags',
-      tags,
-    );
+    final helper = newBuiltValueToStringHelper('TagResourceRequestPayload')
+      ..add(
+        'tags',
+        tags,
+      );
     return helper.toString();
   }
 }
@@ -156,6 +156,9 @@ class TagResourceRequestRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'tags':
           result.tags.replace((serializers.deserialize(
@@ -168,7 +171,6 @@ class TagResourceRequestRestJson1Serializer
               ],
             ),
           ) as _i3.BuiltMap<String, String>));
-          break;
       }
     }
 
@@ -178,16 +180,15 @@ class TagResourceRequestRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    TagResourceRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is TagResourceRequest
-        ? object.getPayload()
-        : (object as TagResourceRequestPayload);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final TagResourceRequestPayload(:tags) = object;
+    result$.addAll([
       'tags',
       serializers.serialize(
-        payload.tags,
+        tags,
         specifiedType: const FullType(
           _i3.BuiltMap,
           [
@@ -196,7 +197,7 @@ class TagResourceRequestRestJson1Serializer
           ],
         ),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

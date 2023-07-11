@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.server_side_encryption; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -30,10 +31,17 @@ class ServerSideEncryption extends _i1.SmithyEnum<ServerSideEncryption> {
     'aws:kms',
   );
 
+  static const awsKmsDsse = ServerSideEncryption._(
+    2,
+    'aws_kms_dsse',
+    'aws:kms:dsse',
+  );
+
   /// All values of [ServerSideEncryption].
   static const values = <ServerSideEncryption>[
     ServerSideEncryption.aes256,
     ServerSideEncryption.awsKms,
+    ServerSideEncryption.awsKmsDsse,
   ];
 
   static const List<_i1.SmithySerializer<ServerSideEncryption>> serializers = [

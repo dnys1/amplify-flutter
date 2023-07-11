@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_auth_cognito_dart.cognito_identity_provider.model.mfa_option_type; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -17,12 +18,12 @@ abstract class MfaOptionType
     implements Built<MfaOptionType, MfaOptionTypeBuilder> {
   /// _This data type is no longer supported._ Applies only to SMS multi-factor authentication (MFA) configurations. Does not apply to time-based one-time password (TOTP) software token MFA configurations.
   factory MfaOptionType({
-    String? attributeName,
     _i2.DeliveryMediumType? deliveryMedium,
+    String? attributeName,
   }) {
     return _$MfaOptionType._(
-      attributeName: attributeName,
       deliveryMedium: deliveryMedium,
+      attributeName: attributeName,
     );
   }
 
@@ -32,34 +33,34 @@ abstract class MfaOptionType
 
   const MfaOptionType._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<MfaOptionType>> serializers = [
     MfaOptionTypeAwsJson11Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(MfaOptionTypeBuilder b) {}
 
-  /// The attribute name of the MFA option type. The only valid value is `phone_number`.
-  String? get attributeName;
-
   /// The delivery medium to send the MFA code. You can use this parameter to set only the `SMS` delivery medium value.
   _i2.DeliveryMediumType? get deliveryMedium;
+
+  /// The attribute name of the MFA option type. The only valid value is `phone_number`.
+  String? get attributeName;
   @override
   List<Object?> get props => [
-        attributeName,
         deliveryMedium,
+        attributeName,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('MfaOptionType');
-    helper.add(
-      'attributeName',
-      attributeName,
-    );
-    helper.add(
-      'deliveryMedium',
-      deliveryMedium,
-    );
+    final helper = newBuiltValueToStringHelper('MfaOptionType')
+      ..add(
+        'deliveryMedium',
+        deliveryMedium,
+      )
+      ..add(
+        'attributeName',
+        attributeName,
+      );
     return helper.toString();
   }
 }
@@ -92,23 +93,20 @@ class MfaOptionTypeAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
-        case 'AttributeName':
-          if (value != null) {
-            result.attributeName = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
         case 'DeliveryMedium':
-          if (value != null) {
-            result.deliveryMedium = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.DeliveryMediumType),
-            ) as _i2.DeliveryMediumType);
-          }
-          break;
+          result.deliveryMedium = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.DeliveryMediumType),
+          ) as _i2.DeliveryMediumType);
+        case 'AttributeName':
+          result.attributeName = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -118,27 +116,27 @@ class MfaOptionTypeAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    MfaOptionType object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as MfaOptionType);
-    final result = <Object?>[];
-    if (payload.attributeName != null) {
-      result
-        ..add('AttributeName')
-        ..add(serializers.serialize(
-          payload.attributeName!,
-          specifiedType: const FullType(String),
-        ));
-    }
-    if (payload.deliveryMedium != null) {
-      result
+    final result$ = <Object?>[];
+    final MfaOptionType(:deliveryMedium, :attributeName) = object;
+    if (deliveryMedium != null) {
+      result$
         ..add('DeliveryMedium')
         ..add(serializers.serialize(
-          payload.deliveryMedium!,
+          deliveryMedium,
           specifiedType: const FullType(_i2.DeliveryMediumType),
         ));
     }
-    return result;
+    if (attributeName != null) {
+      result$
+        ..add('AttributeName')
+        ..add(serializers.serialize(
+          attributeName,
+          specifiedType: const FullType(String),
+        ));
+    }
+    return result$;
   }
 }

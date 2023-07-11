@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.delete_stored_query_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -32,9 +33,8 @@ abstract class DeleteStoredQueryRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    DeleteStoredQueryRequestAwsJson11Serializer()
-  ];
+  static const List<_i1.SmithySerializer<DeleteStoredQueryRequest>>
+      serializers = [DeleteStoredQueryRequestAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DeleteStoredQueryRequestBuilder b) {}
@@ -47,11 +47,11 @@ abstract class DeleteStoredQueryRequest
   List<Object?> get props => [queryName];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DeleteStoredQueryRequest');
-    helper.add(
-      'queryName',
-      queryName,
-    );
+    final helper = newBuiltValueToStringHelper('DeleteStoredQueryRequest')
+      ..add(
+        'queryName',
+        queryName,
+      );
     return helper.toString();
   }
 }
@@ -85,13 +85,15 @@ class DeleteStoredQueryRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'QueryName':
           result.queryName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -101,17 +103,18 @@ class DeleteStoredQueryRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteStoredQueryRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DeleteStoredQueryRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final DeleteStoredQueryRequest(:queryName) = object;
+    result$.addAll([
       'QueryName',
       serializers.serialize(
-        payload.queryName,
+        queryName,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

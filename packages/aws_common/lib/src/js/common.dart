@@ -35,14 +35,83 @@ mixin JSEnum on Enum {
 @JS()
 external GlobalScope get self;
 
-/// The window object of the current context.
-@JS()
-external Window? get window;
+/// Whether the current script is running in a web worker.
+final bool zIsWebWorker = js_util.getProperty<Window?>(self, 'window') == null;
 
+/// The [Window] object of the current context.
+///
+/// Throws a [StateError] if unavailable in this context. Use [zIsWebWorker]
+/// to check whether this will throw or not.
+Window get window {
+  final window = js_util.getProperty<Window?>(self, 'window');
+  if (window == null) {
+    throw StateError('window is not available in this context');
+  }
+  return window;
+}
+
+/// The [Document] object of the current context.
+///
+/// Throws a [StateError] if unavailable. Use [zIsWebWorker] to check whether
+/// this will throw or not.
+Document get document {
+  final document = js_util.getProperty<Document?>(self, 'document');
+  if (document == null) {
+    throw StateError('document is not available in this context');
+  }
+  return document;
+}
+
+/// {@template aws_common.js.window}
 /// The Window interface represents a window containing a DOM document.
+/// {@endtemplate}
 @JS()
 @staticInterop
 abstract class Window implements GlobalScope {}
+
+/// {@macro aws_common.js.window}
+extension PropsWindow on Window {
+  /// Loads a specified resource into a new or existing browsing context
+  /// (that is, a tab, a window, or an iframe) under a specified name.
+  external void open([String? url, String? target]);
+}
+
+/// {@template aws_common.js.document}
+/// The Document interface represents any web page loaded in the browser and
+/// serves as an entry point into the web page's content, which is the DOM tree.
+/// {@endtemplate}
+@JS()
+@staticInterop
+abstract class Document {}
+
+/// {@macro aws_common.js.document}
+extension PropsDocument on Document {
+  /// Returns the first [Element] within the document that matches the
+  /// specified selector, or group of selectors.
+  ///
+  /// If no matches are found, `null` is returned.
+  external Element? querySelector(String selectors);
+}
+
+/// {@template aws_common.js.element}
+/// The most general base class from which all element objects (i.e. objects
+/// that represent elements) in a [Document] inherit.
+///
+/// It only has methods and properties common to all kinds of elements. More
+/// specific classes inherit from Element.
+/// {@endtemplate}
+@JS()
+@staticInterop
+abstract class Element {}
+
+/// {@macro aws_common.js.element}
+extension PropsElement on Element {
+  /// Returns the value of a specified attribute on the element.
+  ///
+  /// If the given attribute does not exist, the value returned will either be
+  /// `null` or `""` (the empty string);
+  external String? getAttribute(String name);
+}
 
 /// A function which handles DOM events.
 typedef EventHandler<T extends Event> = void Function(T event);
@@ -93,11 +162,6 @@ extension PropsEventTarget on EventTarget {
       ]);
 }
 
-Object? _convertToJs(Object? o) {
-  if (o == null || o is! Map || o is! Iterable) return o;
-  return js_util.jsify(o);
-}
-
 /// {@template worker_bee.js.interop.global_scope}
 /// The global execution context, referred to by [self].
 ///
@@ -105,7 +169,7 @@ Object? _convertToJs(Object? o) {
 /// {@endtemplate}
 @JS()
 @staticInterop
-class GlobalScope extends EventTarget {}
+abstract class GlobalScope extends EventTarget {}
 
 /// {@macro worker_bee.js.interop.global_scope}
 extension PropsGlobalScope on GlobalScope {
@@ -123,8 +187,8 @@ extension PropsGlobalScope on GlobalScope {
     List<Object>? transfer,
   ]) =>
       js_util.callMethod(this, 'postMessage', [
-        _convertToJs(o),
-        transfer?.map(_convertToJs).toList(),
+        js_util.jsify(o),
+        transfer?.map(js_util.jsify).toList(),
       ]);
 }
 
@@ -133,21 +197,21 @@ extension PropsGlobalScope on GlobalScope {
 /// {@endtemplate}
 @JS()
 @staticInterop
-class MessageEvent extends Event {}
+abstract class MessageEvent extends Event {}
 
 /// {@macro worker_bee.js.interop.message_event}
 extension PropsMessageEvent on MessageEvent {
   /// The data sent by the message emitter.
   Object? get data {
     final Object? data = js_util.getProperty(this, 'data');
-    return dartify(data);
+    return js_util.dartify(data);
   }
 
   /// An array of [MessagePort] objects representing the ports associated with
   /// the channel the message is being sent through.
   List<MessagePort> get ports {
     final Object ports = js_util.getProperty(this, 'ports');
-    return (dartify(ports) as List).cast<MessagePort>();
+    return (js_util.dartify(ports) as List).cast<MessagePort>();
   }
 }
 
@@ -158,7 +222,7 @@ extension PropsMessageEvent on MessageEvent {
 /// {@endtemplate}
 @JS()
 @staticInterop
-class MessagePort extends EventTarget {}
+abstract class MessagePort extends EventTarget {}
 
 /// {@macro worker_bee.js.interop.message_port}
 extension PropsMessagePort on MessagePort {
@@ -185,15 +249,18 @@ extension PropsMessagePort on MessagePort {
     List<Object>? transfer,
   ]) =>
       js_util.callMethod(this, 'postMessage', [
-        _convertToJs(o),
-        transfer?.map(_convertToJs).toList(),
+        js_util.jsify(o),
+        transfer?.map(js_util.jsify).toList(),
       ]);
 
   /// Starts the sending of messages queued on the port.
   ///
   /// Only needed when using `EventTarget.addEventListener`; it is implied when
   /// using [onMessage].
-  external void start();
+  void start() => _start();
+
+  @JS('start')
+  external void _start();
 
   /// Disconnects the port, so it is no longer active.
   external void close();
@@ -211,6 +278,10 @@ abstract class Location {}
 extension PropsLocation on Location {
   /// The entire URL.
   external String get href;
+
+  /// Returns a string containing the canonical form of the origin of the
+  /// specific location.
+  external String get origin;
 }
 
 /// {@template worker_bee.js.interop.worker_init}
@@ -220,7 +291,7 @@ extension PropsLocation on Location {
 @JS()
 @anonymous
 @staticInterop
-class WorkerInit {
+abstract class WorkerInit {
   /// {@macro worker_bee.js.interop.worker_init}
   external factory WorkerInit({
     String? type,
@@ -233,7 +304,7 @@ class WorkerInit {
 /// {@endtemplate}
 @JS()
 @staticInterop
-class Worker extends EventTarget {
+abstract class Worker extends EventTarget {
   /// {@macro worker_bee.js.interop.worker}
   external factory Worker(String url, [WorkerInit? init]);
 }
@@ -268,7 +339,7 @@ extension PropsWorker on Worker {
 /// {@endtemplate}
 @JS()
 @staticInterop
-class ErrorEvent extends Event {}
+abstract class ErrorEvent extends Event {}
 
 /// {@macro worker_bee.js.interop.error_event}
 extension PropsErrorEvent on ErrorEvent {
@@ -286,7 +357,7 @@ extension PropsErrorEvent on ErrorEvent {
 /// {@endtemplate}
 @JS()
 @staticInterop
-class MessageChannel {
+abstract class MessageChannel {
   /// {@macro worker_bee.js.interop.message_channel}
   external factory MessageChannel();
 }
@@ -303,7 +374,7 @@ extension PropsMessageChannel on MessageChannel {
 /// Browser-based JSON utilities.
 @JS()
 @staticInterop
-class JSON {
+abstract class JSON {
   /// Stringifies a JSON-like object.
   external static String stringify(Object? object);
 }
@@ -313,7 +384,7 @@ class JSON {
 /// {@endtemplate}
 @JS('Object')
 @staticInterop
-class JSObject {
+abstract class JSObject {
   /// Returns an array of a given [object]'s own enumerable property names,
   /// iterated in the same order that a normal loop would.
   external static List<String> keys(Object object);
@@ -324,54 +395,4 @@ class JSObject {
 
   /// The prototype of the JS `Object` class.
   external static Object get prototype;
-}
-
-/// Returns `true` if a given object is a simple JavaScript object.
-bool isJavaScriptSimpleObject(Object? value) {
-  final proto = JSObject.getPrototypeOf(value);
-  return proto == null || proto == JSObject.prototype;
-}
-
-Object? _getConstructor(String constructorName) =>
-    js_util.getProperty(self, constructorName);
-
-/// Like [js_util.instanceof] only takes a [String] for the object name instead
-/// of a constructor object.
-bool instanceOfString(Object? element, String objectType) {
-  final constructor = _getConstructor(objectType);
-  return constructor != null && js_util.instanceof(element, constructor);
-}
-
-/// Returns `true` if a given object is a JavaScript array.
-bool isJavaScriptArray(Object? value) => instanceOfString(value, 'Array');
-
-/// Inverse of [js_util.jsify]. Converts JS types to Dart.
-// TODO(dnys1): Remove when dartify is available in js_util.
-Object? dartify(Object? o) {
-  if (o == null) return null;
-  if (isJavaScriptSimpleObject(o)) {
-    final dartObject = <Object?, Object?>{};
-    final originalKeys = JSObject.keys(o);
-    final dartKeys = <Object?>[];
-    for (final key in originalKeys) {
-      dartKeys.add(dartify(key));
-    }
-    for (var i = 0; i < originalKeys.length; i++) {
-      final jsKey = originalKeys[i];
-      final dartKey = dartKeys[i];
-      final Object? jsValue = js_util.getProperty(o, jsKey);
-      dartObject[dartKey] = dartify(jsValue);
-    }
-    return dartObject;
-  }
-  if (isJavaScriptArray(o)) {
-    final dartObject = <Object?>[];
-    final int length = js_util.getProperty(o, 'length');
-    for (var i = 0; i < length; i++) {
-      final Object? jsValue = js_util.getProperty(o, i);
-      dartObject.add(dartify(jsValue));
-    }
-    return dartObject;
-  }
-  return o;
 }

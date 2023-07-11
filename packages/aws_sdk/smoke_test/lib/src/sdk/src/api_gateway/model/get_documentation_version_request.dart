@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.get_documentation_version_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -22,12 +23,12 @@ abstract class GetDocumentationVersionRequest
         _i1.HasPayload<GetDocumentationVersionRequestPayload> {
   /// Gets a documentation snapshot of an API.
   factory GetDocumentationVersionRequest({
-    required String documentationVersion,
     required String restApiId,
+    required String documentationVersion,
   }) {
     return _$GetDocumentationVersionRequest._(
-      documentationVersion: documentationVersion,
       restApiId: restApiId,
+      documentationVersion: documentationVersion,
     );
   }
 
@@ -52,18 +53,17 @@ abstract class GetDocumentationVersionRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    GetDocumentationVersionRequestRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<GetDocumentationVersionRequestPayload>>
+      serializers = [GetDocumentationVersionRequestRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetDocumentationVersionRequestBuilder b) {}
 
-  /// The version identifier of the to-be-retrieved documentation snapshot.
-  String get documentationVersion;
-
   /// The string identifier of the associated RestApi.
   String get restApiId;
+
+  /// The version identifier of the to-be-retrieved documentation snapshot.
+  String get documentationVersion;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -83,21 +83,20 @@ abstract class GetDocumentationVersionRequest
       GetDocumentationVersionRequestPayload();
   @override
   List<Object?> get props => [
-        documentationVersion,
         restApiId,
+        documentationVersion,
       ];
   @override
   String toString() {
-    final helper =
-        newBuiltValueToStringHelper('GetDocumentationVersionRequest');
-    helper.add(
-      'documentationVersion',
-      documentationVersion,
-    );
-    helper.add(
-      'restApiId',
-      restApiId,
-    );
+    final helper = newBuiltValueToStringHelper('GetDocumentationVersionRequest')
+      ..add(
+        'restApiId',
+        restApiId,
+      )
+      ..add(
+        'documentationVersion',
+        documentationVersion,
+      );
     return helper.toString();
   }
 }
@@ -159,7 +158,7 @@ class GetDocumentationVersionRequestRestJson1Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetDocumentationVersionRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) =>
       const <Object?>[];

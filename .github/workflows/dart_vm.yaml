@@ -2,6 +2,10 @@ name: Dart (VM)
 on:
   workflow_call:
     inputs:
+      package-name:
+        description: The name of the package being tested
+        required: true
+        type: string
       working-directory:
         description: The working directory relative to the repo root
         required: true
@@ -18,12 +22,12 @@ jobs:
       matrix:
         sdk:
           # Minimum supported Dart version
-          - '2.18.0'
+          - "3.0.1"
           - stable
           - beta
     steps:
       - name: Cache Pub dependencies
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # 3.0.11
+        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # 3.3.1
         with:
           path: |
             ~/.pub-cache/hosted
@@ -35,15 +39,30 @@ jobs:
             os:ubuntu-latest
 
       - name: Git Checkout
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # 3.1.0
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # 3.5.3
 
       - name: Git Submodules
         run: git submodule update --init
 
+      # Some Dart packages require Flutter to be available, for example `amplify_core`
+      # requires it for its `doc` package. Running this before "Setup Dart" means that
+      # the `dart` executable in PATH will always be the one setup by "Setup Dart".
+      #
+      # TODO(dnys1): Create mapping of Flutter->Dart versions so we can just use Dart
+      # vended by Flutter.
+      - name: Setup Flutter
+        uses: subosito/flutter-action@dbf1fa04f4d2e52c33185153d06cdb5443aa189d # 2.8.0
+        with:
+          cache: true
+          channel: beta
+
       - name: Setup Dart
-        uses: dart-lang/setup-dart@196f54580e9eee2797c57e85e289339f85e6779d # main
+        uses: dart-lang/setup-dart@007c7cbb377cdbdf8922e2f8c4172dc60fbaaf9a # main
         with:
           sdk: ${{ matrix.sdk }}
+
+      - name: Dart Version
+        run: dart --version
 
       - name: Setup aft
         shell: bash # Run in bash regardless of platform
@@ -55,11 +74,11 @@ jobs:
 
       - name: Bootstrap
         id: bootstrap
-        timeout-minutes: 10
-        run: aft bootstrap
+        timeout-minutes: 20
+        run: aft bootstrap --fail-fast --include=${{ inputs.package-name }} --verbose
 
       - name: Check Formatting
-        if: "always() && steps.bootstrap.conclusion == 'success'"
+        if: "always() && steps.bootstrap.conclusion == 'success' && matrix.sdk == 'stable'"
         run: dart format --set-exit-if-changed .
         working-directory: ${{ inputs.working-directory }}
 
@@ -89,7 +108,13 @@ jobs:
         run: dart analyze --fatal-infos --fatal-warnings .
         working-directory: ${{ inputs.working-directory }}
 
-      - name: Run Tests
-        if: "always() && steps.bootstrap.conclusion == 'success' && steps.testCheck.outputs.hasTests == 'true'"
+      - name: Run Tests (stable)
+        if: "always() && steps.bootstrap.conclusion == 'success' && steps.testCheck.outputs.hasTests == 'true' && matrix.sdk == 'stable'"
         run: dart test
+        working-directory: ${{ inputs.working-directory }}
+
+        # Non-stable test runs do not need to verify `build` tags since the generated code in the repo is updated using `build_runner` on `stable`.
+      - name: Run Tests (non-stable)
+        if: "always() && steps.bootstrap.conclusion == 'success' && steps.testCheck.outputs.hasTests == 'true' && matrix.sdk != 'stable'"
+        run: dart test --exclude-tags=build
         working-directory: ${{ inputs.working-directory }}

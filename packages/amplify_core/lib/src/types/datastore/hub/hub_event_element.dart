@@ -9,8 +9,8 @@ part 'hub_event_element_with_metadata.dart';
 /// `outboxMutationProcessed` Hub event.
 class HubEventElement<ModelIdentifier extends Object,
     M extends Model<ModelIdentifier, M>> {
+  const HubEventElement(this.model);
+
   /// The instance of the mutated model.
   final M model;
-
-  const HubEventElement(this.model);
 }

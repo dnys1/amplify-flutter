@@ -44,12 +44,13 @@ part 'form_fields/verify_user_form_field.dart';
 /// - [ConfirmSignUpFormField]
 /// - [VerifyUserFormField]
 /// {@endtemplate}
-abstract class AuthenticatorFormField<FieldType, FieldValue>
+abstract class AuthenticatorFormField<FieldType extends Enum,
+        FieldValue extends Object>
     extends AuthenticatorComponent<
         AuthenticatorFormField<FieldType, FieldValue>> {
   /// {@macro amplify_authenticator.authenticator_form_field}
   const AuthenticatorFormField._({
-    Key? key,
+    super.key,
     required this.field,
     this.titleKey,
     this.hintTextKey,
@@ -57,8 +58,8 @@ abstract class AuthenticatorFormField<FieldType, FieldValue>
     this.hintText,
     FormFieldValidator<FieldValue>? validator,
     this.requiredOverride,
-  })  : validatorOverride = validator,
-        super(key: key);
+    this.autofillHints,
+  }) : validatorOverride = validator;
 
   /// Resolver key for the title
   final InputResolverKey? titleKey;
@@ -85,6 +86,9 @@ abstract class AuthenticatorFormField<FieldType, FieldValue>
   /// User override of default [required] value.
   final bool? requiredOverride;
 
+  /// Autocomplete hints to override the default value
+  final Iterable<String>? autofillHints;
+
   /// Whether the field is required in the form.
   ///
   /// Defaults to `false`.
@@ -98,22 +102,29 @@ abstract class AuthenticatorFormField<FieldType, FieldValue>
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(EnumProperty('field', field));
-    properties.add(EnumProperty('titleKey', titleKey));
-    properties.add(EnumProperty('hintTextKey', hintTextKey));
-    properties.add(StringProperty('title', title));
-    properties.add(StringProperty('hintText', hintText));
-    properties.add(ObjectFlagProperty<FormFieldValidator<FieldValue>?>.has(
-        'validatorOverride', validatorOverride));
-    properties.add(IntProperty('priority', displayPriority));
-    properties.add(DiagnosticsProperty<bool>('required', required));
     properties
-        .add(DiagnosticsProperty<bool?>('requiredOverride', requiredOverride));
-    properties.add(EnumProperty<UsernameType?>('usernameType', usernameType));
+      ..add(EnumProperty('field', field))
+      ..add(DiagnosticsProperty('titleKey', titleKey))
+      ..add(DiagnosticsProperty('hintTextKey', hintTextKey))
+      ..add(StringProperty('title', title))
+      ..add(StringProperty('hintText', hintText))
+      ..add(
+        ObjectFlagProperty<FormFieldValidator<FieldValue>?>.has(
+          'validatorOverride',
+          validatorOverride,
+        ),
+      )
+      ..add(IntProperty('priority', displayPriority))
+      ..add(DiagnosticsProperty<bool>('required', required))
+      ..add(DiagnosticsProperty<bool?>('requiredOverride', requiredOverride))
+      ..add(EnumProperty<UsernameType?>('usernameType', usernameType))
+      ..add(IterableProperty<String>('autofillHints', autofillHints));
   }
 }
 
-abstract class AuthenticatorFormFieldState<FieldType, FieldValue,
+abstract class AuthenticatorFormFieldState<
+        FieldType extends Enum,
+        FieldValue extends Object,
         T extends AuthenticatorFormField<FieldType, FieldValue>>
     extends AuthenticatorComponentState<T> {
   @nonVirtual
@@ -158,7 +169,7 @@ abstract class AuthenticatorFormFieldState<FieldType, FieldValue,
   Widget? get companionWidget => null;
 
   /// Maximum number of lines to use for error text.
-  int get errorMaxLines => 1;
+  int get errorMaxLines => 2;
 
   /// The maximum length of the input.
   int? get maxLength => null;
@@ -166,7 +177,7 @@ abstract class AuthenticatorFormFieldState<FieldType, FieldValue,
   /// Text content for the form field's label
   String? get labelText {
     final inputResolver = stringResolver.inputs;
-    String? labelText =
+    var labelText =
         widget.title ?? widget.titleKey?.resolve(context, inputResolver);
     if (labelText != null) {
       labelText =
@@ -203,38 +214,33 @@ abstract class AuthenticatorFormFieldState<FieldType, FieldValue,
   /// A function that will be called when the Form Field is submitted, for
   /// example when the enter key is pressed down on web/desktop.
   void onFieldSubmitted(String _) {
+    if (state.isBusy) return;
     switch (state.currentStep) {
       case AuthenticatorStep.signUp:
         state.signUp();
-        break;
       case AuthenticatorStep.signIn:
         state.signIn();
-        break;
       case AuthenticatorStep.confirmSignUp:
         state.confirmSignUp();
-        break;
       case AuthenticatorStep.confirmSignInCustomAuth:
         state.confirmSignInCustomAuth();
-        break;
       case AuthenticatorStep.confirmSignInMfa:
         state.confirmSignInMFA();
-        break;
       case AuthenticatorStep.confirmSignInNewPassword:
         state.confirmSignInNewPassword();
-        break;
       case AuthenticatorStep.resetPassword:
         state.resetPassword();
-        break;
       case AuthenticatorStep.confirmResetPassword:
         state.confirmResetPassword();
-        break;
       case AuthenticatorStep.verifyUser:
         state.verifyUser();
-        break;
       default:
         break;
     }
   }
+
+  // Autocomplete hints
+  Iterable<String>? get autofillHints => widget.autofillHints;
 
   @nonVirtual
   @override
@@ -261,24 +267,35 @@ abstract class AuthenticatorFormFieldState<FieldType, FieldValue,
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-        .add(DiagnosticsProperty<TextInputType>('keyboardType', keyboardType));
-    properties.add(DiagnosticsProperty<bool>('enabled', enabled));
-    properties.add(IntProperty('errorMaxLines', errorMaxLines));
-    properties.add(DiagnosticsProperty<bool>('obscureText', obscureText));
-    properties.add(ObjectFlagProperty<ValueChanged<FieldValue>?>.has(
-        'onChanged', onChanged));
-    properties.add(ObjectFlagProperty<FormFieldValidator<FieldValue>?>.has(
-        'validator', validator));
-    properties
-        .add(DiagnosticsProperty<FieldValue?>('initialValue', initialValue));
-    properties
-        .add(EnumProperty<UsernameConfigType>('usernameType', usernameType));
-    properties.add(EnumProperty<UsernameType>(
-        'selectedUsernameType', selectedUsernameType));
-    properties.add(IntProperty('maxLength', maxLength));
-    properties.add(DiagnosticsProperty<bool>('isOptional', isOptional));
-    properties.add(StringProperty('labelText', labelText));
-    properties.add(DiagnosticsProperty<double?>('marginBottom', marginBottom));
-    properties.add(DoubleProperty('labelGap', labelGap));
+      ..add(DiagnosticsProperty<TextInputType>('keyboardType', keyboardType))
+      ..add(DiagnosticsProperty<bool>('enabled', enabled))
+      ..add(IntProperty('errorMaxLines', errorMaxLines))
+      ..add(DiagnosticsProperty<bool>('obscureText', obscureText))
+      ..add(
+        ObjectFlagProperty<ValueChanged<FieldValue>?>.has(
+          'onChanged',
+          onChanged,
+        ),
+      )
+      ..add(
+        ObjectFlagProperty<FormFieldValidator<FieldValue>?>.has(
+          'validator',
+          validator,
+        ),
+      )
+      ..add(DiagnosticsProperty<FieldValue?>('initialValue', initialValue))
+      ..add(EnumProperty<UsernameConfigType>('usernameType', usernameType))
+      ..add(
+        EnumProperty<UsernameType>(
+          'selectedUsernameType',
+          selectedUsernameType,
+        ),
+      )
+      ..add(IntProperty('maxLength', maxLength))
+      ..add(DiagnosticsProperty<bool>('isOptional', isOptional))
+      ..add(StringProperty('labelText', labelText))
+      ..add(DiagnosticsProperty<double?>('marginBottom', marginBottom))
+      ..add(DoubleProperty('labelGap', labelGap))
+      ..add(IterableProperty<String>('autofillHints', autofillHints));
   }
 }

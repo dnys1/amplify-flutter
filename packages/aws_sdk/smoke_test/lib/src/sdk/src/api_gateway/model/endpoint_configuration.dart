@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.endpoint_configuration; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -35,7 +36,7 @@ abstract class EndpointConfiguration
 
   const EndpointConfiguration._();
 
-  static const List<_i4.SmithySerializer> serializers = [
+  static const List<_i4.SmithySerializer<EndpointConfiguration>> serializers = [
     EndpointConfigurationRestJson1Serializer()
   ];
 
@@ -54,15 +55,15 @@ abstract class EndpointConfiguration
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('EndpointConfiguration');
-    helper.add(
-      'types',
-      types,
-    );
-    helper.add(
-      'vpcEndpointIds',
-      vpcEndpointIds,
-    );
+    final helper = newBuiltValueToStringHelper('EndpointConfiguration')
+      ..add(
+        'types',
+        types,
+      )
+      ..add(
+        'vpcEndpointIds',
+        vpcEndpointIds,
+      );
     return helper.toString();
   }
 }
@@ -96,29 +97,26 @@ class EndpointConfigurationRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'types':
-          if (value != null) {
-            result.types.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.EndpointType)],
-              ),
-            ) as _i3.BuiltList<_i2.EndpointType>));
-          }
-          break;
+          result.types.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.EndpointType)],
+            ),
+          ) as _i3.BuiltList<_i2.EndpointType>));
         case 'vpcEndpointIds':
-          if (value != null) {
-            result.vpcEndpointIds.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(String)],
-              ),
-            ) as _i3.BuiltList<String>));
-          }
-          break;
+          result.vpcEndpointIds.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(String)],
+            ),
+          ) as _i3.BuiltList<String>));
       }
     }
 
@@ -128,33 +126,33 @@ class EndpointConfigurationRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    EndpointConfiguration object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as EndpointConfiguration);
-    final result = <Object?>[];
-    if (payload.types != null) {
-      result
+    final result$ = <Object?>[];
+    final EndpointConfiguration(:types, :vpcEndpointIds) = object;
+    if (types != null) {
+      result$
         ..add('types')
         ..add(serializers.serialize(
-          payload.types!,
+          types,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(_i2.EndpointType)],
           ),
         ));
     }
-    if (payload.vpcEndpointIds != null) {
-      result
+    if (vpcEndpointIds != null) {
+      result$
         ..add('vpcEndpointIds')
         ..add(serializers.serialize(
-          payload.vpcEndpointIds!,
+          vpcEndpointIds,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(String)],
           ),
         ));
     }
-    return result;
+    return result$;
   }
 }

@@ -86,13 +86,7 @@ return ${allocate(DartTypes.awsCommon.zDebugMode)} ? '$_workersJsPath' : '$_mini
     final basePath = baseUri.pathSegments
         .takeWhile((segment) => segment != 'test')
         .map(Uri.encodeComponent)
-        .join('/');
-    final testDir = Uri(
-      scheme: baseUri.scheme,
-      host: baseUri.host,
-      port: baseUri.port,
-      path: '\$basePath/test',
-    );'''),
+        .join('/');'''),
       declareConst('relativePath')
           .assign(
             DartTypes.awsCommon.zDebugMode.conditional(
@@ -101,14 +95,16 @@ return ${allocate(DartTypes.awsCommon.zDebugMode)} ? '$_workersJsPath' : '$_mini
             ),
           )
           .statement,
-      literalList([
-        refer('relativePath'),
-        refer('testDir')
-            .property('resolve')
-            .call([refer('relativePath')])
-            .property('toString')
-            .call([]),
-      ]).returned.statement,
+      const Code(r'''
+    final testRelativePath = Uri(
+      scheme: baseUri.scheme,
+      host: baseUri.host,
+      port: baseUri.port,
+      path: '$basePath/test/$relativePath',
+    ).toString();'''),
+      literalList([refer('relativePath'), refer('testRelativePath')])
+          .returned
+          .statement,
     ]);
   }
 
@@ -118,26 +114,32 @@ return ${allocate(DartTypes.awsCommon.zDebugMode)} ? '$_workersJsPath' : '$_mini
           ..docs.add('/// The JS implementation of [${workerType.symbol}].')
           ..extend = workerType
           ..methods.addAll([
-            Method((m) => m
-              ..annotations.add(DartTypes.core.override)
-              ..returns = DartTypes.core.string
-              ..type = MethodType.getter
-              ..name = 'name'
-              ..body = literalString(workerName).code),
-            if (!declaresJsEntrypoint)
-              Method((m) => m
+            Method(
+              (m) => m
                 ..annotations.add(DartTypes.core.override)
                 ..returns = DartTypes.core.string
                 ..type = MethodType.getter
-                ..name = 'jsEntrypoint'
-                ..body = _jsEntrypoint),
+                ..name = 'name'
+                ..body = literalString(workerName).code,
+            ),
+            if (!declaresJsEntrypoint)
+              Method(
+                (m) => m
+                  ..annotations.add(DartTypes.core.override)
+                  ..returns = DartTypes.core.string
+                  ..type = MethodType.getter
+                  ..name = 'jsEntrypoint'
+                  ..body = _jsEntrypoint,
+              ),
             if (!declaresFallbackUrls)
-              Method((m) => m
-                ..annotations.add(DartTypes.core.override)
-                ..returns = DartTypes.core.list(DartTypes.core.string)
-                ..type = MethodType.getter
-                ..name = 'fallbackUrls'
-                ..body = _fallbackUrls),
+              Method(
+                (m) => m
+                  ..annotations.add(DartTypes.core.override)
+                  ..returns = DartTypes.core.list(DartTypes.core.string)
+                  ..type = MethodType.getter
+                  ..name = 'fallbackUrls'
+                  ..body = _fallbackUrls,
+              ),
           ]),
       );
 }

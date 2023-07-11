@@ -10,16 +10,19 @@ import 'package:smithy_test/smithy_test.dart';
 import 'common.dart';
 
 void main() {
-  void testDefaultValue(StructureShape struct, CodegenContext context) {
-    final generator = StructureGenerator(struct, context);
-    final method = generator.defaultValues(
-      members: generator.payloadMembers,
-      builderSymbol: generator.payloadBuilderSymbol,
-    );
-    final emitter = buildEmitter(Allocator.none);
-    final output = method.accept(emitter).toString();
-    expect(output, contains('b.defaultValue = 0'));
-  }
+  void testDefaultValue(StructureShape struct, CodegenContext context) =>
+      context.run(() {
+        {
+          final generator = StructureGenerator(struct, context);
+          final method = generator.defaultValues(
+            members: generator.payloadMembers,
+            builderSymbol: generator.payloadBuilderSymbol,
+          );
+          final emitter = buildEmitter(Allocator.none);
+          final output = method.accept(emitter).toString();
+          expect(output, contains('b.defaultValue = 0'));
+        }
+      });
 
   group('default value', () {
     test('v1', () {
@@ -29,14 +32,16 @@ void main() {
         (b) => b
           ..shapeId = const ShapeId(namespace: 'example', shape: 'MyStruct')
           ..members = NamedMembersMap({
-            'defaultValue': MemberShape((b) => b
-              ..memberName = 'defaultValue'
-              ..shapeId = const ShapeId(
-                namespace: 'example',
-                shape: 'MyStruct',
-                member: 'defaultValue',
-              )
-              ..target = primitiveId),
+            'defaultValue': MemberShape(
+              (b) => b
+                ..memberName = 'defaultValue'
+                ..shapeId = const ShapeId(
+                  namespace: 'example',
+                  shape: 'MyStruct',
+                  member: 'defaultValue',
+                )
+                ..target = primitiveId,
+            ),
           })
           ..traits = TraitMap.fromTraits(const [InputTrait()]),
       );

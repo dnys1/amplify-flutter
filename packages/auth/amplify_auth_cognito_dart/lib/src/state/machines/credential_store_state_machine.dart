@@ -7,21 +7,23 @@ import 'dart:convert';
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:amplify_auth_cognito_dart/src/credentials/cognito_keys.dart';
 import 'package:amplify_auth_cognito_dart/src/credentials/credential_store_keys.dart';
+import 'package:amplify_auth_cognito_dart/src/credentials/legacy_credential_provider.dart';
 import 'package:amplify_auth_cognito_dart/src/credentials/secure_storage_extension.dart';
 import 'package:amplify_auth_cognito_dart/src/model/auth_configuration.dart';
 import 'package:amplify_auth_cognito_dart/src/model/session/cognito_sign_in_details.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_secure_storage_dart/amplify_secure_storage_dart.dart';
 import 'package:meta/meta.dart';
 
-/// {@template amplify_auth_cognito.auth_store_state_machine}
+/// {@template amplify_auth_cognito.credential_store_state_machine}
 /// Manages the loading and storing of auth configuration data.
 /// {@endtemplate}
-class CredentialStoreStateMachine extends StateMachine<CredentialStoreEvent,
-    CredentialStoreState, AuthEvent, AuthState, CognitoAuthStateMachine> {
-  /// {@macro amplify_auth_cognito.auth_store_state_machine}
+final class CredentialStoreStateMachine
+    extends AuthStateMachine<CredentialStoreEvent, CredentialStoreState> {
+  /// {@macro amplify_auth_cognito.credential_store_state_machine}
   CredentialStoreStateMachine(CognitoAuthStateMachine manager)
       : super(manager, type);
 
@@ -45,37 +47,25 @@ class CredentialStoreStateMachine extends StateMachine<CredentialStoreEvent,
 
   @override
   Future<void> resolve(CredentialStoreEvent event) async {
-    switch (event.type) {
-      case CredentialStoreEventType.loadCredentialStore:
-        event as CredentialStoreLoadCredentialStore;
+    switch (event) {
+      case CredentialStoreLoadCredentialStore _:
         emit(const CredentialStoreState.loadingStoredCredentials());
         await onLoadCredentialStore(event);
-        return;
-      case CredentialStoreEventType.storeCredentials:
-        event as CredentialStoreStoreCredentials;
+      case CredentialStoreStoreCredentials _:
         emit(const CredentialStoreState.storingCredentials());
         await onStoreCredentials(event);
-        return;
-      case CredentialStoreEventType.clearCredentials:
-        event as CredentialStoreClearCredentials;
+      case CredentialStoreClearCredentials _:
         emit(const CredentialStoreState.clearingCredentials());
         await onClearCredentials(event);
-        return;
-      case CredentialStoreEventType.succeeded:
-        event as CredentialStoreSucceeded;
+      case CredentialStoreSucceeded _:
         emit(CredentialStoreState.success(event.data));
-        return;
-      case CredentialStoreEventType.failed:
-        event as CredentialStoreFailed;
-        emit(CredentialStoreState.failure(event.exception));
-        return;
     }
   }
 
   @override
-  CredentialStoreState? resolveError(Object error, [StackTrace? st]) {
+  CredentialStoreState? resolveError(Object error, StackTrace st) {
     if (error is Exception) {
-      return CredentialStoreFailure(error);
+      return CredentialStoreFailure(error, st);
     }
     return null;
   }

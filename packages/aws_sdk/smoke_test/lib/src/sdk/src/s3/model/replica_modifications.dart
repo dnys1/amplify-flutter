@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.replica_modifications; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -34,7 +35,7 @@ abstract class ReplicaModifications
 
   const ReplicaModifications._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<ReplicaModifications>> serializers = [
     ReplicaModificationsRestXmlSerializer()
   ];
 
@@ -47,11 +48,11 @@ abstract class ReplicaModifications
   List<Object?> get props => [status];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ReplicaModifications');
-    helper.add(
-      'status',
-      status,
-    );
+    final helper = newBuiltValueToStringHelper('ReplicaModifications')
+      ..add(
+        'status',
+        status,
+      );
     return helper.toString();
   }
 }
@@ -81,16 +82,18 @@ class ReplicaModificationsRestXmlSerializer
     final result = ReplicaModificationsBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'Status':
           result.status = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(_i2.ReplicaModificationsStatus),
           ) as _i2.ReplicaModificationsStatus);
-          break;
       }
     }
 
@@ -100,22 +103,22 @@ class ReplicaModificationsRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ReplicaModifications object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ReplicaModifications);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i3.XmlElementName(
         'ReplicaModifications',
         _i3.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    result
+    final ReplicaModifications(:status) = object;
+    result$
       ..add(const _i3.XmlElementName('Status'))
       ..add(serializers.serialize(
-        payload.status,
+        status,
         specifiedType: const FullType.nullable(_i2.ReplicaModificationsStatus),
       ));
-    return result;
+    return result$;
   }
 }

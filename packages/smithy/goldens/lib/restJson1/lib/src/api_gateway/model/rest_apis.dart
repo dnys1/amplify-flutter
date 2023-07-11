@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v1.api_gateway.model.rest_apis; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -35,7 +36,7 @@ abstract class RestApis
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
+  static const List<_i4.SmithySerializer<RestApis>> serializers = [
     RestApisRestJson1Serializer()
   ];
 
@@ -50,15 +51,15 @@ abstract class RestApis
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('RestApis');
-    helper.add(
-      'items',
-      items,
-    );
-    helper.add(
-      'position',
-      position,
-    );
+    final helper = newBuiltValueToStringHelper('RestApis')
+      ..add(
+        'items',
+        items,
+      )
+      ..add(
+        'position',
+        position,
+      );
     return helper.toString();
   }
 }
@@ -91,26 +92,23 @@ class RestApisRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'item':
-          if (value != null) {
-            result.items.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.RestApi)],
-              ),
-            ) as _i3.BuiltList<_i2.RestApi>));
-          }
-          break;
+          result.items.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.RestApi)],
+            ),
+          ) as _i3.BuiltList<_i2.RestApi>));
         case 'position':
-          if (value != null) {
-            result.position = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.position = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -120,30 +118,30 @@ class RestApisRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    RestApis object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as RestApis);
-    final result = <Object?>[];
-    if (payload.items != null) {
-      result
+    final result$ = <Object?>[];
+    final RestApis(:items, :position) = object;
+    if (items != null) {
+      result$
         ..add('item')
         ..add(serializers.serialize(
-          payload.items!,
+          items,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(_i2.RestApi)],
           ),
         ));
     }
-    if (payload.position != null) {
-      result
+    if (position != null) {
+      result$
         ..add('position')
         ..add(serializers.serialize(
-          payload.position!,
+          position,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

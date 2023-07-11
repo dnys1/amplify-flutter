@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.put_retention_configuration_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,9 +37,8 @@ abstract class PutRetentionConfigurationResponse
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
-    PutRetentionConfigurationResponseAwsJson11Serializer()
-  ];
+  static const List<_i3.SmithySerializer<PutRetentionConfigurationResponse>>
+      serializers = [PutRetentionConfigurationResponseAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(PutRetentionConfigurationResponseBuilder b) {}
@@ -50,11 +50,11 @@ abstract class PutRetentionConfigurationResponse
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('PutRetentionConfigurationResponse');
-    helper.add(
-      'retentionConfiguration',
-      retentionConfiguration,
-    );
+        newBuiltValueToStringHelper('PutRetentionConfigurationResponse')
+          ..add(
+            'retentionConfiguration',
+            retentionConfiguration,
+          );
     return helper.toString();
   }
 }
@@ -88,15 +88,15 @@ class PutRetentionConfigurationResponseAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'RetentionConfiguration':
-          if (value != null) {
-            result.retentionConfiguration.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.RetentionConfiguration),
-            ) as _i2.RetentionConfiguration));
-          }
-          break;
+          result.retentionConfiguration.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.RetentionConfiguration),
+          ) as _i2.RetentionConfiguration));
       }
     }
 
@@ -106,19 +106,19 @@ class PutRetentionConfigurationResponseAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    PutRetentionConfigurationResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as PutRetentionConfigurationResponse);
-    final result = <Object?>[];
-    if (payload.retentionConfiguration != null) {
-      result
+    final result$ = <Object?>[];
+    final PutRetentionConfigurationResponse(:retentionConfiguration) = object;
+    if (retentionConfiguration != null) {
+      result$
         ..add('RetentionConfiguration')
         ..add(serializers.serialize(
-          payload.retentionConfiguration!,
+          retentionConfiguration,
           specifiedType: const FullType(_i2.RetentionConfiguration),
         ));
     }
-    return result;
+    return result$;
   }
 }

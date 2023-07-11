@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.describe_continuous_backups_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,9 +37,8 @@ abstract class DescribeContinuousBackupsOutput
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
-    DescribeContinuousBackupsOutputAwsJson10Serializer()
-  ];
+  static const List<_i3.SmithySerializer<DescribeContinuousBackupsOutput>>
+      serializers = [DescribeContinuousBackupsOutputAwsJson10Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DescribeContinuousBackupsOutputBuilder b) {}
@@ -50,11 +50,11 @@ abstract class DescribeContinuousBackupsOutput
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DescribeContinuousBackupsOutput');
-    helper.add(
-      'continuousBackupsDescription',
-      continuousBackupsDescription,
-    );
+        newBuiltValueToStringHelper('DescribeContinuousBackupsOutput')
+          ..add(
+            'continuousBackupsDescription',
+            continuousBackupsDescription,
+          );
     return helper.toString();
   }
 }
@@ -88,16 +88,15 @@ class DescribeContinuousBackupsOutputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ContinuousBackupsDescription':
-          if (value != null) {
-            result.continuousBackupsDescription
-                .replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.ContinuousBackupsDescription),
-            ) as _i2.ContinuousBackupsDescription));
-          }
-          break;
+          result.continuousBackupsDescription.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.ContinuousBackupsDescription),
+          ) as _i2.ContinuousBackupsDescription));
       }
     }
 
@@ -107,19 +106,20 @@ class DescribeContinuousBackupsOutputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeContinuousBackupsOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeContinuousBackupsOutput);
-    final result = <Object?>[];
-    if (payload.continuousBackupsDescription != null) {
-      result
+    final result$ = <Object?>[];
+    final DescribeContinuousBackupsOutput(:continuousBackupsDescription) =
+        object;
+    if (continuousBackupsDescription != null) {
+      result$
         ..add('ContinuousBackupsDescription')
         ..add(serializers.serialize(
-          payload.continuousBackupsDescription!,
+          continuousBackupsDescription,
           specifiedType: const FullType(_i2.ContinuousBackupsDescription),
         ));
     }
-    return result;
+    return result$;
   }
 }

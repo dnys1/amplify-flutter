@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.describe_configuration_aggregators_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -19,15 +20,16 @@ abstract class DescribeConfigurationAggregatorsRequest
             DescribeConfigurationAggregatorsRequestBuilder> {
   factory DescribeConfigurationAggregatorsRequest({
     List<String>? configurationAggregatorNames,
-    int? limit,
     String? nextToken,
+    int? limit,
   }) {
+    limit ??= 0;
     return _$DescribeConfigurationAggregatorsRequest._(
       configurationAggregatorNames: configurationAggregatorNames == null
           ? null
           : _i3.BuiltList(configurationAggregatorNames),
-      limit: limit,
       nextToken: nextToken,
+      limit: limit,
     );
   }
 
@@ -44,45 +46,49 @@ abstract class DescribeConfigurationAggregatorsRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<
+          _i1.SmithySerializer<DescribeConfigurationAggregatorsRequest>>
+      serializers = [
     DescribeConfigurationAggregatorsRequestAwsJson11Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(DescribeConfigurationAggregatorsRequestBuilder b) {}
+  static void _init(DescribeConfigurationAggregatorsRequestBuilder b) {
+    b.limit = 0;
+  }
 
   /// The name of the configuration aggregators.
   _i3.BuiltList<String>? get configurationAggregatorNames;
 
-  /// The maximum number of configuration aggregators returned on each page. The default is maximum. If you specify 0, Config uses the default.
-  int? get limit;
-
   /// The `nextToken` string returned on a previous page that you use to get the next page of results in a paginated response.
   String? get nextToken;
+
+  /// The maximum number of configuration aggregators returned on each page. The default is maximum. If you specify 0, Config uses the default.
+  int get limit;
   @override
   DescribeConfigurationAggregatorsRequest getPayload() => this;
   @override
   List<Object?> get props => [
         configurationAggregatorNames,
-        limit,
         nextToken,
+        limit,
       ];
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DescribeConfigurationAggregatorsRequest');
-    helper.add(
-      'configurationAggregatorNames',
-      configurationAggregatorNames,
-    );
-    helper.add(
-      'limit',
-      limit,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+        newBuiltValueToStringHelper('DescribeConfigurationAggregatorsRequest')
+          ..add(
+            'configurationAggregatorNames',
+            configurationAggregatorNames,
+          )
+          ..add(
+            'nextToken',
+            nextToken,
+          )
+          ..add(
+            'limit',
+            limit,
+          );
     return helper.toString();
   }
 }
@@ -116,35 +122,28 @@ class DescribeConfigurationAggregatorsRequestAwsJson11Serializer extends _i1
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ConfigurationAggregatorNames':
-          if (value != null) {
-            result.configurationAggregatorNames
-                .replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(String)],
-              ),
-            ) as _i3.BuiltList<String>));
-          }
-          break;
-        case 'Limit':
-          if (value != null) {
-            result.limit = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(int),
-            ) as int);
-          }
-          break;
+          result.configurationAggregatorNames.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(String)],
+            ),
+          ) as _i3.BuiltList<String>));
         case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'Limit':
+          result.limit = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int);
       }
     }
 
@@ -154,38 +153,41 @@ class DescribeConfigurationAggregatorsRequestAwsJson11Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeConfigurationAggregatorsRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeConfigurationAggregatorsRequest);
-    final result = <Object?>[];
-    if (payload.configurationAggregatorNames != null) {
-      result
+    final result$ = <Object?>[];
+    final DescribeConfigurationAggregatorsRequest(
+      :configurationAggregatorNames,
+      :nextToken,
+      :limit
+    ) = object;
+    result$.addAll([
+      'Limit',
+      serializers.serialize(
+        limit,
+        specifiedType: const FullType(int),
+      ),
+    ]);
+    if (configurationAggregatorNames != null) {
+      result$
         ..add('ConfigurationAggregatorNames')
         ..add(serializers.serialize(
-          payload.configurationAggregatorNames!,
+          configurationAggregatorNames,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(String)],
           ),
         ));
     }
-    if (payload.limit != null) {
-      result
-        ..add('Limit')
-        ..add(serializers.serialize(
-          payload.limit!,
-          specifiedType: const FullType(int),
-        ));
-    }
-    if (payload.nextToken != null) {
-      result
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

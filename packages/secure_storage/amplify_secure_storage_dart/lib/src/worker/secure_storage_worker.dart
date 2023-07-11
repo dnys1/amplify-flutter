@@ -35,6 +35,7 @@ abstract class SecureStorageWorker
       var response = request;
       if (request.action == SecureStorageAction.init) {
         final config = request.config!;
+        // ignore: invalid_use_of_visible_for_testing_member
         _storage ??= AmplifySecureStorageDart(
           config: config,
         );
@@ -50,20 +51,16 @@ abstract class SecureStorageWorker
         case SecureStorageAction.delete:
           final key = request.key!;
           await storage.delete(key: key);
-          break;
         case SecureStorageAction.read:
           final key = request.key!;
           final value = await storage.read(key: key);
           response = request.rebuild((b) => b..value = value);
-          break;
         case SecureStorageAction.write:
           final key = request.key!;
           final value = request.value!;
           await storage.write(key: key, value: value);
-          break;
         case SecureStorageAction.removeAll:
           await storage.removeAll();
-          break;
       }
       respond.add(response);
     }

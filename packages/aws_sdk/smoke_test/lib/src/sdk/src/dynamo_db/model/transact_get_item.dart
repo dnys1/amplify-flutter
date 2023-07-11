@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.transact_get_item; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -25,7 +26,7 @@ abstract class TransactGetItem
 
   const TransactGetItem._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<TransactGetItem>> serializers = [
     TransactGetItemAwsJson10Serializer()
   ];
 
@@ -38,11 +39,11 @@ abstract class TransactGetItem
   List<Object?> get props => [get];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('TransactGetItem');
-    helper.add(
-      'get',
-      get,
-    );
+    final helper = newBuiltValueToStringHelper('TransactGetItem')
+      ..add(
+        'get',
+        get,
+      );
     return helper.toString();
   }
 }
@@ -75,13 +76,15 @@ class TransactGetItemAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'Get':
           result.get.replace((serializers.deserialize(
             value,
             specifiedType: const FullType(_i2.Get),
           ) as _i2.Get));
-          break;
       }
     }
 
@@ -91,17 +94,18 @@ class TransactGetItemAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    TransactGetItem object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as TransactGetItem);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final TransactGetItem(:get) = object;
+    result$.addAll([
       'Get',
       serializers.serialize(
-        payload.get,
+        get,
         specifiedType: const FullType(_i2.Get),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

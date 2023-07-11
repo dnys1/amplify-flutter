@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.get_conformance_pack_compliance_details_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -47,7 +48,9 @@ abstract class GetConformancePackComplianceDetailsResponse
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
+  static const List<
+          _i4.SmithySerializer<GetConformancePackComplianceDetailsResponse>>
+      serializers = [
     GetConformancePackComplianceDetailsResponseAwsJson11Serializer()
   ];
 
@@ -72,19 +75,19 @@ abstract class GetConformancePackComplianceDetailsResponse
   @override
   String toString() {
     final helper = newBuiltValueToStringHelper(
-        'GetConformancePackComplianceDetailsResponse');
-    helper.add(
-      'conformancePackName',
-      conformancePackName,
-    );
-    helper.add(
-      'conformancePackRuleEvaluationResults',
-      conformancePackRuleEvaluationResults,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+        'GetConformancePackComplianceDetailsResponse')
+      ..add(
+        'conformancePackName',
+        conformancePackName,
+      )
+      ..add(
+        'conformancePackRuleEvaluationResults',
+        conformancePackRuleEvaluationResults,
+      )
+      ..add(
+        'nextToken',
+        nextToken,
+      );
     return helper.toString();
   }
 }
@@ -118,33 +121,29 @@ class GetConformancePackComplianceDetailsResponseAwsJson11Serializer extends _i4
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ConformancePackName':
           result.conformancePackName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'ConformancePackRuleEvaluationResults':
-          if (value != null) {
-            result.conformancePackRuleEvaluationResults
-                .replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.ConformancePackEvaluationResult)],
-              ),
-            ) as _i3.BuiltList<_i2.ConformancePackEvaluationResult>));
-          }
-          break;
+          result.conformancePackRuleEvaluationResults
+              .replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.ConformancePackEvaluationResult)],
+            ),
+          ) as _i3.BuiltList<_i2.ConformancePackEvaluationResult>));
         case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -154,36 +153,41 @@ class GetConformancePackComplianceDetailsResponseAwsJson11Serializer extends _i4
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetConformancePackComplianceDetailsResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as GetConformancePackComplianceDetailsResponse);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final GetConformancePackComplianceDetailsResponse(
+      :conformancePackName,
+      :conformancePackRuleEvaluationResults,
+      :nextToken
+    ) = object;
+    result$.addAll([
       'ConformancePackName',
       serializers.serialize(
-        payload.conformancePackName,
+        conformancePackName,
         specifiedType: const FullType(String),
       ),
-    ];
-    if (payload.conformancePackRuleEvaluationResults != null) {
-      result
+    ]);
+    if (conformancePackRuleEvaluationResults != null) {
+      result$
         ..add('ConformancePackRuleEvaluationResults')
         ..add(serializers.serialize(
-          payload.conformancePackRuleEvaluationResults!,
+          conformancePackRuleEvaluationResults,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(_i2.ConformancePackEvaluationResult)],
           ),
         ));
     }
-    if (payload.nextToken != null) {
-      result
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

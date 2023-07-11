@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.get_compliance_summary_by_config_rule_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,7 +37,9 @@ abstract class GetComplianceSummaryByConfigRuleResponse
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<
+          _i3.SmithySerializer<GetComplianceSummaryByConfigRuleResponse>>
+      serializers = [
     GetComplianceSummaryByConfigRuleResponseAwsJson11Serializer()
   ];
 
@@ -50,11 +53,11 @@ abstract class GetComplianceSummaryByConfigRuleResponse
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('GetComplianceSummaryByConfigRuleResponse');
-    helper.add(
-      'complianceSummary',
-      complianceSummary,
-    );
+        newBuiltValueToStringHelper('GetComplianceSummaryByConfigRuleResponse')
+          ..add(
+            'complianceSummary',
+            complianceSummary,
+          );
     return helper.toString();
   }
 }
@@ -88,15 +91,15 @@ class GetComplianceSummaryByConfigRuleResponseAwsJson11Serializer extends _i3
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ComplianceSummary':
-          if (value != null) {
-            result.complianceSummary.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.ComplianceSummary),
-            ) as _i2.ComplianceSummary));
-          }
-          break;
+          result.complianceSummary.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.ComplianceSummary),
+          ) as _i2.ComplianceSummary));
       }
     }
 
@@ -106,19 +109,19 @@ class GetComplianceSummaryByConfigRuleResponseAwsJson11Serializer extends _i3
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetComplianceSummaryByConfigRuleResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as GetComplianceSummaryByConfigRuleResponse);
-    final result = <Object?>[];
-    if (payload.complianceSummary != null) {
-      result
+    final result$ = <Object?>[];
+    final GetComplianceSummaryByConfigRuleResponse(:complianceSummary) = object;
+    if (complianceSummary != null) {
+      result$
         ..add('ComplianceSummary')
         ..add(serializers.serialize(
-          payload.complianceSummary!,
+          complianceSummary,
           specifiedType: const FullType(_i2.ComplianceSummary),
         ));
     }
-    return result;
+    return result$;
   }
 }

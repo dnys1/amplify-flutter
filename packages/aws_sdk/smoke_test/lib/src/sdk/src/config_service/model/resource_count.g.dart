@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of smoke_test.config_service.model.resource_count;
+part of 'resource_count.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
@@ -8,14 +8,16 @@ part of smoke_test.config_service.model.resource_count;
 
 class _$ResourceCount extends ResourceCount {
   @override
-  final _i2.Int64? count;
+  final _i2.ResourceType? resourceType;
   @override
-  final _i3.ResourceType? resourceType;
+  final _i3.Int64 count;
 
   factory _$ResourceCount([void Function(ResourceCountBuilder)? updates]) =>
       (new ResourceCountBuilder()..update(updates))._build();
 
-  _$ResourceCount._({this.count, this.resourceType}) : super._();
+  _$ResourceCount._({this.resourceType, required this.count}) : super._() {
+    BuiltValueNullFieldError.checkNotNull(count, r'ResourceCount', 'count');
+  }
 
   @override
   ResourceCount rebuild(void Function(ResourceCountBuilder) updates) =>
@@ -28,15 +30,15 @@ class _$ResourceCount extends ResourceCount {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is ResourceCount &&
-        count == other.count &&
-        resourceType == other.resourceType;
+        resourceType == other.resourceType &&
+        count == other.count;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
-    _$hash = $jc(_$hash, count.hashCode);
     _$hash = $jc(_$hash, resourceType.hashCode);
+    _$hash = $jc(_$hash, count.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -46,14 +48,14 @@ class ResourceCountBuilder
     implements Builder<ResourceCount, ResourceCountBuilder> {
   _$ResourceCount? _$v;
 
-  _i2.Int64? _count;
-  _i2.Int64? get count => _$this._count;
-  set count(_i2.Int64? count) => _$this._count = count;
-
-  _i3.ResourceType? _resourceType;
-  _i3.ResourceType? get resourceType => _$this._resourceType;
-  set resourceType(_i3.ResourceType? resourceType) =>
+  _i2.ResourceType? _resourceType;
+  _i2.ResourceType? get resourceType => _$this._resourceType;
+  set resourceType(_i2.ResourceType? resourceType) =>
       _$this._resourceType = resourceType;
+
+  _i3.Int64? _count;
+  _i3.Int64? get count => _$this._count;
+  set count(_i3.Int64? count) => _$this._count = count;
 
   ResourceCountBuilder() {
     ResourceCount._init(this);
@@ -62,8 +64,8 @@ class ResourceCountBuilder
   ResourceCountBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _count = $v.count;
       _resourceType = $v.resourceType;
+      _count = $v.count;
       _$v = null;
     }
     return this;
@@ -84,8 +86,11 @@ class ResourceCountBuilder
   ResourceCount build() => _build();
 
   _$ResourceCount _build() {
-    final _$result =
-        _$v ?? new _$ResourceCount._(count: count, resourceType: resourceType);
+    final _$result = _$v ??
+        new _$ResourceCount._(
+            resourceType: resourceType,
+            count: BuiltValueNullFieldError.checkNotNull(
+                count, r'ResourceCount', 'count'));
     replace(_$result);
     return _$result;
   }

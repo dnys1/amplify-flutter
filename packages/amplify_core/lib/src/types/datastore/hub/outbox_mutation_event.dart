@@ -4,8 +4,7 @@
 import 'package:amplify_core/amplify_core.dart';
 
 class OutboxMutationEvent extends DataStoreHubEventPayload {
+  const OutboxMutationEvent(this.modelName, this.element);
   final HubEventElement element;
   final String modelName;
-
-  const OutboxMutationEvent(this.modelName, this.element);
 }

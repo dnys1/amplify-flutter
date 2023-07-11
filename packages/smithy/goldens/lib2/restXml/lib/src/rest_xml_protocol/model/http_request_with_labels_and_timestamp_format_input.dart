@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_xml_v2.rest_xml_protocol.model.http_request_with_labels_and_timestamp_format_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -20,22 +21,22 @@ abstract class HttpRequestWithLabelsAndTimestampFormatInput
         _i1.EmptyPayload,
         _i1.HasPayload<HttpRequestWithLabelsAndTimestampFormatInputPayload> {
   factory HttpRequestWithLabelsAndTimestampFormatInput({
-    required DateTime defaultFormat,
-    required DateTime memberDateTime,
     required DateTime memberEpochSeconds,
     required DateTime memberHttpDate,
-    required DateTime targetDateTime,
+    required DateTime memberDateTime,
+    required DateTime defaultFormat,
     required DateTime targetEpochSeconds,
     required DateTime targetHttpDate,
+    required DateTime targetDateTime,
   }) {
     return _$HttpRequestWithLabelsAndTimestampFormatInput._(
-      defaultFormat: defaultFormat,
-      memberDateTime: memberDateTime,
       memberEpochSeconds: memberEpochSeconds,
       memberHttpDate: memberHttpDate,
-      targetDateTime: targetDateTime,
+      memberDateTime: memberDateTime,
+      defaultFormat: defaultFormat,
       targetEpochSeconds: targetEpochSeconds,
       targetHttpDate: targetHttpDate,
+      targetDateTime: targetDateTime,
     );
   }
 
@@ -95,19 +96,21 @@ abstract class HttpRequestWithLabelsAndTimestampFormatInput
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<
+      _i1.SmithySerializer<
+          HttpRequestWithLabelsAndTimestampFormatInputPayload>> serializers = [
     HttpRequestWithLabelsAndTimestampFormatInputRestXmlSerializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(HttpRequestWithLabelsAndTimestampFormatInputBuilder b) {}
-  DateTime get defaultFormat;
-  DateTime get memberDateTime;
   DateTime get memberEpochSeconds;
   DateTime get memberHttpDate;
-  DateTime get targetDateTime;
+  DateTime get memberDateTime;
+  DateTime get defaultFormat;
   DateTime get targetEpochSeconds;
   DateTime get targetHttpDate;
+  DateTime get targetDateTime;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -151,46 +154,46 @@ abstract class HttpRequestWithLabelsAndTimestampFormatInput
       HttpRequestWithLabelsAndTimestampFormatInputPayload();
   @override
   List<Object?> get props => [
-        defaultFormat,
-        memberDateTime,
         memberEpochSeconds,
         memberHttpDate,
-        targetDateTime,
+        memberDateTime,
+        defaultFormat,
         targetEpochSeconds,
         targetHttpDate,
+        targetDateTime,
       ];
   @override
   String toString() {
     final helper = newBuiltValueToStringHelper(
-        'HttpRequestWithLabelsAndTimestampFormatInput');
-    helper.add(
-      'defaultFormat',
-      defaultFormat,
-    );
-    helper.add(
-      'memberDateTime',
-      memberDateTime,
-    );
-    helper.add(
-      'memberEpochSeconds',
-      memberEpochSeconds,
-    );
-    helper.add(
-      'memberHttpDate',
-      memberHttpDate,
-    );
-    helper.add(
-      'targetDateTime',
-      targetDateTime,
-    );
-    helper.add(
-      'targetEpochSeconds',
-      targetEpochSeconds,
-    );
-    helper.add(
-      'targetHttpDate',
-      targetHttpDate,
-    );
+        'HttpRequestWithLabelsAndTimestampFormatInput')
+      ..add(
+        'memberEpochSeconds',
+        memberEpochSeconds,
+      )
+      ..add(
+        'memberHttpDate',
+        memberHttpDate,
+      )
+      ..add(
+        'memberDateTime',
+        memberDateTime,
+      )
+      ..add(
+        'defaultFormat',
+        defaultFormat,
+      )
+      ..add(
+        'targetEpochSeconds',
+        targetEpochSeconds,
+      )
+      ..add(
+        'targetHttpDate',
+        targetHttpDate,
+      )
+      ..add(
+        'targetDateTime',
+        targetDateTime,
+      );
     return helper.toString();
   }
 }
@@ -254,12 +257,13 @@ class HttpRequestWithLabelsAndTimestampFormatInputRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    HttpRequestWithLabelsAndTimestampFormatInputPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName('HttpRequestWithLabelsAndTimestampFormatInput')
     ];
-    return result;
+
+    return result$;
   }
 }

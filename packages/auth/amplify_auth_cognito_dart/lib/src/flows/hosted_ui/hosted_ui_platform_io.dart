@@ -6,6 +6,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
+import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_platform.dart';
+import 'package:amplify_auth_cognito_dart/src/model/hosted_ui/oauth_parameters.dart';
+import 'package:amplify_auth_cognito_dart/src/state/event/auth_event.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:meta/meta.dart';
 
@@ -197,7 +200,7 @@ class HostedUiPlatformImpl extends HostedUiPlatform {
 
   @override
   Future<void> signIn({
-    required CognitoSignInWithWebUIOptions options,
+    required CognitoSignInWithWebUIPluginOptions options,
     AuthProvider? provider,
   }) async {
     final signInUris = config.signInRedirectUris.where(
@@ -211,10 +214,11 @@ class HostedUiPlatformImpl extends HostedUiPlatform {
 
     _localServer = await localConnect(signInUris);
     try {
-      final signInUrl = getSignInUri(
+      final signInUrl = (await getSignInUri(
         provider: provider,
         redirectUri: _localServer!.uri,
-      ).toString();
+      ))
+          .toString();
       await launchUrl(signInUrl);
 
       final server = _localServer?.server;
@@ -246,9 +250,11 @@ class HostedUiPlatformImpl extends HostedUiPlatform {
           );
           continue;
         }
-        dispatcher.dispatch(
-          HostedUiEvent.exchange(
-            OAuthParameters.fromJson(queryParams),
+        unawaited(
+          dispatcher.dispatchAndComplete(
+            HostedUiEvent.exchange(
+              OAuthParameters.fromJson(queryParams),
+            ),
           ),
         );
         await _respond(
@@ -271,8 +277,7 @@ class HostedUiPlatformImpl extends HostedUiPlatform {
 
   @override
   Future<void> signOut({
-    required CognitoSignOutWithWebUIOptions options,
-    required bool isPreferPrivateSession,
+    required CognitoSignInWithWebUIPluginOptions options,
   }) async {
     final signOutUris = config.signOutRedirectUris.where(
       (uri) =>

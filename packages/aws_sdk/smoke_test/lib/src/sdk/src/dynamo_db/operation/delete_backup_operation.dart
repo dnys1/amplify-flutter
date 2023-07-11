@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.operation.delete_backup_operation; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -111,7 +112,7 @@ class DeleteBackupOperation extends _i1.HttpOperation<_i2.DeleteBackupInput,
       );
   @override
   List<_i1.SmithyError> get errorTypes => const [
-        _i1.SmithyError(
+        _i1.SmithyError<_i9.BackupInUseException, _i9.BackupInUseException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.dynamodb',
             shape: 'BackupInUseException',
@@ -120,7 +121,8 @@ class DeleteBackupOperation extends _i1.HttpOperation<_i2.DeleteBackupInput,
           _i9.BackupInUseException,
           builder: _i9.BackupInUseException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i10.BackupNotFoundException,
+            _i10.BackupNotFoundException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.dynamodb',
             shape: 'BackupNotFoundException',
@@ -129,7 +131,7 @@ class DeleteBackupOperation extends _i1.HttpOperation<_i2.DeleteBackupInput,
           _i10.BackupNotFoundException,
           builder: _i10.BackupNotFoundException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i11.InternalServerError, _i11.InternalServerError>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.dynamodb',
             shape: 'InternalServerError',
@@ -138,7 +140,8 @@ class DeleteBackupOperation extends _i1.HttpOperation<_i2.DeleteBackupInput,
           _i11.InternalServerError,
           builder: _i11.InternalServerError.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i12.InvalidEndpointException,
+            _i12.InvalidEndpointException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.dynamodb',
             shape: 'InvalidEndpointException',
@@ -148,7 +151,8 @@ class DeleteBackupOperation extends _i1.HttpOperation<_i2.DeleteBackupInput,
           statusCode: 421,
           builder: _i12.InvalidEndpointException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i13.LimitExceededException,
+            _i13.LimitExceededException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.dynamodb',
             shape: 'LimitExceededException',
@@ -180,7 +184,7 @@ class DeleteBackupOperation extends _i1.HttpOperation<_i2.DeleteBackupInput,
       ),
       zoneValues: {
         ...?_awsEndpoint.credentialScope?.zoneValues,
-        ...{_i7.AWSHeaders.sdkInvocationId: _i7.uuid(secure: true)}
+        ...{_i7.AWSHeaders.sdkInvocationId: _i7.uuid(secure: true)},
       },
     );
   }

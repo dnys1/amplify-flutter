@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.put_delivery_channel_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -38,9 +39,8 @@ abstract class PutDeliveryChannelRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    PutDeliveryChannelRequestAwsJson11Serializer()
-  ];
+  static const List<_i1.SmithySerializer<PutDeliveryChannelRequest>>
+      serializers = [PutDeliveryChannelRequestAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(PutDeliveryChannelRequestBuilder b) {}
@@ -53,11 +53,11 @@ abstract class PutDeliveryChannelRequest
   List<Object?> get props => [deliveryChannel];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('PutDeliveryChannelRequest');
-    helper.add(
-      'deliveryChannel',
-      deliveryChannel,
-    );
+    final helper = newBuiltValueToStringHelper('PutDeliveryChannelRequest')
+      ..add(
+        'deliveryChannel',
+        deliveryChannel,
+      );
     return helper.toString();
   }
 }
@@ -91,13 +91,15 @@ class PutDeliveryChannelRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'DeliveryChannel':
           result.deliveryChannel.replace((serializers.deserialize(
             value,
             specifiedType: const FullType(_i3.DeliveryChannel),
           ) as _i3.DeliveryChannel));
-          break;
       }
     }
 
@@ -107,17 +109,18 @@ class PutDeliveryChannelRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    PutDeliveryChannelRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as PutDeliveryChannelRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final PutDeliveryChannelRequest(:deliveryChannel) = object;
+    result$.addAll([
       'DeliveryChannel',
       serializers.serialize(
-        payload.deliveryChannel,
+        deliveryChannel,
         specifiedType: const FullType(_i3.DeliveryChannel),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

@@ -1,4 +1,4 @@
-group 'com.amazonaws.amplify.amplify_analytics_pinpoint.amplify_analytics_pinpoint'
+group 'com.amazonaws.amplify.amplify_analytics_pinpoint'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.0'
+        classpath 'com.android.tools.build:gradle:8.0.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -43,6 +43,8 @@ android {
     defaultConfig {
         minSdkVersion 23
     }
+
+    namespace 'com.amazonaws.amplify.amplify_analytics_pinpoint'
 }
 
 dependencies {

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.invalid_next_token_exception; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -9,18 +10,18 @@ import 'package:smithy/smithy.dart' as _i2;
 
 part 'invalid_next_token_exception.g.dart';
 
-/// The specified next token is invalid. Specify the `nextToken` string that was returned in the previous response to get the next page of results.
+/// The specified next token is not valid. Specify the `nextToken` string that was returned in the previous response to get the next page of results.
 abstract class InvalidNextTokenException
     with _i1.AWSEquatable<InvalidNextTokenException>
     implements
         Built<InvalidNextTokenException, InvalidNextTokenExceptionBuilder>,
         _i2.SmithyHttpException {
-  /// The specified next token is invalid. Specify the `nextToken` string that was returned in the previous response to get the next page of results.
+  /// The specified next token is not valid. Specify the `nextToken` string that was returned in the previous response to get the next page of results.
   factory InvalidNextTokenException({String? message}) {
     return _$InvalidNextTokenException._(message: message);
   }
 
-  /// The specified next token is invalid. Specify the `nextToken` string that was returned in the previous response to get the next page of results.
+  /// The specified next token is not valid. Specify the `nextToken` string that was returned in the previous response to get the next page of results.
   factory InvalidNextTokenException.build(
           [void Function(InvalidNextTokenExceptionBuilder) updates]) =
       _$InvalidNextTokenException;
@@ -37,9 +38,8 @@ abstract class InvalidNextTokenException
         b.headers = response.headers;
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
-    InvalidNextTokenExceptionAwsJson11Serializer()
-  ];
+  static const List<_i2.SmithySerializer<InvalidNextTokenException>>
+      serializers = [InvalidNextTokenExceptionAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(InvalidNextTokenExceptionBuilder b) {}
@@ -66,11 +66,11 @@ abstract class InvalidNextTokenException
   List<Object?> get props => [message];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('InvalidNextTokenException');
-    helper.add(
-      'message',
-      message,
-    );
+    final helper = newBuiltValueToStringHelper('InvalidNextTokenException')
+      ..add(
+        'message',
+        message,
+      );
     return helper.toString();
   }
 }
@@ -104,15 +104,15 @@ class InvalidNextTokenExceptionAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'message':
-          if (value != null) {
-            result.message = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.message = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -122,19 +122,19 @@ class InvalidNextTokenExceptionAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    InvalidNextTokenException object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as InvalidNextTokenException);
-    final result = <Object?>[];
-    if (payload.message != null) {
-      result
+    final result$ = <Object?>[];
+    final InvalidNextTokenException(:message) = object;
+    if (message != null) {
+      result$
         ..add('message')
         ..add(serializers.serialize(
-          payload.message!,
+          message,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

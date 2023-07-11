@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_analytics_pinpoint_dart.pinpoint.model.get_endpoint_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,7 +37,7 @@ abstract class GetEndpointResponse
         b.endpointResponse.replace(payload);
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<_i3.EndpointResponse>> serializers = [
     GetEndpointResponseRestJson1Serializer()
   ];
 
@@ -51,11 +52,11 @@ abstract class GetEndpointResponse
   List<Object?> get props => [endpointResponse];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('GetEndpointResponse');
-    helper.add(
-      'endpointResponse',
-      endpointResponse,
-    );
+    final helper = newBuiltValueToStringHelper('GetEndpointResponse')
+      ..add(
+        'endpointResponse',
+        endpointResponse,
+      );
     return helper.toString();
   }
 }
@@ -91,15 +92,12 @@ class GetEndpointResponseRestJson1Serializer
   @override
   Object serialize(
     Serializers serializers,
-    Object? object, {
+    _i3.EndpointResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is GetEndpointResponse
-        ? object.getPayload()
-        : (object as _i3.EndpointResponse);
-    return (serializers.serialize(
-      payload,
+    return serializers.serialize(
+      object,
       specifiedType: const FullType(_i3.EndpointResponse),
-    ) as Object);
+    )!;
   }
 }

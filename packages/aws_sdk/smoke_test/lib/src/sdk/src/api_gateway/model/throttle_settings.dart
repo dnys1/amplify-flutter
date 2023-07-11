@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.throttle_settings; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -18,6 +19,8 @@ abstract class ThrottleSettings
     int? burstLimit,
     double? rateLimit,
   }) {
+    burstLimit ??= 0;
+    rateLimit ??= 0;
     return _$ThrottleSettings._(
       burstLimit: burstLimit,
       rateLimit: rateLimit,
@@ -30,18 +33,21 @@ abstract class ThrottleSettings
 
   const ThrottleSettings._();
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<ThrottleSettings>> serializers = [
     ThrottleSettingsRestJson1Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(ThrottleSettingsBuilder b) {}
+  static void _init(ThrottleSettingsBuilder b) {
+    b.burstLimit = 0;
+    b.rateLimit = 0;
+  }
 
   /// The API target request burst rate limit. This allows more requests through for a period of time than the target rate limit.
-  int? get burstLimit;
+  int get burstLimit;
 
   /// The API target request rate limit.
-  double? get rateLimit;
+  double get rateLimit;
   @override
   List<Object?> get props => [
         burstLimit,
@@ -49,15 +55,15 @@ abstract class ThrottleSettings
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ThrottleSettings');
-    helper.add(
-      'burstLimit',
-      burstLimit,
-    );
-    helper.add(
-      'rateLimit',
-      rateLimit,
-    );
+    final helper = newBuiltValueToStringHelper('ThrottleSettings')
+      ..add(
+        'burstLimit',
+        burstLimit,
+      )
+      ..add(
+        'rateLimit',
+        rateLimit,
+      );
     return helper.toString();
   }
 }
@@ -90,23 +96,20 @@ class ThrottleSettingsRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'burstLimit':
-          if (value != null) {
-            result.burstLimit = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(int),
-            ) as int);
-          }
-          break;
+          result.burstLimit = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int);
         case 'rateLimit':
-          if (value != null) {
-            result.rateLimit = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(double),
-            ) as double);
-          }
-          break;
+          result.rateLimit = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(double),
+          ) as double);
       }
     }
 
@@ -116,27 +119,23 @@ class ThrottleSettingsRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ThrottleSettings object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ThrottleSettings);
-    final result = <Object?>[];
-    if (payload.burstLimit != null) {
-      result
-        ..add('burstLimit')
-        ..add(serializers.serialize(
-          payload.burstLimit!,
-          specifiedType: const FullType(int),
-        ));
-    }
-    if (payload.rateLimit != null) {
-      result
-        ..add('rateLimit')
-        ..add(serializers.serialize(
-          payload.rateLimit!,
-          specifiedType: const FullType(double),
-        ));
-    }
-    return result;
+    final result$ = <Object?>[];
+    final ThrottleSettings(:burstLimit, :rateLimit) = object;
+    result$.addAll([
+      'burstLimit',
+      serializers.serialize(
+        burstLimit,
+        specifiedType: const FullType(int),
+      ),
+      'rateLimit',
+      serializers.serialize(
+        rateLimit,
+        specifiedType: const FullType(double),
+      ),
+    ]);
+    return result$;
   }
 }

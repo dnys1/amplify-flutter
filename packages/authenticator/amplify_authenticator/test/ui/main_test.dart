@@ -21,8 +21,9 @@ enum TestConfig {
   phoneNumber(phoneNumberConfig),
   usernameWithAttributes(usernameWithAttributesConfig);
 
-  final String config;
   const TestConfig(this.config);
+
+  final String config;
 }
 
 enum ScreenGeometry {
@@ -41,29 +42,35 @@ enum ScreenGeometry {
   // Geometry based off of an ultra HD monitor
   desktop(size: Size(2560, 1440), pixelRatio: 1);
 
+  const ScreenGeometry({required this.size, required this.pixelRatio});
+
   final Size size;
 
   final double pixelRatio;
-
-  const ScreenGeometry({required this.size, required this.pixelRatio});
 }
 
+// TODO(Jordan-Nelson): Update all themes to use material3
 enum TestTheme {
-  defaultMaterial,
-  highContrast,
-  customSwatch,
-  custom;
+  defaultMaterial(),
+  material3(),
+  highContrast(),
+  customSwatch(),
+  custom();
 
   ThemeData get lightTheme {
     switch (this) {
       case TestTheme.defaultMaterial:
-        return ThemeData.light();
+        return ThemeData.light(useMaterial3: false);
+      case TestTheme.material3:
+        return ThemeData.light(useMaterial3: true);
       case TestTheme.highContrast:
         return ThemeData.from(
+          useMaterial3: false,
           colorScheme: const ColorScheme.highContrastLight(),
         );
       case TestTheme.customSwatch:
         return ThemeData.from(
+          useMaterial3: false,
           colorScheme: ColorScheme.fromSwatch(
             primarySwatch: Colors.red,
             backgroundColor: Colors.white,
@@ -72,7 +79,7 @@ enum TestTheme {
           indicatorColor: Colors.red,
         );
       case TestTheme.custom:
-        return ThemeData.light().copyWith(
+        return ThemeData.light(useMaterial3: false).copyWith(
           tabBarTheme: const TabBarTheme(
             labelColor: Colors.amber,
           ),
@@ -84,13 +91,17 @@ enum TestTheme {
   ThemeData get darkTheme {
     switch (this) {
       case TestTheme.defaultMaterial:
-        return ThemeData.dark();
+        return ThemeData.dark(useMaterial3: false);
+      case TestTheme.material3:
+        return ThemeData.dark(useMaterial3: true);
       case TestTheme.highContrast:
         return ThemeData.from(
+          useMaterial3: false,
           colorScheme: const ColorScheme.highContrastDark(),
         );
       case TestTheme.customSwatch:
         return ThemeData.from(
+          useMaterial3: false,
           colorScheme: ColorScheme.fromSwatch(
             primarySwatch: Colors.red,
             backgroundColor: Colors.black,
@@ -98,7 +109,7 @@ enum TestTheme {
           ),
         );
       case TestTheme.custom:
-        return ThemeData.dark().copyWith(
+        return ThemeData.dark(useMaterial3: false).copyWith(
           tabBarTheme: const TabBarTheme(
             labelColor: Colors.amber,
           ),
@@ -118,9 +129,7 @@ void main() {
   });
 
   group('UI Tests', () {
-    setUp(() {
-      binding.window.platformDispatcher.clearPlatformBrightnessTestValue();
-    });
+    setUp(binding.platformDispatcher.clearPlatformBrightnessTestValue);
 
     // Tests the layout for each config/step/geometry.
     group('layout', () {
@@ -143,7 +152,10 @@ void main() {
           final testName = 'layout_${configName}_${stepName}_$geometryName';
 
           setUp(() {
+            // TODO(Jordan-Nelson): Migrate to WidgetTester
+            // ignore: deprecated_member_use
             binding.window.devicePixelRatioTestValue = geometry.pixelRatio;
+            // ignore: deprecated_member_use
             binding.window.physicalSizeTestValue = geometry.size;
           });
 
@@ -185,9 +197,12 @@ void main() {
               'theme_${configName}_${stepName}_${themeName}_${brightnessName}_$geometryName';
 
           setUp(() {
-            binding.window.platformDispatcher.platformBrightnessTestValue =
-                brightness;
+            binding.platformDispatcher.platformBrightnessTestValue = brightness;
+
+            // TODO(Jordan-Nelson): Migrate to WidgetTester
+            // ignore: deprecated_member_use
             binding.window.devicePixelRatioTestValue = geometry.pixelRatio;
+            // ignore: deprecated_member_use
             binding.window.physicalSizeTestValue = geometry.size;
           });
 

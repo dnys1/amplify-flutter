@@ -8,13 +8,14 @@ import 'package:amplify_auth_cognito_dart/src/credentials/cognito_keys.dart';
 import 'package:amplify_auth_cognito_dart/src/crypto/crypto.dart';
 import 'package:amplify_auth_cognito_dart/src/jwt/jwt.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';
+import 'package:amplify_auth_cognito_test/common/mock_clients.dart';
+import 'package:amplify_auth_cognito_test/common/mock_config.dart';
+import 'package:amplify_auth_cognito_test/common/mock_secure_storage.dart';
 import 'package:amplify_core/amplify_core.dart';
+import 'package:amplify_secure_storage_dart/amplify_secure_storage_dart.dart';
 import 'package:test/test.dart';
-
-import '../common/mock_clients.dart';
-import '../common/mock_config.dart';
-import '../common/mock_secure_storage.dart';
 
 String randomString(int len) => String.fromCharCodes(getRandomBytes(10));
 
@@ -78,7 +79,7 @@ final _userPoolTokens = CognitoUserPoolTokens.build(
     ..idToken = idToken,
 );
 
-class MockAmplifyAuthCognito extends AmplifyAuthCognitoDart {
+class MockCognitoAuthStateMachine extends CognitoAuthStateMachine {
   @override
   Future<CognitoUserPoolTokens> getUserPoolTokens() async {
     return _userPoolTokens;
@@ -93,7 +94,7 @@ void main() {
 
   group('fetchUserAttributes', () {
     setUp(() {
-      stateMachine = CognitoAuthStateMachine()
+      stateMachine = MockCognitoAuthStateMachine()
         ..addInstance<CognitoIdentityProviderClient>(
           MockCognitoIdentityProviderClient(
             getUser: () async => GetUserResponse(
@@ -105,6 +106,7 @@ void main() {
             ),
           ),
         );
+      plugin = AmplifyAuthCognitoDart()..stateMachine = stateMachine;
     });
 
     tearDown(() async {
@@ -112,8 +114,6 @@ void main() {
     });
 
     test('converts user attributes correctly', () async {
-      plugin = MockAmplifyAuthCognito()..stateMachine = stateMachine;
-
       final res = await plugin.fetchUserAttributes();
       final expected = [
         AuthUserAttribute(
@@ -203,6 +203,7 @@ void main() {
 
     test('refreshes token before calling Cognito', () async {
       final secureStorage = MockSecureStorage();
+      SecureStorageInterface storageFactory(scope) => secureStorage;
       seedStorage(
         secureStorage,
         userPoolKeys: userPoolKeys,
@@ -219,7 +220,7 @@ void main() {
         ).raw,
       );
 
-      plugin = AmplifyAuthCognitoDart(credentialStorage: secureStorage)
+      plugin = AmplifyAuthCognitoDart(secureStorageFactory: storageFactory)
         ..stateMachine = stateMachine;
 
       await plugin.configure(

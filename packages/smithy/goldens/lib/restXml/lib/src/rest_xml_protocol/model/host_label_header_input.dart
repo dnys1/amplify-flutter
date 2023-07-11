@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_xml_v1.rest_xml_protocol.model.host_label_header_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -39,9 +40,8 @@ abstract class HostLabelHeaderInput
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    HostLabelHeaderInputRestXmlSerializer()
-  ];
+  static const List<_i1.SmithySerializer<HostLabelHeaderInputPayload>>
+      serializers = [HostLabelHeaderInputRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(HostLabelHeaderInputBuilder b) {}
@@ -64,11 +64,11 @@ abstract class HostLabelHeaderInput
   List<Object?> get props => [accountId];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('HostLabelHeaderInput');
-    helper.add(
-      'accountId',
-      accountId,
-    );
+    final helper = newBuiltValueToStringHelper('HostLabelHeaderInput')
+      ..add(
+        'accountId',
+        accountId,
+      );
     return helper.toString();
   }
 }
@@ -126,10 +126,11 @@ class HostLabelHeaderInputRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    HostLabelHeaderInputPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[const _i1.XmlElementName('HostLabelHeaderInput')];
-    return result;
+    final result$ = <Object?>[const _i1.XmlElementName('HostLabelHeaderInput')];
+
+    return result$;
   }
 }

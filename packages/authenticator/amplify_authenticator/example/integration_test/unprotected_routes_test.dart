@@ -3,19 +3,15 @@
 
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_authenticator_test/amplify_authenticator_test.dart';
-import 'package:amplify_test/amplify_test.dart';
+import 'package:amplify_integration_test/amplify_integration_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 
-import 'config.dart';
-import 'utils/mock_data.dart';
+import 'test_runner.dart';
 import 'utils/test_utils.dart';
 
 void main() {
-  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  // resolves issue on iOS. See: https://github.com/flutter/flutter/issues/89651
-  binding.deferFirstFrame();
+  testRunner.setupTests();
 
   final authenticator = Authenticator(
     child: MaterialApp(
@@ -30,18 +26,15 @@ void main() {
   );
 
   group('unprotected routes', () {
-    // Given I'm running the example "ui/components/authenticator/sign-in-with-email.feature"
-    setUpAll(() async {
-      await loadConfiguration(
-        'ui/components/authenticator/sign-in-with-email',
+    setUp(() async {
+      await testRunner.configure(
+        environmentName: 'sign-in-with-username',
       );
     });
 
-    tearDown(signOut);
-
     // Scenario: Sign in then sign out
     testWidgets('Sign in then sign out', (tester) async {
-      final username = generateEmail();
+      final username = generateUsername();
       final password = generatePassword();
       await adminCreateUser(
         username,
@@ -49,12 +42,23 @@ void main() {
         autoConfirm: true,
         verifyAttributes: true,
       );
-      SignInPage signInPage = SignInPage(tester: tester);
-      RouteAPage routeAPage = RouteAPage(tester: tester);
-      RouteBPage routeBPage = RouteBPage(tester: tester);
+
+      final signInPage = SignInPage(tester: tester);
+      final routeAPage = RouteAPage(tester: tester);
+      final routeBPage = RouteBPage(tester: tester);
 
       // when I launch the authenticator
       await loadAuthenticator(tester: tester, authenticator: authenticator);
+
+      expect(
+        tester.bloc.stream,
+        emitsInOrder([
+          UnauthenticatedState.signIn,
+          isA<AuthenticatedState>(),
+          UnauthenticatedState.signIn,
+          emitsDone,
+        ]),
+      );
 
       // then I should see route A
       routeAPage.expectIsPresent();
@@ -62,10 +66,10 @@ void main() {
       // when I navigate to route B
       await routeAPage.navigateToRouteB();
 
-      // then I should see the sign in page with email as the username
-      signInPage.expectUsername(label: 'Email');
+      // then I should see the sign in page
+      signInPage.expectUsername();
 
-      // When I type my "email" with status "CONFIRMED"
+      // When I type my "username" with status "CONFIRMED"
       await signInPage.enterUsername(username);
 
       // And I type my password
@@ -80,8 +84,10 @@ void main() {
       // And I click the "Sign out" button
       await signInPage.submitSignOut();
 
-      // then I should see the sign in page with email as the username
-      signInPage.expectUsername(label: 'Email');
+      // then I should see the sign in page
+      signInPage.expectUsername();
+
+      await tester.bloc.close();
     });
   });
 }
@@ -91,7 +97,7 @@ const navToRouteBButtonKey = Key('nav-to-route-b-button');
 const routeBKey = Key('route-b');
 
 class RouteA extends StatelessWidget {
-  const RouteA({Key? key}) : super(key: key);
+  const RouteA({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +119,7 @@ class RouteA extends StatelessWidget {
 }
 
 class RouteB extends StatelessWidget {
-  const RouteB({Key? key}) : super(key: key);
+  const RouteB({super.key});
 
   @override
   Widget build(BuildContext context) {

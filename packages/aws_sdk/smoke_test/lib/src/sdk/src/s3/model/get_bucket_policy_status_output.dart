@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.get_bucket_policy_status_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,7 +37,7 @@ abstract class GetBucketPolicyStatusOutput
         }
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<_i3.PolicyStatus?>> serializers = [
     GetBucketPolicyStatusOutputRestXmlSerializer()
   ];
 
@@ -51,11 +52,11 @@ abstract class GetBucketPolicyStatusOutput
   List<Object?> get props => [policyStatus];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('GetBucketPolicyStatusOutput');
-    helper.add(
-      'policyStatus',
-      policyStatus,
-    );
+    final helper = newBuiltValueToStringHelper('GetBucketPolicyStatusOutput')
+      ..add(
+        'policyStatus',
+        policyStatus,
+      );
     return helper.toString();
   }
 }
@@ -86,18 +87,18 @@ class GetBucketPolicyStatusOutputRestXmlSerializer
     final result = _i3.PolicyStatusBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'IsPublic':
-          if (value != null) {
-            result.isPublic = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(bool),
-            ) as bool);
-          }
-          break;
+          result.isPublic = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
       }
     }
 
@@ -107,29 +108,24 @@ class GetBucketPolicyStatusOutputRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    _i3.PolicyStatus object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is GetBucketPolicyStatusOutput
-        ? object.getPayload()
-        : (object as _i3.PolicyStatus?);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i2.XmlElementName(
         'PolicyStatus',
         _i2.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    if (payload == null) {
-      return result;
-    }
-    if (payload.isPublic != null) {
-      result
+    final _i3.PolicyStatus(:isPublic) = object;
+    if (isPublic != null) {
+      result$
         ..add(const _i2.XmlElementName('IsPublic'))
         ..add(serializers.serialize(
-          payload.isPublic!,
+          isPublic,
           specifiedType: const FullType.nullable(bool),
         ));
     }
-    return result;
+    return result$;
   }
 }

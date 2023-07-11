@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.too_many_tags_exception; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -9,18 +10,18 @@ import 'package:smithy/smithy.dart' as _i2;
 
 part 'too_many_tags_exception.g.dart';
 
-/// You have reached the limit of the number of tags you can use. You have more than 50 tags.
+/// You have reached the limit of the number of tags you can use. For more information, see [**Service Limits**](https://docs.aws.amazon.com/config/latest/developerguide/configlimits.html) in the _Config Developer Guide_.
 abstract class TooManyTagsException
     with _i1.AWSEquatable<TooManyTagsException>
     implements
         Built<TooManyTagsException, TooManyTagsExceptionBuilder>,
         _i2.SmithyHttpException {
-  /// You have reached the limit of the number of tags you can use. You have more than 50 tags.
+  /// You have reached the limit of the number of tags you can use. For more information, see [**Service Limits**](https://docs.aws.amazon.com/config/latest/developerguide/configlimits.html) in the _Config Developer Guide_.
   factory TooManyTagsException({String? message}) {
     return _$TooManyTagsException._(message: message);
   }
 
-  /// You have reached the limit of the number of tags you can use. You have more than 50 tags.
+  /// You have reached the limit of the number of tags you can use. For more information, see [**Service Limits**](https://docs.aws.amazon.com/config/latest/developerguide/configlimits.html) in the _Config Developer Guide_.
   factory TooManyTagsException.build(
           [void Function(TooManyTagsExceptionBuilder) updates]) =
       _$TooManyTagsException;
@@ -37,7 +38,7 @@ abstract class TooManyTagsException
         b.headers = response.headers;
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<TooManyTagsException>> serializers = [
     TooManyTagsExceptionAwsJson11Serializer()
   ];
 
@@ -66,11 +67,11 @@ abstract class TooManyTagsException
   List<Object?> get props => [message];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('TooManyTagsException');
-    helper.add(
-      'message',
-      message,
-    );
+    final helper = newBuiltValueToStringHelper('TooManyTagsException')
+      ..add(
+        'message',
+        message,
+      );
     return helper.toString();
   }
 }
@@ -104,15 +105,15 @@ class TooManyTagsExceptionAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'message':
-          if (value != null) {
-            result.message = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.message = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -122,19 +123,19 @@ class TooManyTagsExceptionAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    TooManyTagsException object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as TooManyTagsException);
-    final result = <Object?>[];
-    if (payload.message != null) {
-      result
+    final result$ = <Object?>[];
+    final TooManyTagsException(:message) = object;
+    if (message != null) {
+      result$
         ..add('message')
         ..add(serializers.serialize(
-          payload.message!,
+          message,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_auth_cognito_dart.cognito_identity.model.get_credentials_for_identity_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -20,12 +21,12 @@ abstract class GetCredentialsForIdentityResponse
             GetCredentialsForIdentityResponseBuilder> {
   /// Returned in response to a successful `GetCredentialsForIdentity` operation.
   factory GetCredentialsForIdentityResponse({
-    _i2.Credentials? credentials,
     String? identityId,
+    _i2.Credentials? credentials,
   }) {
     return _$GetCredentialsForIdentityResponse._(
-      credentials: credentials,
       identityId: identityId,
+      credentials: credentials,
     );
   }
 
@@ -43,35 +44,34 @@ abstract class GetCredentialsForIdentityResponse
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
-    GetCredentialsForIdentityResponseAwsJson11Serializer()
-  ];
+  static const List<_i3.SmithySerializer<GetCredentialsForIdentityResponse>>
+      serializers = [GetCredentialsForIdentityResponseAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetCredentialsForIdentityResponseBuilder b) {}
 
-  /// Credentials for the provided identity ID.
-  _i2.Credentials? get credentials;
-
   /// A unique identifier in the format REGION:GUID.
   String? get identityId;
+
+  /// Credentials for the provided identity ID.
+  _i2.Credentials? get credentials;
   @override
   List<Object?> get props => [
-        credentials,
         identityId,
+        credentials,
       ];
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('GetCredentialsForIdentityResponse');
-    helper.add(
-      'credentials',
-      credentials,
-    );
-    helper.add(
-      'identityId',
-      identityId,
-    );
+        newBuiltValueToStringHelper('GetCredentialsForIdentityResponse')
+          ..add(
+            'identityId',
+            identityId,
+          )
+          ..add(
+            'credentials',
+            credentials,
+          );
     return helper.toString();
   }
 }
@@ -105,23 +105,20 @@ class GetCredentialsForIdentityResponseAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
-        case 'Credentials':
-          if (value != null) {
-            result.credentials.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.Credentials),
-            ) as _i2.Credentials));
-          }
-          break;
         case 'IdentityId':
-          if (value != null) {
-            result.identityId = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.identityId = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'Credentials':
+          result.credentials.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.Credentials),
+          ) as _i2.Credentials));
       }
     }
 
@@ -131,27 +128,27 @@ class GetCredentialsForIdentityResponseAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetCredentialsForIdentityResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as GetCredentialsForIdentityResponse);
-    final result = <Object?>[];
-    if (payload.credentials != null) {
-      result
-        ..add('Credentials')
-        ..add(serializers.serialize(
-          payload.credentials!,
-          specifiedType: const FullType(_i2.Credentials),
-        ));
-    }
-    if (payload.identityId != null) {
-      result
+    final result$ = <Object?>[];
+    final GetCredentialsForIdentityResponse(:identityId, :credentials) = object;
+    if (identityId != null) {
+      result$
         ..add('IdentityId')
         ..add(serializers.serialize(
-          payload.identityId!,
+          identityId,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    if (credentials != null) {
+      result$
+        ..add('Credentials')
+        ..add(serializers.serialize(
+          credentials,
+          specifiedType: const FullType(_i2.Credentials),
+        ));
+    }
+    return result$;
   }
 }

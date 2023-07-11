@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.describe_continuous_backups_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -33,9 +34,8 @@ abstract class DescribeContinuousBackupsInput
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    DescribeContinuousBackupsInputAwsJson10Serializer()
-  ];
+  static const List<_i1.SmithySerializer<DescribeContinuousBackupsInput>>
+      serializers = [DescribeContinuousBackupsInputAwsJson10Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DescribeContinuousBackupsInputBuilder b) {}
@@ -48,12 +48,11 @@ abstract class DescribeContinuousBackupsInput
   List<Object?> get props => [tableName];
   @override
   String toString() {
-    final helper =
-        newBuiltValueToStringHelper('DescribeContinuousBackupsInput');
-    helper.add(
-      'tableName',
-      tableName,
-    );
+    final helper = newBuiltValueToStringHelper('DescribeContinuousBackupsInput')
+      ..add(
+        'tableName',
+        tableName,
+      );
     return helper.toString();
   }
 }
@@ -87,13 +86,15 @@ class DescribeContinuousBackupsInputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'TableName':
           result.tableName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -103,17 +104,18 @@ class DescribeContinuousBackupsInputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeContinuousBackupsInput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeContinuousBackupsInput);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final DescribeContinuousBackupsInput(:tableName) = object;
+    result$.addAll([
       'TableName',
       serializers.serialize(
-        payload.tableName,
+        tableName,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

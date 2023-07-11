@@ -10,6 +10,7 @@ import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_config.d
 import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_platform_stub.dart'
     if (dart.library.html) 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_platform_html.dart'
     if (dart.library.io) 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_platform_io.dart';
+import 'package:amplify_auth_cognito_dart/src/model/hosted_ui/oauth_parameters.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_secure_storage_dart/amplify_secure_storage_dart.dart';
@@ -33,9 +34,6 @@ abstract class HostedUiPlatform implements Closeable {
   /// {@macro amplify_auth_cognito.hosted_ui_platform}
   @protected
   HostedUiPlatform.protected(this.dependencyManager);
-
-  /// The dependency token for [HostedUiPlatform].
-  static const token = Token<HostedUiPlatform>([Token<DependencyManager>()]);
 
   /// The Hosted UI configuration.
   @protected
@@ -95,27 +93,30 @@ abstract class HostedUiPlatform implements Closeable {
   @protected
   @visibleForTesting
   @nonVirtual
-  Uri getSignInUri({
+  Future<Uri> getSignInUri({
     Uri? redirectUri,
     AuthProvider? provider,
-  }) {
+  }) async {
     final state = generateState();
     final codeVerifier = createCodeVerifier();
     final nonce = generateState();
 
-    _secureStorage
-      ..write(
-        key: _keys[HostedUiKey.state],
-        value: state,
-      )
-      ..write(
-        key: _keys[HostedUiKey.codeVerifier],
-        value: codeVerifier,
-      )
-      ..write(
-        key: _keys[HostedUiKey.nonce],
-        value: nonce,
-      );
+    await Future.wait<void>(
+      [
+        _secureStorage.write(
+          key: _keys[HostedUiKey.state],
+          value: state,
+        ),
+        _secureStorage.write(
+          key: _keys[HostedUiKey.codeVerifier],
+          value: codeVerifier,
+        ),
+        _secureStorage.write(
+          key: _keys[HostedUiKey.nonce],
+          value: nonce,
+        ),
+      ].map(Future.value),
+    );
 
     _authCodeGrant = createGrant(
       config,
@@ -247,7 +248,7 @@ abstract class HostedUiPlatform implements Closeable {
   }
 
   /// Called during initialization when old state is found in [_secureStorage].
-  Future<void> onFoundState({
+  Future<OAuthParameters> onFoundState({
     required String state,
     required String codeVerifier,
   }) async {
@@ -259,23 +260,26 @@ abstract class HostedUiPlatform implements Closeable {
         codeVerifier: codeVerifier,
         httpClient: httpClient,
       );
-      return dispatcher.dispatch(HostedUiEvent.exchange(parameters)).accepted;
+      return parameters;
     }
 
     // Clear all state from the previous session.
     _authCodeGrant = null;
-    _secureStorage
-      ..delete(key: _keys[HostedUiKey.state])
-      ..delete(key: _keys[HostedUiKey.codeVerifier])
-      ..delete(key: _keys[HostedUiKey.nonce])
-      ..delete(key: _keys[HostedUiKey.options]);
+    await Future.wait<void>(
+      [
+        _secureStorage.delete(key: _keys[HostedUiKey.state]),
+        _secureStorage.delete(key: _keys[HostedUiKey.codeVerifier]),
+        _secureStorage.delete(key: _keys[HostedUiKey.nonce]),
+        _secureStorage.delete(key: _keys[HostedUiKey.options]),
+      ].map(Future.value),
+    );
 
     throw const SignedOutException('The user is currently signed out');
   }
 
   /// Sign in a user via the OAuth flow.
   Future<void> signIn({
-    required CognitoSignInWithWebUIOptions options,
+    required CognitoSignInWithWebUIPluginOptions options,
     AuthProvider? provider,
   });
 
@@ -284,8 +288,7 @@ abstract class HostedUiPlatform implements Closeable {
 
   /// Sign out the current user.
   Future<void> signOut({
-    required CognitoSignOutWithWebUIOptions options,
-    required bool isPreferPrivateSession,
+    required CognitoSignInWithWebUIPluginOptions options,
   });
 
   @override

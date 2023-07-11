@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.delete_usage_plan_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -42,9 +43,8 @@ abstract class DeleteUsagePlanRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    DeleteUsagePlanRequestRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<DeleteUsagePlanRequestPayload>>
+      serializers = [DeleteUsagePlanRequestRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DeleteUsagePlanRequestBuilder b) {}
@@ -69,11 +69,11 @@ abstract class DeleteUsagePlanRequest
   List<Object?> get props => [usagePlanId];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DeleteUsagePlanRequest');
-    helper.add(
-      'usagePlanId',
-      usagePlanId,
-    );
+    final helper = newBuiltValueToStringHelper('DeleteUsagePlanRequest')
+      ..add(
+        'usagePlanId',
+        usagePlanId,
+      );
     return helper.toString();
   }
 }
@@ -134,7 +134,7 @@ class DeleteUsagePlanRequestRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteUsagePlanRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) =>
       const <Object?>[];

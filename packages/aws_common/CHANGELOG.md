@@ -1,3 +1,51 @@
+## 0.5.0+2
+
+### Fixes
+- fix(core): Disallowed JS tearoff ([#3150](https://github.com/aws-amplify/amplify-flutter/pull/3150))
+
+## 0.5.0+1
+
+- Minor bug fixes and improvements
+
+## 0.5.0
+
+### Features
+- Dart 3 support (must update Dart SDK constraint to `^3.0.0`)
+
+## 0.4.2+5
+
+### Fixes
+- fix(repo): Flutter 3.3 support
+
+## 0.4.2+4
+
+- Minor bug fixes and improvements
+
+## 0.4.2+3
+
+- Minor bug fixes and improvements
+
+## 0.4.2+2
+
+### Fixes
+- fix(http): Header casing in HTTP/2
+- fix(sigv4): Query parameter encoding
+
+## 0.4.2+1
+
+### Fixes
+- fix(aws_common): Explicitly serialize values
+- fix(core): Refine `toJson` outputs when `createFactory = false`
+
+## 0.4.2
+
+### Features
+- feat(aws_common): add openRead API for AWSFile
+
+## 0.4.1+1
+
+- Minor bug fixes and improvements
+
 ## 0.4.1
 
 ### Fixes

@@ -10,7 +10,7 @@ import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/sdk_exception.dart';
 import 'package:amplify_core/amplify_core.dart'
-    show AuthenticationFlowType, DependencyManager;
+    show AmplifyHttpClient, AuthenticationFlowType, DependencyManager;
 import 'package:aws_common/aws_common.dart';
 import 'package:meta/meta.dart';
 import 'package:smithy/smithy.dart';
@@ -18,25 +18,22 @@ import 'package:smithy/smithy.dart';
 /// Bridging helpers for [ChallengeNameType].
 extension ChallengeNameTypeBridge on ChallengeNameType {
   /// The sign in step corresponding to this challenge.
-  AuthSignInStep get signInStep {
-    switch (this) {
-      case ChallengeNameType.customChallenge:
-        return AuthSignInStep.confirmSignInWithCustomChallenge;
-      case ChallengeNameType.newPasswordRequired:
-        return AuthSignInStep.confirmSignInWithNewPassword;
-      case ChallengeNameType.smsMfa:
-        return AuthSignInStep.confirmSignInWithSmsMfaCode;
-      case ChallengeNameType.adminNoSrpAuth:
-      case ChallengeNameType.selectMfaType:
-      case ChallengeNameType.passwordVerifier:
-      case ChallengeNameType.devicePasswordVerifier:
-      case ChallengeNameType.deviceSrpAuth:
-      case ChallengeNameType.mfaSetup:
-      case ChallengeNameType.softwareTokenMfa:
-        break;
-    }
-    throw InvalidStateException('Unrecognized challenge type: $this');
-  }
+  AuthSignInStep get signInStep => switch (this) {
+        ChallengeNameType.customChallenge =>
+          AuthSignInStep.confirmSignInWithCustomChallenge,
+        ChallengeNameType.newPasswordRequired =>
+          AuthSignInStep.confirmSignInWithNewPassword,
+        ChallengeNameType.smsMfa => AuthSignInStep.confirmSignInWithSmsMfaCode,
+        ChallengeNameType.adminNoSrpAuth ||
+        ChallengeNameType.selectMfaType ||
+        ChallengeNameType.passwordVerifier ||
+        ChallengeNameType.devicePasswordVerifier ||
+        ChallengeNameType.deviceSrpAuth ||
+        ChallengeNameType.mfaSetup ||
+        ChallengeNameType.softwareTokenMfa ||
+        _ =>
+          throw InvalidStateException('Unrecognized challenge type: $this'),
+      };
 }
 
 /// Bridging helpers for [CodeDeliveryDetailsType].
@@ -58,15 +55,11 @@ extension CodeDeliveryDetailsBridge on CodeDeliveryDetailsType {
 /// Bridging helpers for [DeliveryMediumType].
 extension DeliveryMediumTypeBridge on DeliveryMediumType {
   /// The [DeliveryMedium] representation of `this`.
-  DeliveryMedium get asDeliveryMedium {
-    switch (this) {
-      case DeliveryMediumType.sms:
-        return DeliveryMedium.sms;
-      case DeliveryMediumType.email:
-        return DeliveryMedium.email;
-    }
-    throw StateError('Unknown delivery medium: $this');
-  }
+  DeliveryMedium get asDeliveryMedium => switch (this) {
+        DeliveryMediumType.sms => DeliveryMedium.sms,
+        DeliveryMediumType.email => DeliveryMedium.email,
+        _ => DeliveryMedium.unknown,
+      };
 }
 
 /// Bridging helpers for [AuthUserAttribute].
@@ -81,7 +74,7 @@ extension AuthUserAttributeBridge on AuthUserAttribute {
 /// Bridging helpers for [AttributeType].
 extension AttributeTypeBridge on AttributeType {
   /// This attribute as an [AuthUserAttribute].
-  AuthUserAttribute<CognitoUserAttributeKey> get asAuthUserAttribute {
+  AuthUserAttribute get asAuthUserAttribute {
     final key = CognitoUserAttributeKey.parse(name);
     return AuthUserAttribute(
       userAttributeKey: key,
@@ -93,19 +86,16 @@ extension AttributeTypeBridge on AttributeType {
 /// Bridging helpers for [AuthenticationFlowType].
 extension AuthenticationFlowTypeBridge on AuthenticationFlowType {
   /// The Cognito SDK value of `this`.
-  AuthFlowType get sdkValue {
-    switch (this) {
-      case AuthenticationFlowType.userSrpAuth:
-        return AuthFlowType.userSrpAuth;
-      // ignore: deprecated_member_use
-      case AuthenticationFlowType.customAuth:
-      case AuthenticationFlowType.customAuthWithSrp:
-      case AuthenticationFlowType.customAuthWithoutSrp:
-        return AuthFlowType.customAuth;
-      case AuthenticationFlowType.userPasswordAuth:
-        return AuthFlowType.userPasswordAuth;
-    }
-  }
+  AuthFlowType get sdkValue => switch (this) {
+        AuthenticationFlowType.userSrpAuth => AuthFlowType.userSrpAuth,
+        // ignore: deprecated_member_use
+        AuthenticationFlowType.customAuth ||
+        AuthenticationFlowType.customAuthWithSrp ||
+        AuthenticationFlowType.customAuthWithoutSrp =>
+          AuthFlowType.customAuth,
+        AuthenticationFlowType.userPasswordAuth =>
+          AuthFlowType.userPasswordAuth,
+      };
 }
 
 /// {@template amplify_auth_cognito_dart.sdk.wrapped_cognito_identity_provider_client}
@@ -118,16 +108,17 @@ class WrappedCognitoIdentityClient implements CognitoIdentityClient {
     required String region,
     required AWSCredentialsProvider credentialsProvider,
     required DependencyManager dependencyManager,
-  }) : _base = CognitoIdentityClient(
+  })  : _base = CognitoIdentityClient(
           region: region,
           credentialsProvider: credentialsProvider,
-          client: dependencyManager.getOrCreate(),
           requestInterceptors: const [
             WithHeader(AWSHeaders.cacheControl, 'no-store'),
           ],
-        );
+        ),
+        _dependencyManager = dependencyManager;
 
   final CognitoIdentityClient _base;
+  final DependencyManager _dependencyManager;
 
   @override
   SmithyOperation<GetCredentialsForIdentityResponse> getCredentialsForIdentity(
@@ -137,7 +128,7 @@ class WrappedCognitoIdentityClient implements CognitoIdentityClient {
   }) {
     final operation = _base.getCredentialsForIdentity(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -161,7 +152,7 @@ class WrappedCognitoIdentityClient implements CognitoIdentityClient {
   }) {
     final operation = _base.getId(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -190,10 +181,9 @@ class WrappedCognitoIdentityProviderClient
     String? endpoint,
     required AWSCredentialsProvider credentialsProvider,
     required DependencyManager dependencyManager,
-  }) : _base = CognitoIdentityProviderClient(
+  })  : _base = CognitoIdentityProviderClient(
           region: region,
           credentialsProvider: credentialsProvider,
-          client: dependencyManager.getOrCreate(),
           baseUri: endpoint == null
               ? null
               : (endpoint.startsWith('http')
@@ -202,8 +192,10 @@ class WrappedCognitoIdentityProviderClient
           requestInterceptors: const [
             WithHeader(AWSHeaders.cacheControl, 'no-store'),
           ],
-        );
+        ),
+        _dependencyManager = dependencyManager;
 
+  final DependencyManager _dependencyManager;
   final CognitoIdentityProviderClient _base;
 
   @override
@@ -214,7 +206,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.associateSoftwareToken(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -238,7 +230,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.changePassword(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -262,7 +254,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.confirmDevice(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -286,7 +278,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.confirmForgotPassword(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -310,7 +302,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.confirmSignUp(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -334,7 +326,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.deleteUser(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -358,7 +350,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.forgetDevice(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -382,7 +374,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.forgotPassword(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -406,7 +398,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.getDevice(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -430,7 +422,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.getUser(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -455,7 +447,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.getUserAttributeVerificationCode(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -479,7 +471,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.globalSignOut(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -503,7 +495,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.initiateAuth(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -527,7 +519,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.listDevices(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -551,7 +543,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.resendConfirmationCode(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -575,7 +567,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.respondToAuthChallenge(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -599,7 +591,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.revokeToken(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -623,7 +615,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.signUp(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -647,7 +639,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.updateDeviceStatus(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -671,7 +663,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.updateUserAttributes(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -695,7 +687,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.verifySoftwareToken(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(
@@ -719,7 +711,7 @@ class WrappedCognitoIdentityProviderClient
   }) {
     final operation = _base.verifyUserAttribute(
       input,
-      client: client,
+      client: client ?? _dependencyManager.getOrCreate<AmplifyHttpClient>(),
       credentialsProvider: credentialsProvider,
     );
     return SmithyOperation(

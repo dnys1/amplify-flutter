@@ -4,6 +4,7 @@
 import 'dart:async';
 
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_authenticator/src/version.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:collection/collection.dart';
 
@@ -64,12 +65,29 @@ abstract class AuthService {
   Stream<AuthHubEvent> get hubEvents;
 }
 
-class AmplifyAuthService implements AuthService {
+class AmplifyAuthService
+    with AWSDebuggable, AmplifyLoggerMixin
+    implements AuthService {
+  static final userAgent =
+      'amplify-authenticator/${packageVersion.split('+').first}';
+
+  static R _withUserAgent<R>(R Function() fn) {
+    final globalUserAgent =
+        // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+        Amplify.dependencies.getOrCreate<AmplifyUserAgent>();
+    return globalUserAgent.runWith(
+      updates: (ua) => ua.addComponent(userAgent),
+      fn,
+    );
+  }
+
   @override
   Future<SignInResult> signIn(String username, String password) async {
-    final SignInResult result = await Amplify.Auth.signIn(
-      username: username,
-      password: password,
+    final result = await _withUserAgent(
+      () => Amplify.Auth.signIn(
+        username: username,
+        password: password,
+      ),
     );
 
     return result;
@@ -80,17 +98,23 @@ class AmplifyAuthService implements AuthService {
     AuthProvider provider, {
     required bool preferPrivateSession,
   }) {
-    return Amplify.Auth.signInWithWebUI(
-      provider: provider,
-      options: CognitoSignInWithWebUIOptions(
-        isPreferPrivateSession: preferPrivateSession,
+    return _withUserAgent(
+      () => Amplify.Auth.signInWithWebUI(
+        provider: provider,
+        options: SignInWithWebUIOptions(
+          pluginOptions: CognitoSignInWithWebUIPluginOptions(
+            isPreferPrivateSession: preferPrivateSession,
+          ),
+        ),
       ),
     );
   }
 
   @override
   Future<ResendSignUpCodeResult> resendSignUpCode(String username) {
-    return Amplify.Auth.resendSignUpCode(username: username);
+    return _withUserAgent(
+      () => Amplify.Auth.resendSignUpCode(username: username),
+    );
   }
 
   @override
@@ -99,20 +123,24 @@ class AmplifyAuthService implements AuthService {
     String password,
     Map<CognitoUserAttributeKey, String> attributes,
   ) {
-    return Amplify.Auth.signUp(
-      username: username,
-      password: password,
-      options: CognitoSignUpOptions(
-        userAttributes: attributes,
-      ),
-    );
+    return _withUserAgent(() {
+      return Amplify.Auth.signUp(
+        username: username,
+        password: password,
+        options: SignUpOptions(
+          userAttributes: attributes,
+        ),
+      );
+    });
   }
 
   @override
   Future<SignUpResult> confirmSignUp(String username, String code) {
-    return Amplify.Auth.confirmSignUp(
-      username: username,
-      confirmationCode: code,
+    return _withUserAgent(
+      () => Amplify.Auth.confirmSignUp(
+        username: username,
+        confirmationCode: code,
+      ),
     );
   }
 
@@ -121,68 +149,86 @@ class AmplifyAuthService implements AuthService {
     required String confirmationValue,
     Map<CognitoUserAttributeKey, String>? attributes,
   }) {
-    return Amplify.Auth.confirmSignIn(
-      confirmationValue: confirmationValue,
-      options: CognitoConfirmSignInOptions(userAttributes: attributes),
+    return _withUserAgent(
+      () => Amplify.Auth.confirmSignIn(
+        confirmationValue: confirmationValue,
+        options: ConfirmSignInOptions(
+          pluginOptions: CognitoConfirmSignInPluginOptions(
+            userAttributes: attributes,
+          ),
+        ),
+      ),
     );
   }
 
   @override
   Future<void> rememberDevice() {
-    return Amplify.Auth.rememberDevice();
+    return _withUserAgent(
+      () => Amplify.Auth.rememberDevice(),
+    );
   }
 
   @override
   Future<void> signOut() {
-    return Amplify.Auth.signOut();
+    return _withUserAgent(() => Amplify.Auth.signOut());
   }
 
   @override
   Future<AuthUser?> get currentUser async {
-    if (!Amplify.isConfigured) return null;
+    return _withUserAgent(() async {
+      if (!Amplify.isConfigured) return null;
 
-    if (!await isLoggedIn) {
-      return null;
-    }
-    final user = await Amplify.Auth.getCurrentUser();
+      if (!await isLoggedIn) {
+        return null;
+      }
+      final user = await Amplify.Auth.getCurrentUser();
 
-    return user;
+      return user;
+    });
   }
 
   @override
   Future<bool> get isLoggedIn async {
-    try {
-      final result = await Amplify.Auth.fetchAuthSession();
+    return _withUserAgent(() async {
+      try {
+        final result = await Amplify.Auth.fetchAuthSession();
 
-      return result.isSignedIn;
-    } on SignedOutException {
-      return false;
-    }
+        return result.isSignedIn;
+      } on SignedOutException {
+        return false;
+      }
+    });
   }
 
   @override
   Future<bool> isValidSession() async {
-    final res = await Amplify.Auth.fetchAuthSession() as CognitoAuthSession;
-    try {
-      // If tokens can be retrieved without an exception, return true.
-      res.userPoolTokensResult.value;
-      return true;
-    } on SignedOutException {
-      return false;
-    } on NetworkException {
-      // NetworkException indicates that access and/or id tokens have expired
-      // and cannot be refreshed due to a network error. In this case the user
-      // should be treated as authenticated to allow for offline use cases.
-      return true;
-    } on Exception {
-      // Any other exception should be thrown to be handled appropriately.
-      rethrow;
-    }
+    return _withUserAgent(() async {
+      final session =
+          await Amplify.Auth.fetchAuthSession() as CognitoAuthSession;
+      final CognitoAuthSession(:userPoolTokensResult) = session;
+      return switch (userPoolTokensResult) {
+        // If tokens can be retrieved without an exception, return true.
+        AuthSuccessResult _ => true,
+        AuthErrorResult(:final exception) => switch (exception) {
+            SignedOutException _ => false,
+
+            // NetworkException indicates that access and/or id tokens have expired
+            // and cannot be refreshed due to a network error. In this case the user
+            // should be treated as authenticated to allow for offline use cases.
+            NetworkException _ => true,
+
+            // Any other exception should be thrown to be handled appropriately.
+            _ => throw exception,
+          },
+      };
+    });
   }
 
   @override
   Future<ResetPasswordResult> resetPassword(String username) {
-    return Amplify.Auth.resetPassword(username: username);
+    return _withUserAgent(
+      () => Amplify.Auth.resetPassword(username: username),
+    );
   }
 
   @override
@@ -191,10 +237,12 @@ class AmplifyAuthService implements AuthService {
     String code,
     String newPassword,
   ) {
-    return Amplify.Auth.confirmResetPassword(
-      username: username,
-      confirmationCode: code,
-      newPassword: newPassword,
+    return _withUserAgent(
+      () => Amplify.Auth.confirmResetPassword(
+        username: username,
+        confirmationCode: code,
+        newPassword: newPassword,
+      ),
     );
   }
 
@@ -203,8 +251,10 @@ class AmplifyAuthService implements AuthService {
       resendUserAttributeConfirmationCode({
     required CognitoUserAttributeKey userAttributeKey,
   }) {
-    return Amplify.Auth.resendUserAttributeConfirmationCode(
-      userAttributeKey: userAttributeKey,
+    return _withUserAgent(
+      () => Amplify.Auth.resendUserAttributeConfirmationCode(
+        userAttributeKey: userAttributeKey,
+      ),
     );
   }
 
@@ -213,9 +263,11 @@ class AmplifyAuthService implements AuthService {
     required CognitoUserAttributeKey userAttributeKey,
     required String confirmationCode,
   }) {
-    return Amplify.Auth.confirmUserAttribute(
-      userAttributeKey: userAttributeKey,
-      confirmationCode: confirmationCode,
+    return _withUserAgent(
+      () => Amplify.Auth.confirmUserAttribute(
+        userAttributeKey: userAttributeKey,
+        confirmationCode: confirmationCode,
+      ),
     );
   }
 
@@ -226,54 +278,70 @@ class AmplifyAuthService implements AuthService {
   @override
   Future<GetAttributeVerificationStatusResult>
       getAttributeVerificationStatus() async {
-    final List<AuthUserAttribute> userAttributes =
-        await Amplify.Auth.fetchUserAttributes();
+    return _withUserAgent(() async {
+      final userAttributes = await Amplify.Auth.fetchUserAttributes();
 
-    var verifiableAttributes = userAttributes
-        .map((e) => e.userAttributeKey)
-        .cast<CognitoUserAttributeKey>()
-        .where((element) =>
-            element == CognitoUserAttributeKey.email ||
-            element == CognitoUserAttributeKey.phoneNumber)
-        .toList();
+      final verifiableAttributes = userAttributes
+          .map((e) => e.userAttributeKey.toCognitoUserAttributeKey())
+          .where(
+            (element) =>
+                element == CognitoUserAttributeKey.email ||
+                element == CognitoUserAttributeKey.phoneNumber,
+          )
+          .toList();
 
-    bool attributeIsVerified(CognitoUserAttributeKey userAttributeKey) {
-      return userAttributes
-              .firstWhereOrNull((attr) =>
-                  attr.userAttributeKey.key ==
-                  '${userAttributeKey.key}_verified')
-              ?.value ==
-          'true';
-    }
+      bool attributeIsVerified(CognitoUserAttributeKey userAttributeKey) {
+        return userAttributes
+                .firstWhereOrNull(
+                  (attr) =>
+                      attr.userAttributeKey.key ==
+                      '${userAttributeKey.key}_verified',
+                )
+                ?.value ==
+            'true';
+      }
 
-    var verifiedAttributes =
-        verifiableAttributes.where(attributeIsVerified).toList();
-    var unverifiedAttributes = verifiableAttributes
-        .where((attribute) => !attributeIsVerified(attribute))
-        .toList();
+      final verifiedAttributes =
+          verifiableAttributes.where(attributeIsVerified).toList();
+      final unverifiedAttributes = verifiableAttributes
+          .where((attribute) => !attributeIsVerified(attribute))
+          .toList();
 
-    return GetAttributeVerificationStatusResult(
-      verifiedAttributes: verifiedAttributes,
-      unverifiedAttributes: unverifiedAttributes,
-    );
+      return GetAttributeVerificationStatusResult(
+        verifiedAttributes: verifiedAttributes,
+        unverifiedAttributes: unverifiedAttributes,
+      );
+    });
   }
 
   @override
-  Future<AmplifyConfig> waitForConfiguration() {
-    return Amplify.asyncConfig;
+  Future<AmplifyConfig> waitForConfiguration() async {
+    final timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      logger.warn(
+        'Amplify is taking longer than expected to configure.'
+        ' Have you called `Amplify.configure()`?',
+      );
+    });
+    try {
+      return await Amplify.asyncConfig;
+    } finally {
+      timer.cancel();
+    }
   }
 
   @override
   Stream<AuthHubEvent> get hubEvents =>
       Amplify.Hub.availableStreams[HubChannel.Auth]!.cast();
+
+  @override
+  String get runtimeTypeName => 'AmplifyAuthService';
 }
 
 class GetAttributeVerificationStatusResult {
-  final List<CognitoUserAttributeKey> verifiedAttributes;
-  final List<CognitoUserAttributeKey> unverifiedAttributes;
-
   GetAttributeVerificationStatusResult({
     required this.verifiedAttributes,
     required this.unverifiedAttributes,
   });
+  final List<CognitoUserAttributeKey> verifiedAttributes;
+  final List<CognitoUserAttributeKey> unverifiedAttributes;
 }

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.canary_settings; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -16,14 +17,16 @@ abstract class CanarySettings
     implements Built<CanarySettings, CanarySettingsBuilder> {
   /// Configuration settings of a canary deployment.
   factory CanarySettings({
-    String? deploymentId,
     double? percentTraffic,
+    String? deploymentId,
     Map<String, String>? stageVariableOverrides,
     bool? useStageCache,
   }) {
+    percentTraffic ??= 0;
+    useStageCache ??= false;
     return _$CanarySettings._(
-      deploymentId: deploymentId,
       percentTraffic: percentTraffic,
+      deploymentId: deploymentId,
       stageVariableOverrides: stageVariableOverrides == null
           ? null
           : _i2.BuiltMap(stageVariableOverrides),
@@ -37,50 +40,53 @@ abstract class CanarySettings
 
   const CanarySettings._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<CanarySettings>> serializers = [
     CanarySettingsRestJson1Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(CanarySettingsBuilder b) {}
+  static void _init(CanarySettingsBuilder b) {
+    b.percentTraffic = 0;
+    b.useStageCache = false;
+  }
+
+  /// The percent (0-100) of traffic diverted to a canary deployment.
+  double get percentTraffic;
 
   /// The ID of the canary deployment.
   String? get deploymentId;
-
-  /// The percent (0-100) of traffic diverted to a canary deployment.
-  double? get percentTraffic;
 
   /// Stage variables overridden for a canary release deployment, including new stage variables introduced in the canary. These stage variables are represented as a string-to-string map between stage variable names and their values.
   _i2.BuiltMap<String, String>? get stageVariableOverrides;
 
   /// A Boolean flag to indicate whether the canary deployment uses the stage cache or not.
-  bool? get useStageCache;
+  bool get useStageCache;
   @override
   List<Object?> get props => [
-        deploymentId,
         percentTraffic,
+        deploymentId,
         stageVariableOverrides,
         useStageCache,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('CanarySettings');
-    helper.add(
-      'deploymentId',
-      deploymentId,
-    );
-    helper.add(
-      'percentTraffic',
-      percentTraffic,
-    );
-    helper.add(
-      'stageVariableOverrides',
-      stageVariableOverrides,
-    );
-    helper.add(
-      'useStageCache',
-      useStageCache,
-    );
+    final helper = newBuiltValueToStringHelper('CanarySettings')
+      ..add(
+        'percentTraffic',
+        percentTraffic,
+      )
+      ..add(
+        'deploymentId',
+        deploymentId,
+      )
+      ..add(
+        'stageVariableOverrides',
+        stageVariableOverrides,
+      )
+      ..add(
+        'useStageCache',
+        useStageCache,
+      );
     return helper.toString();
   }
 }
@@ -113,45 +119,36 @@ class CanarySettingsRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'deploymentId':
-          if (value != null) {
-            result.deploymentId = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.deploymentId = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'percentTraffic':
-          if (value != null) {
-            result.percentTraffic = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(double),
-            ) as double);
-          }
-          break;
+          result.percentTraffic = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(double),
+          ) as double);
         case 'stageVariableOverrides':
-          if (value != null) {
-            result.stageVariableOverrides.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i2.BuiltMap,
-                [
-                  FullType(String),
-                  FullType(String),
-                ],
-              ),
-            ) as _i2.BuiltMap<String, String>));
-          }
-          break;
+          result.stageVariableOverrides.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i2.BuiltMap,
+              [
+                FullType(String),
+                FullType(String),
+              ],
+            ),
+          ) as _i2.BuiltMap<String, String>));
         case 'useStageCache':
-          if (value != null) {
-            result.useStageCache = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(bool),
-            ) as bool);
-          }
-          break;
+          result.useStageCache = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
       }
     }
 
@@ -161,32 +158,41 @@ class CanarySettingsRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    CanarySettings object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as CanarySettings);
-    final result = <Object?>[];
-    if (payload.deploymentId != null) {
-      result
+    final result$ = <Object?>[];
+    final CanarySettings(
+      :deploymentId,
+      :percentTraffic,
+      :stageVariableOverrides,
+      :useStageCache
+    ) = object;
+    result$.addAll([
+      'percentTraffic',
+      serializers.serialize(
+        percentTraffic,
+        specifiedType: const FullType(double),
+      ),
+      'useStageCache',
+      serializers.serialize(
+        useStageCache,
+        specifiedType: const FullType(bool),
+      ),
+    ]);
+    if (deploymentId != null) {
+      result$
         ..add('deploymentId')
         ..add(serializers.serialize(
-          payload.deploymentId!,
+          deploymentId,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.percentTraffic != null) {
-      result
-        ..add('percentTraffic')
-        ..add(serializers.serialize(
-          payload.percentTraffic!,
-          specifiedType: const FullType(double),
-        ));
-    }
-    if (payload.stageVariableOverrides != null) {
-      result
+    if (stageVariableOverrides != null) {
+      result$
         ..add('stageVariableOverrides')
         ..add(serializers.serialize(
-          payload.stageVariableOverrides!,
+          stageVariableOverrides,
           specifiedType: const FullType(
             _i2.BuiltMap,
             [
@@ -196,14 +202,6 @@ class CanarySettingsRestJson1Serializer
           ),
         ));
     }
-    if (payload.useStageCache != null) {
-      result
-        ..add('useStageCache')
-        ..add(serializers.serialize(
-          payload.useStageCache!,
-          specifiedType: const FullType(bool),
-        ));
-    }
-    return result;
+    return result$;
   }
 }

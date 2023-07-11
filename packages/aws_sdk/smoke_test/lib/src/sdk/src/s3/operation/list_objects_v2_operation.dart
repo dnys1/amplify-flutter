@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.operation.list_objects_v2_operation; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,7 +37,7 @@ import 'package:smoke_test/src/sdk/src/s3/model/no_such_bucket.dart' as _i9;
 class ListObjectsV2Operation extends _i1.PaginatedHttpOperation<
     _i2.ListObjectsV2RequestPayload,
     _i2.ListObjectsV2Request,
-    _i3.ListObjectsV2Output,
+    _i3.ListObjectsV2OutputPayload,
     _i3.ListObjectsV2Output,
     String,
     int,
@@ -78,7 +79,7 @@ class ListObjectsV2Operation extends _i1.PaginatedHttpOperation<
       _i1.HttpProtocol<
           _i2.ListObjectsV2RequestPayload,
           _i2.ListObjectsV2Request,
-          _i3.ListObjectsV2Output,
+          _i3.ListObjectsV2OutputPayload,
           _i3.ListObjectsV2Output>> protocols = [
     _i4.RestXmlProtocol(
       serializers: _i6.serializers,
@@ -184,7 +185,7 @@ class ListObjectsV2Operation extends _i1.PaginatedHttpOperation<
   int successCode([_i3.ListObjectsV2Output? output]) => 200;
   @override
   _i3.ListObjectsV2Output buildOutput(
-    _i3.ListObjectsV2Output payload,
+    _i3.ListObjectsV2OutputPayload payload,
     _i7.AWSBaseHttpResponse response,
   ) =>
       _i3.ListObjectsV2Output.fromResponse(
@@ -193,7 +194,7 @@ class ListObjectsV2Operation extends _i1.PaginatedHttpOperation<
       );
   @override
   List<_i1.SmithyError> get errorTypes => const [
-        _i1.SmithyError(
+        _i1.SmithyError<_i9.NoSuchBucket, _i9.NoSuchBucket>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.s3',
             shape: 'NoSuchBucket',
@@ -241,7 +242,7 @@ class ListObjectsV2Operation extends _i1.PaginatedHttpOperation<
       ),
       zoneValues: {
         ...?_awsEndpoint.credentialScope?.zoneValues,
-        ...{_i7.AWSHeaders.sdkInvocationId: _i7.uuid(secure: true)}
+        ...{_i7.AWSHeaders.sdkInvocationId: _i7.uuid(secure: true)},
       },
     );
   }

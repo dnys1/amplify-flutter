@@ -6,13 +6,14 @@ import 'dart:convert';
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart'
     hide InternalErrorException;
 import 'package:amplify_auth_cognito_dart/src/credentials/cognito_keys.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
 import 'package:amplify_auth_cognito_dart/src/util/cognito_iam_auth_provider.dart';
 import 'package:amplify_auth_cognito_dart/src/util/cognito_user_pools_auth_provider.dart';
+import 'package:amplify_auth_cognito_test/common/mock_config.dart';
+import 'package:amplify_auth_cognito_test/common/mock_secure_storage.dart';
 import 'package:amplify_core/amplify_core.dart';
+import 'package:amplify_secure_storage_dart/amplify_secure_storage_dart.dart';
 import 'package:test/test.dart';
-
-import '../common/mock_config.dart';
-import '../common/mock_secure_storage.dart';
 
 AWSHttpRequest _generateTestRequest() {
   return AWSHttpRequest(
@@ -25,7 +26,7 @@ AWSHttpRequest _generateTestRequest() {
 class TestAmplifyAuthUserPoolOnly extends AmplifyAuthCognitoDart {
   @override
   Future<CognitoAuthSession> fetchAuthSession({
-    CognitoSessionOptions? options,
+    FetchAuthSessionOptions? options,
   }) async {
     return CognitoAuthSession(
       isSignedIn: true,
@@ -58,8 +59,9 @@ void main() {
   setUpAll(() async {
     testAuthRepo = AmplifyAuthProviderRepository();
     final secureStorage = MockSecureStorage();
+    SecureStorageInterface storageFactory(scope) => secureStorage;
     final stateMachine = CognitoAuthStateMachine()..addInstance(secureStorage);
-    plugin = AmplifyAuthCognitoDart(credentialStorage: secureStorage)
+    plugin = AmplifyAuthCognitoDart(secureStorageFactory: storageFactory)
       ..stateMachine = stateMachine;
 
     seedStorage(
@@ -144,15 +146,13 @@ void main() {
         );
         // Note: not intended to be complete test of sigv4 algorithm.
         expect(authorizedRequest.headers[AWSHeaders.authorization], isNotEmpty);
-        const userAgentHeader =
-            zIsWeb ? AWSHeaders.amzUserAgent : AWSHeaders.userAgent;
         expect(
           authorizedRequest.headers[AWSHeaders.host],
           isNotEmpty,
           skip: zIsWeb,
         );
         expect(
-          authorizedRequest.headers[userAgentHeader],
+          authorizedRequest.headers[AWSHeaders.platformUserAgent],
           contains('aws-sigv4'),
         );
       });

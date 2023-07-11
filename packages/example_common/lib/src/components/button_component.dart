@@ -3,8 +3,8 @@
 
 import 'dart:html';
 
-import '../utils/component_edge_insets.dart';
-import 'component.dart';
+import 'package:example_common/src/components/component.dart';
+import 'package:example_common/src/utils/component_edge_insets.dart';
 
 /// {@template example_common.button_component}
 /// A component that renders an html button element.
@@ -41,8 +41,13 @@ class ButtonComponent extends Component {
   /// wether or not the button is in a loading state.
   final bool loading;
 
-  late final _buttonElement = ButtonElement()
-    ..innerHtml = loading ? 'Loading ...' : innerHtml;
+  late final _buttonElement = () {
+    final el = ButtonElement()..innerHtml = loading ? 'Loading ...' : innerHtml;
+    if (id != null) {
+      el.id = id!;
+    }
+    return el;
+  }();
 
   @override
   Component render() {

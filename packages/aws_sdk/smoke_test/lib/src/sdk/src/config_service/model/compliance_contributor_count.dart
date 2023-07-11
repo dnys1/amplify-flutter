@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.compliance_contributor_count; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -16,12 +17,14 @@ abstract class ComplianceContributorCount
         Built<ComplianceContributorCount, ComplianceContributorCountBuilder> {
   /// The number of Amazon Web Services resources or Config rules responsible for the current compliance of the item, up to a maximum number.
   factory ComplianceContributorCount({
-    bool? capExceeded,
     int? cappedCount,
+    bool? capExceeded,
   }) {
+    cappedCount ??= 0;
+    capExceeded ??= false;
     return _$ComplianceContributorCount._(
-      capExceeded: capExceeded,
       cappedCount: cappedCount,
+      capExceeded: capExceeded,
     );
   }
 
@@ -32,34 +35,36 @@ abstract class ComplianceContributorCount
 
   const ComplianceContributorCount._();
 
-  static const List<_i2.SmithySerializer> serializers = [
-    ComplianceContributorCountAwsJson11Serializer()
-  ];
+  static const List<_i2.SmithySerializer<ComplianceContributorCount>>
+      serializers = [ComplianceContributorCountAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(ComplianceContributorCountBuilder b) {}
-
-  /// Indicates whether the maximum count is reached.
-  bool? get capExceeded;
+  static void _init(ComplianceContributorCountBuilder b) {
+    b.cappedCount = 0;
+    b.capExceeded = false;
+  }
 
   /// The number of Amazon Web Services resources or Config rules responsible for the current compliance of the item.
-  int? get cappedCount;
+  int get cappedCount;
+
+  /// Indicates whether the maximum count is reached.
+  bool get capExceeded;
   @override
   List<Object?> get props => [
-        capExceeded,
         cappedCount,
+        capExceeded,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ComplianceContributorCount');
-    helper.add(
-      'capExceeded',
-      capExceeded,
-    );
-    helper.add(
-      'cappedCount',
-      cappedCount,
-    );
+    final helper = newBuiltValueToStringHelper('ComplianceContributorCount')
+      ..add(
+        'cappedCount',
+        cappedCount,
+      )
+      ..add(
+        'capExceeded',
+        capExceeded,
+      );
     return helper.toString();
   }
 }
@@ -93,23 +98,20 @@ class ComplianceContributorCountAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
-        case 'CapExceeded':
-          if (value != null) {
-            result.capExceeded = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(bool),
-            ) as bool);
-          }
-          break;
         case 'CappedCount':
-          if (value != null) {
-            result.cappedCount = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(int),
-            ) as int);
-          }
-          break;
+          result.cappedCount = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int);
+        case 'CapExceeded':
+          result.capExceeded = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
       }
     }
 
@@ -119,27 +121,23 @@ class ComplianceContributorCountAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ComplianceContributorCount object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ComplianceContributorCount);
-    final result = <Object?>[];
-    if (payload.capExceeded != null) {
-      result
-        ..add('CapExceeded')
-        ..add(serializers.serialize(
-          payload.capExceeded!,
-          specifiedType: const FullType(bool),
-        ));
-    }
-    if (payload.cappedCount != null) {
-      result
-        ..add('CappedCount')
-        ..add(serializers.serialize(
-          payload.cappedCount!,
-          specifiedType: const FullType(int),
-        ));
-    }
-    return result;
+    final result$ = <Object?>[];
+    final ComplianceContributorCount(:cappedCount, :capExceeded) = object;
+    result$.addAll([
+      'CappedCount',
+      serializers.serialize(
+        cappedCount,
+        specifiedType: const FullType(int),
+      ),
+      'CapExceeded',
+      serializers.serialize(
+        capExceeded,
+        specifiedType: const FullType(bool),
+      ),
+    ]);
+    return result$;
   }
 }

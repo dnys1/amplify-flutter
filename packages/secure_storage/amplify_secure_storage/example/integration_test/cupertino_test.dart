@@ -6,7 +6,7 @@
 import 'dart:io';
 
 import 'package:amplify_secure_storage/amplify_secure_storage.dart';
-import 'package:amplify_secure_storage/src/messages.cupertino.g.dart';
+import 'package:amplify_secure_storage/src/pigeons/ns_user_defaults_pigeon.g.dart';
 import 'package:amplify_secure_storage_dart/src/platforms/amplify_secure_storage_cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -30,7 +30,8 @@ void main() {
     // access group.
     final macOSOptions = MacOSSecureStorageOptions(useDataProtection: false);
 
-    final userDefaults = NSUserDefaultsAPI();
+    final userDefaults = NSUserDefaultsPigeon();
+    // ignore: invalid_use_of_internal_member
     final storage = AmplifySecureStorage(
       config: AmplifySecureStorageConfig(
         scope: scope,
@@ -49,6 +50,7 @@ void main() {
       await storage.write(key: key2, value: value2);
 
       // assert value IS NOT cleared when initializing a new instance with an existing scope
+      // ignore: invalid_use_of_internal_member
       final storage1 = AmplifySecureStorage(
         config: AmplifySecureStorageConfig(
           scope: scope,
@@ -66,6 +68,7 @@ void main() {
       );
 
       // assert value IS cleared when initializing a new scope after an app uninstall
+      // ignore: invalid_use_of_internal_member
       final storage2 = AmplifySecureStorage(
         config: AmplifySecureStorageConfig(
           scope: scope,

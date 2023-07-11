@@ -1,13 +1,15 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.list_object_versions_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
 import 'package:aws_common/aws_common.dart' as _i2;
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:meta/meta.dart' as _i4;
+import 'package:meta/meta.dart' as _i5;
 import 'package:smithy/smithy.dart' as _i1;
 import 'package:smoke_test/src/sdk/src/s3/model/encoding_type.dart' as _i3;
+import 'package:smoke_test/src/sdk/src/s3/model/request_payer.dart' as _i4;
 
 part 'list_object_versions_request.g.dart';
 
@@ -23,21 +25,23 @@ abstract class ListObjectVersionsRequest
     required String bucket,
     String? delimiter,
     _i3.EncodingType? encodingType,
-    String? expectedBucketOwner,
     String? keyMarker,
     int? maxKeys,
     String? prefix,
     String? versionIdMarker,
+    String? expectedBucketOwner,
+    _i4.RequestPayer? requestPayer,
   }) {
     return _$ListObjectVersionsRequest._(
       bucket: bucket,
       delimiter: delimiter,
       encodingType: encodingType,
-      expectedBucketOwner: expectedBucketOwner,
       keyMarker: keyMarker,
       maxKeys: maxKeys,
       prefix: prefix,
       versionIdMarker: versionIdMarker,
+      expectedBucketOwner: expectedBucketOwner,
+      requestPayer: requestPayer,
     );
   }
 
@@ -56,6 +60,10 @@ abstract class ListObjectVersionsRequest
         if (request.headers['x-amz-expected-bucket-owner'] != null) {
           b.expectedBucketOwner =
               request.headers['x-amz-expected-bucket-owner']!;
+        }
+        if (request.headers['x-amz-request-payer'] != null) {
+          b.requestPayer = _i4.RequestPayer.values
+              .byValue(request.headers['x-amz-request-payer']!);
         }
         if (request.queryParameters['delimiter'] != null) {
           b.delimiter = request.queryParameters['delimiter']!;
@@ -81,9 +89,8 @@ abstract class ListObjectVersionsRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    ListObjectVersionsRequestRestXmlSerializer()
-  ];
+  static const List<_i1.SmithySerializer<ListObjectVersionsRequestPayload>>
+      serializers = [ListObjectVersionsRequestRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(ListObjectVersionsRequestBuilder b) {}
@@ -97,9 +104,6 @@ abstract class ListObjectVersionsRequest
   /// Requests Amazon S3 to encode the object keys in the response and specifies the encoding method to use. An object key may contain any Unicode character; however, XML 1.0 parser cannot parse some characters, such as characters with an ASCII value from 0 to 10. For characters that are not supported in XML 1.0, you can add this parameter to request that Amazon S3 encode the keys in the response.
   _i3.EncodingType? get encodingType;
 
-  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
-  String? get expectedBucketOwner;
-
   /// Specifies the key to start with when listing objects in a bucket.
   String? get keyMarker;
 
@@ -111,6 +115,12 @@ abstract class ListObjectVersionsRequest
 
   /// Specifies the object version you want to start listing from.
   String? get versionIdMarker;
+
+  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
+  String? get expectedBucketOwner;
+
+  /// Confirms that the requester knows that they will be charged for the request. Bucket owners need not specify this parameter in their requests. For information about downloading objects from Requester Pays buckets, see [Downloading Objects in Requester Pays Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html) in the _Amazon S3 User Guide_.
+  _i4.RequestPayer? get requestPayer;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -131,52 +141,57 @@ abstract class ListObjectVersionsRequest
         bucket,
         delimiter,
         encodingType,
-        expectedBucketOwner,
         keyMarker,
         maxKeys,
         prefix,
         versionIdMarker,
+        expectedBucketOwner,
+        requestPayer,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ListObjectVersionsRequest');
-    helper.add(
-      'bucket',
-      bucket,
-    );
-    helper.add(
-      'delimiter',
-      delimiter,
-    );
-    helper.add(
-      'encodingType',
-      encodingType,
-    );
-    helper.add(
-      'expectedBucketOwner',
-      expectedBucketOwner,
-    );
-    helper.add(
-      'keyMarker',
-      keyMarker,
-    );
-    helper.add(
-      'maxKeys',
-      maxKeys,
-    );
-    helper.add(
-      'prefix',
-      prefix,
-    );
-    helper.add(
-      'versionIdMarker',
-      versionIdMarker,
-    );
+    final helper = newBuiltValueToStringHelper('ListObjectVersionsRequest')
+      ..add(
+        'bucket',
+        bucket,
+      )
+      ..add(
+        'delimiter',
+        delimiter,
+      )
+      ..add(
+        'encodingType',
+        encodingType,
+      )
+      ..add(
+        'keyMarker',
+        keyMarker,
+      )
+      ..add(
+        'maxKeys',
+        maxKeys,
+      )
+      ..add(
+        'prefix',
+        prefix,
+      )
+      ..add(
+        'versionIdMarker',
+        versionIdMarker,
+      )
+      ..add(
+        'expectedBucketOwner',
+        expectedBucketOwner,
+      )
+      ..add(
+        'requestPayer',
+        requestPayer,
+      );
     return helper.toString();
   }
 }
 
-@_i4.internal
+@_i5.internal
 abstract class ListObjectVersionsRequestPayload
     with
         _i2.AWSEquatable<ListObjectVersionsRequestPayload>
@@ -233,15 +248,16 @@ class ListObjectVersionsRequestRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ListObjectVersionsRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName(
         'ListObjectVersionsRequest',
         _i1.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    return result;
+
+    return result$;
   }
 }

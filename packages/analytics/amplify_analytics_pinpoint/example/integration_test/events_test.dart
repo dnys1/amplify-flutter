@@ -51,7 +51,7 @@ void main() {
         const customEventName = 'events sent with properties name';
         final customEvent = AnalyticsEvent(customEventName);
 
-        customEvent.properties
+        customEvent.customProperties
           ..addBoolProperty(boolProperty.key, boolProperty.value)
           ..addDoubleProperty(doubleProperty.key, doubleProperty.value)
           ..addIntProperty(intProperty.key, intProperty.value)
@@ -59,7 +59,7 @@ void main() {
 
         // Verify local analyticsEvent has proper fields
         expect(
-          customEvent.properties.getAllProperties(),
+          customEvent.customProperties.getAllProperties(),
           Map.fromEntries([
             boolProperty,
             doubleProperty,
@@ -68,7 +68,7 @@ void main() {
           ]),
         );
         expect(
-          customEvent.properties.getAllPropertiesTypes(),
+          customEvent.customProperties.getAllPropertiesTypes(),
           {
             boolProperty.key: 'BOOL',
             doubleProperty.key: 'DOUBLE',
@@ -89,16 +89,20 @@ void main() {
                 .having(
                   (e) => e.attributes,
                   'attributes',
-                  equals(Map.fromEntries(
-                    [stringifiedBoolProperty, stringProperty],
-                  )),
+                  equals(
+                    Map.fromEntries(
+                      [stringifiedBoolProperty, stringProperty],
+                    ),
+                  ),
                 )
                 .having(
                   (e) => e.metrics,
                   'metrics',
-                  equals(Map.fromEntries(
-                    [lossyDoubleProperty, intProperty],
-                  )),
+                  equals(
+                    Map.fromEntries(
+                      [lossyDoubleProperty, intProperty],
+                    ),
+                  ),
                 )
                 .having(
                   (e) => e.endpoint.endpointStatus,
@@ -129,12 +133,13 @@ void main() {
         // Add attribute global property types
         final firstEvent = createEvent('global props first event name');
 
-        final attributeGlobalProperties = AnalyticsProperties()
+        final attributeGlobalProperties = CustomProperties()
           ..addBoolProperty(boolProperty.key, boolProperty.value)
           ..addStringProperty(stringProperty.key, stringProperty.value);
 
         await Amplify.Analytics.registerGlobalProperties(
-            globalProperties: attributeGlobalProperties);
+          globalProperties: attributeGlobalProperties,
+        );
 
         await Amplify.Analytics.recordEvent(event: firstEvent);
         await Amplify.Analytics.flushEvents();
@@ -173,12 +178,13 @@ void main() {
         // Add metric global property types
         final secondEvent = createEvent('global props second event name');
 
-        final metricGlobalProperties = AnalyticsProperties()
+        final metricGlobalProperties = CustomProperties()
           ..addIntProperty(intProperty.key, intProperty.value)
           ..addDoubleProperty(doubleProperty.key, doubleProperty.value);
 
         await Amplify.Analytics.registerGlobalProperties(
-            globalProperties: metricGlobalProperties);
+          globalProperties: metricGlobalProperties,
+        );
 
         await Amplify.Analytics.recordEvent(event: secondEvent);
         await Amplify.Analytics.flushEvents();
@@ -199,9 +205,11 @@ void main() {
                 .having(
                   (e) => e.metrics,
                   'metrics',
-                  equals(Map.fromEntries(
-                    [lossyDoubleProperty, intProperty, secondIntProperty],
-                  )),
+                  equals(
+                    Map.fromEntries(
+                      [lossyDoubleProperty, intProperty, secondIntProperty],
+                    ),
+                  ),
                 ),
           ),
           reason:
@@ -245,11 +253,11 @@ AnalyticsEvent createEvent(String name) {
   final customEvent = AnalyticsEvent(name);
 
   // Add local event properties
-  customEvent.properties.addStringProperty(
+  customEvent.customProperties.addStringProperty(
     secondStringProperty.key,
     secondStringProperty.value,
   );
-  customEvent.properties.addIntProperty(
+  customEvent.customProperties.addIntProperty(
     secondIntProperty.key,
     secondIntProperty.value,
   );

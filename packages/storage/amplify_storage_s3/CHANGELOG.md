@@ -1,3 +1,83 @@
+## 1.2.0
+
+### Features
+- feat(storage): using path style URLs when bucket name contains dots
+
+## 1.1.1
+
+- Minor bug fixes and improvements
+
+## 1.1.0
+
+### Features
+- Dart 3 support (must update Dart SDK constraint to `^3.0.0`)
+
+## 1.0.1
+
+### Fixes
+- fix(repo): Flutter 3.3 support
+
+## 1.0.0
+
+We are thrilled to release version 1.0 of the Amplify Flutter libraries!
+
+This release introduces a full rewrite of the Amplify libraries in Dart, allowing you to build AWS cloud-connected
+applications on every platform Flutter supports (iOS, Android, Web, macOS, Windows, and Linux).
+
+If you've been using v0 in production, you can now safely migrate to v1. Check out our 
+[migration guide](https://docs.amplify.aws/lib/project-setup/upgrade-guide/q/platform/flutter/) for 
+more information.
+
+As always, you can find us on [GitHub](https://github.com/aws-amplify/amplify-flutter/) and 
+[Discord](https://discord.gg/jWVbPfC) to answer any questions.
+
+### New Features in the Storage Category
+
+* In-flight download and upload operations are now fully controllable.
+    * NOTE: Downloading and uploading in the background is not yet supported.
+* The `list` API now supports pagination.
+* The new APIs `uploadData` and `downloadData` provide flexibility when dealing with data stored in memory.
+    * `uploadData` supports uploading from various data formats such as raw bytes, JSON, strings, Data URLs, and more.
+* The new API `getProperties` allows retrieving S3 object metadata without downloading the object. 
+* New `copy`, `move`, and `removeMany` APIs now support better control of your files.
+* Prefix customization is now supported.
+
+### Bug Fixes
+
+The following issues have been fixed in this release:
+
+- When amplify storage upload start, we see an allow push notifications dialog on Android ([#2643](https://github.com/aws-amplify/amplify-flutter/issues/2643))
+- Inconsistent Network Timeout between iOS and Android ([#774](https://github.com/aws-amplify/amplify-flutter/issues/774))
+- S3 bucket only returning 1000 files ([#991](https://github.com/aws-amplify/amplify-flutter/issues/991))
+- Returned value from Storage.downloadFile function do not resolve when is called with a expired session ([#926](https://github.com/aws-amplify/amplify-flutter/issues/926))
+
+## 1.0.0-next.8+1
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.8
+
+### Breaking Changes
+- feat(storage)!: update upload APIs options to add metadata field ([#2815](https://github.com/aws-amplify/amplify-flutter/pull/2815))
+- refactor(storage)!: rename checkObjectExistence to validateObjectExistence
+- refactor(storage)!: storage category APIs to use category level plugin options ([#2754](https://github.com/aws-amplify/amplify-flutter/pull/2754))
+
+### Features
+- feat(storage): add handling of non-ascii object metadata values
+
+## 1.0.0-next.7
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.6
+
+### Features
+- feat(storage): optimize part size for multipart upload
+- feat(storage): web implementation of transfer database using local storage ([#2631](https://github.com/aws-amplify/amplify-flutter/pull/2631))
+
+### Fixes
+- fix(storage): GetUrl signing
+
 ## 1.0.0-next.5
 
 - Minor bug fixes and improvements

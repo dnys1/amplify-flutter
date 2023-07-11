@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.no_such_delivery_channel_exception; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -39,9 +40,8 @@ abstract class NoSuchDeliveryChannelException
         b.headers = response.headers;
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
-    NoSuchDeliveryChannelExceptionAwsJson11Serializer()
-  ];
+  static const List<_i2.SmithySerializer<NoSuchDeliveryChannelException>>
+      serializers = [NoSuchDeliveryChannelExceptionAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(NoSuchDeliveryChannelExceptionBuilder b) {}
@@ -68,12 +68,11 @@ abstract class NoSuchDeliveryChannelException
   List<Object?> get props => [message];
   @override
   String toString() {
-    final helper =
-        newBuiltValueToStringHelper('NoSuchDeliveryChannelException');
-    helper.add(
-      'message',
-      message,
-    );
+    final helper = newBuiltValueToStringHelper('NoSuchDeliveryChannelException')
+      ..add(
+        'message',
+        message,
+      );
     return helper.toString();
   }
 }
@@ -107,15 +106,15 @@ class NoSuchDeliveryChannelExceptionAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'message':
-          if (value != null) {
-            result.message = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.message = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -125,19 +124,19 @@ class NoSuchDeliveryChannelExceptionAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    NoSuchDeliveryChannelException object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as NoSuchDeliveryChannelException);
-    final result = <Object?>[];
-    if (payload.message != null) {
-      result
+    final result$ = <Object?>[];
+    final NoSuchDeliveryChannelException(:message) = object;
+    if (message != null) {
+      result$
         ..add('message')
         ..add(serializers.serialize(
-          payload.message!,
+          message,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

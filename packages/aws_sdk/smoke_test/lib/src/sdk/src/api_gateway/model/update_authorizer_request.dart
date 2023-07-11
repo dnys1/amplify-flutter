@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.update_authorizer_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -23,15 +24,15 @@ abstract class UpdateAuthorizerRequest
         _i1.HasPayload<UpdateAuthorizerRequestPayload> {
   /// Request to update an existing Authorizer resource.
   factory UpdateAuthorizerRequest({
+    required String restApiId,
     required String authorizerId,
     List<_i3.PatchOperation>? patchOperations,
-    required String restApiId,
   }) {
     return _$UpdateAuthorizerRequest._(
+      restApiId: restApiId,
       authorizerId: authorizerId,
       patchOperations:
           patchOperations == null ? null : _i4.BuiltList(patchOperations),
-      restApiId: restApiId,
     );
   }
 
@@ -59,21 +60,20 @@ abstract class UpdateAuthorizerRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    UpdateAuthorizerRequestRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<UpdateAuthorizerRequestPayload>>
+      serializers = [UpdateAuthorizerRequestRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(UpdateAuthorizerRequestBuilder b) {}
+
+  /// The string identifier of the associated RestApi.
+  String get restApiId;
 
   /// The identifier of the Authorizer resource.
   String get authorizerId;
 
   /// For more information about supported patch operations, see [Patch Operations](https://docs.aws.amazon.com/apigateway/latest/api/patch-operations.html).
   _i4.BuiltList<_i3.PatchOperation>? get patchOperations;
-
-  /// The string identifier of the associated RestApi.
-  String get restApiId;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -97,25 +97,25 @@ abstract class UpdateAuthorizerRequest
       });
   @override
   List<Object?> get props => [
+        restApiId,
         authorizerId,
         patchOperations,
-        restApiId,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('UpdateAuthorizerRequest');
-    helper.add(
-      'authorizerId',
-      authorizerId,
-    );
-    helper.add(
-      'patchOperations',
-      patchOperations,
-    );
-    helper.add(
-      'restApiId',
-      restApiId,
-    );
+    final helper = newBuiltValueToStringHelper('UpdateAuthorizerRequest')
+      ..add(
+        'restApiId',
+        restApiId,
+      )
+      ..add(
+        'authorizerId',
+        authorizerId,
+      )
+      ..add(
+        'patchOperations',
+        patchOperations,
+      );
     return helper.toString();
   }
 }
@@ -142,12 +142,11 @@ abstract class UpdateAuthorizerRequestPayload
   List<Object?> get props => [patchOperations];
   @override
   String toString() {
-    final helper =
-        newBuiltValueToStringHelper('UpdateAuthorizerRequestPayload');
-    helper.add(
-      'patchOperations',
-      patchOperations,
-    );
+    final helper = newBuiltValueToStringHelper('UpdateAuthorizerRequestPayload')
+      ..add(
+        'patchOperations',
+        patchOperations,
+      );
     return helper.toString();
   }
 }
@@ -183,18 +182,18 @@ class UpdateAuthorizerRequestRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'patchOperations':
-          if (value != null) {
-            result.patchOperations.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i4.BuiltList,
-                [FullType(_i3.PatchOperation)],
-              ),
-            ) as _i4.BuiltList<_i3.PatchOperation>));
-          }
-          break;
+          result.patchOperations.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i4.BuiltList,
+              [FullType(_i3.PatchOperation)],
+            ),
+          ) as _i4.BuiltList<_i3.PatchOperation>));
       }
     }
 
@@ -204,24 +203,22 @@ class UpdateAuthorizerRequestRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    UpdateAuthorizerRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is UpdateAuthorizerRequest
-        ? object.getPayload()
-        : (object as UpdateAuthorizerRequestPayload);
-    final result = <Object?>[];
-    if (payload.patchOperations != null) {
-      result
+    final result$ = <Object?>[];
+    final UpdateAuthorizerRequestPayload(:patchOperations) = object;
+    if (patchOperations != null) {
+      result$
         ..add('patchOperations')
         ..add(serializers.serialize(
-          payload.patchOperations!,
+          patchOperations,
           specifiedType: const FullType(
             _i4.BuiltList,
             [FullType(_i3.PatchOperation)],
           ),
         ));
     }
-    return result;
+    return result$;
   }
 }

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.batch_get_resource_config_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -38,9 +39,8 @@ abstract class BatchGetResourceConfigRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    BatchGetResourceConfigRequestAwsJson11Serializer()
-  ];
+  static const List<_i1.SmithySerializer<BatchGetResourceConfigRequest>>
+      serializers = [BatchGetResourceConfigRequestAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(BatchGetResourceConfigRequestBuilder b) {}
@@ -53,11 +53,11 @@ abstract class BatchGetResourceConfigRequest
   List<Object?> get props => [resourceKeys];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('BatchGetResourceConfigRequest');
-    helper.add(
-      'resourceKeys',
-      resourceKeys,
-    );
+    final helper = newBuiltValueToStringHelper('BatchGetResourceConfigRequest')
+      ..add(
+        'resourceKeys',
+        resourceKeys,
+      );
     return helper.toString();
   }
 }
@@ -91,6 +91,9 @@ class BatchGetResourceConfigRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'resourceKeys':
           result.resourceKeys.replace((serializers.deserialize(
@@ -100,7 +103,6 @@ class BatchGetResourceConfigRequestAwsJson11Serializer
               [FullType(_i3.ResourceKey)],
             ),
           ) as _i4.BuiltList<_i3.ResourceKey>));
-          break;
       }
     }
 
@@ -110,20 +112,21 @@ class BatchGetResourceConfigRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    BatchGetResourceConfigRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as BatchGetResourceConfigRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final BatchGetResourceConfigRequest(:resourceKeys) = object;
+    result$.addAll([
       'resourceKeys',
       serializers.serialize(
-        payload.resourceKeys,
+        resourceKeys,
         specifiedType: const FullType(
           _i4.BuiltList,
           [FullType(_i3.ResourceKey)],
         ),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

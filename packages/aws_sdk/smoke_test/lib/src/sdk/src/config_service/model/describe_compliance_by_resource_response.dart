@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.describe_compliance_by_resource_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -43,9 +44,8 @@ abstract class DescribeComplianceByResourceResponse
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
-    DescribeComplianceByResourceResponseAwsJson11Serializer()
-  ];
+  static const List<_i4.SmithySerializer<DescribeComplianceByResourceResponse>>
+      serializers = [DescribeComplianceByResourceResponseAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DescribeComplianceByResourceResponseBuilder b) {}
@@ -63,15 +63,15 @@ abstract class DescribeComplianceByResourceResponse
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DescribeComplianceByResourceResponse');
-    helper.add(
-      'complianceByResources',
-      complianceByResources,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+        newBuiltValueToStringHelper('DescribeComplianceByResourceResponse')
+          ..add(
+            'complianceByResources',
+            complianceByResources,
+          )
+          ..add(
+            'nextToken',
+            nextToken,
+          );
     return helper.toString();
   }
 }
@@ -105,26 +105,23 @@ class DescribeComplianceByResourceResponseAwsJson11Serializer extends _i4
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ComplianceByResources':
-          if (value != null) {
-            result.complianceByResources.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.ComplianceByResource)],
-              ),
-            ) as _i3.BuiltList<_i2.ComplianceByResource>));
-          }
-          break;
+          result.complianceByResources.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.ComplianceByResource)],
+            ),
+          ) as _i3.BuiltList<_i2.ComplianceByResource>));
         case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -134,30 +131,33 @@ class DescribeComplianceByResourceResponseAwsJson11Serializer extends _i4
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeComplianceByResourceResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeComplianceByResourceResponse);
-    final result = <Object?>[];
-    if (payload.complianceByResources != null) {
-      result
+    final result$ = <Object?>[];
+    final DescribeComplianceByResourceResponse(
+      :complianceByResources,
+      :nextToken
+    ) = object;
+    if (complianceByResources != null) {
+      result$
         ..add('ComplianceByResources')
         ..add(serializers.serialize(
-          payload.complianceByResources!,
+          complianceByResources,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(_i2.ComplianceByResource)],
           ),
         ));
     }
-    if (payload.nextToken != null) {
-      result
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

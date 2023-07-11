@@ -6,7 +6,8 @@ part of 'query_field.dart';
 // Top level global function to be used without the context of the enclosing class
 QueryPredicateGroup<ModelIdentifier, M>
     not<ModelIdentifier extends Object, M extends Model<ModelIdentifier, M>>(
-        QueryPredicate<ModelIdentifier, M> predicate) {
+  QueryPredicate<ModelIdentifier, M> predicate,
+) {
   return QueryPredicateGroup(QueryPredicateGroupType.not, [predicate]);
 }
 
@@ -29,7 +30,8 @@ abstract class QueryPredicate<ModelIdentifier extends Object,
   static QueryPredicate all<ModelIdentifier extends Object,
           M extends Model<ModelIdentifier, M>>() =>
       _QueryPredicateConstant<ModelIdentifier, M>(
-          QueryPredicateConstantType.all);
+        QueryPredicateConstantType.all,
+      );
 
   Map<String, dynamic> serializeAsMap();
 
@@ -41,36 +43,42 @@ abstract class QueryPredicate<ModelIdentifier extends Object,
 class QueryPredicateOperation<ModelIdentifier extends Object,
         M extends Model<ModelIdentifier, M>>
     extends QueryPredicate<ModelIdentifier, M> {
+  const QueryPredicateOperation(this.field, this.queryFieldOperator);
   final String field;
   final QueryFieldOperator queryFieldOperator;
 
-  const QueryPredicateOperation(this.field, this.queryFieldOperator);
+  final String field;
+  final QueryFieldOperator<Object?> queryFieldOperator;
 
   // and
   QueryPredicateGroup<ModelIdentifier, M> and(
-      QueryPredicate<ModelIdentifier, M> predicate) {
+    QueryPredicate<ModelIdentifier, M> predicate,
+  ) {
     return QueryPredicateGroup(QueryPredicateGroupType.and, [this, predicate]);
   }
 
   QueryPredicateGroup<ModelIdentifier, M> operator &(
-          QueryPredicate<ModelIdentifier, M> predicate) =>
+    QueryPredicate<ModelIdentifier, M> predicate,
+  ) =>
       and(predicate);
 
   // or
   QueryPredicateGroup<ModelIdentifier, M> or(
-      QueryPredicate<ModelIdentifier, M> predicate) {
+    QueryPredicate<ModelIdentifier, M> predicate,
+  ) {
     return QueryPredicateGroup(QueryPredicateGroupType.or, [this, predicate]);
   }
 
   QueryPredicateGroup<ModelIdentifier, M> operator |(
-          QueryPredicate<ModelIdentifier, M> predicate) =>
+    QueryPredicate<ModelIdentifier, M> predicate,
+  ) =>
       or(predicate);
 
   @override
   bool evaluate(M model) {
-    String fieldName = getFieldName(field);
+    var fieldName = getFieldName(field);
     //ignore:implicit_dynamic_variable
-    var value = model.toJson()[fieldName];
+    final value = model.toJson()[fieldName];
     return queryFieldOperator.evaluate(value);
   }
 
@@ -88,10 +96,12 @@ class QueryPredicateOperation<ModelIdentifier extends Object,
 class QueryByIdentifierOperation<ModelIdentifier extends Object,
         M extends Model<ModelIdentifier, M>>
     extends QueryPredicate<ModelIdentifier, M> {
+  const QueryByIdentifierOperation(this.field, this.queryFieldOperator);
   final String field;
   final QueryFieldOperator<ModelIdentifier> queryFieldOperator;
 
-  const QueryByIdentifierOperation(this.field, this.queryFieldOperator);
+  final String field;
+  final QueryFieldOperator<Object?> queryFieldOperator;
 
   @override
   bool evaluate(M model) {
@@ -115,11 +125,10 @@ class QueryPredicateGroup<ModelIdentifier extends Object,
   final QueryPredicateGroupType type;
   final List<QueryPredicate<ModelIdentifier, M>> predicates;
 
-  QueryPredicateGroup(this.type, this.predicates);
-
   // and
   QueryPredicateGroup<ModelIdentifier, M> and(
-      QueryPredicate<ModelIdentifier, M> predicate) {
+    QueryPredicate<ModelIdentifier, M> predicate,
+  ) {
     if (type == QueryPredicateGroupType.and) {
       predicates.add(predicate);
       return this;
@@ -128,12 +137,14 @@ class QueryPredicateGroup<ModelIdentifier extends Object,
   }
 
   QueryPredicateGroup<ModelIdentifier, M> operator &(
-          QueryPredicate<ModelIdentifier, M> predicate) =>
+    QueryPredicate<ModelIdentifier, M> predicate,
+  ) =>
       and(predicate);
 
   // or
   QueryPredicateGroup<ModelIdentifier, M> or(
-      QueryPredicate<ModelIdentifier, M> predicate) {
+    QueryPredicate<ModelIdentifier, M> predicate,
+  ) {
     if (type == QueryPredicateGroupType.or) {
       predicates.add(predicate);
       return this;
@@ -142,7 +153,8 @@ class QueryPredicateGroup<ModelIdentifier extends Object,
   }
 
   QueryPredicateGroup<ModelIdentifier, M> operator |(
-          QueryPredicate<ModelIdentifier, M> predicate) =>
+    QueryPredicate<ModelIdentifier, M> predicate,
+  ) =>
       or(predicate);
 
   @override
@@ -176,7 +188,7 @@ class _QueryPredicateConstant<ModelIdentifier extends Object,
     extends QueryPredicate<ModelIdentifier, M> {
   final QueryPredicateConstantType _type;
 
-  const _QueryPredicateConstant(this._type) : super();
+  final QueryPredicateConstantType _type;
 
   @override
   bool evaluate(M model) => _type == QueryPredicateConstantType.all;

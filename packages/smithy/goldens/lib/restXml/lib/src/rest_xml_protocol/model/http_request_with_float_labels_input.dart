@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_xml_v1.rest_xml_protocol.model.http_request_with_float_labels_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -20,14 +21,14 @@ abstract class HttpRequestWithFloatLabelsInput
         _i1.EmptyPayload,
         _i1.HasPayload<HttpRequestWithFloatLabelsInputPayload> {
   factory HttpRequestWithFloatLabelsInput({
-    double? double_,
     double? float,
+    double? double_,
   }) {
-    double_ ??= 0;
     float ??= 0;
+    double_ ??= 0;
     return _$HttpRequestWithFloatLabelsInput._(
-      double_: double_,
       float: float,
+      double_: double_,
     );
   }
 
@@ -51,18 +52,18 @@ abstract class HttpRequestWithFloatLabelsInput
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    HttpRequestWithFloatLabelsInputRestXmlSerializer()
-  ];
+  static const List<
+          _i1.SmithySerializer<HttpRequestWithFloatLabelsInputPayload>>
+      serializers = [HttpRequestWithFloatLabelsInputRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(HttpRequestWithFloatLabelsInputBuilder b) {
-    b.double_ = 0;
     b.float = 0;
+    b.double_ = 0;
   }
 
-  double get double_;
   double get float;
+  double get double_;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -82,21 +83,21 @@ abstract class HttpRequestWithFloatLabelsInput
       HttpRequestWithFloatLabelsInputPayload();
   @override
   List<Object?> get props => [
-        double_,
         float,
+        double_,
       ];
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('HttpRequestWithFloatLabelsInput');
-    helper.add(
-      'double_',
-      double_,
-    );
-    helper.add(
-      'float',
-      float,
-    );
+        newBuiltValueToStringHelper('HttpRequestWithFloatLabelsInput')
+          ..add(
+            'float',
+            float,
+          )
+          ..add(
+            'double_',
+            double_,
+          );
     return helper.toString();
   }
 }
@@ -158,12 +159,13 @@ class HttpRequestWithFloatLabelsInputRestXmlSerializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    HttpRequestWithFloatLabelsInputPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName('HttpRequestWithFloatLabelsInput')
     ];
-    return result;
+
+    return result$;
   }
 }

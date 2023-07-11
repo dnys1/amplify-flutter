@@ -5,15 +5,20 @@ on:
     branches:
       - main
       - stable
-      - next
   pull_request:
     paths:
+      - '.github/workflows/dart_vm.yaml'
+      - '.github/workflows/worker_bee_builder.yaml'
+      - 'packages/amplify_lints/lib/**/*.yaml'
+      - 'packages/amplify_lints/pubspec.yaml'
+      - 'packages/aws_common/lib/**/*.dart'
+      - 'packages/aws_common/pubspec.yaml'
+      - 'packages/worker_bee/worker_bee/lib/**/*.dart'
+      - 'packages/worker_bee/worker_bee/pubspec.yaml'
       - 'packages/worker_bee/worker_bee_builder/**/*.dart'
       - 'packages/worker_bee/worker_bee_builder/**/*.yaml'
       - 'packages/worker_bee/worker_bee_builder/lib/**/*'
       - 'packages/worker_bee/worker_bee_builder/test/**/*'
-      - '.github/workflows/dart_vm.yaml'
-      - '.github/workflows/worker_bee_builder.yaml'
   schedule:
     - cron: "0 0 * * 0" # Every Sunday at 00:00
 defaults:
@@ -25,4 +30,5 @@ jobs:
   test:
     uses: ./.github/workflows/dart_vm.yaml
     with:
+      package-name: worker_bee_builder
       working-directory: packages/worker_bee/worker_bee_builder

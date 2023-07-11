@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.get_public_access_block_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -39,9 +40,8 @@ abstract class GetPublicAccessBlockOutput
         }
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
-    GetPublicAccessBlockOutputRestXmlSerializer()
-  ];
+  static const List<_i2.SmithySerializer<_i3.PublicAccessBlockConfiguration?>>
+      serializers = [GetPublicAccessBlockOutputRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetPublicAccessBlockOutputBuilder b) {}
@@ -55,11 +55,11 @@ abstract class GetPublicAccessBlockOutput
   List<Object?> get props => [publicAccessBlockConfiguration];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('GetPublicAccessBlockOutput');
-    helper.add(
-      'publicAccessBlockConfiguration',
-      publicAccessBlockConfiguration,
-    );
+    final helper = newBuiltValueToStringHelper('GetPublicAccessBlockOutput')
+      ..add(
+        'publicAccessBlockConfiguration',
+        publicAccessBlockConfiguration,
+      );
     return helper.toString();
   }
 }
@@ -90,42 +90,33 @@ class GetPublicAccessBlockOutputRestXmlSerializer
     final result = _i3.PublicAccessBlockConfigurationBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'BlockPublicAcls':
-          if (value != null) {
-            result.blockPublicAcls = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(bool),
-            ) as bool);
-          }
-          break;
+          result.blockPublicAcls = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
         case 'IgnorePublicAcls':
-          if (value != null) {
-            result.ignorePublicAcls = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(bool),
-            ) as bool);
-          }
-          break;
+          result.ignorePublicAcls = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
         case 'BlockPublicPolicy':
-          if (value != null) {
-            result.blockPublicPolicy = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(bool),
-            ) as bool);
-          }
-          break;
+          result.blockPublicPolicy = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
         case 'RestrictPublicBuckets':
-          if (value != null) {
-            result.restrictPublicBuckets = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(bool),
-            ) as bool);
-          }
-          break;
+          result.restrictPublicBuckets = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
       }
     }
 
@@ -135,53 +126,53 @@ class GetPublicAccessBlockOutputRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    _i3.PublicAccessBlockConfiguration object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is GetPublicAccessBlockOutput
-        ? object.getPayload()
-        : (object as _i3.PublicAccessBlockConfiguration?);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i2.XmlElementName(
         'PublicAccessBlockConfiguration',
         _i2.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    if (payload == null) {
-      return result;
-    }
-    if (payload.blockPublicAcls != null) {
-      result
+    final _i3.PublicAccessBlockConfiguration(
+      :blockPublicAcls,
+      :ignorePublicAcls,
+      :blockPublicPolicy,
+      :restrictPublicBuckets
+    ) = object;
+    if (blockPublicAcls != null) {
+      result$
         ..add(const _i2.XmlElementName('BlockPublicAcls'))
         ..add(serializers.serialize(
-          payload.blockPublicAcls!,
+          blockPublicAcls,
           specifiedType: const FullType.nullable(bool),
         ));
     }
-    if (payload.ignorePublicAcls != null) {
-      result
+    if (ignorePublicAcls != null) {
+      result$
         ..add(const _i2.XmlElementName('IgnorePublicAcls'))
         ..add(serializers.serialize(
-          payload.ignorePublicAcls!,
+          ignorePublicAcls,
           specifiedType: const FullType.nullable(bool),
         ));
     }
-    if (payload.blockPublicPolicy != null) {
-      result
+    if (blockPublicPolicy != null) {
+      result$
         ..add(const _i2.XmlElementName('BlockPublicPolicy'))
         ..add(serializers.serialize(
-          payload.blockPublicPolicy!,
+          blockPublicPolicy,
           specifiedType: const FullType.nullable(bool),
         ));
     }
-    if (payload.restrictPublicBuckets != null) {
-      result
+    if (restrictPublicBuckets != null) {
+      result$
         ..add(const _i2.XmlElementName('RestrictPublicBuckets'))
         ..add(serializers.serialize(
-          payload.restrictPublicBuckets!,
+          restrictPublicBuckets,
           specifiedType: const FullType.nullable(bool),
         ));
     }
-    return result;
+    return result$;
   }
 }

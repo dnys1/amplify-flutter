@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.create_usage_plan_key_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -20,14 +21,14 @@ abstract class CreateUsagePlanKeyRequest
         _i1.HasPayload<CreateUsagePlanKeyRequestPayload> {
   /// The POST request to create a usage plan key for adding an existing API key to a usage plan.
   factory CreateUsagePlanKeyRequest({
+    required String usagePlanId,
     required String keyId,
     required String keyType,
-    required String usagePlanId,
   }) {
     return _$CreateUsagePlanKeyRequest._(
+      usagePlanId: usagePlanId,
       keyId: keyId,
       keyType: keyType,
-      usagePlanId: usagePlanId,
     );
   }
 
@@ -51,21 +52,20 @@ abstract class CreateUsagePlanKeyRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    CreateUsagePlanKeyRequestRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<CreateUsagePlanKeyRequestPayload>>
+      serializers = [CreateUsagePlanKeyRequestRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(CreateUsagePlanKeyRequestBuilder b) {}
+
+  /// The Id of the UsagePlan resource representing the usage plan containing the to-be-created UsagePlanKey resource representing a plan customer.
+  String get usagePlanId;
 
   /// The identifier of a UsagePlanKey resource for a plan customer.
   String get keyId;
 
   /// The type of a UsagePlanKey resource for a plan customer.
   String get keyType;
-
-  /// The Id of the UsagePlan resource representing the usage plan containing the to-be-created UsagePlanKey resource representing a plan customer.
-  String get usagePlanId;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -86,25 +86,25 @@ abstract class CreateUsagePlanKeyRequest
       });
   @override
   List<Object?> get props => [
+        usagePlanId,
         keyId,
         keyType,
-        usagePlanId,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('CreateUsagePlanKeyRequest');
-    helper.add(
-      'keyId',
-      keyId,
-    );
-    helper.add(
-      'keyType',
-      keyType,
-    );
-    helper.add(
-      'usagePlanId',
-      usagePlanId,
-    );
+    final helper = newBuiltValueToStringHelper('CreateUsagePlanKeyRequest')
+      ..add(
+        'usagePlanId',
+        usagePlanId,
+      )
+      ..add(
+        'keyId',
+        keyId,
+      )
+      ..add(
+        'keyType',
+        keyType,
+      );
     return helper.toString();
   }
 }
@@ -138,15 +138,15 @@ abstract class CreateUsagePlanKeyRequestPayload
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('CreateUsagePlanKeyRequestPayload');
-    helper.add(
-      'keyId',
-      keyId,
-    );
-    helper.add(
-      'keyType',
-      keyType,
-    );
+        newBuiltValueToStringHelper('CreateUsagePlanKeyRequestPayload')
+          ..add(
+            'keyId',
+            keyId,
+          )
+          ..add(
+            'keyType',
+            keyType,
+          );
     return helper.toString();
   }
 }
@@ -182,19 +182,20 @@ class CreateUsagePlanKeyRequestRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'keyId':
           result.keyId = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'keyType':
           result.keyType = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -204,24 +205,23 @@ class CreateUsagePlanKeyRequestRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    CreateUsagePlanKeyRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is CreateUsagePlanKeyRequest
-        ? object.getPayload()
-        : (object as CreateUsagePlanKeyRequestPayload);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final CreateUsagePlanKeyRequestPayload(:keyId, :keyType) = object;
+    result$.addAll([
       'keyId',
       serializers.serialize(
-        payload.keyId,
+        keyId,
         specifiedType: const FullType(String),
       ),
       'keyType',
       serializers.serialize(
-        payload.keyType,
+        keyType,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

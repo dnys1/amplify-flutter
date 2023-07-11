@@ -1,8 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:amplify_auth_cognito_dart/src/state/state.dart';
-import 'package:amplify_core/amplify_core.dart';
+part of 'auth_state.dart';
 
 /// Discrete state types of the hosted UI state machine.
 enum HostedUiStateType {
@@ -29,7 +28,7 @@ enum HostedUiStateType {
 }
 
 /// Discrete states of the hosted UI state machine.
-abstract class HostedUiState extends AuthState<HostedUiStateType> {
+sealed class HostedUiState extends AuthState<HostedUiStateType> {
   const HostedUiState._();
 
   /// {@macro amplify_auth_cognito.hosted_ui_not_configured}
@@ -51,7 +50,10 @@ abstract class HostedUiState extends AuthState<HostedUiStateType> {
   const factory HostedUiState.signedIn(AuthUser user) = HostedUiSignedIn;
 
   /// {@macro amplify_auth_cognito.hosted_ui_failure}
-  const factory HostedUiState.failure(Exception exception) = HostedUiFailure;
+  const factory HostedUiState.failure(
+    Exception exception,
+    StackTrace stackTrace,
+  ) = HostedUiFailure;
 
   @override
   String get runtimeTypeName => 'HostedUiState';
@@ -60,7 +62,7 @@ abstract class HostedUiState extends AuthState<HostedUiStateType> {
 /// {@template amplify_auth_cognito.hosted_ui_not_configured}
 /// The hosted UI flow is not configured and not ready for use.
 /// {@endtemplate}
-class HostedUiNotConfigured extends HostedUiState {
+final class HostedUiNotConfigured extends HostedUiState {
   /// {@macro amplify_auth_cognito.hosted_ui_not_configured}
   const HostedUiNotConfigured() : super._();
 
@@ -74,7 +76,7 @@ class HostedUiNotConfigured extends HostedUiState {
 /// {@template amplify_auth_cognito.hosted_ui_configuring}
 /// The hosted UI flow is busy configuring.
 /// {@endtemplate}
-class HostedUiConfiguring extends HostedUiState {
+final class HostedUiConfiguring extends HostedUiState {
   /// {@macro amplify_auth_cognito.hosted_ui_configuring}
   const HostedUiConfiguring() : super._();
 
@@ -88,7 +90,7 @@ class HostedUiConfiguring extends HostedUiState {
 /// {@template amplify_auth_cognito.hosted_ui_signing_in}
 /// The user is being signed in via the hosted UI flow.
 /// {@endtemplate}
-class HostedUiSigningIn extends HostedUiState {
+final class HostedUiSigningIn extends HostedUiState {
   /// {@macro amplify_auth_cognito.hosted_ui_signing_in}
   const HostedUiSigningIn() : super._();
 
@@ -102,7 +104,7 @@ class HostedUiSigningIn extends HostedUiState {
 /// {@template amplify_auth_cognito.hosted_ui_signing_out}
 /// The user is being signed out via the hosted UI flow.
 /// {@endtemplate}
-class HostedUiSigningOut extends HostedUiState {
+final class HostedUiSigningOut extends HostedUiState {
   /// {@macro amplify_auth_cognito.hosted_ui_signing_out}
   const HostedUiSigningOut() : super._();
 
@@ -116,7 +118,7 @@ class HostedUiSigningOut extends HostedUiState {
 /// {@template amplify_auth_cognito.hosted_ui_signed_out}
 /// The user is signed out via the hosted UI flow.
 /// {@endtemplate}
-class HostedUiSignedOut extends HostedUiState {
+final class HostedUiSignedOut extends HostedUiState {
   /// {@macro amplify_auth_cognito.hosted_ui_signed_out}
   const HostedUiSignedOut() : super._();
 
@@ -130,7 +132,7 @@ class HostedUiSignedOut extends HostedUiState {
 /// {@template amplify_auth_cognito.hosted_ui_signed_in}
 /// The user is signed in via the hosted UI flow.
 /// {@endtemplate}
-class HostedUiSignedIn extends HostedUiState with SuccessState {
+final class HostedUiSignedIn extends HostedUiState with SuccessState {
   /// {@macro amplify_auth_cognito.hosted_ui_signed_in}
   const HostedUiSignedIn(this.user) : super._();
 
@@ -147,16 +149,19 @@ class HostedUiSignedIn extends HostedUiState with SuccessState {
 /// {@template amplify_auth_cognito.hosted_ui_failure}
 /// The Hosted UI flow failed with an [exception].
 /// {@endtemplate}
-class HostedUiFailure extends HostedUiState with ErrorState {
+final class HostedUiFailure extends HostedUiState with ErrorState {
   /// {@macro amplify_auth_cognito.hosted_ui_failure}
-  const HostedUiFailure(this.exception) : super._();
+  const HostedUiFailure(this.exception, this.stackTrace) : super._();
 
   /// The Hosted UI exception.
   @override
   final Exception exception;
 
   @override
-  List<Object?> get props => [type, exception];
+  final StackTrace stackTrace;
+
+  @override
+  List<Object?> get props => [type, exception, stackTrace];
 
   @override
   HostedUiStateType get type => HostedUiStateType.failure;

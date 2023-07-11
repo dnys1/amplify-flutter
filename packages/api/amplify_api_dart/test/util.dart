@@ -4,6 +4,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:amplify_api_dart/src/graphql/factories/graphql_request_factory.dart';
 import 'package:amplify_api_dart/src/graphql/providers/app_sync_api_key_auth_provider.dart';
 import 'package:amplify_api_dart/src/graphql/web_socket/blocs/web_socket_bloc.dart';
 import 'package:amplify_api_dart/src/graphql/web_socket/services/web_socket_service.dart';
@@ -14,6 +15,7 @@ import 'package:amplify_core/amplify_core.dart';
 import 'package:async/async.dart';
 import 'package:aws_common/testing.dart';
 import 'package:aws_signature_v4/aws_signature_v4.dart';
+import 'package:collection/collection.dart';
 import 'package:stream_channel/stream_channel.dart';
 import 'package:test/test.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -60,10 +62,8 @@ class TestTokenAuthProvider extends TokenAmplifyAuthProvider {
 }
 
 void validateSignedRequest(AWSBaseHttpRequest request) {
-  const userAgentHeader =
-      zIsWeb ? AWSHeaders.amzUserAgent : AWSHeaders.userAgent;
   expect(
-    request.headers[userAgentHeader],
+    request.headers[AWSHeaders.platformUserAgent],
     contains('aws-sigv4'),
   );
 }
@@ -75,9 +75,18 @@ const testApiKeyConfig = AWSApiConfig(
   authorizationType: APIAuthorizationType.apiKey,
   apiKey: 'abc-123',
 );
+const testApiKeyConfigCustomDomain = AWSApiConfig(
+  endpointType: EndpointType.graphQL,
+  endpoint: 'https://foo.bar.aws.dev/graphql ',
+  region: 'us-east-1',
+  authorizationType: APIAuthorizationType.apiKey,
+  apiKey: 'abc-123',
+);
 
 const expectedApiKeyWebSocketConnectionUrl =
     'wss://abc123.appsync-realtime-api.us-east-1.amazonaws.com/graphql?header=eyJBY2NlcHQiOiJhcHBsaWNhdGlvbi9qc29uLCB0ZXh0L2phdmFzY3JpcHQiLCJDb250ZW50LUVuY29kaW5nIjoiYW16LTEuMCIsIkNvbnRlbnQtVHlwZSI6ImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9dXRmLTgiLCJYLUFwaS1LZXkiOiJhYmMtMTIzIiwiSG9zdCI6ImFiYzEyMy5hcHBzeW5jLWFwaS51cy1lYXN0LTEuYW1hem9uYXdzLmNvbSJ9&payload=e30%3D';
+const expectedApiKeyWebSocketConnectionUrlCustomDomain =
+    'wss://foo.bar.aws.dev/graphql/realtime?header=eyJBY2NlcHQiOiJhcHBsaWNhdGlvbi9qc29uLCB0ZXh0L2phdmFzY3JpcHQiLCJDb250ZW50LUVuY29kaW5nIjoiYW16LTEuMCIsIkNvbnRlbnQtVHlwZSI6ImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9dXRmLTgiLCJYLUFwaS1LZXkiOiJhYmMtMTIzIiwiSG9zdCI6ImZvby5iYXIuYXdzLmRldiJ9&payload=e30%3D';
 
 AmplifyAuthProviderRepository getTestAuthProviderRepo() {
   final testAuthProviderRepo = AmplifyAuthProviderRepository()
@@ -314,3 +323,16 @@ class MockConnectivity extends ConnectivityPlatform {
   Stream<ConnectivityStatus> get onConnectivityChanged =>
       mockNetworkStreamController.stream;
 }
+
+/// Ensures a query predicate converts to JSON correctly.
+void testQueryPredicateTranslation(
+  QueryPredicate? queryPredicate,
+  Map<String, dynamic>? expectedFilter, {
+  required ModelType modelType,
+}) {
+  final resultFilter = GraphQLRequestFactory.instance
+      .queryPredicateToGraphQLFilter(queryPredicate, modelType);
+  expect(resultFilter, expectedFilter);
+}
+
+final deepEquals = const DeepCollectionEquality().equals;

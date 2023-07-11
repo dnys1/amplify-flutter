@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.create_resource_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -20,14 +21,14 @@ abstract class CreateResourceRequest
         _i1.HasPayload<CreateResourceRequestPayload> {
   /// Requests API Gateway to create a Resource resource.
   factory CreateResourceRequest({
+    required String restApiId,
     required String parentId,
     required String pathPart,
-    required String restApiId,
   }) {
     return _$CreateResourceRequest._(
+      restApiId: restApiId,
       parentId: parentId,
       pathPart: pathPart,
-      restApiId: restApiId,
     );
   }
 
@@ -53,21 +54,20 @@ abstract class CreateResourceRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    CreateResourceRequestRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<CreateResourceRequestPayload>>
+      serializers = [CreateResourceRequestRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(CreateResourceRequestBuilder b) {}
+
+  /// The string identifier of the associated RestApi.
+  String get restApiId;
 
   /// The parent resource's identifier.
   String get parentId;
 
   /// The last path segment for this resource.
   String get pathPart;
-
-  /// The string identifier of the associated RestApi.
-  String get restApiId;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -89,25 +89,25 @@ abstract class CreateResourceRequest
       });
   @override
   List<Object?> get props => [
+        restApiId,
         parentId,
         pathPart,
-        restApiId,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('CreateResourceRequest');
-    helper.add(
-      'parentId',
-      parentId,
-    );
-    helper.add(
-      'pathPart',
-      pathPart,
-    );
-    helper.add(
-      'restApiId',
-      restApiId,
-    );
+    final helper = newBuiltValueToStringHelper('CreateResourceRequest')
+      ..add(
+        'restApiId',
+        restApiId,
+      )
+      ..add(
+        'parentId',
+        parentId,
+      )
+      ..add(
+        'pathPart',
+        pathPart,
+      );
     return helper.toString();
   }
 }
@@ -134,11 +134,11 @@ abstract class CreateResourceRequestPayload
   List<Object?> get props => [pathPart];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('CreateResourceRequestPayload');
-    helper.add(
-      'pathPart',
-      pathPart,
-    );
+    final helper = newBuiltValueToStringHelper('CreateResourceRequestPayload')
+      ..add(
+        'pathPart',
+        pathPart,
+      );
     return helper.toString();
   }
 }
@@ -174,13 +174,15 @@ class CreateResourceRequestRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'pathPart':
           result.pathPart = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -190,19 +192,18 @@ class CreateResourceRequestRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    CreateResourceRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is CreateResourceRequest
-        ? object.getPayload()
-        : (object as CreateResourceRequestPayload);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final CreateResourceRequestPayload(:pathPart) = object;
+    result$.addAll([
       'pathPart',
       serializers.serialize(
-        payload.pathPart,
+        pathPart,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_analytics_pinpoint_dart.pinpoint.model.update_endpoints_batch_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -37,7 +38,7 @@ abstract class UpdateEndpointsBatchResponse
         b.messageBody.replace(payload);
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<_i3.MessageBody>> serializers = [
     UpdateEndpointsBatchResponseRestJson1Serializer()
   ];
 
@@ -52,11 +53,11 @@ abstract class UpdateEndpointsBatchResponse
   List<Object?> get props => [messageBody];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('UpdateEndpointsBatchResponse');
-    helper.add(
-      'messageBody',
-      messageBody,
-    );
+    final helper = newBuiltValueToStringHelper('UpdateEndpointsBatchResponse')
+      ..add(
+        'messageBody',
+        messageBody,
+      );
     return helper.toString();
   }
 }
@@ -93,15 +94,12 @@ class UpdateEndpointsBatchResponseRestJson1Serializer
   @override
   Object serialize(
     Serializers serializers,
-    Object? object, {
+    _i3.MessageBody object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is UpdateEndpointsBatchResponse
-        ? object.getPayload()
-        : (object as _i3.MessageBody);
-    return (serializers.serialize(
-      payload,
+    return serializers.serialize(
+      object,
       specifiedType: const FullType(_i3.MessageBody),
-    ) as Object);
+    )!;
   }
 }

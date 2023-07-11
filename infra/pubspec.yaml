@@ -2,9 +2,8 @@ name: infra
 publish_to: none
 
 environment:
-  flutter: ">=3.0.0-0 <4.0.0"
-  sdk: ">=3.0.0-0 <4.0.0"
+  sdk: ^3.0.0
 
 dependencies:
-  amplify_core: ">=1.0.0-next.5 <1.0.0-next.6"
+  amplify_core: any
   path: any

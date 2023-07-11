@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.list_stored_queries_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -16,12 +17,13 @@ abstract class ListStoredQueriesRequest
     implements
         Built<ListStoredQueriesRequest, ListStoredQueriesRequestBuilder> {
   factory ListStoredQueriesRequest({
-    int? maxResults,
     String? nextToken,
+    int? maxResults,
   }) {
+    maxResults ??= 0;
     return _$ListStoredQueriesRequest._(
-      maxResults: maxResults,
       nextToken: nextToken,
+      maxResults: maxResults,
     );
   }
 
@@ -38,36 +40,37 @@ abstract class ListStoredQueriesRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    ListStoredQueriesRequestAwsJson11Serializer()
-  ];
+  static const List<_i1.SmithySerializer<ListStoredQueriesRequest>>
+      serializers = [ListStoredQueriesRequestAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(ListStoredQueriesRequestBuilder b) {}
-
-  /// The maximum number of results to be returned with a single call.
-  int? get maxResults;
+  static void _init(ListStoredQueriesRequestBuilder b) {
+    b.maxResults = 0;
+  }
 
   /// The nextToken string returned in a previous request that you use to request the next page of results in a paginated response.
   String? get nextToken;
+
+  /// The maximum number of results to be returned with a single call.
+  int get maxResults;
   @override
   ListStoredQueriesRequest getPayload() => this;
   @override
   List<Object?> get props => [
-        maxResults,
         nextToken,
+        maxResults,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ListStoredQueriesRequest');
-    helper.add(
-      'maxResults',
-      maxResults,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+    final helper = newBuiltValueToStringHelper('ListStoredQueriesRequest')
+      ..add(
+        'nextToken',
+        nextToken,
+      )
+      ..add(
+        'maxResults',
+        maxResults,
+      );
     return helper.toString();
   }
 }
@@ -101,23 +104,20 @@ class ListStoredQueriesRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
-        case 'MaxResults':
-          if (value != null) {
-            result.maxResults = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(int),
-            ) as int);
-          }
-          break;
         case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'MaxResults':
+          result.maxResults = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int);
       }
     }
 
@@ -127,27 +127,26 @@ class ListStoredQueriesRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ListStoredQueriesRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ListStoredQueriesRequest);
-    final result = <Object?>[];
-    if (payload.maxResults != null) {
-      result
-        ..add('MaxResults')
-        ..add(serializers.serialize(
-          payload.maxResults!,
-          specifiedType: const FullType(int),
-        ));
-    }
-    if (payload.nextToken != null) {
-      result
+    final result$ = <Object?>[];
+    final ListStoredQueriesRequest(:nextToken, :maxResults) = object;
+    result$.addAll([
+      'MaxResults',
+      serializers.serialize(
+        maxResults,
+        specifiedType: const FullType(int),
+      ),
+    ]);
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

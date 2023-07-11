@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.api_stage; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -34,7 +35,7 @@ abstract class ApiStage
 
   const ApiStage._();
 
-  static const List<_i4.SmithySerializer> serializers = [
+  static const List<_i4.SmithySerializer<ApiStage>> serializers = [
     ApiStageRestJson1Serializer()
   ];
 
@@ -57,19 +58,19 @@ abstract class ApiStage
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ApiStage');
-    helper.add(
-      'apiId',
-      apiId,
-    );
-    helper.add(
-      'stage',
-      stage,
-    );
-    helper.add(
-      'throttle',
-      throttle,
-    );
+    final helper = newBuiltValueToStringHelper('ApiStage')
+      ..add(
+        'apiId',
+        apiId,
+      )
+      ..add(
+        'stage',
+        stage,
+      )
+      ..add(
+        'throttle',
+        throttle,
+      );
     return helper.toString();
   }
 }
@@ -102,37 +103,31 @@ class ApiStageRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'apiId':
-          if (value != null) {
-            result.apiId = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.apiId = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'stage':
-          if (value != null) {
-            result.stage = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.stage = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'throttle':
-          if (value != null) {
-            result.throttle.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltMap,
-                [
-                  FullType(String),
-                  FullType(_i2.ThrottleSettings),
-                ],
-              ),
-            ) as _i3.BuiltMap<String, _i2.ThrottleSettings>));
-          }
-          break;
+          result.throttle.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltMap,
+              [
+                FullType(String),
+                FullType(_i2.ThrottleSettings),
+              ],
+            ),
+          ) as _i3.BuiltMap<String, _i2.ThrottleSettings>));
       }
     }
 
@@ -142,32 +137,32 @@ class ApiStageRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ApiStage object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ApiStage);
-    final result = <Object?>[];
-    if (payload.apiId != null) {
-      result
+    final result$ = <Object?>[];
+    final ApiStage(:apiId, :stage, :throttle) = object;
+    if (apiId != null) {
+      result$
         ..add('apiId')
         ..add(serializers.serialize(
-          payload.apiId!,
+          apiId,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.stage != null) {
-      result
+    if (stage != null) {
+      result$
         ..add('stage')
         ..add(serializers.serialize(
-          payload.stage!,
+          stage,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.throttle != null) {
-      result
+    if (throttle != null) {
+      result$
         ..add('throttle')
         ..add(serializers.serialize(
-          payload.throttle!,
+          throttle,
           specifiedType: const FullType(
             _i3.BuiltMap,
             [
@@ -177,6 +172,6 @@ class ApiStageRestJson1Serializer
           ),
         ));
     }
-    return result;
+    return result$;
   }
 }

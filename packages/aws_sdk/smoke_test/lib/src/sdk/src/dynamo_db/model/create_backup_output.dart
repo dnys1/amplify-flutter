@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.create_backup_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -31,7 +32,7 @@ abstract class CreateBackupOutput
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<CreateBackupOutput>> serializers = [
     CreateBackupOutputAwsJson10Serializer()
   ];
 
@@ -44,11 +45,11 @@ abstract class CreateBackupOutput
   List<Object?> get props => [backupDetails];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('CreateBackupOutput');
-    helper.add(
-      'backupDetails',
-      backupDetails,
-    );
+    final helper = newBuiltValueToStringHelper('CreateBackupOutput')
+      ..add(
+        'backupDetails',
+        backupDetails,
+      );
     return helper.toString();
   }
 }
@@ -81,15 +82,15 @@ class CreateBackupOutputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'BackupDetails':
-          if (value != null) {
-            result.backupDetails.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.BackupDetails),
-            ) as _i2.BackupDetails));
-          }
-          break;
+          result.backupDetails.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.BackupDetails),
+          ) as _i2.BackupDetails));
       }
     }
 
@@ -99,19 +100,19 @@ class CreateBackupOutputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    CreateBackupOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as CreateBackupOutput);
-    final result = <Object?>[];
-    if (payload.backupDetails != null) {
-      result
+    final result$ = <Object?>[];
+    final CreateBackupOutput(:backupDetails) = object;
+    if (backupDetails != null) {
+      result$
         ..add('BackupDetails')
         ..add(serializers.serialize(
-          payload.backupDetails!,
+          backupDetails,
           specifiedType: const FullType(_i2.BackupDetails),
         ));
     }
-    return result;
+    return result$;
   }
 }

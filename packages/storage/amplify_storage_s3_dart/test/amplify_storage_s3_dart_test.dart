@@ -13,7 +13,8 @@ import 'test_utils/test_custom_prefix_resolver.dart';
 import 'test_utils/test_token_provider.dart';
 
 void main() {
-  const testDefaultStorageAccessLevel = StorageAccessLevel.private;
+  const testDefaultStorageAccessLevel = StorageAccessLevel.guest;
+  const testAccessLevelProtected = StorageAccessLevel.protected;
   const testConfig = AmplifyConfig(
     storage: StorageConfig(
       plugins: {
@@ -41,7 +42,7 @@ void main() {
     late StorageS3Service storageS3Service;
 
     setUp(() async {
-      dependencyManager = DependencyManager();
+      dependencyManager = AmplifyDependencyManager();
       storageS3Service = MockStorageS3Service();
 
       when(
@@ -106,7 +107,7 @@ void main() {
     late StorageS3Service storageS3Service;
 
     setUp(() async {
-      dependencyManager = DependencyManager();
+      dependencyManager = AmplifyDependencyManager();
       storageS3Service = MockStorageS3Service();
       storageS3Plugin = AmplifyStorageS3Dart(
         dependencyManagerOverride: dependencyManager,
@@ -140,39 +141,88 @@ void main() {
       );
 
       setUpAll(() {
-        registerFallbackValue(const S3ListOptions());
+        registerFallbackValue(
+          const StorageListOptions(),
+        );
       });
 
-      test(
-          'should forward options with default StorageAccessLevel to to StorageS3Service.list() API',
-          () {
-        const testRequest = StorageListRequest<S3ListOptions>(path: testPath);
+      test('should forward default options to StorageS3Service.list() API',
+          () async {
+        const defaultOptions =
+            StorageListOptions(pluginOptions: S3ListPluginOptions());
 
         when(
           () => storageS3Service.list(
             path: testPath,
-            options: any(named: 'options'),
+            options: defaultOptions,
           ),
         ).thenAnswer(
           (_) async => testResult,
         );
 
-        storageS3Plugin.list(request: testRequest);
+        final listOperation = storageS3Plugin.list(path: testPath);
 
         final capturedOptions = verify(
           () => storageS3Service.list(
             path: testPath,
-            options: captureAny<S3ListOptions>(named: 'options'),
+            options: captureAny<StorageListOptions>(
+              named: 'options',
+            ),
           ),
         ).captured.last;
 
         expect(
           capturedOptions,
-          isA<S3ListOptions>().having(
-            (o) => o.accessLevel,
-            'accessLevel',
-            testDefaultStorageAccessLevel,
+          defaultOptions,
+        );
+
+        final result = await listOperation.result;
+        expect(
+          result,
+          testResult,
+        );
+      });
+
+      test('should forward options to StorageS3Service.list() API', () async {
+        const testOptions = StorageListOptions(
+          accessLevel: testAccessLevelProtected,
+          pluginOptions: S3ListPluginOptions(excludeSubPaths: true),
+          nextToken: 'next-token-123',
+          pageSize: 2,
+        );
+
+        when(
+          () => storageS3Service.list(
+            path: testPath,
+            options: testOptions,
           ),
+        ).thenAnswer(
+          (_) async => testResult,
+        );
+
+        final listOperation = storageS3Plugin.list(
+          path: testPath,
+          options: testOptions,
+        );
+
+        final capturedOptions = verify(
+          () => storageS3Service.list(
+            path: testPath,
+            options: captureAny<StorageListOptions>(
+              named: 'options',
+            ),
+          ),
+        ).captured.last;
+
+        expect(
+          capturedOptions,
+          testOptions,
+        );
+
+        final result = await listOperation.result;
+        expect(
+          result,
+          testResult,
         );
       });
     });
@@ -193,42 +243,90 @@ void main() {
       );
 
       setUpAll(() {
-        registerFallbackValue(const S3GetPropertiesOptions());
+        registerFallbackValue(
+          const StorageGetPropertiesOptions(),
+        );
       });
 
       test(
-          'should forward options with default StorageAccessLevel to StorageS3Service.getProperties() API',
-          () {
-        const testRequest = StorageGetPropertiesRequest<S3GetPropertiesOptions>(
-          key: testKey,
+          'should forward default options to StorageS3Service.getProperties() API',
+          () async {
+        const defaultOptions = StorageGetPropertiesOptions(
+          pluginOptions: S3GetPropertiesPluginOptions(),
         );
 
         when(
           () => storageS3Service.getProperties(
             key: testKey,
-            options: any(named: 'options'),
+            options: defaultOptions,
           ),
         ).thenAnswer(
           (_) async => testResult,
         );
 
-        storageS3Plugin.getProperties(request: testRequest);
+        final getPropertiesOperation =
+            storageS3Plugin.getProperties(key: testKey);
 
         final capturedOptions = verify(
           () => storageS3Service.getProperties(
             key: testKey,
-            options: captureAny<S3GetPropertiesOptions>(named: 'options'),
+            options: captureAny<StorageGetPropertiesOptions>(
+              named: 'options',
+            ),
           ),
         ).captured.last;
 
         expect(
           capturedOptions,
-          isA<S3GetPropertiesOptions>().having(
-            (o) => o.accessLevel,
-            'accessLevel',
-            testDefaultStorageAccessLevel,
-          ),
+          defaultOptions,
         );
+
+        final result = await getPropertiesOperation.result;
+
+        expect(
+          result,
+          testResult,
+        );
+      });
+
+      test('should forward options to StorageS3Service.getProperties() API',
+          () async {
+        const testOptions = StorageGetPropertiesOptions(
+          accessLevel: testAccessLevelProtected,
+          pluginOptions:
+              S3GetPropertiesPluginOptions.forIdentity('target-identity-id'),
+        );
+
+        when(
+          () => storageS3Service.getProperties(
+            key: testKey,
+            options: testOptions,
+          ),
+        ).thenAnswer(
+          (_) async => testResult,
+        );
+
+        final getPropertiesOperation = storageS3Plugin.getProperties(
+          key: testKey,
+          options: testOptions,
+        );
+
+        final capturedOptions = verify(
+          () => storageS3Service.getProperties(
+            key: testKey,
+            options: captureAny<StorageGetPropertiesOptions>(
+              named: 'options',
+            ),
+          ),
+        ).captured.last;
+
+        expect(
+          capturedOptions,
+          testOptions,
+        );
+
+        final result = await getPropertiesOperation.result;
+        expect(result, testResult);
       });
     });
 
@@ -243,43 +341,92 @@ void main() {
       );
 
       setUpAll(() {
-        registerFallbackValue(const S3GetUrlOptions());
+        registerFallbackValue(
+          const StorageGetUrlOptions(),
+        );
       });
 
-      test(
-          'should forward options with default StorageAccessLevel to StorageS3Service.getUrl() API',
+      test('should forward default options to StorageS3Service.getUrl() API',
           () async {
-        const testRequest = StorageGetUrlRequest(key: testKey);
+        const defaultOptions = StorageGetUrlOptions(
+          pluginOptions: S3GetUrlPluginOptions(),
+        );
 
         when(
           () => storageS3Service.getUrl(
             key: testKey,
-            options: any(named: 'options'),
+            options: defaultOptions,
           ),
         ).thenAnswer(
           (_) async => testResult,
         );
 
-        final getUrlOperation = storageS3Plugin.getUrl(request: testRequest);
+        final getUrlOperation = storageS3Plugin.getUrl(key: testKey);
 
         final capturedOptions = verify(
           () => storageS3Service.getUrl(
             key: testKey,
-            options: captureAny<S3GetUrlOptions>(named: 'options'),
+            options: captureAny<StorageGetUrlOptions>(
+              named: 'options',
+            ),
           ),
         ).captured.last;
 
         expect(
           capturedOptions,
-          isA<S3GetUrlOptions>().having(
-            (o) => o.accessLevel,
-            'accessLevel',
-            testDefaultStorageAccessLevel,
-          ),
+          defaultOptions,
         );
 
         final result = await getUrlOperation.result;
-        expect(result.url, testResult.url);
+        expect(
+          result,
+          testResult,
+        );
+      });
+
+      test('should forward options to StorageS3Service.getUrl() API', () async {
+        const testOptions = StorageGetUrlOptions(
+          accessLevel: testAccessLevelProtected,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(minutes: 10),
+            useAccelerateEndpoint: true,
+          ),
+        );
+
+        when(
+          () => storageS3Service.getUrl(
+            key: testKey,
+            options: testOptions,
+          ),
+        ).thenAnswer(
+          (_) async => testResult,
+        );
+
+        final getUrlOperation = storageS3Plugin.getUrl(
+          key: testKey,
+          options: testOptions,
+        );
+
+        final capturedOptions = verify(
+          () => storageS3Service.getUrl(
+            key: testKey,
+            options: captureAny<StorageGetUrlOptions>(
+              named: 'options',
+            ),
+          ),
+        ).captured.last;
+
+        expect(
+          capturedOptions,
+          testOptions,
+        );
+
+        final result = await getUrlOperation.result;
+        expect(
+          result,
+          testResult,
+        );
       });
     });
 
@@ -299,20 +446,22 @@ void main() {
       late S3DownloadDataOperation downloadDataOperation;
 
       setUpAll(() {
-        registerFallbackValue(const S3DownloadDataOptions());
+        registerFallbackValue(
+          const StorageDownloadDataOptions(),
+        );
       });
 
       test(
-          'should forward options with default StorageAccessLevel to StorageS3Service.downloadData API',
+          'should forward default options to StorageS3Service.downloadData API',
           () async {
-        const testRequest = StorageDownloadDataRequest<S3DownloadDataOptions>(
-          key: testKey,
+        const defaultOptions = StorageDownloadDataOptions(
+          pluginOptions: S3DownloadDataPluginOptions(),
         );
 
         when(
           () => storageS3Service.downloadData(
             key: testKey,
-            options: any(named: 'options'),
+            options: defaultOptions,
             preStart: any(named: 'preStart'),
             onProgress: any(named: 'onProgress'),
             onData: any(named: 'onData'),
@@ -323,13 +472,15 @@ void main() {
         when(() => testS3DownloadTask.result).thenAnswer((_) async => testItem);
 
         downloadDataOperation = storageS3Plugin.downloadData(
-          request: testRequest,
+          key: testKey,
         );
 
         final capturedOptions = verify(
           () => storageS3Service.downloadData(
             key: testKey,
-            options: captureAny<S3DownloadDataOptions>(named: 'options'),
+            options: captureAny<StorageDownloadDataOptions>(
+              named: 'options',
+            ),
             preStart: any(named: 'preStart'),
             onProgress: any(named: 'onProgress'),
             onData: any(named: 'onData'),
@@ -339,16 +490,53 @@ void main() {
 
         expect(
           capturedOptions,
-          isA<S3DownloadDataOptions>().having(
-            (o) => o.accessLevel,
-            'accessLevel',
-            testDefaultStorageAccessLevel,
-          ),
+          defaultOptions,
         );
 
         final result = await downloadDataOperation.result;
         expect(result.bytes.isEmpty, true);
         expect(result.downloadedItem, testItem);
+      });
+
+      test('should forward options to StorageS3Service.downloadData API',
+          () async {
+        const testOptions = StorageDownloadDataOptions(
+          accessLevel: testAccessLevelProtected,
+          pluginOptions: S3DownloadDataPluginOptions(
+            useAccelerateEndpoint: true,
+            getProperties: true,
+          ),
+        );
+
+        when(
+          () => storageS3Service.downloadData(
+            key: testKey,
+            options: any(named: 'options'),
+            onData: any(named: 'onData'),
+          ),
+        ).thenAnswer((_) => testS3DownloadTask);
+
+        when(() => testS3DownloadTask.result).thenAnswer((_) async => testItem);
+
+        downloadDataOperation = storageS3Plugin.downloadData(
+          key: testKey,
+          options: testOptions,
+        );
+
+        final capturedOptions = verify(
+          () => storageS3Service.downloadData(
+            key: testKey,
+            onData: any(named: 'onData'),
+            options: captureAny<StorageDownloadDataOptions>(
+              named: 'options',
+            ),
+          ),
+        ).captured.last;
+
+        expect(
+          capturedOptions,
+          testOptions,
+        );
       });
 
       test(
@@ -370,6 +558,7 @@ void main() {
 
     group('uploadData() API', () {
       const testKey = 'object-upload-to';
+      final testData = S3DataPayload.string('Hello S3.');
       final testItem = S3Item(
         key: testKey,
         lastModified: DateTime(2022, 10, 14),
@@ -384,23 +573,23 @@ void main() {
       late S3UploadDataOperation uploadDataOperation;
 
       setUpAll(() {
-        registerFallbackValue(const S3UploadDataOptions());
+        registerFallbackValue(
+          const StorageUploadDataOptions(),
+        );
         registerFallbackValue(S3DataPayload());
       });
 
-      test(
-          'should forward options with default StorageAccessLevel to StorageS3Service.uploadData API',
+      test('should forward default options to StorageS3Service.uploadData API',
           () async {
-        final testRequest = StorageUploadDataRequest(
-          data: S3DataPayload.string('Hello S3.'),
-          key: testKey,
+        const defaultOptions = StorageUploadDataOptions(
+          pluginOptions: S3UploadDataPluginOptions(),
         );
 
         when(
           () => storageS3Service.uploadData(
             key: testKey,
             dataPayload: any(named: 'dataPayload'),
-            options: any(named: 'options'),
+            options: defaultOptions,
             onProgress: any(named: 'onProgress'),
             onDone: any(named: 'onDone'),
             onError: any(named: 'onError'),
@@ -409,13 +598,16 @@ void main() {
 
         when(() => testS3UploadTask.result).thenAnswer((_) async => testItem);
 
-        uploadDataOperation = storageS3Plugin.uploadData(request: testRequest);
+        final uploadDataOperation =
+            storageS3Plugin.uploadData(data: testData, key: testKey);
 
         final capturedParams = verify(
           () => storageS3Service.uploadData(
             key: testKey,
             dataPayload: captureAny<S3DataPayload>(named: 'dataPayload'),
-            options: captureAny<S3UploadDataOptions>(named: 'options'),
+            options: captureAny<StorageUploadDataOptions>(
+              named: 'options',
+            ),
             onProgress: any(named: 'onProgress'),
             onDone: any(named: 'onDone'),
             onError: any(named: 'onError'),
@@ -425,19 +617,104 @@ void main() {
         final capturedDataPayload = capturedParams[0];
         final capturedOptions = capturedParams[1];
 
-        expect(capturedDataPayload, testRequest.data);
-
+        expect(
+          capturedDataPayload,
+          testData,
+        );
         expect(
           capturedOptions,
-          isA<S3UploadDataOptions>().having(
-            (o) => o.accessLevel,
-            'accessLevel',
-            testDefaultStorageAccessLevel,
-          ),
+          defaultOptions,
         );
 
         final result = await uploadDataOperation.result;
-        expect(result.uploadedItem, testItem);
+        expect(
+          result.uploadedItem,
+          testItem,
+        );
+      });
+
+      test('should forward options to StorageS3Service.uploadData API',
+          () async {
+        const testOptions = StorageUploadDataOptions(
+          accessLevel: testAccessLevelProtected,
+          pluginOptions: S3UploadDataPluginOptions(
+            getProperties: true,
+            useAccelerateEndpoint: true,
+          ),
+        );
+
+        when(
+          () => storageS3Service.uploadData(
+            key: testKey,
+            dataPayload: any(named: 'dataPayload'),
+            options: testOptions,
+          ),
+        ).thenAnswer((_) => testS3UploadTask);
+
+        when(() => testS3UploadTask.result).thenAnswer((_) async => testItem);
+        uploadDataOperation = storageS3Plugin.uploadData(
+          data: testData,
+          key: testKey,
+          options: testOptions,
+        );
+        final capturedOptions = verify(
+          () => storageS3Service.uploadData(
+            key: testKey,
+            dataPayload: any(named: 'dataPayload'),
+            options: captureAny<StorageUploadDataOptions>(
+              named: 'options',
+            ),
+          ),
+        ).captured.last;
+
+        expect(
+          capturedOptions,
+          testOptions,
+        );
+      });
+
+      test('should forward options.metadata to StorageS3Service.uploadData API',
+          () async {
+        const testMetadata = {
+          'filename': '123',
+        };
+        const testOptions = StorageUploadDataOptions(
+          accessLevel: testAccessLevelProtected,
+          metadata: testMetadata,
+        );
+
+        when(
+          () => storageS3Service.uploadData(
+            key: testKey,
+            dataPayload: any(named: 'dataPayload'),
+            options: any(named: 'options'),
+          ),
+        ).thenAnswer((_) => testS3UploadTask);
+
+        when(() => testS3UploadTask.result).thenAnswer((_) async => testItem);
+        uploadDataOperation = storageS3Plugin.uploadData(
+          data: testData,
+          key: testKey,
+          options: testOptions,
+        );
+        final capturedOptions = verify(
+          () => storageS3Service.uploadData(
+            key: testKey,
+            dataPayload: any(named: 'dataPayload'),
+            options: captureAny<StorageUploadDataOptions>(
+              named: 'options',
+            ),
+          ),
+        ).captured.last;
+
+        expect(
+          capturedOptions,
+          isA<StorageUploadDataOptions>().having(
+            (o) => o.metadata,
+            'options.metadata',
+            equals(testMetadata),
+          ),
+        );
       });
 
       test(
@@ -453,6 +730,7 @@ void main() {
 
     group('uploadFile() API', () {
       const testKey = 'object-upload-to';
+      final testLocalFile = AWSFile.fromData([101]);
       final testItem = S3Item(
         key: testKey,
         lastModified: DateTime(2022, 10, 14),
@@ -467,25 +745,24 @@ void main() {
       late S3UploadFileOperation uploadFileOperation;
 
       setUpAll(() {
-        registerFallbackValue(const S3UploadFileOptions());
-        registerFallbackValue(const S3UploadDataOptions());
+        registerFallbackValue(
+          const StorageUploadFileOptions(),
+        );
         registerFallbackValue(S3DataPayload());
         registerFallbackValue(AWSFile.fromData([]));
       });
 
-      test(
-          'should forward options with default StorageAccessLevel to StorageS3Service.uploadFile API',
+      test('should forward default options to StorageS3Service.uploadFile API',
           () async {
-        final testRequest = StorageUploadFileRequest(
-          localFile: AWSFile.fromData([101]),
-          key: testKey,
+        const defaultOptions = StorageUploadFileOptions(
+          pluginOptions: S3UploadFilePluginOptions(),
         );
 
         when(
           () => storageS3Service.uploadFile(
             key: testKey,
             localFile: any(named: 'localFile'),
-            options: any(named: 'options'),
+            options: defaultOptions,
             onProgress: any(named: 'onProgress'),
             onDone: any(named: 'onDone'),
             onError: any(named: 'onError'),
@@ -494,13 +771,18 @@ void main() {
 
         when(() => testS3UploadTask.result).thenAnswer((_) async => testItem);
 
-        uploadFileOperation = storageS3Plugin.uploadFile(request: testRequest);
+        uploadFileOperation = storageS3Plugin.uploadFile(
+          key: testKey,
+          localFile: testLocalFile,
+        );
 
         final capturedParams = verify(
           () => storageS3Service.uploadFile(
             key: testKey,
             localFile: captureAny<AWSFile>(named: 'localFile'),
-            options: captureAny<S3UploadFileOptions>(named: 'options'),
+            options: captureAny<StorageUploadFileOptions>(
+              named: 'options',
+            ),
             onProgress: any(named: 'onProgress'),
             onDone: any(named: 'onDone'),
             onError: any(named: 'onError'),
@@ -510,19 +792,106 @@ void main() {
         final capturedLocalFile = capturedParams[0];
         final capturedOptions = capturedParams[1];
 
-        expect(capturedLocalFile, testRequest.localFile);
+        expect(
+          capturedLocalFile,
+          testLocalFile,
+        );
 
         expect(
           capturedOptions,
-          isA<S3UploadFileOptions>().having(
-            (o) => o.accessLevel,
-            'accessLevel',
-            testDefaultStorageAccessLevel,
-          ),
+          defaultOptions,
         );
 
         final result = await uploadFileOperation.result;
         expect(result.uploadedItem, testItem);
+      });
+
+      test('should forward options to StorageS3Service.uploadFile API',
+          () async {
+        const testOptions = StorageUploadFileOptions(
+          accessLevel: testAccessLevelProtected,
+          pluginOptions: S3UploadFilePluginOptions(
+            getProperties: true,
+            useAccelerateEndpoint: true,
+          ),
+        );
+
+        when(
+          () => storageS3Service.uploadFile(
+            key: testKey,
+            localFile: any(named: 'localFile'),
+            options: testOptions,
+          ),
+        ).thenAnswer((_) => testS3UploadTask);
+
+        when(() => testS3UploadTask.result).thenAnswer((_) async => testItem);
+
+        uploadFileOperation = storageS3Plugin.uploadFile(
+          key: testKey,
+          localFile: testLocalFile,
+          options: testOptions,
+        );
+
+        final capturedOptions = verify(
+          () => storageS3Service.uploadFile(
+            key: testKey,
+            localFile: any(named: 'localFile'),
+            options: captureAny<StorageUploadFileOptions>(
+              named: 'options',
+            ),
+          ),
+        ).captured.last;
+
+        expect(
+          capturedOptions,
+          testOptions,
+        );
+      });
+
+      test('should forward options.metadata to StorageS3Service.uploadFile API',
+          () async {
+        const testMetadata = {
+          'filename': '123',
+        };
+        const testOptions = StorageUploadFileOptions(
+          accessLevel: testAccessLevelProtected,
+          metadata: testMetadata,
+        );
+
+        when(
+          () => storageS3Service.uploadFile(
+            key: testKey,
+            localFile: any(named: 'localFile'),
+            options: any(named: 'options'),
+          ),
+        ).thenAnswer((_) => testS3UploadTask);
+
+        when(() => testS3UploadTask.result).thenAnswer((_) async => testItem);
+
+        uploadFileOperation = storageS3Plugin.uploadFile(
+          key: testKey,
+          localFile: testLocalFile,
+          options: testOptions,
+        );
+
+        final capturedOptions = verify(
+          () => storageS3Service.uploadFile(
+            key: testKey,
+            localFile: any(named: 'localFile'),
+            options: captureAny<StorageUploadFileOptions>(
+              named: 'options',
+            ),
+          ),
+        ).captured.last;
+
+        expect(
+          capturedOptions,
+          isA<StorageUploadFileOptions>().having(
+            (o) => o.metadata,
+            'options.metadata',
+            equals(testMetadata),
+          ),
+        );
       });
 
       test(
@@ -543,55 +912,104 @@ void main() {
     });
 
     group('copy() API', () {
-      const testTargetIdentityId = 'someone-else';
-      const testSourceItem = S3Item(key: 'source');
-      const testDestinationItem = S3Item(key: 'destination');
-      const testSource = S3ItemWithAccessLevel(
-        storageItem: testSourceItem,
+      const sourceKey = 'source-key';
+      const destinationKey = 'destination-key';
+
+      const testSource = StorageItemWithAccessLevel(
+        storageItem: StorageItem(key: sourceKey),
+        accessLevel: StorageAccessLevel.guest,
       );
-      const testDestination = S3ItemWithAccessLevel.forIdentity(
-        testTargetIdentityId,
-        storageItem: testDestinationItem,
+      const testDestination = StorageItemWithAccessLevel(
+        storageItem: StorageItem(key: destinationKey),
+        accessLevel: StorageAccessLevel.protected,
       );
-      const testResult = S3CopyResult(copiedItem: testDestinationItem);
+
+      final testResult = S3CopyResult(copiedItem: S3Item(key: destinationKey));
 
       setUpAll(() {
-        registerFallbackValue(const S3CopyOptions());
+        registerFallbackValue(const StorageCopyOptions());
+        registerFallbackValue(
+          S3ItemWithAccessLevel(
+            storageItem: S3Item(key: 'some-key'),
+          ),
+        );
       });
 
-      test(
-          'should forward options with default getProperties value to StorageS3Service.copy() API',
-          () async {
-        const testRequest = StorageCopyRequest(
-          source: testSource,
-          destination: testDestination,
-        );
-
+      test('should forward options to StorageS3Service.copy() API', () async {
         when(
           () => storageS3Service.copy(
-            source: testSource,
-            destination: testDestination,
+            source: any(named: 'source'),
+            destination: any(named: 'destination'),
             options: any(named: 'options'),
           ),
-        ).thenAnswer((_) async => testResult);
+        ).thenAnswer((_) async {
+          return Future.value(testResult);
+        });
 
-        final copyOperation = storageS3Plugin.copy(request: testRequest);
-
-        final capturedOptions = verify(
-          () => storageS3Service.copy(
-            source: testSource,
-            destination: testDestination,
-            options: captureAny<S3CopyOptions>(named: 'options'),
+        final copyOperation = storageS3Plugin.copy(
+          source: testSource,
+          destination: testDestination,
+          options: const StorageCopyOptions(
+            pluginOptions: S3CopyPluginOptions(getProperties: true),
           ),
-        ).captured.last;
+        );
+
+        final captured = verify(
+          () => storageS3Service.copy(
+            source: captureAny<S3ItemWithAccessLevel>(named: 'source'),
+            destination:
+                captureAny<S3ItemWithAccessLevel>(named: 'destination'),
+            options: captureAny<StorageCopyOptions>(
+              named: 'options',
+            ),
+          ),
+        ).captured;
+        final capturedSource = captured[0];
+        final capturedDestination = captured[1];
+        final capturedOptions = captured[2];
+
+        expect(
+          capturedSource,
+          isA<S3ItemWithAccessLevel>()
+              .having(
+                (i) => i.accessLevel,
+                'accessLevel',
+                testSource.accessLevel,
+              )
+              .having(
+                (i) => i.storageItem.key,
+                'key',
+                testSource.storageItem.key,
+              ),
+        );
+        expect(
+          capturedDestination,
+          isA<S3ItemWithAccessLevel>()
+              .having(
+                (o) => o.accessLevel,
+                'accessLevel',
+                testDestination.accessLevel,
+              )
+              .having(
+                (i) => i.storageItem.key,
+                'key',
+                testDestination.storageItem.key,
+              ),
+        );
 
         expect(
           capturedOptions,
-          isA<S3CopyOptions>().having(
-            (o) => o.getProperties,
-            'getProperties',
-            false,
-          ),
+          isA<StorageCopyOptions>()
+              .having(
+                (o) => o.pluginOptions,
+                'pluginOptions',
+                isNotNull,
+              )
+              .having(
+                (o) => (o.pluginOptions as S3CopyPluginOptions).getProperties,
+                'getProperties',
+                isTrue,
+              ),
         );
 
         final result = await copyOperation.result;
@@ -600,52 +1018,91 @@ void main() {
     });
 
     group('move() API', () {
-      const testSourceItem = S3Item(key: 'source');
-      const testDestinationItem = S3Item(key: 'destination');
-      const testSource = S3ItemWithAccessLevel(
-        storageItem: testSourceItem,
-        accessLevel: StorageAccessLevel.private,
-      );
-      const testDestination = S3ItemWithAccessLevel(
-        storageItem: testDestinationItem,
+      const sourceKey = 'source-key';
+      const destinationKey = 'destination-key';
+
+      const testSource = StorageItemWithAccessLevel(
+        storageItem: StorageItem(key: sourceKey),
         accessLevel: StorageAccessLevel.guest,
       );
-      const testResult = S3MoveResult(movedItem: testDestinationItem);
+
+      const testDestination = StorageItemWithAccessLevel(
+        storageItem: StorageItem(key: destinationKey),
+        accessLevel: StorageAccessLevel.protected,
+      );
+
+      final testResult = S3MoveResult(movedItem: S3Item(key: destinationKey));
 
       setUpAll(() {
-        registerFallbackValue(const S3MoveOptions());
+        registerFallbackValue(const StorageMoveOptions());
+        registerFallbackValue(
+          S3ItemWithAccessLevel(
+            storageItem: S3Item(key: 'some-key'),
+          ),
+        );
       });
 
       test(
           'should forward options with default getProperties value to StorageS3Service.move() API',
           () async {
-        const testRequest = StorageMoveRequest(
-          source: testSource,
-          destination: testDestination,
-        );
-
         when(
           () => storageS3Service.move(
-            source: testSource,
-            destination: testDestination,
+            source: any(named: 'source'),
+            destination: any(named: 'destination'),
             options: any(named: 'options'),
           ),
         ).thenAnswer((_) async => testResult);
 
-        final moveOperation = storageS3Plugin.move(request: testRequest);
+        final moveOperation = storageS3Plugin.move(
+          source: testSource,
+          destination: testDestination,
+        );
 
-        final capturedOptions = verify(
+        final captured = verify(
           () => storageS3Service.move(
-            source: testSource,
-            destination: testDestination,
-            options: captureAny<S3MoveOptions>(named: 'options'),
+            source: captureAny<S3ItemWithAccessLevel>(named: 'source'),
+            destination:
+                captureAny<S3ItemWithAccessLevel>(named: 'destination'),
+            options: captureAny<StorageMoveOptions>(
+              named: 'options',
+            ),
           ),
-        ).captured.last;
-
+        ).captured;
+        final capturedSource = captured[0];
+        final capturedDestination = captured[1];
+        final capturedOptions = captured[2];
+        expect(
+          capturedSource,
+          isA<S3ItemWithAccessLevel>()
+              .having(
+                (i) => i.accessLevel,
+                'accessLevel',
+                testSource.accessLevel,
+              )
+              .having(
+                (i) => i.storageItem.key,
+                'key',
+                testSource.storageItem.key,
+              ),
+        );
+        expect(
+          capturedDestination,
+          isA<S3ItemWithAccessLevel>()
+              .having(
+                (o) => o.accessLevel,
+                'accessLevel',
+                testDestination.accessLevel,
+              )
+              .having(
+                (i) => i.storageItem.key,
+                'key',
+                testDestination.storageItem.key,
+              ),
+        );
         expect(
           capturedOptions,
-          isA<S3MoveOptions>().having(
-            (o) => o.getProperties,
+          isA<StorageMoveOptions>().having(
+            (o) => (o.pluginOptions! as S3MovePluginOptions).getProperties,
             'getProperties',
             false,
           ),
@@ -658,20 +1115,58 @@ void main() {
 
     group('remove() API', () {
       const testKey = 'object-to-remove';
-      const testResult = S3RemoveResult(
+      final testResult = S3RemoveResult(
         removedItem: S3Item(
           key: testKey,
         ),
       );
 
       setUpAll(() {
-        registerFallbackValue(const S3RemoveOptions());
+        registerFallbackValue(
+          const StorageRemoveOptions(),
+        );
       });
 
-      test(
-          'should forward options with default StorageAccessLevel StorageS3Service.remove() API',
+      test('should forward default options to StorageS3Service.remove() API',
           () async {
-        const testRequest = StorageRemoveRequest(key: testKey);
+        const defaultOptions = StorageRemoveOptions(
+          pluginOptions: S3RemovePluginOptions(),
+        );
+        when(
+          () => storageS3Service.remove(
+            key: testKey,
+            options: defaultOptions,
+          ),
+        ).thenAnswer((_) async => testResult);
+
+        final removeOperation = storageS3Plugin.remove(key: testKey);
+
+        final capturedOptions = verify(
+          () => storageS3Service.remove(
+            key: testKey,
+            options: captureAny<StorageRemoveOptions>(
+              named: 'options',
+            ),
+          ),
+        ).captured.last;
+
+        expect(
+          capturedOptions,
+          defaultOptions,
+        );
+
+        final result = await removeOperation.result;
+        expect(
+          result,
+          testResult,
+        );
+      });
+
+      test('should forward options to StorageS3Service.remove() API', () async {
+        const testOptions = StorageRemoveOptions(
+          accessLevel: testAccessLevelProtected,
+          pluginOptions: S3RemovePluginOptions(),
+        );
 
         when(
           () => storageS3Service.remove(
@@ -680,26 +1175,30 @@ void main() {
           ),
         ).thenAnswer((_) async => testResult);
 
-        final removeOperation = storageS3Plugin.remove(request: testRequest);
+        final removeOperation = storageS3Plugin.remove(
+          key: testKey,
+          options: testOptions,
+        );
 
         final capturedOptions = verify(
           () => storageS3Service.remove(
             key: testKey,
-            options: captureAny<S3RemoveOptions>(named: 'options'),
+            options: captureAny<StorageRemoveOptions>(
+              named: 'options',
+            ),
           ),
         ).captured.last;
 
         expect(
           capturedOptions,
-          isA<S3RemoveOptions>().having(
-            (o) => o.accessLevel,
-            'accessLevel',
-            testDefaultStorageAccessLevel,
-          ),
+          testOptions,
         );
 
         final result = await removeOperation.result;
-        expect(result, testResult);
+        expect(
+          result,
+          testResult,
+        );
       });
     });
 
@@ -715,23 +1214,26 @@ void main() {
       );
 
       setUpAll(() {
-        registerFallbackValue(const S3RemoveManyOptions());
+        registerFallbackValue(
+          const StorageRemoveManyOptions(),
+        );
       });
 
       test(
-          'should forward options with default StorageAccessLevel StorageS3Service.removeMany() API',
+          'should forward default options to StorageS3Service.removeMany() API',
           () async {
-        final testRequest = StorageRemoveManyRequest(keys: testKeys);
+        const defaultOptions = StorageRemoveManyOptions(
+          pluginOptions: S3RemoveManyPluginOptions(),
+        );
 
         when(
           () => storageS3Service.removeMany(
             keys: testKeys,
-            options: any(named: 'options'),
+            options: defaultOptions,
           ),
         ).thenAnswer((_) async => testResult);
 
-        final removeManyOperation =
-            storageS3Plugin.removeMany(request: testRequest);
+        final removeManyOperation = storageS3Plugin.removeMany(keys: testKeys);
 
         final capturedOptions = verify(
           () => storageS3Service.removeMany(
@@ -742,15 +1244,52 @@ void main() {
 
         expect(
           capturedOptions,
-          isA<S3RemoveManyOptions>().having(
-            (o) => o.accessLevel,
-            'accessLevel',
-            testDefaultStorageAccessLevel,
-          ),
+          defaultOptions,
         );
 
         final result = await removeManyOperation.result;
-        expect(result.removedItems, resultRemoveItems);
+        expect(
+          result.removedItems,
+          resultRemoveItems,
+        );
+      });
+
+      test('should forward options to StorageS3Service.removeMany() API',
+          () async {
+        const testOptions = StorageRemoveManyOptions(
+          accessLevel: testAccessLevelProtected,
+          pluginOptions: S3RemoveManyPluginOptions(),
+        );
+
+        when(
+          () => storageS3Service.removeMany(
+            keys: testKeys,
+            options: testOptions,
+          ),
+        ).thenAnswer((_) async => testResult);
+
+        final removeManyOperation = storageS3Plugin.removeMany(
+          keys: testKeys,
+          options: testOptions,
+        );
+
+        final capturedOptions = verify(
+          () => storageS3Service.removeMany(
+            keys: testKeys,
+            options: captureAny(named: 'options'),
+          ),
+        ).captured.last;
+
+        expect(
+          capturedOptions,
+          testOptions,
+        );
+
+        final result = await removeManyOperation.result;
+        expect(
+          result.removedItems,
+          resultRemoveItems,
+        );
       });
     });
   });

@@ -6,12 +6,15 @@ library amplify_interface;
 import 'dart:async';
 
 import 'package:amplify_core/amplify_core.dart';
+import 'package:amplify_core/src/http/amplify_category_method.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
 /// category parts
 part 'amplify_analytics_category.dart';
 part 'amplify_api_category.dart';
+part 'amplify_notifications_category.dart';
+part 'amplify_push_notifications_category.dart';
 part 'amplify_storage_category.dart';
 
 String _errorMsgPluginNotAdded(String pluginName) =>
@@ -44,30 +47,27 @@ enum Category {
 
   /// Upload and download files from the cloud
   storage,
-}
 
-extension CategoryName on Category {
-  String get name {
-    switch (this) {
-      case Category.analytics:
-        return 'Analytics';
-      case Category.api:
-        return 'API';
-      case Category.auth:
-        return 'Auth';
-      case Category.dataStore:
-        return 'DataStore';
-      case Category.hub:
-        return 'Hub';
-      case Category.storage:
-        return 'Storage';
-    }
-  }
+  /// Push Notifications
+  pushNotifications;
+
+  String get name => switch (this) {
+        Category.analytics => 'Analytics',
+        Category.api => 'API',
+        Category.auth => 'Auth',
+        Category.dataStore => 'DataStore',
+        Category.hub => 'Hub',
+        Category.storage => 'Storage',
+        Category.pushNotifications => 'PushNotifications',
+      };
 }
 
 /// Base functionality for Amplify categories.
 abstract class AmplifyCategory<P extends AmplifyPluginInterface> {
   Category get category;
+
+  /// The categories this category depends on.
+  Set<Category> get categoryDependencies;
 
   final List<P> _plugins = [];
 
@@ -80,11 +80,10 @@ abstract class AmplifyCategory<P extends AmplifyPluginInterface> {
 
   @protected
   P get defaultPlugin {
-    final plugin = plugins.firstOrNull;
-    if (plugin == null) {
-      throw _pluginNotAddedException(category.name);
+    if (plugins case [final singlePlugin]) {
+      return singlePlugin;
     }
-    return plugin;
+    throw _pluginNotAddedException(category.name);
   }
 
   /// Adds a plugin to the category.
@@ -105,7 +104,7 @@ abstract class AmplifyCategory<P extends AmplifyPluginInterface> {
   /// Resets the category, clearing all registered plugins.
   @visibleForTesting
   Future<void> reset() async {
-    // ignore: invalid_use_of_visible_for_testing_member
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     await Future.wait<void>(_plugins.map((plugin) => plugin.reset()));
     _plugins.clear();
   }

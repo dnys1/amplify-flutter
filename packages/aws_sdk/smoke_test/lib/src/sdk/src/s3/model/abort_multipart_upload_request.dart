@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.abort_multipart_upload_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -21,17 +22,17 @@ abstract class AbortMultipartUploadRequest
         _i1.HasPayload<AbortMultipartUploadRequestPayload> {
   factory AbortMultipartUploadRequest({
     required String bucket,
-    String? expectedBucketOwner,
     required String key,
-    _i3.RequestPayer? requestPayer,
     required String uploadId,
+    _i3.RequestPayer? requestPayer,
+    String? expectedBucketOwner,
   }) {
     return _$AbortMultipartUploadRequest._(
       bucket: bucket,
-      expectedBucketOwner: expectedBucketOwner,
       key: key,
-      requestPayer: requestPayer,
       uploadId: uploadId,
+      requestPayer: requestPayer,
+      expectedBucketOwner: expectedBucketOwner,
     );
   }
 
@@ -66,9 +67,8 @@ abstract class AbortMultipartUploadRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    AbortMultipartUploadRequestRestXmlSerializer()
-  ];
+  static const List<_i1.SmithySerializer<AbortMultipartUploadRequestPayload>>
+      serializers = [AbortMultipartUploadRequestRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(AbortMultipartUploadRequestBuilder b) {}
@@ -77,20 +77,20 @@ abstract class AbortMultipartUploadRequest
   ///
   /// When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
   ///
-  /// When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `_AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com`. When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using Amazon S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
+  /// When you use this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `_AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com`. When you use this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts access point ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [What is S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
   String get bucket;
-
-  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
-  String? get expectedBucketOwner;
 
   /// Key of the object for which the multipart upload was initiated.
   String get key;
 
+  /// Upload ID that identifies the multipart upload.
+  String get uploadId;
+
   /// Confirms that the requester knows that they will be charged for the request. Bucket owners need not specify this parameter in their requests. For information about downloading objects from Requester Pays buckets, see [Downloading Objects in Requester Pays Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html) in the _Amazon S3 User Guide_.
   _i3.RequestPayer? get requestPayer;
 
-  /// Upload ID that identifies the multipart upload.
-  String get uploadId;
+  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
+  String? get expectedBucketOwner;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -111,34 +111,34 @@ abstract class AbortMultipartUploadRequest
   @override
   List<Object?> get props => [
         bucket,
-        expectedBucketOwner,
         key,
-        requestPayer,
         uploadId,
+        requestPayer,
+        expectedBucketOwner,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('AbortMultipartUploadRequest');
-    helper.add(
-      'bucket',
-      bucket,
-    );
-    helper.add(
-      'expectedBucketOwner',
-      expectedBucketOwner,
-    );
-    helper.add(
-      'key',
-      key,
-    );
-    helper.add(
-      'requestPayer',
-      requestPayer,
-    );
-    helper.add(
-      'uploadId',
-      uploadId,
-    );
+    final helper = newBuiltValueToStringHelper('AbortMultipartUploadRequest')
+      ..add(
+        'bucket',
+        bucket,
+      )
+      ..add(
+        'key',
+        key,
+      )
+      ..add(
+        'uploadId',
+        uploadId,
+      )
+      ..add(
+        'requestPayer',
+        requestPayer,
+      )
+      ..add(
+        'expectedBucketOwner',
+        expectedBucketOwner,
+      );
     return helper.toString();
   }
 }
@@ -200,15 +200,16 @@ class AbortMultipartUploadRequestRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    AbortMultipartUploadRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName(
         'AbortMultipartUploadRequest',
         _i1.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    return result;
+
+    return result$;
   }
 }

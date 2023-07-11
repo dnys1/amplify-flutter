@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.list_parts_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -21,27 +22,27 @@ abstract class ListPartsRequest
         _i1.HasPayload<ListPartsRequestPayload> {
   factory ListPartsRequest({
     required String bucket,
-    String? expectedBucketOwner,
     required String key,
     int? maxParts,
     String? partNumberMarker,
+    required String uploadId,
     _i3.RequestPayer? requestPayer,
+    String? expectedBucketOwner,
     String? sseCustomerAlgorithm,
     String? sseCustomerKey,
     String? sseCustomerKeyMd5,
-    required String uploadId,
   }) {
     return _$ListPartsRequest._(
       bucket: bucket,
-      expectedBucketOwner: expectedBucketOwner,
       key: key,
       maxParts: maxParts,
       partNumberMarker: partNumberMarker,
+      uploadId: uploadId,
       requestPayer: requestPayer,
+      expectedBucketOwner: expectedBucketOwner,
       sseCustomerAlgorithm: sseCustomerAlgorithm,
       sseCustomerKey: sseCustomerKey,
       sseCustomerKeyMd5: sseCustomerKeyMd5,
-      uploadId: uploadId,
     );
   }
 
@@ -97,9 +98,8 @@ abstract class ListPartsRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    ListPartsRequestRestXmlSerializer()
-  ];
+  static const List<_i1.SmithySerializer<ListPartsRequestPayload>> serializers =
+      [ListPartsRequestRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(ListPartsRequestBuilder b) {}
@@ -108,11 +108,8 @@ abstract class ListPartsRequest
   ///
   /// When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
   ///
-  /// When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `_AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com`. When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using Amazon S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
+  /// When you use this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `_AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com`. When you use this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts access point ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [What is S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
   String get bucket;
-
-  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
-  String? get expectedBucketOwner;
 
   /// Object key for which the multipart upload was initiated.
   String get key;
@@ -123,8 +120,14 @@ abstract class ListPartsRequest
   /// Specifies the part after which listing should begin. Only parts with higher part numbers will be listed.
   String? get partNumberMarker;
 
+  /// Upload ID identifying the multipart upload whose parts are being listed.
+  String get uploadId;
+
   /// Confirms that the requester knows that they will be charged for the request. Bucket owners need not specify this parameter in their requests. For information about downloading objects from Requester Pays buckets, see [Downloading Objects in Requester Pays Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html) in the _Amazon S3 User Guide_.
   _i3.RequestPayer? get requestPayer;
+
+  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
+  String? get expectedBucketOwner;
 
   /// The server-side encryption (SSE) algorithm used to encrypt the object. This parameter is needed only when the object was created using a checksum algorithm. For more information, see [Protecting data using SSE-C keys](https://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html) in the _Amazon S3 User Guide_.
   String? get sseCustomerAlgorithm;
@@ -134,9 +137,6 @@ abstract class ListPartsRequest
 
   /// The MD5 server-side encryption (SSE) customer managed key. This parameter is needed only when the object was created using a checksum algorithm. For more information, see [Protecting data using SSE-C keys](https://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html) in the _Amazon S3 User Guide_.
   String? get sseCustomerKeyMd5;
-
-  /// Upload ID identifying the multipart upload whose parts are being listed.
-  String get uploadId;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -156,59 +156,59 @@ abstract class ListPartsRequest
   @override
   List<Object?> get props => [
         bucket,
-        expectedBucketOwner,
         key,
         maxParts,
         partNumberMarker,
+        uploadId,
         requestPayer,
+        expectedBucketOwner,
         sseCustomerAlgorithm,
         sseCustomerKey,
         sseCustomerKeyMd5,
-        uploadId,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ListPartsRequest');
-    helper.add(
-      'bucket',
-      bucket,
-    );
-    helper.add(
-      'expectedBucketOwner',
-      expectedBucketOwner,
-    );
-    helper.add(
-      'key',
-      key,
-    );
-    helper.add(
-      'maxParts',
-      maxParts,
-    );
-    helper.add(
-      'partNumberMarker',
-      partNumberMarker,
-    );
-    helper.add(
-      'requestPayer',
-      requestPayer,
-    );
-    helper.add(
-      'sseCustomerAlgorithm',
-      sseCustomerAlgorithm,
-    );
-    helper.add(
-      'sseCustomerKey',
-      '***SENSITIVE***',
-    );
-    helper.add(
-      'sseCustomerKeyMd5',
-      sseCustomerKeyMd5,
-    );
-    helper.add(
-      'uploadId',
-      uploadId,
-    );
+    final helper = newBuiltValueToStringHelper('ListPartsRequest')
+      ..add(
+        'bucket',
+        bucket,
+      )
+      ..add(
+        'key',
+        key,
+      )
+      ..add(
+        'maxParts',
+        maxParts,
+      )
+      ..add(
+        'partNumberMarker',
+        partNumberMarker,
+      )
+      ..add(
+        'uploadId',
+        uploadId,
+      )
+      ..add(
+        'requestPayer',
+        requestPayer,
+      )
+      ..add(
+        'expectedBucketOwner',
+        expectedBucketOwner,
+      )
+      ..add(
+        'sseCustomerAlgorithm',
+        sseCustomerAlgorithm,
+      )
+      ..add(
+        'sseCustomerKey',
+        '***SENSITIVE***',
+      )
+      ..add(
+        'sseCustomerKeyMd5',
+        sseCustomerKeyMd5,
+      );
     return helper.toString();
   }
 }
@@ -266,15 +266,16 @@ class ListPartsRequestRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ListPartsRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName(
         'ListPartsRequest',
         _i1.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    return result;
+
+    return result$;
   }
 }

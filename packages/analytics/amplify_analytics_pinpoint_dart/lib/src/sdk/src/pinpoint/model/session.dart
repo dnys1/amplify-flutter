@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_analytics_pinpoint_dart.pinpoint.model.session; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -20,7 +21,6 @@ abstract class Session
     required String startTimestamp,
     String? stopTimestamp,
   }) {
-    duration ??= 0;
     return _$Session._(
       duration: duration,
       id: id,
@@ -34,17 +34,15 @@ abstract class Session
 
   const Session._();
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<Session>> serializers = [
     SessionRestJson1Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(SessionBuilder b) {
-    b.duration = 0;
-  }
+  static void _init(SessionBuilder b) {}
 
   /// The duration of the session, in milliseconds.
-  int get duration;
+  int? get duration;
 
   /// The unique identifier for the session.
   String get id;
@@ -63,23 +61,23 @@ abstract class Session
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('Session');
-    helper.add(
-      'duration',
-      duration,
-    );
-    helper.add(
-      'id',
-      id,
-    );
-    helper.add(
-      'startTimestamp',
-      startTimestamp,
-    );
-    helper.add(
-      'stopTimestamp',
-      stopTimestamp,
-    );
+    final helper = newBuiltValueToStringHelper('Session')
+      ..add(
+        'duration',
+        duration,
+      )
+      ..add(
+        'id',
+        id,
+      )
+      ..add(
+        'startTimestamp',
+        startTimestamp,
+      )
+      ..add(
+        'stopTimestamp',
+        stopTimestamp,
+      );
     return helper.toString();
   }
 }
@@ -112,33 +110,30 @@ class SessionRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'Duration':
           result.duration = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(int),
           ) as int);
-          break;
         case 'Id':
           result.id = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'StartTimestamp':
           result.startTimestamp = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'StopTimestamp':
-          if (value != null) {
-            result.stopTimestamp = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.stopTimestamp = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -148,35 +143,39 @@ class SessionRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    Session object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as Session);
-    final result = <Object?>[
-      'Duration',
-      serializers.serialize(
-        payload.duration,
-        specifiedType: const FullType(int),
-      ),
+    final result$ = <Object?>[];
+    final Session(:duration, :id, :startTimestamp, :stopTimestamp) = object;
+    result$.addAll([
       'Id',
       serializers.serialize(
-        payload.id,
+        id,
         specifiedType: const FullType(String),
       ),
       'StartTimestamp',
       serializers.serialize(
-        payload.startTimestamp,
+        startTimestamp,
         specifiedType: const FullType(String),
       ),
-    ];
-    if (payload.stopTimestamp != null) {
-      result
+    ]);
+    if (duration != null) {
+      result$
+        ..add('Duration')
+        ..add(serializers.serialize(
+          duration,
+          specifiedType: const FullType(int),
+        ));
+    }
+    if (stopTimestamp != null) {
+      result$
         ..add('StopTimestamp')
         ..add(serializers.serialize(
-          payload.stopTimestamp!,
+          stopTimestamp,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

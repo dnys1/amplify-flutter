@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.get_compliance_details_by_resource_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -20,17 +21,19 @@ abstract class GetComplianceDetailsByResourceRequest
         Built<GetComplianceDetailsByResourceRequest,
             GetComplianceDetailsByResourceRequestBuilder> {
   factory GetComplianceDetailsByResourceRequest({
+    String? resourceType,
+    String? resourceId,
     List<_i3.ComplianceType>? complianceTypes,
     String? nextToken,
-    required String resourceId,
-    required String resourceType,
+    String? resourceEvaluationId,
   }) {
     return _$GetComplianceDetailsByResourceRequest._(
+      resourceType: resourceType,
+      resourceId: resourceId,
       complianceTypes:
           complianceTypes == null ? null : _i4.BuiltList(complianceTypes),
       nextToken: nextToken,
-      resourceId: resourceId,
-      resourceType: resourceType,
+      resourceEvaluationId: resourceEvaluationId,
     );
   }
 
@@ -47,55 +50,66 @@ abstract class GetComplianceDetailsByResourceRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<_i1.SmithySerializer<GetComplianceDetailsByResourceRequest>>
+      serializers = [
     GetComplianceDetailsByResourceRequestAwsJson11Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetComplianceDetailsByResourceRequestBuilder b) {}
 
+  /// The type of the Amazon Web Services resource for which you want compliance information.
+  String? get resourceType;
+
+  /// The ID of the Amazon Web Services resource for which you want compliance information.
+  String? get resourceId;
+
   /// Filters the results by compliance.
   ///
-  /// The allowed values are `COMPLIANT`, `NON_COMPLIANT`, and `NOT_APPLICABLE`.
+  /// `INSUFFICIENT_DATA` is a valid `ComplianceType` that is returned when an Config rule cannot be evaluated. However, `INSUFFICIENT_DATA` cannot be used as a `ComplianceType` for filtering results.
   _i4.BuiltList<_i3.ComplianceType>? get complianceTypes;
 
   /// The `nextToken` string returned on a previous page that you use to get the next page of results in a paginated response.
   String? get nextToken;
 
-  /// The ID of the Amazon Web Services resource for which you want compliance information.
-  String get resourceId;
-
-  /// The type of the Amazon Web Services resource for which you want compliance information.
-  String get resourceType;
+  /// The unique ID of Amazon Web Services resource execution for which you want to retrieve evaluation results.
+  ///
+  /// You need to only provide either a `ResourceEvaluationID` or a `ResourceID` and `ResourceType`.
+  String? get resourceEvaluationId;
   @override
   GetComplianceDetailsByResourceRequest getPayload() => this;
   @override
   List<Object?> get props => [
+        resourceType,
+        resourceId,
         complianceTypes,
         nextToken,
-        resourceId,
-        resourceType,
+        resourceEvaluationId,
       ];
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('GetComplianceDetailsByResourceRequest');
-    helper.add(
-      'complianceTypes',
-      complianceTypes,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
-    helper.add(
-      'resourceId',
-      resourceId,
-    );
-    helper.add(
-      'resourceType',
-      resourceType,
-    );
+        newBuiltValueToStringHelper('GetComplianceDetailsByResourceRequest')
+          ..add(
+            'resourceType',
+            resourceType,
+          )
+          ..add(
+            'resourceId',
+            resourceId,
+          )
+          ..add(
+            'complianceTypes',
+            complianceTypes,
+          )
+          ..add(
+            'nextToken',
+            nextToken,
+          )
+          ..add(
+            'resourceEvaluationId',
+            resourceEvaluationId,
+          );
     return helper.toString();
   }
 }
@@ -129,38 +143,38 @@ class GetComplianceDetailsByResourceRequestAwsJson11Serializer extends _i1
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
-        case 'ComplianceTypes':
-          if (value != null) {
-            result.complianceTypes.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i4.BuiltList,
-                [FullType(_i3.ComplianceType)],
-              ),
-            ) as _i4.BuiltList<_i3.ComplianceType>));
-          }
-          break;
-        case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
-        case 'ResourceId':
-          result.resourceId = (serializers.deserialize(
-            value!,
-            specifiedType: const FullType(String),
-          ) as String);
-          break;
         case 'ResourceType':
           result.resourceType = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
+        case 'ResourceId':
+          result.resourceId = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'ComplianceTypes':
+          result.complianceTypes.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i4.BuiltList,
+              [FullType(_i3.ComplianceType)],
+            ),
+          ) as _i4.BuiltList<_i3.ComplianceType>));
+        case 'NextToken':
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'ResourceEvaluationId':
+          result.resourceEvaluationId = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -170,41 +184,60 @@ class GetComplianceDetailsByResourceRequestAwsJson11Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetComplianceDetailsByResourceRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as GetComplianceDetailsByResourceRequest);
-    final result = <Object?>[
-      'ResourceId',
-      serializers.serialize(
-        payload.resourceId,
-        specifiedType: const FullType(String),
-      ),
-      'ResourceType',
-      serializers.serialize(
-        payload.resourceType,
-        specifiedType: const FullType(String),
-      ),
-    ];
-    if (payload.complianceTypes != null) {
-      result
+    final result$ = <Object?>[];
+    final GetComplianceDetailsByResourceRequest(
+      :resourceType,
+      :resourceId,
+      :complianceTypes,
+      :nextToken,
+      :resourceEvaluationId
+    ) = object;
+    if (resourceType != null) {
+      result$
+        ..add('ResourceType')
+        ..add(serializers.serialize(
+          resourceType,
+          specifiedType: const FullType(String),
+        ));
+    }
+    if (resourceId != null) {
+      result$
+        ..add('ResourceId')
+        ..add(serializers.serialize(
+          resourceId,
+          specifiedType: const FullType(String),
+        ));
+    }
+    if (complianceTypes != null) {
+      result$
         ..add('ComplianceTypes')
         ..add(serializers.serialize(
-          payload.complianceTypes!,
+          complianceTypes,
           specifiedType: const FullType(
             _i4.BuiltList,
             [FullType(_i3.ComplianceType)],
           ),
         ));
     }
-    if (payload.nextToken != null) {
-      result
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    if (resourceEvaluationId != null) {
+      result$
+        ..add('ResourceEvaluationId')
+        ..add(serializers.serialize(
+          resourceEvaluationId,
+          specifiedType: const FullType(String),
+        ));
+    }
+    return result$;
   }
 }

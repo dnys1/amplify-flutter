@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v2.rest_json_protocol.model.malformed_timestamp_body_date_time_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -33,9 +34,8 @@ abstract class MalformedTimestampBodyDateTimeInput
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    MalformedTimestampBodyDateTimeInputRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<MalformedTimestampBodyDateTimeInput>>
+      serializers = [MalformedTimestampBodyDateTimeInputRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(MalformedTimestampBodyDateTimeInputBuilder b) {}
@@ -47,11 +47,11 @@ abstract class MalformedTimestampBodyDateTimeInput
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('MalformedTimestampBodyDateTimeInput');
-    helper.add(
-      'timestamp',
-      timestamp,
-    );
+        newBuiltValueToStringHelper('MalformedTimestampBodyDateTimeInput')
+          ..add(
+            'timestamp',
+            timestamp,
+          );
     return helper.toString();
   }
 }
@@ -85,13 +85,15 @@ class MalformedTimestampBodyDateTimeInputRestJson1Serializer extends _i1
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'timestamp':
           result.timestamp = _i1.TimestampSerializer.dateTime.deserialize(
             serializers,
-            value!,
+            value,
           );
-          break;
       }
     }
 
@@ -101,17 +103,18 @@ class MalformedTimestampBodyDateTimeInputRestJson1Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    MalformedTimestampBodyDateTimeInput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as MalformedTimestampBodyDateTimeInput);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final MalformedTimestampBodyDateTimeInput(:timestamp) = object;
+    result$.addAll([
       'timestamp',
       _i1.TimestampSerializer.dateTime.serialize(
         serializers,
-        payload.timestamp,
+        timestamp,
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

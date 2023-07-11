@@ -1,3 +1,68 @@
+## 0.3.1
+
+### Fixes
+- fix(storage): API doc errors
+
+### Features
+- feat(storage): using path style URLs when bucket name contains dots
+
+## 0.3.0+1
+
+- Minor bug fixes and improvements
+
+## 0.3.0
+
+### Features
+- Dart 3 support (must update Dart SDK constraint to `^3.0.0`)
+
+## 0.2.0+3
+
+### Fixes
+- fix(repo): Flutter 3.3 support
+- fix(storage): API doc errors
+
+## 0.2.0+2
+
+### Fixes
+- fix(storage): API doc errors
+
+## 0.2.0+1
+
+- Minor bug fixes and improvements
+
+## 0.2.0
+
+### Breaking Changes
+- feat(storage)!: update upload APIs options to add metadata field ([#2815](https://github.com/aws-amplify/amplify-flutter/pull/2815))
+- fix(storage)!: make S3Exception internal
+- refactor(storage)!: rename checkObjectExistence to validateObjectExistence
+- refactor(storage)!: simplify storage s3 exceptions throwing
+- refactor(storage)!: storage category APIs to use category level plugin options ([#2754](https://github.com/aws-amplify/amplify-flutter/pull/2754))
+
+### Fixes
+- fix(storage): Use `reifyPluginOptions` as instance method
+- fix(storage): add handling of AWSHttpException
+- fix(storage): remove unnecessary exception for resuming a canceled task
+
+### Features
+- feat(storage): add generic StorageOperationCanceledException in core
+- feat(storage): add handling of non-ascii object metadata values
+- feat(storage): make access level optional for storage APIs ([#2793](https://github.com/aws-amplify/amplify-flutter/pull/2793))
+- feat(storage): promote StorageTransferState to amplify_core
+
+## 0.1.7+1
+
+- Minor bug fixes and improvements
+
+## 0.1.7
+
+### Features
+- feat(storage): optimize part size for multipart upload
+- feat(storage): web implementation of transfer database using local storage ([#2631](https://github.com/aws-amplify/amplify-flutter/pull/2631))
+
+### Fixes
+- fix(storage): GetUrl signing
+
 ## 0.1.6
 
 ### Features

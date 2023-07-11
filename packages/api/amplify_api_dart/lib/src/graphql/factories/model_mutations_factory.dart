@@ -6,7 +6,7 @@ import 'package:amplify_core/amplify_core.dart';
 
 // ignore_for_file: public_member_api_docs
 
-class ModelMutationsFactory extends ModelMutationsInterface {
+class ModelMutationsFactory {
   // Singleton methods/properties
   // usage: ModelQueriesFactory.instance;
   ModelMutationsFactory._();
@@ -75,9 +75,8 @@ class ModelMutationsFactory extends ModelMutationsInterface {
   }) {
     final condition = GraphQLRequestFactory.instance
         .queryPredicateToGraphQLFilter(where, modelType);
-    final input = {
-      idFieldName: id
-    }; // Simpler input than other mutations so don't use helper.
+    final input = modelIdentifier
+        .serializeAsMap(); // Simpler input than other mutations so don't use helper.
     final variables = GraphQLRequestFactory.instance
         .buildVariablesForMutationRequest(input: input, condition: condition);
 

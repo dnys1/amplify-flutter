@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.get_object_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -7,8 +8,8 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:meta/meta.dart' as _i5;
 import 'package:smithy/smithy.dart' as _i1;
-import 'package:smoke_test/src/sdk/src/s3/model/checksum_mode.dart' as _i3;
-import 'package:smoke_test/src/sdk/src/s3/model/request_payer.dart' as _i4;
+import 'package:smoke_test/src/sdk/src/s3/model/checksum_mode.dart' as _i4;
+import 'package:smoke_test/src/sdk/src/s3/model/request_payer.dart' as _i3;
 
 part 'get_object_request.g.dart';
 
@@ -22,49 +23,49 @@ abstract class GetObjectRequest
         _i1.HasPayload<GetObjectRequestPayload> {
   factory GetObjectRequest({
     required String bucket,
-    _i3.ChecksumMode? checksumMode,
-    String? expectedBucketOwner,
     String? ifMatch,
     DateTime? ifModifiedSince,
     String? ifNoneMatch,
     DateTime? ifUnmodifiedSince,
     required String key,
-    int? partNumber,
     String? range,
-    _i4.RequestPayer? requestPayer,
     String? responseCacheControl,
     String? responseContentDisposition,
     String? responseContentEncoding,
     String? responseContentLanguage,
     String? responseContentType,
     DateTime? responseExpires,
+    String? versionId,
     String? sseCustomerAlgorithm,
     String? sseCustomerKey,
     String? sseCustomerKeyMd5,
-    String? versionId,
+    _i3.RequestPayer? requestPayer,
+    int? partNumber,
+    String? expectedBucketOwner,
+    _i4.ChecksumMode? checksumMode,
   }) {
     return _$GetObjectRequest._(
       bucket: bucket,
-      checksumMode: checksumMode,
-      expectedBucketOwner: expectedBucketOwner,
       ifMatch: ifMatch,
       ifModifiedSince: ifModifiedSince,
       ifNoneMatch: ifNoneMatch,
       ifUnmodifiedSince: ifUnmodifiedSince,
       key: key,
-      partNumber: partNumber,
       range: range,
-      requestPayer: requestPayer,
       responseCacheControl: responseCacheControl,
       responseContentDisposition: responseContentDisposition,
       responseContentEncoding: responseContentEncoding,
       responseContentLanguage: responseContentLanguage,
       responseContentType: responseContentType,
       responseExpires: responseExpires,
+      versionId: versionId,
       sseCustomerAlgorithm: sseCustomerAlgorithm,
       sseCustomerKey: sseCustomerKey,
       sseCustomerKeyMd5: sseCustomerKeyMd5,
-      versionId: versionId,
+      requestPayer: requestPayer,
+      partNumber: partNumber,
+      expectedBucketOwner: expectedBucketOwner,
+      checksumMode: checksumMode,
     );
   }
 
@@ -117,7 +118,7 @@ abstract class GetObjectRequest
               request.headers['x-amz-server-side-encryption-customer-key-MD5']!;
         }
         if (request.headers['x-amz-request-payer'] != null) {
-          b.requestPayer = _i4.RequestPayer.values
+          b.requestPayer = _i3.RequestPayer.values
               .byValue(request.headers['x-amz-request-payer']!);
         }
         if (request.headers['x-amz-expected-bucket-owner'] != null) {
@@ -125,7 +126,7 @@ abstract class GetObjectRequest
               request.headers['x-amz-expected-bucket-owner']!;
         }
         if (request.headers['x-amz-checksum-mode'] != null) {
-          b.checksumMode = _i3.ChecksumMode.values
+          b.checksumMode = _i4.ChecksumMode.values
               .byValue(request.headers['x-amz-checksum-mode']!);
         }
         if (request.queryParameters['response-cache-control'] != null) {
@@ -168,9 +169,8 @@ abstract class GetObjectRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    GetObjectRequestRestXmlSerializer()
-  ];
+  static const List<_i1.SmithySerializer<GetObjectRequestPayload>> serializers =
+      [GetObjectRequestRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetObjectRequestBuilder b) {}
@@ -181,14 +181,8 @@ abstract class GetObjectRequest
   ///
   /// When using an Object Lambda access point the hostname takes the form _AccessPointName_-_AccountId_.s3-object-lambda._Region_.amazonaws.com.
   ///
-  /// When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `_AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com`. When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using Amazon S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
+  /// When you use this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `_AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com`. When you use this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts access point ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [What is S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
   String get bucket;
-
-  /// To retrieve the checksum, this mode must be enabled.
-  _i3.ChecksumMode? get checksumMode;
-
-  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
-  String? get expectedBucketOwner;
 
   /// Return the object only if its entity tag (ETag) is the same as the one specified; otherwise, return a 412 (precondition failed) error.
   String? get ifMatch;
@@ -205,16 +199,10 @@ abstract class GetObjectRequest
   /// Key of the object to get.
   String get key;
 
-  /// Part number of the object being read. This is a positive integer between 1 and 10,000. Effectively performs a 'ranged' GET request for the part specified. Useful for downloading just a part of an object.
-  int? get partNumber;
-
-  /// Downloads the specified range bytes of an object. For more information about the HTTP Range header, see [https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35](https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35).
+  /// Downloads the specified range bytes of an object. For more information about the HTTP Range header, see [https://www.rfc-editor.org/rfc/rfc9110.html#name-range](https://www.rfc-editor.org/rfc/rfc9110.html#name-range).
   ///
   /// Amazon S3 doesn't support retrieving multiple ranges of data per `GET` request.
   String? get range;
-
-  /// Confirms that the requester knows that they will be charged for the request. Bucket owners need not specify this parameter in their requests. For information about downloading objects from Requester Pays buckets, see [Downloading Objects in Requester Pays Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html) in the _Amazon S3 User Guide_.
-  _i4.RequestPayer? get requestPayer;
 
   /// Sets the `Cache-Control` header of the response.
   String? get responseCacheControl;
@@ -234,6 +222,9 @@ abstract class GetObjectRequest
   /// Sets the `Expires` header of the response.
   DateTime? get responseExpires;
 
+  /// VersionId used to reference a specific version of the object.
+  String? get versionId;
+
   /// Specifies the algorithm to use to when decrypting the object (for example, AES256).
   String? get sseCustomerAlgorithm;
 
@@ -243,8 +234,17 @@ abstract class GetObjectRequest
   /// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure that the encryption key was transmitted without error.
   String? get sseCustomerKeyMd5;
 
-  /// VersionId used to reference a specific version of the object.
-  String? get versionId;
+  /// Confirms that the requester knows that they will be charged for the request. Bucket owners need not specify this parameter in their requests. For information about downloading objects from Requester Pays buckets, see [Downloading Objects in Requester Pays Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html) in the _Amazon S3 User Guide_.
+  _i3.RequestPayer? get requestPayer;
+
+  /// Part number of the object being read. This is a positive integer between 1 and 10,000. Effectively performs a 'ranged' GET request for the part specified. Useful for downloading just a part of an object.
+  int? get partNumber;
+
+  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
+  String? get expectedBucketOwner;
+
+  /// To retrieve the checksum, this mode must be enabled.
+  _i4.ChecksumMode? get checksumMode;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -264,114 +264,114 @@ abstract class GetObjectRequest
   @override
   List<Object?> get props => [
         bucket,
-        checksumMode,
-        expectedBucketOwner,
         ifMatch,
         ifModifiedSince,
         ifNoneMatch,
         ifUnmodifiedSince,
         key,
-        partNumber,
         range,
-        requestPayer,
         responseCacheControl,
         responseContentDisposition,
         responseContentEncoding,
         responseContentLanguage,
         responseContentType,
         responseExpires,
+        versionId,
         sseCustomerAlgorithm,
         sseCustomerKey,
         sseCustomerKeyMd5,
-        versionId,
+        requestPayer,
+        partNumber,
+        expectedBucketOwner,
+        checksumMode,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('GetObjectRequest');
-    helper.add(
-      'bucket',
-      bucket,
-    );
-    helper.add(
-      'checksumMode',
-      checksumMode,
-    );
-    helper.add(
-      'expectedBucketOwner',
-      expectedBucketOwner,
-    );
-    helper.add(
-      'ifMatch',
-      ifMatch,
-    );
-    helper.add(
-      'ifModifiedSince',
-      ifModifiedSince,
-    );
-    helper.add(
-      'ifNoneMatch',
-      ifNoneMatch,
-    );
-    helper.add(
-      'ifUnmodifiedSince',
-      ifUnmodifiedSince,
-    );
-    helper.add(
-      'key',
-      key,
-    );
-    helper.add(
-      'partNumber',
-      partNumber,
-    );
-    helper.add(
-      'range',
-      range,
-    );
-    helper.add(
-      'requestPayer',
-      requestPayer,
-    );
-    helper.add(
-      'responseCacheControl',
-      responseCacheControl,
-    );
-    helper.add(
-      'responseContentDisposition',
-      responseContentDisposition,
-    );
-    helper.add(
-      'responseContentEncoding',
-      responseContentEncoding,
-    );
-    helper.add(
-      'responseContentLanguage',
-      responseContentLanguage,
-    );
-    helper.add(
-      'responseContentType',
-      responseContentType,
-    );
-    helper.add(
-      'responseExpires',
-      responseExpires,
-    );
-    helper.add(
-      'sseCustomerAlgorithm',
-      sseCustomerAlgorithm,
-    );
-    helper.add(
-      'sseCustomerKey',
-      '***SENSITIVE***',
-    );
-    helper.add(
-      'sseCustomerKeyMd5',
-      sseCustomerKeyMd5,
-    );
-    helper.add(
-      'versionId',
-      versionId,
-    );
+    final helper = newBuiltValueToStringHelper('GetObjectRequest')
+      ..add(
+        'bucket',
+        bucket,
+      )
+      ..add(
+        'ifMatch',
+        ifMatch,
+      )
+      ..add(
+        'ifModifiedSince',
+        ifModifiedSince,
+      )
+      ..add(
+        'ifNoneMatch',
+        ifNoneMatch,
+      )
+      ..add(
+        'ifUnmodifiedSince',
+        ifUnmodifiedSince,
+      )
+      ..add(
+        'key',
+        key,
+      )
+      ..add(
+        'range',
+        range,
+      )
+      ..add(
+        'responseCacheControl',
+        responseCacheControl,
+      )
+      ..add(
+        'responseContentDisposition',
+        responseContentDisposition,
+      )
+      ..add(
+        'responseContentEncoding',
+        responseContentEncoding,
+      )
+      ..add(
+        'responseContentLanguage',
+        responseContentLanguage,
+      )
+      ..add(
+        'responseContentType',
+        responseContentType,
+      )
+      ..add(
+        'responseExpires',
+        responseExpires,
+      )
+      ..add(
+        'versionId',
+        versionId,
+      )
+      ..add(
+        'sseCustomerAlgorithm',
+        sseCustomerAlgorithm,
+      )
+      ..add(
+        'sseCustomerKey',
+        '***SENSITIVE***',
+      )
+      ..add(
+        'sseCustomerKeyMd5',
+        sseCustomerKeyMd5,
+      )
+      ..add(
+        'requestPayer',
+        requestPayer,
+      )
+      ..add(
+        'partNumber',
+        partNumber,
+      )
+      ..add(
+        'expectedBucketOwner',
+        expectedBucketOwner,
+      )
+      ..add(
+        'checksumMode',
+        checksumMode,
+      );
     return helper.toString();
   }
 }
@@ -429,15 +429,16 @@ class GetObjectRequestRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetObjectRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName(
         'GetObjectRequest',
         _i1.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    return result;
+
+    return result$;
   }
 }

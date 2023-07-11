@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.describe_backup_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -31,7 +32,7 @@ abstract class DescribeBackupOutput
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<DescribeBackupOutput>> serializers = [
     DescribeBackupOutputAwsJson10Serializer()
   ];
 
@@ -44,11 +45,11 @@ abstract class DescribeBackupOutput
   List<Object?> get props => [backupDescription];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DescribeBackupOutput');
-    helper.add(
-      'backupDescription',
-      backupDescription,
-    );
+    final helper = newBuiltValueToStringHelper('DescribeBackupOutput')
+      ..add(
+        'backupDescription',
+        backupDescription,
+      );
     return helper.toString();
   }
 }
@@ -82,15 +83,15 @@ class DescribeBackupOutputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'BackupDescription':
-          if (value != null) {
-            result.backupDescription.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.BackupDescription),
-            ) as _i2.BackupDescription));
-          }
-          break;
+          result.backupDescription.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.BackupDescription),
+          ) as _i2.BackupDescription));
       }
     }
 
@@ -100,19 +101,19 @@ class DescribeBackupOutputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeBackupOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeBackupOutput);
-    final result = <Object?>[];
-    if (payload.backupDescription != null) {
-      result
+    final result$ = <Object?>[];
+    final DescribeBackupOutput(:backupDescription) = object;
+    if (backupDescription != null) {
+      result$
         ..add('BackupDescription')
         ..add(serializers.serialize(
-          payload.backupDescription!,
+          backupDescription,
           specifiedType: const FullType(_i2.BackupDescription),
         ));
     }
-    return result;
+    return result$;
   }
 }

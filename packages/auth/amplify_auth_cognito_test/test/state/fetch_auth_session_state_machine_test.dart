@@ -5,16 +5,16 @@ import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:amplify_auth_cognito_dart/src/credentials/cognito_keys.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';
+import 'package:amplify_auth_cognito_test/common/jwt.dart';
+import 'package:amplify_auth_cognito_test/common/mock_clients.dart';
+import 'package:amplify_auth_cognito_test/common/mock_config.dart';
+import 'package:amplify_auth_cognito_test/common/mock_secure_storage.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_secure_storage_dart/amplify_secure_storage_dart.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:test/test.dart';
-
-import '../common/jwt.dart';
-import '../common/mock_clients.dart';
-import '../common/mock_config.dart';
-import '../common/mock_secure_storage.dart';
 
 void main() {
   group('FetchAuthSessionStateMachine', () {
@@ -47,7 +47,7 @@ void main() {
     const newSecretAccessKey = 'newSecretAccessKey';
 
     Future<void> configureAmplify(AmplifyConfig config) async {
-      stateMachine.dispatch(ConfigurationEvent.configure(config));
+      stateMachine.dispatch(ConfigurationEvent.configure(config)).ignore();
       await stateMachine.stream.whereType<Configured>().first;
     }
 
@@ -70,7 +70,7 @@ void main() {
       final sessionState =
           await stateMachine.dispatchAndComplete<FetchAuthSessionSuccess>(
         FetchAuthSessionEvent.fetch(
-          CognitoSessionOptions(forceRefresh: forceRefresh),
+          FetchAuthSessionOptions(forceRefresh: forceRefresh),
         ),
       );
       return sessionState.session;
@@ -171,7 +171,7 @@ void main() {
         });
       });
 
-      group('expired credentials', () {
+      group('expired AWS credentials', () {
         setUp(() {
           seedStorage(
             secureStorage,
@@ -226,6 +226,51 @@ void main() {
 
             test('should return existing identityId', () {
               expect(session.identityIdResult.value, identityId);
+            });
+          });
+
+          group('not authorized error', () {
+            setUp(() async {
+              await configureAmplify(config);
+              stateMachine.addInstance<CognitoIdentityClient>(
+                MockCognitoIdentityClient(
+                  getCredentialsForIdentity: expectAsync0(
+                    () async => throw const AuthNotAuthorizedException(
+                      'Not authorized',
+                    ),
+                  ),
+                ),
+              );
+              session = await fetchAuthSession(willRefresh: true);
+            });
+
+            test('should return isSignedIn=true', () {
+              expect(session.isSignedIn, isTrue);
+            });
+
+            test('should return existing user sub', () {
+              expect(session.userSubResult.value, userSub);
+            });
+
+            test('should return existing user pool tokens', () {
+              final userPoolTokens = session.userPoolTokensResult.value;
+              expect(userPoolTokens.accessToken, accessToken);
+              expect(userPoolTokens.idToken, idToken);
+              expect(userPoolTokens.refreshToken, refreshToken);
+            });
+
+            test('should throw when accessing credentials', () {
+              expect(
+                () => session.credentialsResult.value,
+                throwsA(isA<SessionExpiredException>()),
+              );
+            });
+
+            test('should throw when accessing identityId', () {
+              expect(
+                () => session.identityIdResult.value,
+                throwsA(isA<SessionExpiredException>()),
+              );
             });
           });
 
@@ -371,6 +416,50 @@ void main() {
               expect(userPoolTokens.accessToken, newAccessToken);
               expect(userPoolTokens.idToken, newIdToken);
               expect(userPoolTokens.refreshToken, refreshToken);
+            });
+
+            test('should return existing credentials', () {
+              final credentials = session.credentialsResult.value;
+              expect(credentials.accessKeyId, accessKeyId);
+              expect(credentials.secretAccessKey, secretAccessKey);
+            });
+
+            test('should return existing identityId', () {
+              expect(session.identityIdResult.value, identityId);
+            });
+          });
+
+          group('not authorized error', () {
+            setUp(() async {
+              await configureAmplify(config);
+              stateMachine.addInstance<CognitoIdentityProviderClient>(
+                MockCognitoIdentityProviderClient(
+                  initiateAuth: expectAsync1(
+                    (_) async => throw const AuthNotAuthorizedException(
+                      'Tokens expired',
+                    ),
+                  ),
+                ),
+              );
+              session = await fetchAuthSession(willRefresh: true);
+            });
+
+            test('should return isSignedIn=true', () {
+              expect(session.isSignedIn, isTrue);
+            });
+
+            test('should throw when accessing user sub', () {
+              expect(
+                () => session.userSubResult.value,
+                throwsA(isA<SessionExpiredException>()),
+              );
+            });
+
+            test('should throw when accessing user pool tokens', () {
+              expect(
+                () => session.userPoolTokensResult.value,
+                throwsA(isA<SessionExpiredException>()),
+              );
             });
 
             test('should return existing credentials', () {
@@ -687,6 +776,67 @@ void main() {
           });
         });
 
+        group('expired', () {
+          setUp(() async {
+            await configureAmplify(config);
+            stateMachine
+              ..addInstance<CognitoIdentityProviderClient>(
+                MockCognitoIdentityProviderClient(
+                  initiateAuth: expectAsync1(
+                    (_) async => throw const AuthNotAuthorizedException(
+                      'Tokens expired',
+                    ),
+                  ),
+                ),
+              )
+              ..addInstance<CognitoIdentityClient>(
+                MockCognitoIdentityClient(
+                  getCredentialsForIdentity: expectAsync0(
+                    () async => throw const AuthNotAuthorizedException(
+                      'Tokens expired',
+                    ),
+                  ),
+                ),
+              );
+            session = await fetchAuthSession(
+              willRefresh: true,
+              forceRefresh: true,
+            );
+          });
+
+          test('should return isSignedIn=true', () {
+            expect(session.isSignedIn, isTrue);
+          });
+
+          test('should throw when accessing user sub', () {
+            expect(
+              () => session.userSubResult.value,
+              throwsA(isA<SessionExpiredException>()),
+            );
+          });
+
+          test('should throw when accessing user pool tokens', () {
+            expect(
+              () => session.userPoolTokensResult.value,
+              throwsA(isA<SessionExpiredException>()),
+            );
+          });
+
+          test('should throw when accessing credentials', () {
+            expect(
+              () => session.credentialsResult.value,
+              throwsA(isA<SessionExpiredException>()),
+            );
+          });
+
+          test('should throw when accessing identityId', () {
+            expect(
+              () => session.identityIdResult.value,
+              throwsA(isA<SessionExpiredException>()),
+            );
+          });
+        });
+
         group('network error', () {
           setUp(() async {
             await configureAmplify(config);
@@ -897,14 +1047,14 @@ void main() {
             test('should throw when accessing credentials', () {
               expect(
                 () => session.credentialsResult.value,
-                throwsA(isA<AuthNotAuthorizedException>()),
+                throwsA(isA<SessionExpiredException>()),
               );
             });
 
             test('should throw when accessing identityId', () {
               expect(
                 () => session.identityIdResult.value,
-                throwsA(isA<AuthNotAuthorizedException>()),
+                throwsA(isA<SessionExpiredException>()),
               );
             });
           });

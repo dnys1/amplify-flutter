@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_analytics_pinpoint_dart.pinpoint.model.payload_too_large_exception; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -42,9 +43,8 @@ abstract class PayloadTooLargeException
         b.headers = response.headers;
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
-    PayloadTooLargeExceptionRestJson1Serializer()
-  ];
+  static const List<_i2.SmithySerializer<PayloadTooLargeException>>
+      serializers = [PayloadTooLargeExceptionRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(PayloadTooLargeExceptionBuilder b) {}
@@ -77,15 +77,15 @@ abstract class PayloadTooLargeException
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('PayloadTooLargeException');
-    helper.add(
-      'message',
-      message,
-    );
-    helper.add(
-      'requestId',
-      requestId,
-    );
+    final helper = newBuiltValueToStringHelper('PayloadTooLargeException')
+      ..add(
+        'message',
+        message,
+      )
+      ..add(
+        'requestId',
+        requestId,
+      );
     return helper.toString();
   }
 }
@@ -119,23 +119,20 @@ class PayloadTooLargeExceptionRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'Message':
-          if (value != null) {
-            result.message = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.message = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'RequestID':
-          if (value != null) {
-            result.requestId = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.requestId = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -145,27 +142,27 @@ class PayloadTooLargeExceptionRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    PayloadTooLargeException object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as PayloadTooLargeException);
-    final result = <Object?>[];
-    if (payload.message != null) {
-      result
+    final result$ = <Object?>[];
+    final PayloadTooLargeException(:message, :requestId) = object;
+    if (message != null) {
+      result$
         ..add('Message')
         ..add(serializers.serialize(
-          payload.message!,
+          message,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.requestId != null) {
-      result
+    if (requestId != null) {
+      result$
         ..add('RequestID')
         ..add(serializers.serialize(
-          payload.requestId!,
+          requestId,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

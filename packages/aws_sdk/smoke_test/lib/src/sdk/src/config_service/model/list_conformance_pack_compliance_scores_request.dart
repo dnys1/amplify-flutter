@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.list_conformance_pack_compliance_scores_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -9,9 +10,9 @@ import 'package:smithy/smithy.dart' as _i1;
 import 'package:smoke_test/src/sdk/src/config_service/model/conformance_pack_compliance_scores_filters.dart'
     as _i3;
 import 'package:smoke_test/src/sdk/src/config_service/model/sort_by.dart'
-    as _i4;
-import 'package:smoke_test/src/sdk/src/config_service/model/sort_order.dart'
     as _i5;
+import 'package:smoke_test/src/sdk/src/config_service/model/sort_order.dart'
+    as _i4;
 
 part 'list_conformance_pack_compliance_scores_request.g.dart';
 
@@ -24,17 +25,18 @@ abstract class ListConformancePackComplianceScoresRequest
             ListConformancePackComplianceScoresRequestBuilder> {
   factory ListConformancePackComplianceScoresRequest({
     _i3.ConformancePackComplianceScoresFilters? filters,
+    _i4.SortOrder? sortOrder,
+    _i5.SortBy? sortBy,
     int? limit,
     String? nextToken,
-    _i4.SortBy? sortBy,
-    _i5.SortOrder? sortOrder,
   }) {
+    limit ??= 0;
     return _$ListConformancePackComplianceScoresRequest._(
       filters: filters,
+      sortOrder: sortOrder,
+      sortBy: sortBy,
       limit: limit,
       nextToken: nextToken,
-      sortBy: sortBy,
-      sortOrder: sortOrder,
     );
   }
 
@@ -51,65 +53,71 @@ abstract class ListConformancePackComplianceScoresRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<
+          _i1.SmithySerializer<ListConformancePackComplianceScoresRequest>>
+      serializers = [
     ListConformancePackComplianceScoresRequestAwsJson11Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(ListConformancePackComplianceScoresRequestBuilder b) {}
+  static void _init(ListConformancePackComplianceScoresRequestBuilder b) {
+    b.limit = 0;
+  }
 
   /// Filters the results based on the `ConformancePackComplianceScoresFilters`.
   _i3.ConformancePackComplianceScoresFilters? get filters;
 
-  /// The maximum number of conformance pack compliance scores returned on each page.
-  int? get limit;
-
-  /// The `nextToken` string in a prior request that you can use to get the paginated response for next set of conformance pack compliance scores.
-  String? get nextToken;
+  /// Determines the order in which conformance pack compliance scores are sorted. Either in ascending or descending order.
+  ///
+  /// By default, conformance pack compliance scores are sorted in alphabetical order by name of the conformance pack. Conformance pack compliance scores are sorted in reverse alphabetical order if you enter `DESCENDING`.
+  ///
+  /// You can sort conformance pack compliance scores by the numerical value of the compliance score by entering `SCORE` in the `SortBy` action. When compliance scores are sorted by `SCORE`, conformance packs with a compliance score of `INSUFFICIENT_DATA` will be last when sorting by ascending order and first when sorting by descending order.
+  _i4.SortOrder? get sortOrder;
 
   /// Sorts your conformance pack compliance scores in either ascending or descending order, depending on `SortOrder`.
   ///
-  /// By default, conformance pack compliance scores are sorted in ascending order by compliance score and alphabetically by name of the conformance pack if there is more than one conformance pack with the same compliance score.
-  _i4.SortBy? get sortBy;
+  /// By default, conformance pack compliance scores are sorted in alphabetical order by name of the conformance pack. Enter `SCORE`, to sort conformance pack compliance scores by the numerical value of the compliance score.
+  _i5.SortBy? get sortBy;
 
-  /// Determines the order in which conformance pack compliance scores are sorted. Either in ascending or descending order.
-  ///
-  /// Conformance packs with a compliance score of `INSUFFICIENT_DATA` will be first when sorting by ascending order and last when sorting by descending order.
-  _i5.SortOrder? get sortOrder;
+  /// The maximum number of conformance pack compliance scores returned on each page.
+  int get limit;
+
+  /// The `nextToken` string in a prior request that you can use to get the paginated response for the next set of conformance pack compliance scores.
+  String? get nextToken;
   @override
   ListConformancePackComplianceScoresRequest getPayload() => this;
   @override
   List<Object?> get props => [
         filters,
+        sortOrder,
+        sortBy,
         limit,
         nextToken,
-        sortBy,
-        sortOrder,
       ];
   @override
   String toString() {
     final helper = newBuiltValueToStringHelper(
-        'ListConformancePackComplianceScoresRequest');
-    helper.add(
-      'filters',
-      filters,
-    );
-    helper.add(
-      'limit',
-      limit,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
-    helper.add(
-      'sortBy',
-      sortBy,
-    );
-    helper.add(
-      'sortOrder',
-      sortOrder,
-    );
+        'ListConformancePackComplianceScoresRequest')
+      ..add(
+        'filters',
+        filters,
+      )
+      ..add(
+        'sortOrder',
+        sortOrder,
+      )
+      ..add(
+        'sortBy',
+        sortBy,
+      )
+      ..add(
+        'limit',
+        limit,
+      )
+      ..add(
+        'nextToken',
+        nextToken,
+      );
     return helper.toString();
   }
 }
@@ -143,48 +151,36 @@ class ListConformancePackComplianceScoresRequestAwsJson11Serializer extends _i1
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'Filters':
-          if (value != null) {
-            result.filters.replace((serializers.deserialize(
-              value,
-              specifiedType:
-                  const FullType(_i3.ConformancePackComplianceScoresFilters),
-            ) as _i3.ConformancePackComplianceScoresFilters));
-          }
-          break;
-        case 'Limit':
-          if (value != null) {
-            result.limit = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(int),
-            ) as int);
-          }
-          break;
-        case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
-        case 'SortBy':
-          if (value != null) {
-            result.sortBy = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i4.SortBy),
-            ) as _i4.SortBy);
-          }
-          break;
+          result.filters.replace((serializers.deserialize(
+            value,
+            specifiedType:
+                const FullType(_i3.ConformancePackComplianceScoresFilters),
+          ) as _i3.ConformancePackComplianceScoresFilters));
         case 'SortOrder':
-          if (value != null) {
-            result.sortOrder = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i5.SortOrder),
-            ) as _i5.SortOrder);
-          }
-          break;
+          result.sortOrder = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i4.SortOrder),
+          ) as _i4.SortOrder);
+        case 'SortBy':
+          result.sortBy = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i5.SortBy),
+          ) as _i5.SortBy);
+        case 'Limit':
+          result.limit = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int);
+        case 'NextToken':
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -194,52 +190,57 @@ class ListConformancePackComplianceScoresRequestAwsJson11Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ListConformancePackComplianceScoresRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ListConformancePackComplianceScoresRequest);
-    final result = <Object?>[];
-    if (payload.filters != null) {
-      result
+    final result$ = <Object?>[];
+    final ListConformancePackComplianceScoresRequest(
+      :filters,
+      :sortOrder,
+      :sortBy,
+      :limit,
+      :nextToken
+    ) = object;
+    result$.addAll([
+      'Limit',
+      serializers.serialize(
+        limit,
+        specifiedType: const FullType(int),
+      ),
+    ]);
+    if (filters != null) {
+      result$
         ..add('Filters')
         ..add(serializers.serialize(
-          payload.filters!,
+          filters,
           specifiedType:
               const FullType(_i3.ConformancePackComplianceScoresFilters),
         ));
     }
-    if (payload.limit != null) {
-      result
-        ..add('Limit')
+    if (sortOrder != null) {
+      result$
+        ..add('SortOrder')
         ..add(serializers.serialize(
-          payload.limit!,
-          specifiedType: const FullType(int),
+          sortOrder,
+          specifiedType: const FullType(_i4.SortOrder),
         ));
     }
-    if (payload.nextToken != null) {
-      result
+    if (sortBy != null) {
+      result$
+        ..add('SortBy')
+        ..add(serializers.serialize(
+          sortBy,
+          specifiedType: const FullType(_i5.SortBy),
+        ));
+    }
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.sortBy != null) {
-      result
-        ..add('SortBy')
-        ..add(serializers.serialize(
-          payload.sortBy!,
-          specifiedType: const FullType(_i4.SortBy),
-        ));
-    }
-    if (payload.sortOrder != null) {
-      result
-        ..add('SortOrder')
-        ..add(serializers.serialize(
-          payload.sortOrder!,
-          specifiedType: const FullType(_i5.SortOrder),
-        ));
-    }
-    return result;
+    return result$;
   }
 }

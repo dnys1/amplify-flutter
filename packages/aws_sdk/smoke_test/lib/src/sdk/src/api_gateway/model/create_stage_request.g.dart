@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of smoke_test.api_gateway.model.create_stage_request;
+part of 'create_stage_request.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
@@ -8,51 +8,55 @@ part of smoke_test.api_gateway.model.create_stage_request;
 
 class _$CreateStageRequest extends CreateStageRequest {
   @override
-  final bool? cacheClusterEnabled;
+  final String restApiId;
   @override
-  final _i3.CacheClusterSize? cacheClusterSize;
-  @override
-  final _i4.CanarySettings? canarySettings;
+  final String stageName;
   @override
   final String deploymentId;
   @override
   final String? description;
   @override
-  final String? documentationVersion;
+  final bool cacheClusterEnabled;
   @override
-  final String restApiId;
-  @override
-  final String stageName;
-  @override
-  final _i5.BuiltMap<String, String>? tags;
-  @override
-  final bool? tracingEnabled;
+  final _i3.CacheClusterSize? cacheClusterSize;
   @override
   final _i5.BuiltMap<String, String>? variables;
+  @override
+  final String? documentationVersion;
+  @override
+  final _i4.CanarySettings? canarySettings;
+  @override
+  final bool tracingEnabled;
+  @override
+  final _i5.BuiltMap<String, String>? tags;
 
   factory _$CreateStageRequest(
           [void Function(CreateStageRequestBuilder)? updates]) =>
       (new CreateStageRequestBuilder()..update(updates))._build();
 
   _$CreateStageRequest._(
-      {this.cacheClusterEnabled,
-      this.cacheClusterSize,
-      this.canarySettings,
+      {required this.restApiId,
+      required this.stageName,
       required this.deploymentId,
       this.description,
+      required this.cacheClusterEnabled,
+      this.cacheClusterSize,
+      this.variables,
       this.documentationVersion,
-      required this.restApiId,
-      required this.stageName,
-      this.tags,
-      this.tracingEnabled,
-      this.variables})
+      this.canarySettings,
+      required this.tracingEnabled,
+      this.tags})
       : super._() {
-    BuiltValueNullFieldError.checkNotNull(
-        deploymentId, r'CreateStageRequest', 'deploymentId');
     BuiltValueNullFieldError.checkNotNull(
         restApiId, r'CreateStageRequest', 'restApiId');
     BuiltValueNullFieldError.checkNotNull(
         stageName, r'CreateStageRequest', 'stageName');
+    BuiltValueNullFieldError.checkNotNull(
+        deploymentId, r'CreateStageRequest', 'deploymentId');
+    BuiltValueNullFieldError.checkNotNull(
+        cacheClusterEnabled, r'CreateStageRequest', 'cacheClusterEnabled');
+    BuiltValueNullFieldError.checkNotNull(
+        tracingEnabled, r'CreateStageRequest', 'tracingEnabled');
   }
 
   @override
@@ -68,33 +72,33 @@ class _$CreateStageRequest extends CreateStageRequest {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is CreateStageRequest &&
-        cacheClusterEnabled == other.cacheClusterEnabled &&
-        cacheClusterSize == other.cacheClusterSize &&
-        canarySettings == other.canarySettings &&
-        deploymentId == other.deploymentId &&
-        description == other.description &&
-        documentationVersion == other.documentationVersion &&
         restApiId == other.restApiId &&
         stageName == other.stageName &&
-        tags == other.tags &&
+        deploymentId == other.deploymentId &&
+        description == other.description &&
+        cacheClusterEnabled == other.cacheClusterEnabled &&
+        cacheClusterSize == other.cacheClusterSize &&
+        variables == other.variables &&
+        documentationVersion == other.documentationVersion &&
+        canarySettings == other.canarySettings &&
         tracingEnabled == other.tracingEnabled &&
-        variables == other.variables;
+        tags == other.tags;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
-    _$hash = $jc(_$hash, cacheClusterEnabled.hashCode);
-    _$hash = $jc(_$hash, cacheClusterSize.hashCode);
-    _$hash = $jc(_$hash, canarySettings.hashCode);
-    _$hash = $jc(_$hash, deploymentId.hashCode);
-    _$hash = $jc(_$hash, description.hashCode);
-    _$hash = $jc(_$hash, documentationVersion.hashCode);
     _$hash = $jc(_$hash, restApiId.hashCode);
     _$hash = $jc(_$hash, stageName.hashCode);
-    _$hash = $jc(_$hash, tags.hashCode);
-    _$hash = $jc(_$hash, tracingEnabled.hashCode);
+    _$hash = $jc(_$hash, deploymentId.hashCode);
+    _$hash = $jc(_$hash, description.hashCode);
+    _$hash = $jc(_$hash, cacheClusterEnabled.hashCode);
+    _$hash = $jc(_$hash, cacheClusterSize.hashCode);
     _$hash = $jc(_$hash, variables.hashCode);
+    _$hash = $jc(_$hash, documentationVersion.hashCode);
+    _$hash = $jc(_$hash, canarySettings.hashCode);
+    _$hash = $jc(_$hash, tracingEnabled.hashCode);
+    _$hash = $jc(_$hash, tags.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -103,6 +107,22 @@ class _$CreateStageRequest extends CreateStageRequest {
 class CreateStageRequestBuilder
     implements Builder<CreateStageRequest, CreateStageRequestBuilder> {
   _$CreateStageRequest? _$v;
+
+  String? _restApiId;
+  String? get restApiId => _$this._restApiId;
+  set restApiId(String? restApiId) => _$this._restApiId = restApiId;
+
+  String? _stageName;
+  String? get stageName => _$this._stageName;
+  set stageName(String? stageName) => _$this._stageName = stageName;
+
+  String? _deploymentId;
+  String? get deploymentId => _$this._deploymentId;
+  set deploymentId(String? deploymentId) => _$this._deploymentId = deploymentId;
+
+  String? _description;
+  String? get description => _$this._description;
+  set description(String? description) => _$this._description = description;
 
   bool? _cacheClusterEnabled;
   bool? get cacheClusterEnabled => _$this._cacheClusterEnabled;
@@ -114,48 +134,32 @@ class CreateStageRequestBuilder
   set cacheClusterSize(_i3.CacheClusterSize? cacheClusterSize) =>
       _$this._cacheClusterSize = cacheClusterSize;
 
-  _i4.CanarySettingsBuilder? _canarySettings;
-  _i4.CanarySettingsBuilder get canarySettings =>
-      _$this._canarySettings ??= new _i4.CanarySettingsBuilder();
-  set canarySettings(_i4.CanarySettingsBuilder? canarySettings) =>
-      _$this._canarySettings = canarySettings;
-
-  String? _deploymentId;
-  String? get deploymentId => _$this._deploymentId;
-  set deploymentId(String? deploymentId) => _$this._deploymentId = deploymentId;
-
-  String? _description;
-  String? get description => _$this._description;
-  set description(String? description) => _$this._description = description;
+  _i5.MapBuilder<String, String>? _variables;
+  _i5.MapBuilder<String, String> get variables =>
+      _$this._variables ??= new _i5.MapBuilder<String, String>();
+  set variables(_i5.MapBuilder<String, String>? variables) =>
+      _$this._variables = variables;
 
   String? _documentationVersion;
   String? get documentationVersion => _$this._documentationVersion;
   set documentationVersion(String? documentationVersion) =>
       _$this._documentationVersion = documentationVersion;
 
-  String? _restApiId;
-  String? get restApiId => _$this._restApiId;
-  set restApiId(String? restApiId) => _$this._restApiId = restApiId;
-
-  String? _stageName;
-  String? get stageName => _$this._stageName;
-  set stageName(String? stageName) => _$this._stageName = stageName;
-
-  _i5.MapBuilder<String, String>? _tags;
-  _i5.MapBuilder<String, String> get tags =>
-      _$this._tags ??= new _i5.MapBuilder<String, String>();
-  set tags(_i5.MapBuilder<String, String>? tags) => _$this._tags = tags;
+  _i4.CanarySettingsBuilder? _canarySettings;
+  _i4.CanarySettingsBuilder get canarySettings =>
+      _$this._canarySettings ??= new _i4.CanarySettingsBuilder();
+  set canarySettings(_i4.CanarySettingsBuilder? canarySettings) =>
+      _$this._canarySettings = canarySettings;
 
   bool? _tracingEnabled;
   bool? get tracingEnabled => _$this._tracingEnabled;
   set tracingEnabled(bool? tracingEnabled) =>
       _$this._tracingEnabled = tracingEnabled;
 
-  _i5.MapBuilder<String, String>? _variables;
-  _i5.MapBuilder<String, String> get variables =>
-      _$this._variables ??= new _i5.MapBuilder<String, String>();
-  set variables(_i5.MapBuilder<String, String>? variables) =>
-      _$this._variables = variables;
+  _i5.MapBuilder<String, String>? _tags;
+  _i5.MapBuilder<String, String> get tags =>
+      _$this._tags ??= new _i5.MapBuilder<String, String>();
+  set tags(_i5.MapBuilder<String, String>? tags) => _$this._tags = tags;
 
   CreateStageRequestBuilder() {
     CreateStageRequest._init(this);
@@ -164,17 +168,17 @@ class CreateStageRequestBuilder
   CreateStageRequestBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _cacheClusterEnabled = $v.cacheClusterEnabled;
-      _cacheClusterSize = $v.cacheClusterSize;
-      _canarySettings = $v.canarySettings?.toBuilder();
-      _deploymentId = $v.deploymentId;
-      _description = $v.description;
-      _documentationVersion = $v.documentationVersion;
       _restApiId = $v.restApiId;
       _stageName = $v.stageName;
-      _tags = $v.tags?.toBuilder();
-      _tracingEnabled = $v.tracingEnabled;
+      _deploymentId = $v.deploymentId;
+      _description = $v.description;
+      _cacheClusterEnabled = $v.cacheClusterEnabled;
+      _cacheClusterSize = $v.cacheClusterSize;
       _variables = $v.variables?.toBuilder();
+      _documentationVersion = $v.documentationVersion;
+      _canarySettings = $v.canarySettings?.toBuilder();
+      _tracingEnabled = $v.tracingEnabled;
+      _tags = $v.tags?.toBuilder();
       _$v = null;
     }
     return this;
@@ -199,31 +203,35 @@ class CreateStageRequestBuilder
     try {
       _$result = _$v ??
           new _$CreateStageRequest._(
-              cacheClusterEnabled: cacheClusterEnabled,
-              cacheClusterSize: cacheClusterSize,
-              canarySettings: _canarySettings?.build(),
-              deploymentId: BuiltValueNullFieldError.checkNotNull(
-                  deploymentId, r'CreateStageRequest', 'deploymentId'),
-              description: description,
-              documentationVersion: documentationVersion,
               restApiId: BuiltValueNullFieldError.checkNotNull(
                   restApiId, r'CreateStageRequest', 'restApiId'),
               stageName: BuiltValueNullFieldError.checkNotNull(
                   stageName, r'CreateStageRequest', 'stageName'),
-              tags: _tags?.build(),
-              tracingEnabled: tracingEnabled,
-              variables: _variables?.build());
+              deploymentId: BuiltValueNullFieldError.checkNotNull(
+                  deploymentId, r'CreateStageRequest', 'deploymentId'),
+              description: description,
+              cacheClusterEnabled: BuiltValueNullFieldError.checkNotNull(
+                  cacheClusterEnabled,
+                  r'CreateStageRequest',
+                  'cacheClusterEnabled'),
+              cacheClusterSize: cacheClusterSize,
+              variables: _variables?.build(),
+              documentationVersion: documentationVersion,
+              canarySettings: _canarySettings?.build(),
+              tracingEnabled: BuiltValueNullFieldError.checkNotNull(
+                  tracingEnabled, r'CreateStageRequest', 'tracingEnabled'),
+              tags: _tags?.build());
     } catch (_) {
       late String _$failedField;
       try {
+        _$failedField = 'variables';
+        _variables?.build();
+
         _$failedField = 'canarySettings';
         _canarySettings?.build();
 
         _$failedField = 'tags';
         _tags?.build();
-
-        _$failedField = 'variables';
-        _variables?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             r'CreateStageRequest', _$failedField, e.toString());
@@ -237,7 +245,7 @@ class CreateStageRequestBuilder
 
 class _$CreateStageRequestPayload extends CreateStageRequestPayload {
   @override
-  final bool? cacheClusterEnabled;
+  final bool cacheClusterEnabled;
   @override
   final _i3.CacheClusterSize? cacheClusterSize;
   @override
@@ -253,7 +261,7 @@ class _$CreateStageRequestPayload extends CreateStageRequestPayload {
   @override
   final _i5.BuiltMap<String, String>? tags;
   @override
-  final bool? tracingEnabled;
+  final bool tracingEnabled;
   @override
   final _i5.BuiltMap<String, String>? variables;
 
@@ -262,7 +270,7 @@ class _$CreateStageRequestPayload extends CreateStageRequestPayload {
       (new CreateStageRequestPayloadBuilder()..update(updates))._build();
 
   _$CreateStageRequestPayload._(
-      {this.cacheClusterEnabled,
+      {required this.cacheClusterEnabled,
       this.cacheClusterSize,
       this.canarySettings,
       required this.deploymentId,
@@ -270,13 +278,17 @@ class _$CreateStageRequestPayload extends CreateStageRequestPayload {
       this.documentationVersion,
       required this.stageName,
       this.tags,
-      this.tracingEnabled,
+      required this.tracingEnabled,
       this.variables})
       : super._() {
+    BuiltValueNullFieldError.checkNotNull(cacheClusterEnabled,
+        r'CreateStageRequestPayload', 'cacheClusterEnabled');
     BuiltValueNullFieldError.checkNotNull(
         deploymentId, r'CreateStageRequestPayload', 'deploymentId');
     BuiltValueNullFieldError.checkNotNull(
         stageName, r'CreateStageRequestPayload', 'stageName');
+    BuiltValueNullFieldError.checkNotNull(
+        tracingEnabled, r'CreateStageRequestPayload', 'tracingEnabled');
   }
 
   @override
@@ -417,7 +429,10 @@ class CreateStageRequestPayloadBuilder
     try {
       _$result = _$v ??
           new _$CreateStageRequestPayload._(
-              cacheClusterEnabled: cacheClusterEnabled,
+              cacheClusterEnabled: BuiltValueNullFieldError.checkNotNull(
+                  cacheClusterEnabled,
+                  r'CreateStageRequestPayload',
+                  'cacheClusterEnabled'),
               cacheClusterSize: cacheClusterSize,
               canarySettings: _canarySettings?.build(),
               deploymentId: BuiltValueNullFieldError.checkNotNull(
@@ -427,7 +442,10 @@ class CreateStageRequestPayloadBuilder
               stageName: BuiltValueNullFieldError.checkNotNull(
                   stageName, r'CreateStageRequestPayload', 'stageName'),
               tags: _tags?.build(),
-              tracingEnabled: tracingEnabled,
+              tracingEnabled: BuiltValueNullFieldError.checkNotNull(
+                  tracingEnabled,
+                  r'CreateStageRequestPayload',
+                  'tracingEnabled'),
               variables: _variables?.build());
     } catch (_) {
       late String _$failedField;

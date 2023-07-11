@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v2.rest_json_protocol.model.post_player_action_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -31,9 +32,8 @@ abstract class PostPlayerActionOutput
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
-    PostPlayerActionOutputRestJson1Serializer()
-  ];
+  static const List<_i3.SmithySerializer<PostPlayerActionOutput>> serializers =
+      [PostPlayerActionOutputRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(PostPlayerActionOutputBuilder b) {}
@@ -42,11 +42,11 @@ abstract class PostPlayerActionOutput
   List<Object?> get props => [action];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('PostPlayerActionOutput');
-    helper.add(
-      'action',
-      action,
-    );
+    final helper = newBuiltValueToStringHelper('PostPlayerActionOutput')
+      ..add(
+        'action',
+        action,
+      );
     return helper.toString();
   }
 }
@@ -80,13 +80,15 @@ class PostPlayerActionOutputRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'action':
           result.action = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(_i2.PlayerAction),
           ) as _i2.PlayerAction);
-          break;
       }
     }
 
@@ -96,17 +98,18 @@ class PostPlayerActionOutputRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    PostPlayerActionOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as PostPlayerActionOutput);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final PostPlayerActionOutput(:action) = object;
+    result$.addAll([
       'action',
       serializers.serialize(
-        payload.action,
+        action,
         specifiedType: const FullType(_i2.PlayerAction),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

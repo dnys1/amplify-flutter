@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.organization_resource_detailed_status_filters; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,7 +37,9 @@ abstract class OrganizationResourceDetailedStatusFilters
 
   const OrganizationResourceDetailedStatusFilters._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<
+          _i3.SmithySerializer<OrganizationResourceDetailedStatusFilters>>
+      serializers = [
     OrganizationResourceDetailedStatusFiltersAwsJson11Serializer()
   ];
 
@@ -46,7 +49,7 @@ abstract class OrganizationResourceDetailedStatusFilters
   /// The 12-digit account ID of the member account within an organization.
   String? get accountId;
 
-  /// Indicates deployment status for conformance pack in a member account. When master account calls `PutOrganizationConformancePack` action for the first time, conformance pack status is created in the member account. When master account calls `PutOrganizationConformancePack` action for the second time, conformance pack status is updated in the member account. Conformance pack status is deleted when the master account deletes `OrganizationConformancePack` and disables service access for `config-multiaccountsetup.amazonaws.com`.
+  /// Indicates deployment status for conformance pack in a member account. When management account calls `PutOrganizationConformancePack` action for the first time, conformance pack status is created in the member account. When management account calls `PutOrganizationConformancePack` action for the second time, conformance pack status is updated in the member account. Conformance pack status is deleted when the management account deletes `OrganizationConformancePack` and disables service access for `config-multiaccountsetup.amazonaws.com`.
   ///
   /// Config sets the state of the conformance pack to:
   ///
@@ -75,16 +78,16 @@ abstract class OrganizationResourceDetailedStatusFilters
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper(
-        'OrganizationResourceDetailedStatusFilters');
-    helper.add(
-      'accountId',
-      accountId,
-    );
-    helper.add(
-      'status',
-      status,
-    );
+    final helper =
+        newBuiltValueToStringHelper('OrganizationResourceDetailedStatusFilters')
+          ..add(
+            'accountId',
+            accountId,
+          )
+          ..add(
+            'status',
+            status,
+          );
     return helper.toString();
   }
 }
@@ -118,24 +121,21 @@ class OrganizationResourceDetailedStatusFiltersAwsJson11Serializer extends _i3
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'AccountId':
-          if (value != null) {
-            result.accountId = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.accountId = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'Status':
-          if (value != null) {
-            result.status = (serializers.deserialize(
-              value,
-              specifiedType:
-                  const FullType(_i2.OrganizationResourceDetailedStatus),
-            ) as _i2.OrganizationResourceDetailedStatus);
-          }
-          break;
+          result.status = (serializers.deserialize(
+            value,
+            specifiedType:
+                const FullType(_i2.OrganizationResourceDetailedStatus),
+          ) as _i2.OrganizationResourceDetailedStatus);
       }
     }
 
@@ -145,27 +145,28 @@ class OrganizationResourceDetailedStatusFiltersAwsJson11Serializer extends _i3
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    OrganizationResourceDetailedStatusFilters object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as OrganizationResourceDetailedStatusFilters);
-    final result = <Object?>[];
-    if (payload.accountId != null) {
-      result
+    final result$ = <Object?>[];
+    final OrganizationResourceDetailedStatusFilters(:accountId, :status) =
+        object;
+    if (accountId != null) {
+      result$
         ..add('AccountId')
         ..add(serializers.serialize(
-          payload.accountId!,
+          accountId,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.status != null) {
-      result
+    if (status != null) {
+      result$
         ..add('Status')
         ..add(serializers.serialize(
-          payload.status!,
+          status,
           specifiedType: const FullType(_i2.OrganizationResourceDetailedStatus),
         ));
     }
-    return result;
+    return result$;
   }
 }

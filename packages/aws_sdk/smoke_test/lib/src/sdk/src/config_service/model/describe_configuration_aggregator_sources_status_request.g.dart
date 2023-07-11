@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of smoke_test.config_service.model.describe_configuration_aggregator_sources_status_request;
+part of 'describe_configuration_aggregator_sources_status_request.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
@@ -11,11 +11,11 @@ class _$DescribeConfigurationAggregatorSourcesStatusRequest
   @override
   final String configurationAggregatorName;
   @override
-  final int? limit;
+  final _i4.BuiltList<_i3.AggregatedSourceStatusType>? updateStatus;
   @override
   final String? nextToken;
   @override
-  final _i4.BuiltList<_i3.AggregatedSourceStatusType>? updateStatus;
+  final int limit;
 
   factory _$DescribeConfigurationAggregatorSourcesStatusRequest(
           [void Function(
@@ -27,14 +27,16 @@ class _$DescribeConfigurationAggregatorSourcesStatusRequest
 
   _$DescribeConfigurationAggregatorSourcesStatusRequest._(
       {required this.configurationAggregatorName,
-      this.limit,
+      this.updateStatus,
       this.nextToken,
-      this.updateStatus})
+      required this.limit})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
         configurationAggregatorName,
         r'DescribeConfigurationAggregatorSourcesStatusRequest',
         'configurationAggregatorName');
+    BuiltValueNullFieldError.checkNotNull(
+        limit, r'DescribeConfigurationAggregatorSourcesStatusRequest', 'limit');
   }
 
   @override
@@ -54,18 +56,18 @@ class _$DescribeConfigurationAggregatorSourcesStatusRequest
     if (identical(other, this)) return true;
     return other is DescribeConfigurationAggregatorSourcesStatusRequest &&
         configurationAggregatorName == other.configurationAggregatorName &&
-        limit == other.limit &&
+        updateStatus == other.updateStatus &&
         nextToken == other.nextToken &&
-        updateStatus == other.updateStatus;
+        limit == other.limit;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
     _$hash = $jc(_$hash, configurationAggregatorName.hashCode);
-    _$hash = $jc(_$hash, limit.hashCode);
-    _$hash = $jc(_$hash, nextToken.hashCode);
     _$hash = $jc(_$hash, updateStatus.hashCode);
+    _$hash = $jc(_$hash, nextToken.hashCode);
+    _$hash = $jc(_$hash, limit.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -83,14 +85,6 @@ class DescribeConfigurationAggregatorSourcesStatusRequestBuilder
   set configurationAggregatorName(String? configurationAggregatorName) =>
       _$this._configurationAggregatorName = configurationAggregatorName;
 
-  int? _limit;
-  int? get limit => _$this._limit;
-  set limit(int? limit) => _$this._limit = limit;
-
-  String? _nextToken;
-  String? get nextToken => _$this._nextToken;
-  set nextToken(String? nextToken) => _$this._nextToken = nextToken;
-
   _i4.ListBuilder<_i3.AggregatedSourceStatusType>? _updateStatus;
   _i4.ListBuilder<_i3.AggregatedSourceStatusType> get updateStatus =>
       _$this._updateStatus ??=
@@ -98,6 +92,14 @@ class DescribeConfigurationAggregatorSourcesStatusRequestBuilder
   set updateStatus(
           _i4.ListBuilder<_i3.AggregatedSourceStatusType>? updateStatus) =>
       _$this._updateStatus = updateStatus;
+
+  String? _nextToken;
+  String? get nextToken => _$this._nextToken;
+  set nextToken(String? nextToken) => _$this._nextToken = nextToken;
+
+  int? _limit;
+  int? get limit => _$this._limit;
+  set limit(int? limit) => _$this._limit = limit;
 
   DescribeConfigurationAggregatorSourcesStatusRequestBuilder() {
     DescribeConfigurationAggregatorSourcesStatusRequest._init(this);
@@ -107,9 +109,9 @@ class DescribeConfigurationAggregatorSourcesStatusRequestBuilder
     final $v = _$v;
     if ($v != null) {
       _configurationAggregatorName = $v.configurationAggregatorName;
-      _limit = $v.limit;
-      _nextToken = $v.nextToken;
       _updateStatus = $v.updateStatus?.toBuilder();
+      _nextToken = $v.nextToken;
+      _limit = $v.limit;
       _$v = null;
     }
     return this;
@@ -141,9 +143,12 @@ class DescribeConfigurationAggregatorSourcesStatusRequestBuilder
                       configurationAggregatorName,
                       r'DescribeConfigurationAggregatorSourcesStatusRequest',
                       'configurationAggregatorName'),
-              limit: limit,
+              updateStatus: _updateStatus?.build(),
               nextToken: nextToken,
-              updateStatus: _updateStatus?.build());
+              limit: BuiltValueNullFieldError.checkNotNull(
+                  limit,
+                  r'DescribeConfigurationAggregatorSourcesStatusRequest',
+                  'limit'));
     } catch (_) {
       late String _$failedField;
       try {

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_storage_s3_dart.s3.model.copy_object_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -9,17 +10,17 @@ import 'package:amplify_storage_s3_dart/src/sdk/src/s3/model/metadata_directive.
 import 'package:amplify_storage_s3_dart/src/sdk/src/s3/model/object_canned_acl.dart'
     as _i3;
 import 'package:amplify_storage_s3_dart/src/sdk/src/s3/model/object_lock_legal_hold_status.dart'
-    as _i6;
-import 'package:amplify_storage_s3_dart/src/sdk/src/s3/model/object_lock_mode.dart'
-    as _i7;
-import 'package:amplify_storage_s3_dart/src/sdk/src/s3/model/request_payer.dart'
-    as _i8;
-import 'package:amplify_storage_s3_dart/src/sdk/src/s3/model/server_side_encryption.dart'
-    as _i9;
-import 'package:amplify_storage_s3_dart/src/sdk/src/s3/model/storage_class.dart'
-    as _i10;
-import 'package:amplify_storage_s3_dart/src/sdk/src/s3/model/tagging_directive.dart'
     as _i11;
+import 'package:amplify_storage_s3_dart/src/sdk/src/s3/model/object_lock_mode.dart'
+    as _i10;
+import 'package:amplify_storage_s3_dart/src/sdk/src/s3/model/request_payer.dart'
+    as _i9;
+import 'package:amplify_storage_s3_dart/src/sdk/src/s3/model/server_side_encryption.dart'
+    as _i7;
+import 'package:amplify_storage_s3_dart/src/sdk/src/s3/model/storage_class.dart'
+    as _i8;
+import 'package:amplify_storage_s3_dart/src/sdk/src/s3/model/tagging_directive.dart'
+    as _i6;
 import 'package:aws_common/aws_common.dart' as _i2;
 import 'package:built_collection/built_collection.dart' as _i12;
 import 'package:built_value/built_value.dart';
@@ -40,7 +41,6 @@ abstract class CopyObjectRequest
   factory CopyObjectRequest({
     _i3.ObjectCannedAcl? acl,
     required String bucket,
-    bool? bucketKeyEnabled,
     String? cacheControl,
     _i4.ChecksumAlgorithm? checksumAlgorithm,
     String? contentDisposition,
@@ -52,11 +52,6 @@ abstract class CopyObjectRequest
     DateTime? copySourceIfModifiedSince,
     String? copySourceIfNoneMatch,
     DateTime? copySourceIfUnmodifiedSince,
-    String? copySourceSseCustomerAlgorithm,
-    String? copySourceSseCustomerKey,
-    String? copySourceSseCustomerKeyMd5,
-    String? expectedBucketOwner,
-    String? expectedSourceBucketOwner,
     DateTime? expires,
     String? grantFullControl,
     String? grantRead,
@@ -65,25 +60,30 @@ abstract class CopyObjectRequest
     required String key,
     Map<String, String>? metadata,
     _i5.MetadataDirective? metadataDirective,
-    _i6.ObjectLockLegalHoldStatus? objectLockLegalHoldStatus,
-    _i7.ObjectLockMode? objectLockMode,
-    DateTime? objectLockRetainUntilDate,
-    _i8.RequestPayer? requestPayer,
-    _i9.ServerSideEncryption? serverSideEncryption,
+    _i6.TaggingDirective? taggingDirective,
+    _i7.ServerSideEncryption? serverSideEncryption,
+    _i8.StorageClass? storageClass,
+    String? websiteRedirectLocation,
     String? sseCustomerAlgorithm,
     String? sseCustomerKey,
     String? sseCustomerKeyMd5,
-    String? ssekmsEncryptionContext,
     String? ssekmsKeyId,
-    _i10.StorageClass? storageClass,
+    String? ssekmsEncryptionContext,
+    bool? bucketKeyEnabled,
+    String? copySourceSseCustomerAlgorithm,
+    String? copySourceSseCustomerKey,
+    String? copySourceSseCustomerKeyMd5,
+    _i9.RequestPayer? requestPayer,
     String? tagging,
-    _i11.TaggingDirective? taggingDirective,
-    String? websiteRedirectLocation,
+    _i10.ObjectLockMode? objectLockMode,
+    DateTime? objectLockRetainUntilDate,
+    _i11.ObjectLockLegalHoldStatus? objectLockLegalHoldStatus,
+    String? expectedBucketOwner,
+    String? expectedSourceBucketOwner,
   }) {
     return _$CopyObjectRequest._(
       acl: acl,
       bucket: bucket,
-      bucketKeyEnabled: bucketKeyEnabled,
       cacheControl: cacheControl,
       checksumAlgorithm: checksumAlgorithm,
       contentDisposition: contentDisposition,
@@ -95,11 +95,6 @@ abstract class CopyObjectRequest
       copySourceIfModifiedSince: copySourceIfModifiedSince,
       copySourceIfNoneMatch: copySourceIfNoneMatch,
       copySourceIfUnmodifiedSince: copySourceIfUnmodifiedSince,
-      copySourceSseCustomerAlgorithm: copySourceSseCustomerAlgorithm,
-      copySourceSseCustomerKey: copySourceSseCustomerKey,
-      copySourceSseCustomerKeyMd5: copySourceSseCustomerKeyMd5,
-      expectedBucketOwner: expectedBucketOwner,
-      expectedSourceBucketOwner: expectedSourceBucketOwner,
       expires: expires,
       grantFullControl: grantFullControl,
       grantRead: grantRead,
@@ -108,20 +103,26 @@ abstract class CopyObjectRequest
       key: key,
       metadata: metadata == null ? null : _i12.BuiltMap(metadata),
       metadataDirective: metadataDirective,
-      objectLockLegalHoldStatus: objectLockLegalHoldStatus,
-      objectLockMode: objectLockMode,
-      objectLockRetainUntilDate: objectLockRetainUntilDate,
-      requestPayer: requestPayer,
+      taggingDirective: taggingDirective,
       serverSideEncryption: serverSideEncryption,
+      storageClass: storageClass,
+      websiteRedirectLocation: websiteRedirectLocation,
       sseCustomerAlgorithm: sseCustomerAlgorithm,
       sseCustomerKey: sseCustomerKey,
       sseCustomerKeyMd5: sseCustomerKeyMd5,
-      ssekmsEncryptionContext: ssekmsEncryptionContext,
       ssekmsKeyId: ssekmsKeyId,
-      storageClass: storageClass,
+      ssekmsEncryptionContext: ssekmsEncryptionContext,
+      bucketKeyEnabled: bucketKeyEnabled,
+      copySourceSseCustomerAlgorithm: copySourceSseCustomerAlgorithm,
+      copySourceSseCustomerKey: copySourceSseCustomerKey,
+      copySourceSseCustomerKeyMd5: copySourceSseCustomerKeyMd5,
+      requestPayer: requestPayer,
       tagging: tagging,
-      taggingDirective: taggingDirective,
-      websiteRedirectLocation: websiteRedirectLocation,
+      objectLockMode: objectLockMode,
+      objectLockRetainUntilDate: objectLockRetainUntilDate,
+      objectLockLegalHoldStatus: objectLockLegalHoldStatus,
+      expectedBucketOwner: expectedBucketOwner,
+      expectedSourceBucketOwner: expectedSourceBucketOwner,
     );
   }
 
@@ -204,15 +205,15 @@ abstract class CopyObjectRequest
               .byValue(request.headers['x-amz-metadata-directive']!);
         }
         if (request.headers['x-amz-tagging-directive'] != null) {
-          b.taggingDirective = _i11.TaggingDirective.values
+          b.taggingDirective = _i6.TaggingDirective.values
               .byValue(request.headers['x-amz-tagging-directive']!);
         }
         if (request.headers['x-amz-server-side-encryption'] != null) {
-          b.serverSideEncryption = _i9.ServerSideEncryption.values
+          b.serverSideEncryption = _i7.ServerSideEncryption.values
               .byValue(request.headers['x-amz-server-side-encryption']!);
         }
         if (request.headers['x-amz-storage-class'] != null) {
-          b.storageClass = _i10.StorageClass.values
+          b.storageClass = _i8.StorageClass.values
               .byValue(request.headers['x-amz-storage-class']!);
         }
         if (request.headers['x-amz-website-redirect-location'] != null) {
@@ -270,14 +271,14 @@ abstract class CopyObjectRequest
               'x-amz-copy-source-server-side-encryption-customer-key-MD5']!;
         }
         if (request.headers['x-amz-request-payer'] != null) {
-          b.requestPayer = _i8.RequestPayer.values
+          b.requestPayer = _i9.RequestPayer.values
               .byValue(request.headers['x-amz-request-payer']!);
         }
         if (request.headers['x-amz-tagging'] != null) {
           b.tagging = request.headers['x-amz-tagging']!;
         }
         if (request.headers['x-amz-object-lock-mode'] != null) {
-          b.objectLockMode = _i7.ObjectLockMode.values
+          b.objectLockMode = _i10.ObjectLockMode.values
               .byValue(request.headers['x-amz-object-lock-mode']!);
         }
         if (request.headers['x-amz-object-lock-retain-until-date'] != null) {
@@ -287,7 +288,7 @@ abstract class CopyObjectRequest
           ).asDateTime;
         }
         if (request.headers['x-amz-object-lock-legal-hold'] != null) {
-          b.objectLockLegalHoldStatus = _i6.ObjectLockLegalHoldStatus.values
+          b.objectLockLegalHoldStatus = _i11.ObjectLockLegalHoldStatus.values
               .byValue(request.headers['x-amz-object-lock-legal-hold']!);
         }
         if (request.headers['x-amz-expected-bucket-owner'] != null) {
@@ -315,9 +316,8 @@ abstract class CopyObjectRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    CopyObjectRequestRestXmlSerializer()
-  ];
+  static const List<_i1.SmithySerializer<CopyObjectRequestPayload>>
+      serializers = [CopyObjectRequestRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(CopyObjectRequestBuilder b) {}
@@ -331,13 +331,8 @@ abstract class CopyObjectRequest
   ///
   /// When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
   ///
-  /// When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `_AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com`. When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using Amazon S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
+  /// When you use this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `_AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com`. When you use this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts access point ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [What is S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
   String get bucket;
-
-  /// Specifies whether Amazon S3 should use an S3 Bucket Key for object encryption with server-side encryption using AWS KMS (SSE-KMS). Setting this header to `true` causes Amazon S3 to use an S3 Bucket Key for object encryption with SSE-KMS.
-  ///
-  /// Specifying this header with a COPY action doesn’t affect bucket-level settings for S3 Bucket Key.
-  bool? get bucketKeyEnabled;
 
   /// Specifies caching behavior along the request/reply chain.
   String? get cacheControl;
@@ -383,21 +378,6 @@ abstract class CopyObjectRequest
   /// Copies the object if it hasn't been modified since the specified time.
   DateTime? get copySourceIfUnmodifiedSince;
 
-  /// Specifies the algorithm to use when decrypting the source object (for example, AES256).
-  String? get copySourceSseCustomerAlgorithm;
-
-  /// Specifies the customer-provided encryption key for Amazon S3 to use to decrypt the source object. The encryption key provided in this header must be one that was used when the source object was created.
-  String? get copySourceSseCustomerKey;
-
-  /// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure that the encryption key was transmitted without error.
-  String? get copySourceSseCustomerKeyMd5;
-
-  /// The account ID of the expected destination bucket owner. If the destination bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
-  String? get expectedBucketOwner;
-
-  /// The account ID of the expected source bucket owner. If the source bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
-  String? get expectedSourceBucketOwner;
-
   /// The date and time at which the object is no longer cacheable.
   DateTime? get expires;
 
@@ -430,20 +410,17 @@ abstract class CopyObjectRequest
   /// Specifies whether the metadata is copied from the source object or replaced with metadata provided in the request.
   _i5.MetadataDirective? get metadataDirective;
 
-  /// Specifies whether you want to apply a legal hold to the copied object.
-  _i6.ObjectLockLegalHoldStatus? get objectLockLegalHoldStatus;
+  /// Specifies whether the object tag-set are copied from the source object or replaced with tag-set provided in the request.
+  _i6.TaggingDirective? get taggingDirective;
 
-  /// The Object Lock mode that you want to apply to the copied object.
-  _i7.ObjectLockMode? get objectLockMode;
+  /// The server-side encryption algorithm used when storing this object in Amazon S3 (for example, `AES256`, `aws:kms`, `aws:kms:dsse`).
+  _i7.ServerSideEncryption? get serverSideEncryption;
 
-  /// The date and time when you want the copied object's Object Lock to expire.
-  DateTime? get objectLockRetainUntilDate;
+  /// By default, Amazon S3 uses the STANDARD Storage Class to store newly created objects. The STANDARD storage class provides high durability and high availability. Depending on performance needs, you can specify a different Storage Class. Amazon S3 on Outposts only uses the OUTPOSTS Storage Class. For more information, see [Storage Classes](https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro.html) in the _Amazon S3 User Guide_.
+  _i8.StorageClass? get storageClass;
 
-  /// Confirms that the requester knows that they will be charged for the request. Bucket owners need not specify this parameter in their requests. For information about downloading objects from Requester Pays buckets, see [Downloading Objects in Requester Pays Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html) in the _Amazon S3 User Guide_.
-  _i8.RequestPayer? get requestPayer;
-
-  /// The server-side encryption algorithm used when storing this object in Amazon S3 (for example, AES256, aws:kms).
-  _i9.ServerSideEncryption? get serverSideEncryption;
+  /// If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata. This value is unique to each object and is not copied when using the `x-amz-metadata-directive` header. Instead, you may opt to provide this header in combination with the directive.
+  String? get websiteRedirectLocation;
 
   /// Specifies the algorithm to use to when encrypting the object (for example, AES256).
   String? get sseCustomerAlgorithm;
@@ -454,23 +431,46 @@ abstract class CopyObjectRequest
   /// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure that the encryption key was transmitted without error.
   String? get sseCustomerKeyMd5;
 
+  /// Specifies the KMS key ID to use for object encryption. All GET and PUT requests for an object protected by KMS will fail if they're not made via SSL or using SigV4. For information about configuring any of the officially supported Amazon Web Services SDKs and Amazon Web Services CLI, see [Specifying the Signature Version in Request Authentication](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version) in the _Amazon S3 User Guide_.
+  String? get ssekmsKeyId;
+
   /// Specifies the Amazon Web Services KMS Encryption Context to use for object encryption. The value of this header is a base64-encoded UTF-8 string holding JSON with the encryption context key-value pairs.
   String? get ssekmsEncryptionContext;
 
-  /// Specifies the Amazon Web Services KMS key ID to use for object encryption. All GET and PUT requests for an object protected by Amazon Web Services KMS will fail if not made via SSL or using SigV4. For information about configuring using any of the officially supported Amazon Web Services SDKs and Amazon Web Services CLI, see [Specifying the Signature Version in Request Authentication](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version) in the _Amazon S3 User Guide_.
-  String? get ssekmsKeyId;
+  /// Specifies whether Amazon S3 should use an S3 Bucket Key for object encryption with server-side encryption using Key Management Service (KMS) keys (SSE-KMS). Setting this header to `true` causes Amazon S3 to use an S3 Bucket Key for object encryption with SSE-KMS.
+  ///
+  /// Specifying this header with a COPY action doesn’t affect bucket-level settings for S3 Bucket Key.
+  bool? get bucketKeyEnabled;
 
-  /// By default, Amazon S3 uses the STANDARD Storage Class to store newly created objects. The STANDARD storage class provides high durability and high availability. Depending on performance needs, you can specify a different Storage Class. Amazon S3 on Outposts only uses the OUTPOSTS Storage Class. For more information, see [Storage Classes](https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro.html) in the _Amazon S3 User Guide_.
-  _i10.StorageClass? get storageClass;
+  /// Specifies the algorithm to use when decrypting the source object (for example, AES256).
+  String? get copySourceSseCustomerAlgorithm;
+
+  /// Specifies the customer-provided encryption key for Amazon S3 to use to decrypt the source object. The encryption key provided in this header must be one that was used when the source object was created.
+  String? get copySourceSseCustomerKey;
+
+  /// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure that the encryption key was transmitted without error.
+  String? get copySourceSseCustomerKeyMd5;
+
+  /// Confirms that the requester knows that they will be charged for the request. Bucket owners need not specify this parameter in their requests. For information about downloading objects from Requester Pays buckets, see [Downloading Objects in Requester Pays Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html) in the _Amazon S3 User Guide_.
+  _i9.RequestPayer? get requestPayer;
 
   /// The tag-set for the object destination object this value must be used in conjunction with the `TaggingDirective`. The tag-set must be encoded as URL Query parameters.
   String? get tagging;
 
-  /// Specifies whether the object tag-set are copied from the source object or replaced with tag-set provided in the request.
-  _i11.TaggingDirective? get taggingDirective;
+  /// The Object Lock mode that you want to apply to the copied object.
+  _i10.ObjectLockMode? get objectLockMode;
 
-  /// If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata.
-  String? get websiteRedirectLocation;
+  /// The date and time when you want the copied object's Object Lock to expire.
+  DateTime? get objectLockRetainUntilDate;
+
+  /// Specifies whether you want to apply a legal hold to the copied object.
+  _i11.ObjectLockLegalHoldStatus? get objectLockLegalHoldStatus;
+
+  /// The account ID of the expected destination bucket owner. If the destination bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
+  String? get expectedBucketOwner;
+
+  /// The account ID of the expected source bucket owner. If the source bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
+  String? get expectedSourceBucketOwner;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -491,7 +491,6 @@ abstract class CopyObjectRequest
   List<Object?> get props => [
         acl,
         bucket,
-        bucketKeyEnabled,
         cacheControl,
         checksumAlgorithm,
         contentDisposition,
@@ -503,11 +502,6 @@ abstract class CopyObjectRequest
         copySourceIfModifiedSince,
         copySourceIfNoneMatch,
         copySourceIfUnmodifiedSince,
-        copySourceSseCustomerAlgorithm,
-        copySourceSseCustomerKey,
-        copySourceSseCustomerKeyMd5,
-        expectedBucketOwner,
-        expectedSourceBucketOwner,
         expires,
         grantFullControl,
         grantRead,
@@ -516,188 +510,194 @@ abstract class CopyObjectRequest
         key,
         metadata,
         metadataDirective,
-        objectLockLegalHoldStatus,
-        objectLockMode,
-        objectLockRetainUntilDate,
-        requestPayer,
+        taggingDirective,
         serverSideEncryption,
+        storageClass,
+        websiteRedirectLocation,
         sseCustomerAlgorithm,
         sseCustomerKey,
         sseCustomerKeyMd5,
-        ssekmsEncryptionContext,
         ssekmsKeyId,
-        storageClass,
+        ssekmsEncryptionContext,
+        bucketKeyEnabled,
+        copySourceSseCustomerAlgorithm,
+        copySourceSseCustomerKey,
+        copySourceSseCustomerKeyMd5,
+        requestPayer,
         tagging,
-        taggingDirective,
-        websiteRedirectLocation,
+        objectLockMode,
+        objectLockRetainUntilDate,
+        objectLockLegalHoldStatus,
+        expectedBucketOwner,
+        expectedSourceBucketOwner,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('CopyObjectRequest');
-    helper.add(
-      'acl',
-      acl,
-    );
-    helper.add(
-      'bucket',
-      bucket,
-    );
-    helper.add(
-      'bucketKeyEnabled',
-      bucketKeyEnabled,
-    );
-    helper.add(
-      'cacheControl',
-      cacheControl,
-    );
-    helper.add(
-      'checksumAlgorithm',
-      checksumAlgorithm,
-    );
-    helper.add(
-      'contentDisposition',
-      contentDisposition,
-    );
-    helper.add(
-      'contentEncoding',
-      contentEncoding,
-    );
-    helper.add(
-      'contentLanguage',
-      contentLanguage,
-    );
-    helper.add(
-      'contentType',
-      contentType,
-    );
-    helper.add(
-      'copySource',
-      copySource,
-    );
-    helper.add(
-      'copySourceIfMatch',
-      copySourceIfMatch,
-    );
-    helper.add(
-      'copySourceIfModifiedSince',
-      copySourceIfModifiedSince,
-    );
-    helper.add(
-      'copySourceIfNoneMatch',
-      copySourceIfNoneMatch,
-    );
-    helper.add(
-      'copySourceIfUnmodifiedSince',
-      copySourceIfUnmodifiedSince,
-    );
-    helper.add(
-      'copySourceSseCustomerAlgorithm',
-      copySourceSseCustomerAlgorithm,
-    );
-    helper.add(
-      'copySourceSseCustomerKey',
-      '***SENSITIVE***',
-    );
-    helper.add(
-      'copySourceSseCustomerKeyMd5',
-      copySourceSseCustomerKeyMd5,
-    );
-    helper.add(
-      'expectedBucketOwner',
-      expectedBucketOwner,
-    );
-    helper.add(
-      'expectedSourceBucketOwner',
-      expectedSourceBucketOwner,
-    );
-    helper.add(
-      'expires',
-      expires,
-    );
-    helper.add(
-      'grantFullControl',
-      grantFullControl,
-    );
-    helper.add(
-      'grantRead',
-      grantRead,
-    );
-    helper.add(
-      'grantReadAcp',
-      grantReadAcp,
-    );
-    helper.add(
-      'grantWriteAcp',
-      grantWriteAcp,
-    );
-    helper.add(
-      'key',
-      key,
-    );
-    helper.add(
-      'metadata',
-      metadata,
-    );
-    helper.add(
-      'metadataDirective',
-      metadataDirective,
-    );
-    helper.add(
-      'objectLockLegalHoldStatus',
-      objectLockLegalHoldStatus,
-    );
-    helper.add(
-      'objectLockMode',
-      objectLockMode,
-    );
-    helper.add(
-      'objectLockRetainUntilDate',
-      objectLockRetainUntilDate,
-    );
-    helper.add(
-      'requestPayer',
-      requestPayer,
-    );
-    helper.add(
-      'serverSideEncryption',
-      serverSideEncryption,
-    );
-    helper.add(
-      'sseCustomerAlgorithm',
-      sseCustomerAlgorithm,
-    );
-    helper.add(
-      'sseCustomerKey',
-      '***SENSITIVE***',
-    );
-    helper.add(
-      'sseCustomerKeyMd5',
-      sseCustomerKeyMd5,
-    );
-    helper.add(
-      'ssekmsEncryptionContext',
-      '***SENSITIVE***',
-    );
-    helper.add(
-      'ssekmsKeyId',
-      '***SENSITIVE***',
-    );
-    helper.add(
-      'storageClass',
-      storageClass,
-    );
-    helper.add(
-      'tagging',
-      tagging,
-    );
-    helper.add(
-      'taggingDirective',
-      taggingDirective,
-    );
-    helper.add(
-      'websiteRedirectLocation',
-      websiteRedirectLocation,
-    );
+    final helper = newBuiltValueToStringHelper('CopyObjectRequest')
+      ..add(
+        'acl',
+        acl,
+      )
+      ..add(
+        'bucket',
+        bucket,
+      )
+      ..add(
+        'cacheControl',
+        cacheControl,
+      )
+      ..add(
+        'checksumAlgorithm',
+        checksumAlgorithm,
+      )
+      ..add(
+        'contentDisposition',
+        contentDisposition,
+      )
+      ..add(
+        'contentEncoding',
+        contentEncoding,
+      )
+      ..add(
+        'contentLanguage',
+        contentLanguage,
+      )
+      ..add(
+        'contentType',
+        contentType,
+      )
+      ..add(
+        'copySource',
+        copySource,
+      )
+      ..add(
+        'copySourceIfMatch',
+        copySourceIfMatch,
+      )
+      ..add(
+        'copySourceIfModifiedSince',
+        copySourceIfModifiedSince,
+      )
+      ..add(
+        'copySourceIfNoneMatch',
+        copySourceIfNoneMatch,
+      )
+      ..add(
+        'copySourceIfUnmodifiedSince',
+        copySourceIfUnmodifiedSince,
+      )
+      ..add(
+        'expires',
+        expires,
+      )
+      ..add(
+        'grantFullControl',
+        grantFullControl,
+      )
+      ..add(
+        'grantRead',
+        grantRead,
+      )
+      ..add(
+        'grantReadAcp',
+        grantReadAcp,
+      )
+      ..add(
+        'grantWriteAcp',
+        grantWriteAcp,
+      )
+      ..add(
+        'key',
+        key,
+      )
+      ..add(
+        'metadata',
+        metadata,
+      )
+      ..add(
+        'metadataDirective',
+        metadataDirective,
+      )
+      ..add(
+        'taggingDirective',
+        taggingDirective,
+      )
+      ..add(
+        'serverSideEncryption',
+        serverSideEncryption,
+      )
+      ..add(
+        'storageClass',
+        storageClass,
+      )
+      ..add(
+        'websiteRedirectLocation',
+        websiteRedirectLocation,
+      )
+      ..add(
+        'sseCustomerAlgorithm',
+        sseCustomerAlgorithm,
+      )
+      ..add(
+        'sseCustomerKey',
+        '***SENSITIVE***',
+      )
+      ..add(
+        'sseCustomerKeyMd5',
+        sseCustomerKeyMd5,
+      )
+      ..add(
+        'ssekmsKeyId',
+        '***SENSITIVE***',
+      )
+      ..add(
+        'ssekmsEncryptionContext',
+        '***SENSITIVE***',
+      )
+      ..add(
+        'bucketKeyEnabled',
+        bucketKeyEnabled,
+      )
+      ..add(
+        'copySourceSseCustomerAlgorithm',
+        copySourceSseCustomerAlgorithm,
+      )
+      ..add(
+        'copySourceSseCustomerKey',
+        '***SENSITIVE***',
+      )
+      ..add(
+        'copySourceSseCustomerKeyMd5',
+        copySourceSseCustomerKeyMd5,
+      )
+      ..add(
+        'requestPayer',
+        requestPayer,
+      )
+      ..add(
+        'tagging',
+        tagging,
+      )
+      ..add(
+        'objectLockMode',
+        objectLockMode,
+      )
+      ..add(
+        'objectLockRetainUntilDate',
+        objectLockRetainUntilDate,
+      )
+      ..add(
+        'objectLockLegalHoldStatus',
+        objectLockLegalHoldStatus,
+      )
+      ..add(
+        'expectedBucketOwner',
+        expectedBucketOwner,
+      )
+      ..add(
+        'expectedSourceBucketOwner',
+        expectedSourceBucketOwner,
+      );
     return helper.toString();
   }
 }
@@ -755,15 +755,16 @@ class CopyObjectRequestRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    CopyObjectRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName(
         'CopyObjectRequest',
         _i1.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    return result;
+
+    return result$;
   }
 }

@@ -24,13 +24,15 @@ class DummyHttpOperation extends HttpOperation<Unit, Unit, Unit, Unit> {
   Unit buildOutput(Unit payload, AWSBaseHttpResponse response) => payload;
 
   @override
-  HttpRequest buildRequest(Unit input) => HttpRequest((b) => b
-    ..method = 'GET'
-    ..path = '/');
+  HttpRequest buildRequest(Unit input) => HttpRequest(
+        (b) => b
+          ..method = 'GET'
+          ..path = '/',
+      );
 
   @override
   List<SmithyError> get errorTypes => const [
-        SmithyError(
+        SmithyError<DummySmithyException, DummySmithyException>(
           DummySmithyException.id,
           ErrorKind.server,
           DummySmithyException,
@@ -102,15 +104,19 @@ class _DummySmithyExceptionSerializer
 
   @override
   DummySmithyException deserialize(
-      Serializers serializers, Iterable<Object?> serialized,
-      {FullType specifiedType = FullType.unspecified}) {
+    Serializers serializers,
+    Iterable<Object?> serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
     return const DummySmithyException();
   }
 
   @override
   Iterable<Object?> serialize(
-      Serializers serializers, DummySmithyException object,
-      {FullType specifiedType = FullType.unspecified}) {
+    Serializers serializers,
+    DummySmithyException object, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
     return const [];
   }
 

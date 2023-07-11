@@ -4,14 +4,15 @@
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:amplify_auth_cognito_dart/src/flows/helpers.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart';
 
 /// {@template amplify_auth_cognito.sign_up_state_machine}
 /// Manages user sign up with Cognito.
 /// {@endtemplate}
-class SignUpStateMachine extends StateMachine<SignUpEvent, SignUpState,
-    AuthEvent, AuthState, CognitoAuthStateMachine> {
+final class SignUpStateMachine
+    extends AuthStateMachine<SignUpEvent, SignUpState> {
   /// {@macro amplify_auth_cognito.sign_up_state_machine}
   SignUpStateMachine(CognitoAuthStateMachine manager) : super(manager, type);
 
@@ -25,45 +26,54 @@ class SignUpStateMachine extends StateMachine<SignUpEvent, SignUpState,
   @override
   String get runtimeTypeName => 'SignUpStateMachine';
 
-  CognitoIdentityProviderClient get _cognito => expect();
-  CognitoUserPoolConfig get _userPoolConfig => expect();
+  CognitoIdentityProviderClient get _cognito {
+    final cognitoIdp = get<CognitoIdentityProviderClient>();
+    if (cognitoIdp == null) {
+      throw const InvalidAccountTypeException.noUserPool();
+    }
+    return cognitoIdp;
+  }
+
+  CognitoUserPoolConfig get _userPoolConfig {
+    final userPoolConfig = get<CognitoUserPoolConfig>();
+    if (userPoolConfig == null) {
+      throw const InvalidAccountTypeException.noUserPool();
+    }
+    return userPoolConfig;
+  }
+
+  ASFContextDataProvider get _contextDataProvider => getOrCreate();
 
   @override
   Future<void> resolve(SignUpEvent event) async {
-    switch (event.type) {
-      case SignUpEventType.initiate:
-        event as SignUpInitiate;
+    switch (event) {
+      case SignUpInitiate _:
         emit(const SignUpState.initiating());
         await onInitiate(event);
-        break;
-      case SignUpEventType.confirm:
-        event as SignUpConfirm;
+      case SignUpConfirm _:
         emit(const SignUpState.confirming());
         await onConfirm(event);
-        break;
-      case SignUpEventType.succeeded:
-        event as SignUpSucceeded;
-        emit(SignUpState.success(userId: event.userId));
+      case SignUpSucceeded(:final userId):
+        emit(SignUpState.success(userId: userId));
         await onSucceeded(event);
-        break;
-      case SignUpEventType.failed:
-        event as SignUpFailed;
-        emit(SignUpState.failure(event.exception));
-        await onFailed(event);
-        break;
     }
   }
 
   @override
-  SignUpState? resolveError(Object error, [StackTrace? st]) {
+  SignUpState? resolveError(Object error, StackTrace st) {
     if (error is Exception) {
-      return SignUpFailure(error);
+      return SignUpFailure(error, st);
     }
     return null;
   }
 
   /// State machine callback for the [SignUpInitiate] event.
   Future<void> onInitiate(SignUpInitiate event) async {
+    UserContextDataType? contextData;
+    final contextDataProvider = _contextDataProvider;
+    contextData = await contextDataProvider.buildRequestData(
+      event.parameters.username,
+    );
     final resp = await _cognito.signUp(
       SignUpRequest.build(
         (b) {
@@ -75,7 +85,7 @@ class SignUpStateMachine extends StateMachine<SignUpEvent, SignUpState,
             ..userAttributes.addAll(
               event.userAttributes.entries.map(
                 (attr) => AttributeType(
-                  name: attr.key,
+                  name: attr.key.key,
                   value: attr.value,
                 ),
               ),
@@ -87,7 +97,8 @@ class SignUpStateMachine extends StateMachine<SignUpEvent, SignUpState,
                   value: attr.value,
                 ),
               ),
-            );
+            )
+            ..analyticsMetadata = get<AnalyticsMetadataType>()?.toBuilder();
 
           final clientSecret = _userPoolConfig.appClientSecret;
           if (clientSecret != null) {
@@ -96,6 +107,10 @@ class SignUpStateMachine extends StateMachine<SignUpEvent, SignUpState,
               _userPoolConfig.appClientId,
               clientSecret,
             );
+          }
+
+          if (contextData != null) {
+            b.userContextData.replace(contextData);
           }
         },
       ),
@@ -115,13 +130,19 @@ class SignUpStateMachine extends StateMachine<SignUpEvent, SignUpState,
 
   /// State machine callback for the [SignUpConfirm] event.
   Future<void> onConfirm(SignUpConfirm event) async {
+    UserContextDataType? contextData;
+    final contextDataProvider = _contextDataProvider;
+    contextData = await contextDataProvider.buildRequestData(
+      event.username,
+    );
     await _cognito.confirmSignUp(
       ConfirmSignUpRequest.build((b) {
         b
           ..clientId = _userPoolConfig.appClientId
           ..username = event.username
           ..confirmationCode = event.confirmationCode
-          ..clientMetadata.addAll(event.clientMetadata);
+          ..clientMetadata.addAll(event.clientMetadata)
+          ..analyticsMetadata = get<AnalyticsMetadataType>()?.toBuilder();
 
         final clientSecret = _userPoolConfig.appClientSecret;
         if (clientSecret != null) {
@@ -131,6 +152,10 @@ class SignUpStateMachine extends StateMachine<SignUpEvent, SignUpState,
             clientSecret,
           );
         }
+
+        if (contextData != null) {
+          b.userContextData.replace(contextData);
+        }
       }),
     ).result;
 
@@ -139,7 +164,4 @@ class SignUpStateMachine extends StateMachine<SignUpEvent, SignUpState,
 
   /// State machine callback for the [SignUpSucceeded] event.
   Future<void> onSucceeded(SignUpSucceeded event) async {}
-
-  /// State machine callback for the [SignUpFailed] event.
-  Future<void> onFailed(SignUpFailed event) async {}
 }

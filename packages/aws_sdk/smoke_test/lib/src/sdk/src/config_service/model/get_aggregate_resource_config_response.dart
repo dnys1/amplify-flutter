@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.get_aggregate_resource_config_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,9 +37,8 @@ abstract class GetAggregateResourceConfigResponse
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
-    GetAggregateResourceConfigResponseAwsJson11Serializer()
-  ];
+  static const List<_i3.SmithySerializer<GetAggregateResourceConfigResponse>>
+      serializers = [GetAggregateResourceConfigResponseAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetAggregateResourceConfigResponseBuilder b) {}
@@ -50,11 +50,11 @@ abstract class GetAggregateResourceConfigResponse
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('GetAggregateResourceConfigResponse');
-    helper.add(
-      'configurationItem',
-      configurationItem,
-    );
+        newBuiltValueToStringHelper('GetAggregateResourceConfigResponse')
+          ..add(
+            'configurationItem',
+            configurationItem,
+          );
     return helper.toString();
   }
 }
@@ -88,15 +88,15 @@ class GetAggregateResourceConfigResponseAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ConfigurationItem':
-          if (value != null) {
-            result.configurationItem.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.ConfigurationItem),
-            ) as _i2.ConfigurationItem));
-          }
-          break;
+          result.configurationItem.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.ConfigurationItem),
+          ) as _i2.ConfigurationItem));
       }
     }
 
@@ -106,19 +106,19 @@ class GetAggregateResourceConfigResponseAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetAggregateResourceConfigResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as GetAggregateResourceConfigResponse);
-    final result = <Object?>[];
-    if (payload.configurationItem != null) {
-      result
+    final result$ = <Object?>[];
+    final GetAggregateResourceConfigResponse(:configurationItem) = object;
+    if (configurationItem != null) {
+      result$
         ..add('ConfigurationItem')
         ..add(serializers.serialize(
-          payload.configurationItem!,
+          configurationItem,
           specifiedType: const FullType(_i2.ConfigurationItem),
         ));
     }
-    return result;
+    return result$;
   }
 }

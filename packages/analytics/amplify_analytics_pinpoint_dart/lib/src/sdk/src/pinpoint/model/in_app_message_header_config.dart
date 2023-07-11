@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_analytics_pinpoint_dart.pinpoint.model.in_app_message_header_config; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,9 +37,8 @@ abstract class InAppMessageHeaderConfig
 
   const InAppMessageHeaderConfig._();
 
-  static const List<_i3.SmithySerializer> serializers = [
-    InAppMessageHeaderConfigRestJson1Serializer()
-  ];
+  static const List<_i3.SmithySerializer<InAppMessageHeaderConfig>>
+      serializers = [InAppMessageHeaderConfigRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(InAppMessageHeaderConfigBuilder b) {}
@@ -59,19 +59,19 @@ abstract class InAppMessageHeaderConfig
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('InAppMessageHeaderConfig');
-    helper.add(
-      'alignment',
-      alignment,
-    );
-    helper.add(
-      'header',
-      header,
-    );
-    helper.add(
-      'textColor',
-      textColor,
-    );
+    final helper = newBuiltValueToStringHelper('InAppMessageHeaderConfig')
+      ..add(
+        'alignment',
+        alignment,
+      )
+      ..add(
+        'header',
+        header,
+      )
+      ..add(
+        'textColor',
+        textColor,
+      );
     return helper.toString();
   }
 }
@@ -105,25 +105,25 @@ class InAppMessageHeaderConfigRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'Alignment':
           result.alignment = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(_i2.Alignment),
           ) as _i2.Alignment);
-          break;
         case 'Header':
           result.header = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'TextColor':
           result.textColor = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -133,27 +133,28 @@ class InAppMessageHeaderConfigRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    InAppMessageHeaderConfig object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as InAppMessageHeaderConfig);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final InAppMessageHeaderConfig(:alignment, :header, :textColor) = object;
+    result$.addAll([
       'Alignment',
       serializers.serialize(
-        payload.alignment,
+        alignment,
         specifiedType: const FullType(_i2.Alignment),
       ),
       'Header',
       serializers.serialize(
-        payload.header,
+        header,
         specifiedType: const FullType(String),
       ),
       'TextColor',
       serializers.serialize(
-        payload.textColor,
+        textColor,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.delete_remediation_exceptions_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -42,9 +43,8 @@ abstract class DeleteRemediationExceptionsRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    DeleteRemediationExceptionsRequestAwsJson11Serializer()
-  ];
+  static const List<_i1.SmithySerializer<DeleteRemediationExceptionsRequest>>
+      serializers = [DeleteRemediationExceptionsRequestAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DeleteRemediationExceptionsRequestBuilder b) {}
@@ -64,15 +64,15 @@ abstract class DeleteRemediationExceptionsRequest
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DeleteRemediationExceptionsRequest');
-    helper.add(
-      'configRuleName',
-      configRuleName,
-    );
-    helper.add(
-      'resourceKeys',
-      resourceKeys,
-    );
+        newBuiltValueToStringHelper('DeleteRemediationExceptionsRequest')
+          ..add(
+            'configRuleName',
+            configRuleName,
+          )
+          ..add(
+            'resourceKeys',
+            resourceKeys,
+          );
     return helper.toString();
   }
 }
@@ -106,13 +106,15 @@ class DeleteRemediationExceptionsRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ConfigRuleName':
           result.configRuleName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'ResourceKeys':
           result.resourceKeys.replace((serializers.deserialize(
             value,
@@ -121,7 +123,6 @@ class DeleteRemediationExceptionsRequestAwsJson11Serializer
               [FullType(_i3.RemediationExceptionResourceKey)],
             ),
           ) as _i4.BuiltList<_i3.RemediationExceptionResourceKey>));
-          break;
       }
     }
 
@@ -131,25 +132,27 @@ class DeleteRemediationExceptionsRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteRemediationExceptionsRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DeleteRemediationExceptionsRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final DeleteRemediationExceptionsRequest(:configRuleName, :resourceKeys) =
+        object;
+    result$.addAll([
       'ConfigRuleName',
       serializers.serialize(
-        payload.configRuleName,
+        configRuleName,
         specifiedType: const FullType(String),
       ),
       'ResourceKeys',
       serializers.serialize(
-        payload.resourceKeys,
+        resourceKeys,
         specifiedType: const FullType(
           _i4.BuiltList,
           [FullType(_i3.RemediationExceptionResourceKey)],
         ),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

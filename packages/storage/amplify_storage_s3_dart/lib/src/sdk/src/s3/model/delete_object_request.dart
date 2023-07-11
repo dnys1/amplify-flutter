@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_storage_s3_dart.s3.model.delete_object_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -22,21 +23,21 @@ abstract class DeleteObjectRequest
         _i1.HasPayload<DeleteObjectRequestPayload> {
   factory DeleteObjectRequest({
     required String bucket,
-    bool? bypassGovernanceRetention,
-    String? expectedBucketOwner,
     required String key,
     String? mfa,
-    _i3.RequestPayer? requestPayer,
     String? versionId,
+    _i3.RequestPayer? requestPayer,
+    bool? bypassGovernanceRetention,
+    String? expectedBucketOwner,
   }) {
     return _$DeleteObjectRequest._(
       bucket: bucket,
-      bypassGovernanceRetention: bypassGovernanceRetention,
-      expectedBucketOwner: expectedBucketOwner,
       key: key,
       mfa: mfa,
-      requestPayer: requestPayer,
       versionId: versionId,
+      requestPayer: requestPayer,
+      bypassGovernanceRetention: bypassGovernanceRetention,
+      expectedBucketOwner: expectedBucketOwner,
     );
   }
 
@@ -78,9 +79,8 @@ abstract class DeleteObjectRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    DeleteObjectRequestRestXmlSerializer()
-  ];
+  static const List<_i1.SmithySerializer<DeleteObjectRequestPayload>>
+      serializers = [DeleteObjectRequestRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DeleteObjectRequestBuilder b) {}
@@ -89,14 +89,8 @@ abstract class DeleteObjectRequest
   ///
   /// When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
   ///
-  /// When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `_AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com`. When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using Amazon S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
+  /// When you use this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `_AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com`. When you use this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts access point ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [What is S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
   String get bucket;
-
-  /// Indicates whether S3 Object Lock should bypass Governance-mode restrictions to process this operation. To use this header, you must have the `s3:BypassGovernanceRetention` permission.
-  bool? get bypassGovernanceRetention;
-
-  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
-  String? get expectedBucketOwner;
 
   /// Key name of the object to delete.
   String get key;
@@ -104,11 +98,17 @@ abstract class DeleteObjectRequest
   /// The concatenation of the authentication device's serial number, a space, and the value that is displayed on your authentication device. Required to permanently delete a versioned object if versioning is configured with MFA delete enabled.
   String? get mfa;
 
+  /// VersionId used to reference a specific version of the object.
+  String? get versionId;
+
   /// Confirms that the requester knows that they will be charged for the request. Bucket owners need not specify this parameter in their requests. For information about downloading objects from Requester Pays buckets, see [Downloading Objects in Requester Pays Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html) in the _Amazon S3 User Guide_.
   _i3.RequestPayer? get requestPayer;
 
-  /// VersionId used to reference a specific version of the object.
-  String? get versionId;
+  /// Indicates whether S3 Object Lock should bypass Governance-mode restrictions to process this operation. To use this header, you must have the `s3:BypassGovernanceRetention` permission.
+  bool? get bypassGovernanceRetention;
+
+  /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
+  String? get expectedBucketOwner;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -128,44 +128,44 @@ abstract class DeleteObjectRequest
   @override
   List<Object?> get props => [
         bucket,
-        bypassGovernanceRetention,
-        expectedBucketOwner,
         key,
         mfa,
-        requestPayer,
         versionId,
+        requestPayer,
+        bypassGovernanceRetention,
+        expectedBucketOwner,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DeleteObjectRequest');
-    helper.add(
-      'bucket',
-      bucket,
-    );
-    helper.add(
-      'bypassGovernanceRetention',
-      bypassGovernanceRetention,
-    );
-    helper.add(
-      'expectedBucketOwner',
-      expectedBucketOwner,
-    );
-    helper.add(
-      'key',
-      key,
-    );
-    helper.add(
-      'mfa',
-      mfa,
-    );
-    helper.add(
-      'requestPayer',
-      requestPayer,
-    );
-    helper.add(
-      'versionId',
-      versionId,
-    );
+    final helper = newBuiltValueToStringHelper('DeleteObjectRequest')
+      ..add(
+        'bucket',
+        bucket,
+      )
+      ..add(
+        'key',
+        key,
+      )
+      ..add(
+        'mfa',
+        mfa,
+      )
+      ..add(
+        'versionId',
+        versionId,
+      )
+      ..add(
+        'requestPayer',
+        requestPayer,
+      )
+      ..add(
+        'bypassGovernanceRetention',
+        bypassGovernanceRetention,
+      )
+      ..add(
+        'expectedBucketOwner',
+        expectedBucketOwner,
+      );
     return helper.toString();
   }
 }
@@ -223,15 +223,16 @@ class DeleteObjectRequestRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteObjectRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName(
         'DeleteObjectRequest',
         _i1.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    return result;
+
+    return result$;
   }
 }

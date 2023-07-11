@@ -1,3 +1,43 @@
+## 0.4.0+2
+
+- Minor bug fixes and improvements
+
+## 0.4.0+1
+
+### Fixes
+- fix(secure_storage): Fallback for CFStringRef decoding ([#3111](https://github.com/aws-amplify/amplify-flutter/pull/3111))
+
+## 0.4.0
+
+### Features
+- Dart 3 support (must update Dart SDK constraint to `^3.0.0`)
+
+## 0.3.0+4
+
+### Fixes
+- fix(repo): Flutter 3.3 support
+
+## 0.3.0+3
+
+- Minor bug fixes and improvements
+
+## 0.3.0+2
+
+- Minor bug fixes and improvements
+
+## 0.3.0+1
+
+- Minor bug fixes and improvements
+
+## 0.3.0
+
+- Minor bug fixes and improvements
+
+## 0.2.0
+
+### Breaking Changes
+- fix(secure_storage)!: use correct values for `kSecAttrAccessible` ([#2649](https://github.com/aws-amplify/amplify-flutter/pull/2649))
+
 ## 0.1.4+3
 
 - Minor bug fixes and improvements

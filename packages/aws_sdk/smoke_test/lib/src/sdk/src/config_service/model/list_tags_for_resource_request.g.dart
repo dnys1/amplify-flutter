@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of smoke_test.config_service.model.list_tags_for_resource_request;
+part of 'list_tags_for_resource_request.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
@@ -8,21 +8,23 @@ part of smoke_test.config_service.model.list_tags_for_resource_request;
 
 class _$ListTagsForResourceRequest extends ListTagsForResourceRequest {
   @override
-  final int? limit;
+  final String resourceArn;
+  @override
+  final int limit;
   @override
   final String? nextToken;
-  @override
-  final String resourceArn;
 
   factory _$ListTagsForResourceRequest(
           [void Function(ListTagsForResourceRequestBuilder)? updates]) =>
       (new ListTagsForResourceRequestBuilder()..update(updates))._build();
 
   _$ListTagsForResourceRequest._(
-      {this.limit, this.nextToken, required this.resourceArn})
+      {required this.resourceArn, required this.limit, this.nextToken})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
         resourceArn, r'ListTagsForResourceRequest', 'resourceArn');
+    BuiltValueNullFieldError.checkNotNull(
+        limit, r'ListTagsForResourceRequest', 'limit');
   }
 
   @override
@@ -38,17 +40,17 @@ class _$ListTagsForResourceRequest extends ListTagsForResourceRequest {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is ListTagsForResourceRequest &&
+        resourceArn == other.resourceArn &&
         limit == other.limit &&
-        nextToken == other.nextToken &&
-        resourceArn == other.resourceArn;
+        nextToken == other.nextToken;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
+    _$hash = $jc(_$hash, resourceArn.hashCode);
     _$hash = $jc(_$hash, limit.hashCode);
     _$hash = $jc(_$hash, nextToken.hashCode);
-    _$hash = $jc(_$hash, resourceArn.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -59,6 +61,10 @@ class ListTagsForResourceRequestBuilder
         Builder<ListTagsForResourceRequest, ListTagsForResourceRequestBuilder> {
   _$ListTagsForResourceRequest? _$v;
 
+  String? _resourceArn;
+  String? get resourceArn => _$this._resourceArn;
+  set resourceArn(String? resourceArn) => _$this._resourceArn = resourceArn;
+
   int? _limit;
   int? get limit => _$this._limit;
   set limit(int? limit) => _$this._limit = limit;
@@ -67,10 +73,6 @@ class ListTagsForResourceRequestBuilder
   String? get nextToken => _$this._nextToken;
   set nextToken(String? nextToken) => _$this._nextToken = nextToken;
 
-  String? _resourceArn;
-  String? get resourceArn => _$this._resourceArn;
-  set resourceArn(String? resourceArn) => _$this._resourceArn = resourceArn;
-
   ListTagsForResourceRequestBuilder() {
     ListTagsForResourceRequest._init(this);
   }
@@ -78,9 +80,9 @@ class ListTagsForResourceRequestBuilder
   ListTagsForResourceRequestBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
+      _resourceArn = $v.resourceArn;
       _limit = $v.limit;
       _nextToken = $v.nextToken;
-      _resourceArn = $v.resourceArn;
       _$v = null;
     }
     return this;
@@ -103,10 +105,11 @@ class ListTagsForResourceRequestBuilder
   _$ListTagsForResourceRequest _build() {
     final _$result = _$v ??
         new _$ListTagsForResourceRequest._(
-            limit: limit,
-            nextToken: nextToken,
             resourceArn: BuiltValueNullFieldError.checkNotNull(
-                resourceArn, r'ListTagsForResourceRequest', 'resourceArn'));
+                resourceArn, r'ListTagsForResourceRequest', 'resourceArn'),
+            limit: BuiltValueNullFieldError.checkNotNull(
+                limit, r'ListTagsForResourceRequest', 'limit'),
+            nextToken: nextToken);
     replace(_$result);
     return _$result;
   }

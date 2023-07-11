@@ -1,3 +1,86 @@
+## 1.2.0
+
+### Fixes
+- fix(api): GraphQL subscription with custom domain formats URI correctly ([#3148](https://github.com/aws-amplify/amplify-flutter/pull/3148))
+
+## 1.1.1
+
+- Minor bug fixes and improvements
+
+## 1.1.0
+
+### Features
+- Dart 3 support (must update Dart SDK constraint to `^3.0.0`)
+
+## 1.0.1
+
+### Fixes
+- fix(repo): Flutter 3.3 support
+
+## 1.0.0
+
+We are thrilled to release version 1.0 of the Amplify Flutter libraries!
+
+This release introduces a full rewrite of the Amplify libraries in Dart, allowing you to build AWS cloud-connected
+applications on every platform Flutter supports (iOS, Android, Web, macOS, Windows, and Linux).
+
+If you've been using v0 in production, you can now safely migrate to v1. Check out our 
+[migration guide](https://docs.amplify.aws/lib/project-setup/upgrade-guide/q/platform/flutter/) for 
+more information.
+
+As always, you can find us on [GitHub](https://github.com/aws-amplify/amplify-flutter/) and 
+[Discord](https://discord.gg/jWVbPfC) to answer any questions.
+
+### New Features in the API category
+
+* `GraphQLRequest` now has an `authorizationMode` property so callers can specify the authorization mode directly.
+* `GraphQLRequest` now has a `headers` property to specify HTTP headers.
+* GraphQL subscriptions will automatically reconnect when losing internet, or when changing from Wi-fi to cellular data or vice versa.
+* GraphQL model helpers now support [custom primary keys](https://docs.amplify.aws/cli/graphql/data-modeling/#configure-a-primary-key).
+* GraphQL subscription model helpers (`ModelSubscriptions`) now support a `where` clause to use server-side subscription filters via model helpers.
+
+### Bug Fixes
+
+The following issues have been fixed in this release:
+
+- Custom primary key support ([#1426](https://github.com/aws-amplify/amplify-flutter/issues/1426))
+- api Model helpers should not pass null fields ([#2492](https://github.com/aws-amplify/amplify-flutter/issues/2492))
+- Authentication Type For Api ([#1557](https://github.com/aws-amplify/amplify-flutter/issues/1557))
+- Adding Headers to Outgoing Requests ([#1217](https://github.com/aws-amplify/amplify-flutter/issues/1217))
+- Custom HTTP Interceptors ([#798](https://github.com/aws-amplify/amplify-flutter/issues/798))
+- Cannot perform DELETE action with body from android device ([#1569](https://github.com/aws-amplify/amplify-flutter/issues/1569))
+
+## 1.0.0-next.8+1
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.8
+
+### Fixes
+- fix(api): Auth provider registration
+- fix(api): Include owner field in selection set ([#2795](https://github.com/aws-amplify/amplify-flutter/pull/2795))
+
+## 1.0.0-next.7
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.6
+
+### Fixes
+- fix(api): early call of Amplify creates wrong instance of AmplifyClass
+- fix(api): write null values in ModelMutations.create() unless owner field ([#2679](https://github.com/aws-amplify/amplify-flutter/pull/2679))
+
+### Breaking Changes
+- feat(api)!: custom primary key support for GraphQL model helpers ([#2606](https://github.com/aws-amplify/amplify-flutter/pull/2606))
+
+### Features
+- feat(api): GraphQL Subscription Where Filter ([#2650](https://github.com/aws-amplify/amplify-flutter/pull/2650))
+
+## 1.0.0-next.5+1
+
+### Fixes
+- fix(api): include parent IDs in selection set for model helpers ([#2655](https://github.com/aws-amplify/amplify-flutter/pull/2655))
+
 ## 1.0.0-next.5
 
 ### Fixes

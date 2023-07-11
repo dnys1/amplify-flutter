@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_auth_cognito_dart.cognito_identity_provider.operation.get_device_operation; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -72,6 +73,7 @@ class GetDeviceOperation extends _i1.HttpOperation<_i2.GetDeviceRequest,
               region: _region,
               service: _i7.AWSService.cognitoIdentityProvider,
               credentialsProvider: _credentialsProvider,
+              isOptional: true,
             ),
             const _i1.WithUserAgent('aws-sdk-dart/0.3.1'),
             const _i5.WithSdkInvocationId(),
@@ -117,7 +119,7 @@ class GetDeviceOperation extends _i1.HttpOperation<_i2.GetDeviceRequest,
       );
   @override
   List<_i1.SmithyError> get errorTypes => const [
-        _i1.SmithyError(
+        _i1.SmithyError<_i9.ForbiddenException, _i9.ForbiddenException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.cognitoidentityprovider',
             shape: 'ForbiddenException',
@@ -127,7 +129,8 @@ class GetDeviceOperation extends _i1.HttpOperation<_i2.GetDeviceRequest,
           statusCode: 403,
           builder: _i9.ForbiddenException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i10.InternalErrorException,
+            _i10.InternalErrorException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.cognitoidentityprovider',
             shape: 'InternalErrorException',
@@ -136,7 +139,8 @@ class GetDeviceOperation extends _i1.HttpOperation<_i2.GetDeviceRequest,
           _i10.InternalErrorException,
           builder: _i10.InternalErrorException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i11.InvalidParameterException,
+            _i11.InvalidParameterException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.cognitoidentityprovider',
             shape: 'InvalidParameterException',
@@ -146,7 +150,8 @@ class GetDeviceOperation extends _i1.HttpOperation<_i2.GetDeviceRequest,
           statusCode: 400,
           builder: _i11.InvalidParameterException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i12.InvalidUserPoolConfigurationException,
+            _i12.InvalidUserPoolConfigurationException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.cognitoidentityprovider',
             shape: 'InvalidUserPoolConfigurationException',
@@ -156,7 +161,8 @@ class GetDeviceOperation extends _i1.HttpOperation<_i2.GetDeviceRequest,
           statusCode: 400,
           builder: _i12.InvalidUserPoolConfigurationException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i13.NotAuthorizedException,
+            _i13.NotAuthorizedException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.cognitoidentityprovider',
             shape: 'NotAuthorizedException',
@@ -166,7 +172,8 @@ class GetDeviceOperation extends _i1.HttpOperation<_i2.GetDeviceRequest,
           statusCode: 403,
           builder: _i13.NotAuthorizedException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i14.PasswordResetRequiredException,
+            _i14.PasswordResetRequiredException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.cognitoidentityprovider',
             shape: 'PasswordResetRequiredException',
@@ -176,7 +183,8 @@ class GetDeviceOperation extends _i1.HttpOperation<_i2.GetDeviceRequest,
           statusCode: 400,
           builder: _i14.PasswordResetRequiredException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i15.ResourceNotFoundException,
+            _i15.ResourceNotFoundException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.cognitoidentityprovider',
             shape: 'ResourceNotFoundException',
@@ -186,7 +194,8 @@ class GetDeviceOperation extends _i1.HttpOperation<_i2.GetDeviceRequest,
           statusCode: 404,
           builder: _i15.ResourceNotFoundException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i16.TooManyRequestsException,
+            _i16.TooManyRequestsException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.cognitoidentityprovider',
             shape: 'TooManyRequestsException',
@@ -196,7 +205,8 @@ class GetDeviceOperation extends _i1.HttpOperation<_i2.GetDeviceRequest,
           statusCode: 429,
           builder: _i16.TooManyRequestsException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i17.UserNotConfirmedException,
+            _i17.UserNotConfirmedException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.cognitoidentityprovider',
             shape: 'UserNotConfirmedException',
@@ -206,7 +216,7 @@ class GetDeviceOperation extends _i1.HttpOperation<_i2.GetDeviceRequest,
           statusCode: 400,
           builder: _i17.UserNotConfirmedException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i18.UserNotFoundException, _i18.UserNotFoundException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.cognitoidentityprovider',
             shape: 'UserNotFoundException',
@@ -239,7 +249,7 @@ class GetDeviceOperation extends _i1.HttpOperation<_i2.GetDeviceRequest,
       ),
       zoneValues: {
         ...?_awsEndpoint.credentialScope?.zoneValues,
-        ...{_i7.AWSHeaders.sdkInvocationId: _i7.uuid(secure: true)}
+        ...{_i7.AWSHeaders.sdkInvocationId: _i7.uuid(secure: true)},
       },
     );
   }

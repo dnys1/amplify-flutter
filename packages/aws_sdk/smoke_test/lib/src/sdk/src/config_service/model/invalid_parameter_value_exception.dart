@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.invalid_parameter_value_exception; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -9,7 +10,7 @@ import 'package:smithy/smithy.dart' as _i2;
 
 part 'invalid_parameter_value_exception.g.dart';
 
-/// One or more of the specified parameters are invalid. Verify that your parameters are valid and try again.
+/// One or more of the specified parameters are not valid. Verify that your parameters are valid and try again.
 abstract class InvalidParameterValueException
     with
         _i1.AWSEquatable<InvalidParameterValueException>
@@ -17,12 +18,12 @@ abstract class InvalidParameterValueException
         Built<InvalidParameterValueException,
             InvalidParameterValueExceptionBuilder>,
         _i2.SmithyHttpException {
-  /// One or more of the specified parameters are invalid. Verify that your parameters are valid and try again.
+  /// One or more of the specified parameters are not valid. Verify that your parameters are valid and try again.
   factory InvalidParameterValueException({String? message}) {
     return _$InvalidParameterValueException._(message: message);
   }
 
-  /// One or more of the specified parameters are invalid. Verify that your parameters are valid and try again.
+  /// One or more of the specified parameters are not valid. Verify that your parameters are valid and try again.
   factory InvalidParameterValueException.build(
           [void Function(InvalidParameterValueExceptionBuilder) updates]) =
       _$InvalidParameterValueException;
@@ -39,9 +40,8 @@ abstract class InvalidParameterValueException
         b.headers = response.headers;
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
-    InvalidParameterValueExceptionAwsJson11Serializer()
-  ];
+  static const List<_i2.SmithySerializer<InvalidParameterValueException>>
+      serializers = [InvalidParameterValueExceptionAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(InvalidParameterValueExceptionBuilder b) {}
@@ -68,12 +68,11 @@ abstract class InvalidParameterValueException
   List<Object?> get props => [message];
   @override
   String toString() {
-    final helper =
-        newBuiltValueToStringHelper('InvalidParameterValueException');
-    helper.add(
-      'message',
-      message,
-    );
+    final helper = newBuiltValueToStringHelper('InvalidParameterValueException')
+      ..add(
+        'message',
+        message,
+      );
     return helper.toString();
   }
 }
@@ -107,15 +106,15 @@ class InvalidParameterValueExceptionAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'message':
-          if (value != null) {
-            result.message = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.message = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -125,19 +124,19 @@ class InvalidParameterValueExceptionAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    InvalidParameterValueException object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as InvalidParameterValueException);
-    final result = <Object?>[];
-    if (payload.message != null) {
-      result
+    final result$ = <Object?>[];
+    final InvalidParameterValueException(:message) = object;
+    if (message != null) {
+      result$
         ..add('message')
         ..add(serializers.serialize(
-          payload.message!,
+          message,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

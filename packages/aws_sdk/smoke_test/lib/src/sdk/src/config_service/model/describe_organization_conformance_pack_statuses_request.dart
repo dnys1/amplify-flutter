@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.describe_organization_conformance_pack_statuses_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -18,16 +19,17 @@ abstract class DescribeOrganizationConformancePackStatusesRequest
         Built<DescribeOrganizationConformancePackStatusesRequest,
             DescribeOrganizationConformancePackStatusesRequestBuilder> {
   factory DescribeOrganizationConformancePackStatusesRequest({
+    List<String>? organizationConformancePackNames,
     int? limit,
     String? nextToken,
-    List<String>? organizationConformancePackNames,
   }) {
+    limit ??= 0;
     return _$DescribeOrganizationConformancePackStatusesRequest._(
-      limit: limit,
-      nextToken: nextToken,
       organizationConformancePackNames: organizationConformancePackNames == null
           ? null
           : _i3.BuiltList(organizationConformancePackNames),
+      limit: limit,
+      nextToken: nextToken,
     );
   }
 
@@ -44,46 +46,50 @@ abstract class DescribeOrganizationConformancePackStatusesRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<
+      _i1.SmithySerializer<
+          DescribeOrganizationConformancePackStatusesRequest>> serializers = [
     DescribeOrganizationConformancePackStatusesRequestAwsJson11Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(
-      DescribeOrganizationConformancePackStatusesRequestBuilder b) {}
-
-  /// The maximum number of OrganizationConformancePackStatuses returned on each page. If you do no specify a number, Config uses the default. The default is 100.
-  int? get limit;
-
-  /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
-  String? get nextToken;
+      DescribeOrganizationConformancePackStatusesRequestBuilder b) {
+    b.limit = 0;
+  }
 
   /// The names of organization conformance packs for which you want status details. If you do not specify any names, Config returns details for all your organization conformance packs.
   _i3.BuiltList<String>? get organizationConformancePackNames;
+
+  /// The maximum number of OrganizationConformancePackStatuses returned on each page. If you do no specify a number, Config uses the default. The default is 100.
+  int get limit;
+
+  /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
+  String? get nextToken;
   @override
   DescribeOrganizationConformancePackStatusesRequest getPayload() => this;
   @override
   List<Object?> get props => [
+        organizationConformancePackNames,
         limit,
         nextToken,
-        organizationConformancePackNames,
       ];
   @override
   String toString() {
     final helper = newBuiltValueToStringHelper(
-        'DescribeOrganizationConformancePackStatusesRequest');
-    helper.add(
-      'limit',
-      limit,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
-    helper.add(
-      'organizationConformancePackNames',
-      organizationConformancePackNames,
-    );
+        'DescribeOrganizationConformancePackStatusesRequest')
+      ..add(
+        'organizationConformancePackNames',
+        organizationConformancePackNames,
+      )
+      ..add(
+        'limit',
+        limit,
+      )
+      ..add(
+        'nextToken',
+        nextToken,
+      );
     return helper.toString();
   }
 }
@@ -118,35 +124,29 @@ class DescribeOrganizationConformancePackStatusesRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
-        case 'Limit':
-          if (value != null) {
-            result.limit = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(int),
-            ) as int);
-          }
-          break;
-        case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
         case 'OrganizationConformancePackNames':
-          if (value != null) {
-            result.organizationConformancePackNames
-                .replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(String)],
-              ),
-            ) as _i3.BuiltList<String>));
-          }
-          break;
+          result.organizationConformancePackNames
+              .replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(String)],
+            ),
+          ) as _i3.BuiltList<String>));
+        case 'Limit':
+          result.limit = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int);
+        case 'NextToken':
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -156,39 +156,41 @@ class DescribeOrganizationConformancePackStatusesRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeOrganizationConformancePackStatusesRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload =
-        (object as DescribeOrganizationConformancePackStatusesRequest);
-    final result = <Object?>[];
-    if (payload.limit != null) {
-      result
-        ..add('Limit')
-        ..add(serializers.serialize(
-          payload.limit!,
-          specifiedType: const FullType(int),
-        ));
-    }
-    if (payload.nextToken != null) {
-      result
-        ..add('NextToken')
-        ..add(serializers.serialize(
-          payload.nextToken!,
-          specifiedType: const FullType(String),
-        ));
-    }
-    if (payload.organizationConformancePackNames != null) {
-      result
+    final result$ = <Object?>[];
+    final DescribeOrganizationConformancePackStatusesRequest(
+      :organizationConformancePackNames,
+      :limit,
+      :nextToken
+    ) = object;
+    result$.addAll([
+      'Limit',
+      serializers.serialize(
+        limit,
+        specifiedType: const FullType(int),
+      ),
+    ]);
+    if (organizationConformancePackNames != null) {
+      result$
         ..add('OrganizationConformancePackNames')
         ..add(serializers.serialize(
-          payload.organizationConformancePackNames!,
+          organizationConformancePackNames,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(String)],
           ),
         ));
     }
-    return result;
+    if (nextToken != null) {
+      result$
+        ..add('NextToken')
+        ..add(serializers.serialize(
+          nextToken,
+          specifiedType: const FullType(String),
+        ));
+    }
+    return result$;
   }
 }

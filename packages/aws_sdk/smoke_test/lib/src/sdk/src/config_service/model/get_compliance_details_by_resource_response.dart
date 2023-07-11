@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.get_compliance_details_by_resource_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -42,7 +43,9 @@ abstract class GetComplianceDetailsByResourceResponse
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
+  static const List<
+          _i4.SmithySerializer<GetComplianceDetailsByResourceResponse>>
+      serializers = [
     GetComplianceDetailsByResourceResponseAwsJson11Serializer()
   ];
 
@@ -62,15 +65,15 @@ abstract class GetComplianceDetailsByResourceResponse
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('GetComplianceDetailsByResourceResponse');
-    helper.add(
-      'evaluationResults',
-      evaluationResults,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+        newBuiltValueToStringHelper('GetComplianceDetailsByResourceResponse')
+          ..add(
+            'evaluationResults',
+            evaluationResults,
+          )
+          ..add(
+            'nextToken',
+            nextToken,
+          );
     return helper.toString();
   }
 }
@@ -104,26 +107,23 @@ class GetComplianceDetailsByResourceResponseAwsJson11Serializer extends _i4
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'EvaluationResults':
-          if (value != null) {
-            result.evaluationResults.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.EvaluationResult)],
-              ),
-            ) as _i3.BuiltList<_i2.EvaluationResult>));
-          }
-          break;
+          result.evaluationResults.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.EvaluationResult)],
+            ),
+          ) as _i3.BuiltList<_i2.EvaluationResult>));
         case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -133,30 +133,33 @@ class GetComplianceDetailsByResourceResponseAwsJson11Serializer extends _i4
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetComplianceDetailsByResourceResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as GetComplianceDetailsByResourceResponse);
-    final result = <Object?>[];
-    if (payload.evaluationResults != null) {
-      result
+    final result$ = <Object?>[];
+    final GetComplianceDetailsByResourceResponse(
+      :evaluationResults,
+      :nextToken
+    ) = object;
+    if (evaluationResults != null) {
+      result$
         ..add('EvaluationResults')
         ..add(serializers.serialize(
-          payload.evaluationResults!,
+          evaluationResults,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(_i2.EvaluationResult)],
           ),
         ));
     }
-    if (payload.nextToken != null) {
-      result
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

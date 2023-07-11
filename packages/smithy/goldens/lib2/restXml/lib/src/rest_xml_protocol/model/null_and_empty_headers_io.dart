@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_xml_v2.rest_xml_protocol.model.null_and_empty_headers_io; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -73,9 +74,8 @@ abstract class NullAndEmptyHeadersIo
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    NullAndEmptyHeadersIoRestXmlSerializer()
-  ];
+  static const List<_i1.SmithySerializer<NullAndEmptyHeadersIoPayload>>
+      serializers = [NullAndEmptyHeadersIoRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(NullAndEmptyHeadersIoBuilder b) {}
@@ -92,19 +92,19 @@ abstract class NullAndEmptyHeadersIo
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('NullAndEmptyHeadersIo');
-    helper.add(
-      'a',
-      a,
-    );
-    helper.add(
-      'b',
-      b,
-    );
-    helper.add(
-      'c',
-      c,
-    );
+    final helper = newBuiltValueToStringHelper('NullAndEmptyHeadersIo')
+      ..add(
+        'a',
+        a,
+      )
+      ..add(
+        'b',
+        b,
+      )
+      ..add(
+        'c',
+        c,
+      );
     return helper.toString();
   }
 }
@@ -165,10 +165,13 @@ class NullAndEmptyHeadersIoRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    NullAndEmptyHeadersIoPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[const _i1.XmlElementName('NullAndEmptyHeadersIo')];
-    return result;
+    final result$ = <Object?>[
+      const _i1.XmlElementName('NullAndEmptyHeadersIo')
+    ];
+
+    return result$;
   }
 }

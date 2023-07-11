@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v2.rest_json_protocol.model.string_payload_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -42,7 +43,7 @@ abstract class StringPayloadInput
         b.payload = payload;
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<_i1.SmithySerializer<String?>> serializers = [
     StringPayloadInputRestJson1Serializer()
   ];
 
@@ -55,11 +56,11 @@ abstract class StringPayloadInput
   List<Object?> get props => [payload];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('StringPayloadInput');
-    helper.add(
-      'payload',
-      payload,
-    );
+    final helper = newBuiltValueToStringHelper('StringPayloadInput')
+      ..add(
+        'payload',
+        payload,
+      );
     return helper.toString();
   }
 }
@@ -95,15 +96,12 @@ class StringPayloadInputRestJson1Serializer
   @override
   Object serialize(
     Serializers serializers,
-    Object? object, {
+    String object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is StringPayloadInput
-        ? object.getPayload()
-        : (object as String?);
-    return (serializers.serialize(
-      payload!,
+    return serializers.serialize(
+      object,
       specifiedType: const FullType(String),
-    ) as Object);
+    )!;
   }
 }

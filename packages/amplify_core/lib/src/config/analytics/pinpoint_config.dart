@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'package:amplify_core/amplify_core.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
 part 'pinpoint_config.g.dart';
@@ -35,7 +36,11 @@ class PinpointPluginConfig
   const PinpointPluginConfig({
     required this.pinpointAnalytics,
     required this.pinpointTargeting,
-  });
+    int autoFlushEventsInterval = 30,
+  }) : _autoFlushEventsInterval = autoFlushEventsInterval;
+
+  factory PinpointPluginConfig.fromJson(Map<String, Object?> json) =>
+      _$PinpointPluginConfigFromJson(json);
 
   /// The plugin's configuration key.
   static const pluginKey = 'awsPinpointAnalyticsPlugin';
@@ -43,19 +48,27 @@ class PinpointPluginConfig
   final PinpointAnalytics pinpointAnalytics;
   final PinpointTargeting pinpointTargeting;
 
-  @override
-  List<Object?> get props => [pinpointAnalytics, pinpointTargeting];
+  final int _autoFlushEventsInterval;
 
-  factory PinpointPluginConfig.fromJson(Map<String, Object?> json) =>
-      _$PinpointPluginConfigFromJson(json);
+  /// The duration in seconds between flushing analytics events to Pinpoint.
+  @_DurationConverter()
+  Duration get autoFlushEventsInterval =>
+      Duration(seconds: _autoFlushEventsInterval);
+
+  @override
+  List<Object?> get props =>
+      [pinpointAnalytics, pinpointTargeting, autoFlushEventsInterval];
 
   PinpointPluginConfig copyWith({
     PinpointAnalytics? pinpointAnalytics,
     PinpointTargeting? pinpointTargeting,
+    int? autoFlushEventsInterval,
   }) {
     return PinpointPluginConfig(
       pinpointAnalytics: pinpointAnalytics ?? this.pinpointAnalytics,
       pinpointTargeting: pinpointTargeting ?? this.pinpointTargeting,
+      autoFlushEventsInterval:
+          autoFlushEventsInterval ?? _autoFlushEventsInterval,
     );
   }
 
@@ -73,14 +86,14 @@ class PinpointAnalytics with AWSEquatable<PinpointAnalytics>, AWSSerializable {
     required this.region,
   });
 
+  factory PinpointAnalytics.fromJson(Map<String, Object?> json) =>
+      _$PinpointAnalyticsFromJson(json);
+
   final String appId;
   final String region;
 
   @override
   List<Object?> get props => [appId, region];
-
-  factory PinpointAnalytics.fromJson(Map<String, Object?> json) =>
-      _$PinpointAnalyticsFromJson(json);
 
   PinpointAnalytics copyWith({
     String? appId,
@@ -102,13 +115,13 @@ class PinpointTargeting with AWSEquatable<PinpointTargeting>, AWSSerializable {
     required this.region,
   });
 
+  factory PinpointTargeting.fromJson(Map<String, Object?> json) =>
+      _$PinpointTargetingFromJson(json);
+
   final String region;
 
   @override
   List<Object?> get props => [region];
-
-  factory PinpointTargeting.fromJson(Map<String, Object?> json) =>
-      _$PinpointTargetingFromJson(json);
 
   PinpointTargeting copyWith({
     String? region,
@@ -118,4 +131,14 @@ class PinpointTargeting with AWSEquatable<PinpointTargeting>, AWSSerializable {
 
   @override
   Map<String, Object?> toJson() => _$PinpointTargetingToJson(this);
+}
+
+class _DurationConverter implements JsonConverter<Duration, int> {
+  const _DurationConverter();
+
+  @override
+  Duration fromJson(int json) => Duration(seconds: json);
+
+  @override
+  int toJson(Duration object) => object.inSeconds;
 }

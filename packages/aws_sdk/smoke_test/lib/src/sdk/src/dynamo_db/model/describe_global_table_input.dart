@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.describe_global_table_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -32,9 +33,8 @@ abstract class DescribeGlobalTableInput
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    DescribeGlobalTableInputAwsJson10Serializer()
-  ];
+  static const List<_i1.SmithySerializer<DescribeGlobalTableInput>>
+      serializers = [DescribeGlobalTableInputAwsJson10Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DescribeGlobalTableInputBuilder b) {}
@@ -47,11 +47,11 @@ abstract class DescribeGlobalTableInput
   List<Object?> get props => [globalTableName];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DescribeGlobalTableInput');
-    helper.add(
-      'globalTableName',
-      globalTableName,
-    );
+    final helper = newBuiltValueToStringHelper('DescribeGlobalTableInput')
+      ..add(
+        'globalTableName',
+        globalTableName,
+      );
     return helper.toString();
   }
 }
@@ -85,13 +85,15 @@ class DescribeGlobalTableInputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'GlobalTableName':
           result.globalTableName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -101,17 +103,18 @@ class DescribeGlobalTableInputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeGlobalTableInput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeGlobalTableInput);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final DescribeGlobalTableInput(:globalTableName) = object;
+    result$.addAll([
       'GlobalTableName',
       serializers.serialize(
-        payload.globalTableName,
+        globalTableName,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

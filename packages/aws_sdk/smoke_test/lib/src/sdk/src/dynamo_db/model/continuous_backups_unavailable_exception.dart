@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.continuous_backups_unavailable_exception; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -39,7 +40,8 @@ abstract class ContinuousBackupsUnavailableException
         b.headers = response.headers;
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<ContinuousBackupsUnavailableException>>
+      serializers = [
     ContinuousBackupsUnavailableExceptionAwsJson10Serializer()
   ];
 
@@ -67,11 +69,11 @@ abstract class ContinuousBackupsUnavailableException
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('ContinuousBackupsUnavailableException');
-    helper.add(
-      'message',
-      message,
-    );
+        newBuiltValueToStringHelper('ContinuousBackupsUnavailableException')
+          ..add(
+            'message',
+            message,
+          );
     return helper.toString();
   }
 }
@@ -105,15 +107,15 @@ class ContinuousBackupsUnavailableExceptionAwsJson10Serializer extends _i2
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'message':
-          if (value != null) {
-            result.message = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.message = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -123,19 +125,19 @@ class ContinuousBackupsUnavailableExceptionAwsJson10Serializer extends _i2
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ContinuousBackupsUnavailableException object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ContinuousBackupsUnavailableException);
-    final result = <Object?>[];
-    if (payload.message != null) {
-      result
+    final result$ = <Object?>[];
+    final ContinuousBackupsUnavailableException(:message) = object;
+    if (message != null) {
+      result$
         ..add('message')
         ..add(serializers.serialize(
-          payload.message!,
+          message,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

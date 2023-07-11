@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.delete_backup_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -28,7 +29,7 @@ abstract class DeleteBackupInput
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<_i1.SmithySerializer<DeleteBackupInput>> serializers = [
     DeleteBackupInputAwsJson10Serializer()
   ];
 
@@ -43,11 +44,11 @@ abstract class DeleteBackupInput
   List<Object?> get props => [backupArn];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DeleteBackupInput');
-    helper.add(
-      'backupArn',
-      backupArn,
-    );
+    final helper = newBuiltValueToStringHelper('DeleteBackupInput')
+      ..add(
+        'backupArn',
+        backupArn,
+      );
     return helper.toString();
   }
 }
@@ -80,13 +81,15 @@ class DeleteBackupInputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'BackupArn':
           result.backupArn = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -96,17 +99,18 @@ class DeleteBackupInputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteBackupInput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DeleteBackupInput);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final DeleteBackupInput(:backupArn) = object;
+    result$.addAll([
       'BackupArn',
       serializers.serialize(
-        payload.backupArn,
+        backupArn,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

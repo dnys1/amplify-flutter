@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.config_rule_compliance_summary_filters; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -34,9 +35,8 @@ abstract class ConfigRuleComplianceSummaryFilters
 
   const ConfigRuleComplianceSummaryFilters._();
 
-  static const List<_i2.SmithySerializer> serializers = [
-    ConfigRuleComplianceSummaryFiltersAwsJson11Serializer()
-  ];
+  static const List<_i2.SmithySerializer<ConfigRuleComplianceSummaryFilters>>
+      serializers = [ConfigRuleComplianceSummaryFiltersAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(ConfigRuleComplianceSummaryFiltersBuilder b) {}
@@ -54,15 +54,15 @@ abstract class ConfigRuleComplianceSummaryFilters
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('ConfigRuleComplianceSummaryFilters');
-    helper.add(
-      'accountId',
-      accountId,
-    );
-    helper.add(
-      'awsRegion',
-      awsRegion,
-    );
+        newBuiltValueToStringHelper('ConfigRuleComplianceSummaryFilters')
+          ..add(
+            'accountId',
+            accountId,
+          )
+          ..add(
+            'awsRegion',
+            awsRegion,
+          );
     return helper.toString();
   }
 }
@@ -96,23 +96,20 @@ class ConfigRuleComplianceSummaryFiltersAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'AccountId':
-          if (value != null) {
-            result.accountId = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.accountId = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'AwsRegion':
-          if (value != null) {
-            result.awsRegion = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.awsRegion = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -122,27 +119,27 @@ class ConfigRuleComplianceSummaryFiltersAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ConfigRuleComplianceSummaryFilters object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ConfigRuleComplianceSummaryFilters);
-    final result = <Object?>[];
-    if (payload.accountId != null) {
-      result
+    final result$ = <Object?>[];
+    final ConfigRuleComplianceSummaryFilters(:accountId, :awsRegion) = object;
+    if (accountId != null) {
+      result$
         ..add('AccountId')
         ..add(serializers.serialize(
-          payload.accountId!,
+          accountId,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.awsRegion != null) {
-      result
+    if (awsRegion != null) {
+      result$
         ..add('AwsRegion')
         ..add(serializers.serialize(
-          payload.awsRegion!,
+          awsRegion,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

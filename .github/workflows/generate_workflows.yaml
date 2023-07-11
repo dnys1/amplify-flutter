@@ -1,0 +1,35 @@
+name: Generate Workflows
+on:
+  push:
+    branches:
+      - main
+      - stable
+  pull_request:
+  schedule:
+    - cron: "0 0 * * 0" # Every Sunday at 00:00
+
+jobs:
+  test:
+    name: Generate Workflows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # 3.5.3
+        with:
+          submodules: true
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@007c7cbb377cdbdf8922e2f8c4172dc60fbaaf9a # main
+        with:
+          sdk: stable
+
+      - name: Setup aft
+        shell: bash # Run in bash regardless of platform
+        run: |
+          # Patch libgit2dart (see https://github.com/dart-lang/pub/issues/3563)
+          ( cd packages/aft/external/libgit2dart; git apply ../libgit2dart.patch )
+          dart pub global activate -spath packages/aft
+          ( cd packages/aft/external/libgit2dart; git reset --hard HEAD )
+
+      - name: Generate Workflows
+        run: aft generate workflows --set-exit-if-changed

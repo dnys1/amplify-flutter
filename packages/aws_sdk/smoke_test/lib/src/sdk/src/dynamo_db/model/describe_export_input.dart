@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.describe_export_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -31,7 +32,7 @@ abstract class DescribeExportInput
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<_i1.SmithySerializer<DescribeExportInput>> serializers = [
     DescribeExportInputAwsJson10Serializer()
   ];
 
@@ -46,11 +47,11 @@ abstract class DescribeExportInput
   List<Object?> get props => [exportArn];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DescribeExportInput');
-    helper.add(
-      'exportArn',
-      exportArn,
-    );
+    final helper = newBuiltValueToStringHelper('DescribeExportInput')
+      ..add(
+        'exportArn',
+        exportArn,
+      );
     return helper.toString();
   }
 }
@@ -83,13 +84,15 @@ class DescribeExportInputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ExportArn':
           result.exportArn = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -99,17 +102,18 @@ class DescribeExportInputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeExportInput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeExportInput);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final DescribeExportInput(:exportArn) = object;
+    result$.addAll([
       'ExportArn',
       serializers.serialize(
-        payload.exportArn,
+        exportArn,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

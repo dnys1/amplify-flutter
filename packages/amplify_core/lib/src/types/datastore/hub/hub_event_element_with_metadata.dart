@@ -8,6 +8,14 @@ part of 'hub_event_element.dart';
 class HubEventElementWithMetadata<ModelIdentifier extends Object,
         M extends Model<ModelIdentifier, M>>
     extends HubEventElement<ModelIdentifier, M> {
+  const HubEventElementWithMetadata(
+    M model, {
+    required this.version,
+    required this.lastChangedAt,
+    bool? deleted,
+  })  : deleted = deleted ?? false,
+        super(model);
+
   /// The version of the model.
   final int version;
 
@@ -16,12 +24,4 @@ class HubEventElementWithMetadata<ModelIdentifier extends Object,
 
   /// Whether or not the model was deleted.
   final bool deleted;
-
-  const HubEventElementWithMetadata(
-    M model, {
-    required this.version,
-    required this.lastChangedAt,
-    bool? deleted,
-  })  : deleted = deleted ?? false,
-        super(model);
 }

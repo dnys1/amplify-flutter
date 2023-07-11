@@ -1,3 +1,58 @@
+## 1.2.0-supports-only-mobile
+
+- Minor bug fixes and improvements
+
+## 1.1.0-supports-only-mobile+1
+
+### Fixes
+- fix(datastore): support nested predicates for observe and observeQuery ([#3029](https://github.com/aws-amplify/amplify-flutter/pull/3029))
+
+## 1.1.0-supports-only-mobile
+
+### Features
+- Dart 3 support (must update Dart SDK constraint to `^3.0.0`)
+
+### Fixes
+- fix(repo): AGP 8.0 compatibility ([#2942](https://github.com/aws-amplify/amplify-flutter/pull/2942))
+
+## 1.0.0-supports-only-mobile.0+1
+
+### Fixes
+- fix(repo): Flutter 3.3 support
+
+## 1.0.0-supports-only-mobile.0
+
+Version 1 of the Amplify libraries have been released to support all the platforms Flutter supports. 
+When interacting with GraphQL APIs, use the API category for all platforms or DataStore for iOS and Android. 
+This is because we retained DataStore on the original Android & iOS implementation. We’re 
+looking to bring data synchronization and offline-first experiences to the web and desktop in the 
+future and would love to get your feedback on [this GitHub issue](https://github.com/aws-amplify/amplify-flutter/issues/234).
+
+As always, you can find us on [GitHub](https://github.com/aws-amplify/amplify-flutter/) and
+[Discord](https://discord.gg/jWVbPfC) to answer any questions you may have.
+
+## 1.0.0-next.8+1
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.8
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.7
+
+### Fixes
+- fix(android): Bump Amplify Android to 2.4.1
+- fix(datastore): support use of java8 features in the example App
+- fix(ios): Bump Amplify iOS to 1.29.1
+
+### Breaking Changes
+- chore(datastore)!: Reorganize + import cleanup ([#2760](https://github.com/aws-amplify/amplify-flutter/pull/2760))
+
+## 1.0.0-next.6
+
+- Minor bug fixes and improvements
+
 ## 1.0.0-next.5
 
 - Minor bug fixes and improvements

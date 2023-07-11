@@ -1,3 +1,100 @@
+## 1.2.0
+
+### Fixes
+- fix(auth): Attribute key equality ([#3136](https://github.com/aws-amplify/amplify-flutter/pull/3136))
+- fix(auth): `signOut` after user deletion ([#3162](https://github.com/aws-amplify/amplify-flutter/pull/3162))
+
+## 1.1.1
+
+### Fixes
+- fix(auth): remove duplicate continuation call for hosted UI ([#3112](https://github.com/aws-amplify/amplify-flutter/pull/3112))
+- fix: suppress browser on sign out when preferPrivateSession is true ([#3099](https://github.com/aws-amplify/amplify-flutter/pull/3099))
+- fix(auth): User attribute serialization
+
+## 1.1.0
+
+### Features
+- Dart 3 support (must update Dart SDK constraint to `^3.0.0`)
+
+## 1.0.1
+
+### Fixes
+- fix(repo): Flutter 3.3 support
+
+## 1.0.0
+
+We are thrilled to release version 1.0 of the Amplify Flutter libraries!
+
+This release introduces a full rewrite of the Amplify libraries in Dart, allowing you to build AWS cloud-connected
+applications on every platform Flutter supports (iOS, Android, Web, macOS, Windows, and Linux).
+
+If you've been using v0 in production, you can now safely migrate to v1. Check out our 
+[migration guide](https://docs.amplify.aws/lib/project-setup/upgrade-guide/q/platform/flutter/) for 
+more information.
+
+As always, you can find us on [GitHub](https://github.com/aws-amplify/amplify-flutter/) and 
+[Discord](https://discord.gg/jWVbPfC) to answer any questions.
+
+### New Features in the Auth category
+
+* `fetchAuthSession` now supports a `forceRefresh` parameter which, when passed, will refresh User Pool tokens and AWS credentials regardless if they’ve expired.
+* The result of `Amplify.Auth.signUp` now provides the user ID of the created user. Previously this was only available after signing in.
+* Custom OAuth providers are now configurable when signing in via Hosted UI.
+* A new `federateToIdentityPool` API has been added to the Cognito plugin which allows federating directly into an Identity Pool to receive AWS credentials using a third-party identity provider (IdP) token.
+    * **Note:** Since this method is only available on the Cognito plugin, it must be called directly on the plugin. The Cognito plugin can be retrieved by calling `Amplify.Auth.getPlugin(AmplifyAuthCognito.pluginKey)` anytime after configuration.
+    * This method prevents usage of any User Pool-related methods. It should only be used in scenarios where you need AWS credentials and already have a mechanism for retrieving OIDC tokens from a third-party IdP.
+
+### Bug Fixes
+
+The following issues have been fixed in this release:
+
+- Users getting session expired right after sign in ([#1271](https://github.com/aws-amplify/amplify-flutter/issues/1271))
+- Inconsistent/Incorrect behavior when fetching auth session without internet access ([#760](https://github.com/aws-amplify/amplify-flutter/issues/760))
+- Amplify.Auth.updateUserAttribute crashes app ([#2361](https://github.com/aws-amplify/amplify-flutter/issues/2361))
+- Support user migration lambda function trigger & USER_PASSWORD authentication type ([#442](https://github.com/aws-amplify/amplify-flutter/issues/442))
+- Custom Auth Flow with passwordless login ([#2393](https://github.com/aws-amplify/amplify-flutter/issues/2393))
+- Error while getting the getCurrentUser if mobile is connected to network without internet ([#2292](https://github.com/aws-amplify/amplify-flutter/issues/2292))
+- NotAuthorizedException exception message are different on android and iOS ([#2231](https://github.com/aws-amplify/amplify-flutter/issues/2231))
+- AuthException/CustomTabsNotSupportedException when default browser does not support custom tabs ([#1830](https://github.com/aws-amplify/amplify-flutter/issues/1830))
+- Auth Fetch Auth Session fail after relogin ([#1438](https://github.com/aws-amplify/amplify-flutter/issues/1438))
+- Not getting lamda exceptions for social login ([#1279](https://github.com/aws-amplify/amplify-flutter/issues/1279))
+- Username from Auth.getCurrentUser has inconsistent casing on iOS and Android ([#723](https://github.com/aws-amplify/amplify-flutter/issues/723))
+- UpdateUserAttributeResult.isUpdated is true on Android but false on iOS if the attribute requires confirmation ([#609](https://github.com/aws-amplify/amplify-flutter/issues/609))
+- Generic AuthException is thrown when the device does not have chrome installed ([#587](https://github.com/aws-amplify/amplify-flutter/issues/587))
+- isSignUpComplete returns True in android even if the user has not been confirmed. In iOS it doesn't. ([#581](https://github.com/aws-amplify/amplify-flutter/issues/581))
+- Username is cached for use in confirmPassword on Android ([#464](https://github.com/aws-amplify/amplify-flutter/issues/464))
+- Remove browser redirection after signOut() in app using social sign in ([#401](https://github.com/aws-amplify/amplify-flutter/issues/401))
+- Force token refresh ([#299](https://github.com/aws-amplify/amplify-flutter/issues/299))
+- Amplify.Auth.getCurrentUser() return different platform results when using email based auth ([#201](https://github.com/aws-amplify/amplify-flutter/issues/201))
+
+## 1.0.0-next.8+1
+
+- Minor bug fixes and improvements
+
+## 1.0.0-next.8
+
+### Breaking Changes
+- chore(auth)!: send Pinpoint Endpoint id to Cognito
+- refactor(auth)!: Remove generic types ([#2804](https://github.com/aws-amplify/amplify-flutter/pull/2804))
+
+### Fixes
+- fix(auth): Always allow repeated `confirmSignIn` attempts
+- fix(auth): Process sign-in events once
+
+## 1.0.0-next.7
+
+### Breaking Changes
+- refactor(auth)!: Plugin options ([#2691](https://github.com/aws-amplify/amplify-flutter/pull/2691))
+
+## 1.0.0-next.6
+
+### Fixes
+- fix(auth): Await `signInUri` in Hosted UI platform ([#2706](https://github.com/aws-amplify/amplify-flutter/pull/2706))
+
+## 1.0.0-next.5+1
+
+- Minor bug fixes and improvements
+
 ## 1.0.0-next.5
 
 ### Breaking Changes

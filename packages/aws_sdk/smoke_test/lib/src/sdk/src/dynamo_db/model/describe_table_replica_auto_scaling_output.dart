@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.describe_table_replica_auto_scaling_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,7 +37,8 @@ abstract class DescribeTableReplicaAutoScalingOutput
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<DescribeTableReplicaAutoScalingOutput>>
+      serializers = [
     DescribeTableReplicaAutoScalingOutputAwsJson10Serializer()
   ];
 
@@ -50,11 +52,11 @@ abstract class DescribeTableReplicaAutoScalingOutput
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DescribeTableReplicaAutoScalingOutput');
-    helper.add(
-      'tableAutoScalingDescription',
-      tableAutoScalingDescription,
-    );
+        newBuiltValueToStringHelper('DescribeTableReplicaAutoScalingOutput')
+          ..add(
+            'tableAutoScalingDescription',
+            tableAutoScalingDescription,
+          );
     return helper.toString();
   }
 }
@@ -88,15 +90,15 @@ class DescribeTableReplicaAutoScalingOutputAwsJson10Serializer extends _i3
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'TableAutoScalingDescription':
-          if (value != null) {
-            result.tableAutoScalingDescription.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.TableAutoScalingDescription),
-            ) as _i2.TableAutoScalingDescription));
-          }
-          break;
+          result.tableAutoScalingDescription.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.TableAutoScalingDescription),
+          ) as _i2.TableAutoScalingDescription));
       }
     }
 
@@ -106,19 +108,20 @@ class DescribeTableReplicaAutoScalingOutputAwsJson10Serializer extends _i3
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeTableReplicaAutoScalingOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeTableReplicaAutoScalingOutput);
-    final result = <Object?>[];
-    if (payload.tableAutoScalingDescription != null) {
-      result
+    final result$ = <Object?>[];
+    final DescribeTableReplicaAutoScalingOutput(:tableAutoScalingDescription) =
+        object;
+    if (tableAutoScalingDescription != null) {
+      result$
         ..add('TableAutoScalingDescription')
         ..add(serializers.serialize(
-          payload.tableAutoScalingDescription!,
+          tableAutoScalingDescription,
           specifiedType: const FullType(_i2.TableAutoScalingDescription),
         ));
     }
-    return result;
+    return result$;
   }
 }

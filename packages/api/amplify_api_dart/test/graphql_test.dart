@@ -66,6 +66,8 @@ const _errorExtensions = {
   'a': 'blah',
   'b': {'c': 'd'}
 };
+const _errorType = 'DynamoDB:ConditionalCheckFailedException';
+const _errorInfo = {'a': 'b'};
 const _expectedErrorResponseBody = {
   'data': null,
   'errors': [
@@ -74,6 +76,8 @@ const _expectedErrorResponseBody = {
       'locations': _errorLocations,
       'path': _errorPath,
       'extensions': _errorExtensions,
+      'errorType': _errorType,
+      'errorInfo': _errorInfo,
     },
   ]
 };
@@ -245,15 +249,14 @@ void main() {
     });
   });
   group('Model Helpers', () {
-    const blogSelectionSet =
-        'id name createdAt file { bucket region key meta { name } } files { bucket region key meta { name } } updatedAt';
+    const blogSelectionSet = 'id name createdAt updatedAt';
 
     test('Query returns proper response.data for Models', () async {
       const expectedDoc =
           'query getBlog(\$id: ID!) { getBlog(id: \$id) { $blogSelectionSet } }';
       const decodePath = 'getBlog';
-
-      final req = ModelQueries.get<Blog>(Blog.classType, _modelQueryId);
+      final blog = Blog(id: _modelQueryId, name: 'Lorem ipsum $_modelQueryId');
+      final req = ModelQueries.get<Blog>(Blog.classType, blog.modelIdentifier);
 
       final operation = Amplify.API.query(request: req);
       final res = await operation.response;
@@ -554,6 +557,8 @@ void main() {
         ],
         path: <dynamic>[..._errorPath],
         extensions: <String, dynamic>{..._errorExtensions},
+        errorType: _errorType,
+        errorInfo: _errorInfo,
       );
 
       expect(res.data, equals(null));

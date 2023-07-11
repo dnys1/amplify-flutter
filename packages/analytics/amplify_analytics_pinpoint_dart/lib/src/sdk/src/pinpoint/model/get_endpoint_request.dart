@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_analytics_pinpoint_dart.pinpoint.model.get_endpoint_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -48,9 +49,8 @@ abstract class GetEndpointRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    GetEndpointRequestRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<GetEndpointRequestPayload>>
+      serializers = [GetEndpointRequestRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetEndpointRequestBuilder b) {}
@@ -83,15 +83,15 @@ abstract class GetEndpointRequest
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('GetEndpointRequest');
-    helper.add(
-      'applicationId',
-      applicationId,
-    );
-    helper.add(
-      'endpointId',
-      endpointId,
-    );
+    final helper = newBuiltValueToStringHelper('GetEndpointRequest')
+      ..add(
+        'applicationId',
+        applicationId,
+      )
+      ..add(
+        'endpointId',
+        endpointId,
+      );
     return helper.toString();
   }
 }
@@ -149,7 +149,7 @@ class GetEndpointRequestRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetEndpointRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) =>
       const <Object?>[];

@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:aft/aft.dart';
 import 'package:aft/src/options/glob_options.dart';
 import 'package:aws_common/aws_common.dart';
+import 'package:collection/collection.dart';
 import 'package:graphs/graphs.dart';
 import 'package:path/path.dart' as p;
 
@@ -57,8 +58,14 @@ class PublishCommand extends AmplifyCommand with GlobOptions {
 
     try {
       final versionInfo = await resolveVersionInfo(package.name);
-      final publishedVersion =
-          versionInfo?.latestPrerelease ?? versionInfo?.latestVersion;
+      final publishedVersion = maxBy(
+        [
+          if (versionInfo?.latestPrerelease != null)
+            versionInfo?.latestPrerelease!,
+          if (versionInfo?.latestVersion != null) versionInfo?.latestVersion!,
+        ],
+        (v) => v,
+      );
       if (publishedVersion == null) {
         logger.info('No published info for package ${package.name}');
         return package;
@@ -120,6 +127,12 @@ class PublishCommand extends AmplifyCommand with GlobOptions {
   static final _validationPreReleaseRegex = RegExp(
     r'\* Packages dependent on a pre-release of another package should themselves be published as a pre-release version\.',
   );
+  static final _validationPreReleaseSdkRegex = RegExp(
+    r'\* Packages with an SDK constraint on a pre-release of the Dart SDK should themselves be published as a pre-release version\.',
+  );
+  static final _validationNonDevOverridesRegex = RegExp(
+    r'\* Non-dev dependencies are overridden in pubspec_overrides\.yaml\.',
+  );
   static final _validationErrorRegex = RegExp(r'^\s*\*');
 
   /// Publishes the package using `pub`.
@@ -154,7 +167,9 @@ class PublishCommand extends AmplifyCommand with GlobOptions {
           .where(_validationErrorRegex.hasMatch)
           .where((line) => !_validationConstraintRegex.hasMatch(line))
           .where((line) => !_validationPreReleaseRegex.hasMatch(line))
-          .where((line) => !_validationCheckedInFilesRegex.hasMatch(line));
+          .where((line) => !_validationCheckedInFilesRegex.hasMatch(line))
+          .where((line) => !_validationNonDevOverridesRegex.hasMatch(line))
+          .where((line) => !_validationPreReleaseSdkRegex.hasMatch(line));
       if (failures.isNotEmpty) {
         logger
           ..error(
@@ -249,11 +264,16 @@ Future<void> runBuildRunner(
   PackageInfo package, {
   required AWSLogger logger,
   required bool verbose,
+  bool force = false,
 }) async {
-  if (!package.needsBuildRunner) {
+  if (!package.needsBuildRunner && !force) {
     return;
   }
-  logger.info('Running build_runner for ${package.name}...');
+  final dartTool = Directory(p.join(package.path, '.dart_tool'));
+  if (!dartTool.existsSync()) {
+    await runPub(package.flavor, ['get'], package);
+  }
+  logger.debug('Running build_runner for ${package.name}...');
   final buildRunnerCmd = await Process.start(
     package.flavor.entrypoint,
     [
@@ -261,7 +281,6 @@ Future<void> runBuildRunner(
       'run',
       'build_runner',
       'build',
-      if (verbose) '--verbose',
       '--delete-conflicting-outputs',
     ],
     workingDirectory: package.path,

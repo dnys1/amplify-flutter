@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.transition; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -34,7 +35,7 @@ abstract class Transition
 
   const Transition._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<Transition>> serializers = [
     TransitionRestXmlSerializer()
   ];
 
@@ -57,19 +58,19 @@ abstract class Transition
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('Transition');
-    helper.add(
-      'date',
-      date,
-    );
-    helper.add(
-      'days',
-      days,
-    );
-    helper.add(
-      'storageClass',
-      storageClass,
-    );
+    final helper = newBuiltValueToStringHelper('Transition')
+      ..add(
+        'date',
+        date,
+      )
+      ..add(
+        'days',
+        days,
+      )
+      ..add(
+        'storageClass',
+        storageClass,
+      );
     return helper.toString();
   }
 }
@@ -99,34 +100,28 @@ class TransitionRestXmlSerializer
     final result = TransitionBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'Date':
-          if (value != null) {
-            result.date = _i3.TimestampSerializer.dateTime.deserialize(
-              serializers,
-              value,
-            );
-          }
-          break;
+          result.date = _i3.TimestampSerializer.dateTime.deserialize(
+            serializers,
+            value,
+          );
         case 'Days':
-          if (value != null) {
-            result.days = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(int),
-            ) as int);
-          }
-          break;
+          result.days = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int);
         case 'StorageClass':
-          if (value != null) {
-            result.storageClass = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.TransitionStorageClass),
-            ) as _i2.TransitionStorageClass);
-          }
-          break;
+          result.storageClass = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.TransitionStorageClass),
+          ) as _i2.TransitionStorageClass);
       }
     }
 
@@ -136,40 +131,40 @@ class TransitionRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    Transition object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as Transition);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i3.XmlElementName(
         'Transition',
         _i3.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    if (payload.date != null) {
-      result
+    final Transition(:date, :days, :storageClass) = object;
+    if (date != null) {
+      result$
         ..add(const _i3.XmlElementName('Date'))
         ..add(_i3.TimestampSerializer.dateTime.serialize(
           serializers,
-          payload.date!,
+          date,
         ));
     }
-    if (payload.days != null) {
-      result
+    if (days != null) {
+      result$
         ..add(const _i3.XmlElementName('Days'))
         ..add(serializers.serialize(
-          payload.days!,
+          days,
           specifiedType: const FullType.nullable(int),
         ));
     }
-    if (payload.storageClass != null) {
-      result
+    if (storageClass != null) {
+      result$
         ..add(const _i3.XmlElementName('StorageClass'))
         ..add(serializers.serialize(
-          payload.storageClass!,
+          storageClass,
           specifiedType: const FullType.nullable(_i2.TransitionStorageClass),
         ));
     }
-    return result;
+    return result$;
   }
 }

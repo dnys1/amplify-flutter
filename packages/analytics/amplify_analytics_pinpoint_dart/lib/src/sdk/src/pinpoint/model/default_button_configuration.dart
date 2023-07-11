@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_analytics_pinpoint_dart.pinpoint.model.default_button_configuration; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -25,7 +26,6 @@ abstract class DefaultButtonConfiguration
     required String text,
     String? textColor,
   }) {
-    borderRadius ??= 0;
     return _$DefaultButtonConfiguration._(
       backgroundColor: backgroundColor,
       borderRadius: borderRadius,
@@ -43,20 +43,17 @@ abstract class DefaultButtonConfiguration
 
   const DefaultButtonConfiguration._();
 
-  static const List<_i3.SmithySerializer> serializers = [
-    DefaultButtonConfigurationRestJson1Serializer()
-  ];
+  static const List<_i3.SmithySerializer<DefaultButtonConfiguration>>
+      serializers = [DefaultButtonConfigurationRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(DefaultButtonConfigurationBuilder b) {
-    b.borderRadius = 0;
-  }
+  static void _init(DefaultButtonConfigurationBuilder b) {}
 
   /// The background color of the button.
   String? get backgroundColor;
 
   /// The border radius of the button.
-  int get borderRadius;
+  int? get borderRadius;
 
   /// Action triggered by the button.
   _i2.ButtonAction get buttonAction;
@@ -80,31 +77,31 @@ abstract class DefaultButtonConfiguration
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DefaultButtonConfiguration');
-    helper.add(
-      'backgroundColor',
-      backgroundColor,
-    );
-    helper.add(
-      'borderRadius',
-      borderRadius,
-    );
-    helper.add(
-      'buttonAction',
-      buttonAction,
-    );
-    helper.add(
-      'link',
-      link,
-    );
-    helper.add(
-      'text',
-      text,
-    );
-    helper.add(
-      'textColor',
-      textColor,
-    );
+    final helper = newBuiltValueToStringHelper('DefaultButtonConfiguration')
+      ..add(
+        'backgroundColor',
+        backgroundColor,
+      )
+      ..add(
+        'borderRadius',
+        borderRadius,
+      )
+      ..add(
+        'buttonAction',
+        buttonAction,
+      )
+      ..add(
+        'link',
+        link,
+      )
+      ..add(
+        'text',
+        text,
+      )
+      ..add(
+        'textColor',
+        textColor,
+      );
     return helper.toString();
   }
 }
@@ -138,49 +135,40 @@ class DefaultButtonConfigurationRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'BackgroundColor':
-          if (value != null) {
-            result.backgroundColor = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
-        case 'BorderRadius':
-          result.borderRadius = (serializers.deserialize(
-            value!,
-            specifiedType: const FullType(int),
-          ) as int);
-          break;
-        case 'ButtonAction':
-          result.buttonAction = (serializers.deserialize(
-            value!,
-            specifiedType: const FullType(_i2.ButtonAction),
-          ) as _i2.ButtonAction);
-          break;
-        case 'Link':
-          if (value != null) {
-            result.link = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
-        case 'Text':
-          result.text = (serializers.deserialize(
-            value!,
+          result.backgroundColor = (serializers.deserialize(
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
+        case 'BorderRadius':
+          result.borderRadius = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int);
+        case 'ButtonAction':
+          result.buttonAction = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.ButtonAction),
+          ) as _i2.ButtonAction);
+        case 'Link':
+          result.link = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'Text':
+          result.text = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'TextColor':
-          if (value != null) {
-            result.textColor = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.textColor = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -190,51 +178,62 @@ class DefaultButtonConfigurationRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DefaultButtonConfiguration object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DefaultButtonConfiguration);
-    final result = <Object?>[
-      'BorderRadius',
-      serializers.serialize(
-        payload.borderRadius,
-        specifiedType: const FullType(int),
-      ),
+    final result$ = <Object?>[];
+    final DefaultButtonConfiguration(
+      :backgroundColor,
+      :borderRadius,
+      :buttonAction,
+      :link,
+      :text,
+      :textColor
+    ) = object;
+    result$.addAll([
       'ButtonAction',
       serializers.serialize(
-        payload.buttonAction,
+        buttonAction,
         specifiedType: const FullType(_i2.ButtonAction),
       ),
       'Text',
       serializers.serialize(
-        payload.text,
+        text,
         specifiedType: const FullType(String),
       ),
-    ];
-    if (payload.backgroundColor != null) {
-      result
+    ]);
+    if (backgroundColor != null) {
+      result$
         ..add('BackgroundColor')
         ..add(serializers.serialize(
-          payload.backgroundColor!,
+          backgroundColor,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.link != null) {
-      result
+    if (borderRadius != null) {
+      result$
+        ..add('BorderRadius')
+        ..add(serializers.serialize(
+          borderRadius,
+          specifiedType: const FullType(int),
+        ));
+    }
+    if (link != null) {
+      result$
         ..add('Link')
         ..add(serializers.serialize(
-          payload.link!,
+          link,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.textColor != null) {
-      result
+    if (textColor != null) {
+      result$
         ..add('TextColor')
         ..add(serializers.serialize(
-          payload.textColor!,
+          textColor,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

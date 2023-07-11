@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v1.rest_json_protocol.model.union_input_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -40,7 +41,7 @@ abstract class UnionInputOutput
   ) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<_i1.SmithySerializer<UnionInputOutput>> serializers = [
     UnionInputOutputRestJson1Serializer()
   ];
 
@@ -55,11 +56,11 @@ abstract class UnionInputOutput
   List<Object?> get props => [contents];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('UnionInputOutput');
-    helper.add(
-      'contents',
-      contents,
-    );
+    final helper = newBuiltValueToStringHelper('UnionInputOutput')
+      ..add(
+        'contents',
+        contents,
+      );
     return helper.toString();
   }
 }
@@ -92,15 +93,15 @@ class UnionInputOutputRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'contents':
-          if (value != null) {
-            result.contents = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i3.MyUnion),
-            ) as _i3.MyUnion);
-          }
-          break;
+          result.contents = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i3.MyUnion),
+          ) as _i3.MyUnion);
       }
     }
 
@@ -110,19 +111,19 @@ class UnionInputOutputRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    UnionInputOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as UnionInputOutput);
-    final result = <Object?>[];
-    if (payload.contents != null) {
-      result
+    final result$ = <Object?>[];
+    final UnionInputOutput(:contents) = object;
+    if (contents != null) {
+      result$
         ..add('contents')
         ..add(serializers.serialize(
-          payload.contents!,
+          contents,
           specifiedType: const FullType(_i3.MyUnion),
         ));
     }
-    return result;
+    return result$;
   }
 }

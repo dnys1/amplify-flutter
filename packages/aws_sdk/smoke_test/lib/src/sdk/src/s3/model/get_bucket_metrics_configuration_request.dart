@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.get_bucket_metrics_configuration_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -21,13 +22,13 @@ abstract class GetBucketMetricsConfigurationRequest
         _i1.HasPayload<GetBucketMetricsConfigurationRequestPayload> {
   factory GetBucketMetricsConfigurationRequest({
     required String bucket,
-    String? expectedBucketOwner,
     required String id,
+    String? expectedBucketOwner,
   }) {
     return _$GetBucketMetricsConfigurationRequest._(
       bucket: bucket,
-      expectedBucketOwner: expectedBucketOwner,
       id: id,
+      expectedBucketOwner: expectedBucketOwner,
     );
   }
 
@@ -55,9 +56,9 @@ abstract class GetBucketMetricsConfigurationRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    GetBucketMetricsConfigurationRequestRestXmlSerializer()
-  ];
+  static const List<
+          _i1.SmithySerializer<GetBucketMetricsConfigurationRequestPayload>>
+      serializers = [GetBucketMetricsConfigurationRequestRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetBucketMetricsConfigurationRequestBuilder b) {}
@@ -65,11 +66,11 @@ abstract class GetBucketMetricsConfigurationRequest
   /// The name of the bucket containing the metrics configuration to retrieve.
   String get bucket;
 
+  /// The ID used to identify the metrics configuration. The ID has a 64 character limit and can only contain letters, numbers, periods, dashes, and underscores.
+  String get id;
+
   /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
   String? get expectedBucketOwner;
-
-  /// The ID used to identify the metrics configuration.
-  String get id;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -88,25 +89,25 @@ abstract class GetBucketMetricsConfigurationRequest
   @override
   List<Object?> get props => [
         bucket,
-        expectedBucketOwner,
         id,
+        expectedBucketOwner,
       ];
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('GetBucketMetricsConfigurationRequest');
-    helper.add(
-      'bucket',
-      bucket,
-    );
-    helper.add(
-      'expectedBucketOwner',
-      expectedBucketOwner,
-    );
-    helper.add(
-      'id',
-      id,
-    );
+        newBuiltValueToStringHelper('GetBucketMetricsConfigurationRequest')
+          ..add(
+            'bucket',
+            bucket,
+          )
+          ..add(
+            'id',
+            id,
+          )
+          ..add(
+            'expectedBucketOwner',
+            expectedBucketOwner,
+          );
     return helper.toString();
   }
 }
@@ -168,15 +169,16 @@ class GetBucketMetricsConfigurationRequestRestXmlSerializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetBucketMetricsConfigurationRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName(
         'GetBucketMetricsConfigurationRequest',
         _i1.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    return result;
+
+    return result$;
   }
 }

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.operation.delete_remediation_configuration_operation; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -112,7 +113,8 @@ class DeleteRemediationConfigurationOperation extends _i1.HttpOperation<
       );
   @override
   List<_i1.SmithyError> get errorTypes => const [
-        _i1.SmithyError(
+        _i1.SmithyError<_i9.InsufficientPermissionsException,
+            _i9.InsufficientPermissionsException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.configservice',
             shape: 'InsufficientPermissionsException',
@@ -121,7 +123,8 @@ class DeleteRemediationConfigurationOperation extends _i1.HttpOperation<
           _i9.InsufficientPermissionsException,
           builder: _i9.InsufficientPermissionsException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i10.InvalidParameterValueException,
+            _i10.InvalidParameterValueException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.configservice',
             shape: 'InvalidParameterValueException',
@@ -130,7 +133,8 @@ class DeleteRemediationConfigurationOperation extends _i1.HttpOperation<
           _i10.InvalidParameterValueException,
           builder: _i10.InvalidParameterValueException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i11.NoSuchRemediationConfigurationException,
+            _i11.NoSuchRemediationConfigurationException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.configservice',
             shape: 'NoSuchRemediationConfigurationException',
@@ -139,7 +143,8 @@ class DeleteRemediationConfigurationOperation extends _i1.HttpOperation<
           _i11.NoSuchRemediationConfigurationException,
           builder: _i11.NoSuchRemediationConfigurationException.fromResponse,
         ),
-        _i1.SmithyError(
+        _i1.SmithyError<_i12.RemediationInProgressException,
+            _i12.RemediationInProgressException>(
           _i1.ShapeId(
             namespace: 'com.amazonaws.configservice',
             shape: 'RemediationInProgressException',
@@ -171,7 +176,7 @@ class DeleteRemediationConfigurationOperation extends _i1.HttpOperation<
       ),
       zoneValues: {
         ...?_awsEndpoint.credentialScope?.zoneValues,
-        ...{_i7.AWSHeaders.sdkInvocationId: _i7.uuid(secure: true)}
+        ...{_i7.AWSHeaders.sdkInvocationId: _i7.uuid(secure: true)},
       },
     );
   }

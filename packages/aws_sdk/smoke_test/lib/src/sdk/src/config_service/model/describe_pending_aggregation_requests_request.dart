@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.describe_pending_aggregation_requests_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -20,6 +21,7 @@ abstract class DescribePendingAggregationRequestsRequest
     int? limit,
     String? nextToken,
   }) {
+    limit ??= 0;
     return _$DescribePendingAggregationRequestsRequest._(
       limit: limit,
       nextToken: nextToken,
@@ -39,15 +41,19 @@ abstract class DescribePendingAggregationRequestsRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<
+          _i1.SmithySerializer<DescribePendingAggregationRequestsRequest>>
+      serializers = [
     DescribePendingAggregationRequestsRequestAwsJson11Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(DescribePendingAggregationRequestsRequestBuilder b) {}
+  static void _init(DescribePendingAggregationRequestsRequestBuilder b) {
+    b.limit = 0;
+  }
 
   /// The maximum number of evaluation results returned on each page. The default is maximum. If you specify 0, Config uses the default.
-  int? get limit;
+  int get limit;
 
   /// The `nextToken` string returned on a previous page that you use to get the next page of results in a paginated response.
   String? get nextToken;
@@ -60,16 +66,16 @@ abstract class DescribePendingAggregationRequestsRequest
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper(
-        'DescribePendingAggregationRequestsRequest');
-    helper.add(
-      'limit',
-      limit,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+    final helper =
+        newBuiltValueToStringHelper('DescribePendingAggregationRequestsRequest')
+          ..add(
+            'limit',
+            limit,
+          )
+          ..add(
+            'nextToken',
+            nextToken,
+          );
     return helper.toString();
   }
 }
@@ -103,23 +109,20 @@ class DescribePendingAggregationRequestsRequestAwsJson11Serializer extends _i1
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'Limit':
-          if (value != null) {
-            result.limit = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(int),
-            ) as int);
-          }
-          break;
+          result.limit = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int);
         case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -129,27 +132,27 @@ class DescribePendingAggregationRequestsRequestAwsJson11Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribePendingAggregationRequestsRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribePendingAggregationRequestsRequest);
-    final result = <Object?>[];
-    if (payload.limit != null) {
-      result
-        ..add('Limit')
-        ..add(serializers.serialize(
-          payload.limit!,
-          specifiedType: const FullType(int),
-        ));
-    }
-    if (payload.nextToken != null) {
-      result
+    final result$ = <Object?>[];
+    final DescribePendingAggregationRequestsRequest(:limit, :nextToken) =
+        object;
+    result$.addAll([
+      'Limit',
+      serializers.serialize(
+        limit,
+        specifiedType: const FullType(int),
+      ),
+    ]);
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

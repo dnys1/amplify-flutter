@@ -1,8 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-library model;
-
 import 'package:amplify_core/amplify_core.dart';
 
 /// {@template query_snapshot}
@@ -12,21 +10,6 @@ import 'package:amplify_core/amplify_core.dart';
 /// {@endtemplate}
 class QuerySnapshot<ModelIdentifier extends Object,
     M extends Model<ModelIdentifier, M>> {
-  // A list of models sorted according to the value provided for sortBy
-  final SortedList<M> _sortedList;
-
-  /// A list of models from the local store at the time that the snapshot was generated
-  List<M> get items => _sortedList.toList();
-
-  /// Indicates whether all sync queries for this model are complete
-  final bool isSynced;
-
-  /// A condition, or group of conditions, used to query data
-  final QueryPredicate? where;
-
-  /// A list of [QuerySortBy] conditions, used to specify the order of results
-  final List<QuerySortBy>? sortBy;
-
   /// {@macro query_snapshot}
   factory QuerySnapshot({
     required List<M> items,
@@ -34,7 +17,7 @@ class QuerySnapshot<ModelIdentifier extends Object,
     QueryPredicate? where,
     List<QuerySortBy>? sortBy,
   }) {
-    var sortedList = SortedList.fromPresortedList(
+    final sortedList = SortedList.fromPresortedList(
       items: items,
       compare: _createCompareFromSortBy<ModelIdentifier, M>(sortBy),
     );
@@ -52,6 +35,20 @@ class QuerySnapshot<ModelIdentifier extends Object,
     this.where,
     this.sortBy,
   }) : _sortedList = sortedList;
+  // A list of models sorted according to the value provided for sortBy
+  final SortedList<M> _sortedList;
+
+  /// A list of models from the local store at the time that the snapshot was generated
+  List<M> get items => _sortedList.toList();
+
+  /// Indicates whether all sync queries for this model are complete
+  final bool isSynced;
+
+  /// A condition, or group of conditions, used to query data
+  final QueryPredicate? where;
+
+  /// A list of [QuerySortBy] conditions, used to specify the order of results
+  final List<QuerySortBy>? sortBy;
 
   /// Returns a new QuerySnapshot with the [status] applied
   // ignore: avoid_positional_boolean_parameters
@@ -74,16 +71,16 @@ class QuerySnapshot<ModelIdentifier extends Object,
   QuerySnapshot<ModelIdentifier, M> withSubscriptionEvent({
     required SubscriptionEvent<ModelIdentifier, M> event,
   }) {
-    SortedList<M> sortedListCopy = SortedList.from(_sortedList);
+    var sortedListCopy = SortedList<M>.from(_sortedList);
     SortedList<M>? updatedSortedList;
 
-    M newItem = event.item;
-    bool newItemMatchesPredicate = where == null || where!.evaluate(newItem);
-    int currentItemIndex = sortedListCopy
+    var newItem = event.item;
+    var newItemMatchesPredicate = where == null || where!.evaluate(newItem);
+    var currentItemIndex = sortedListCopy
         .indexWhere((item) => item.modelIdentifier == newItem.modelIdentifier);
-    M? currentItem =
+    var currentItem =
         currentItemIndex == -1 ? null : sortedListCopy[currentItemIndex];
-    bool currentItemMatchesPredicate =
+    final currentItemMatchesPredicate =
         currentItem != null && (where == null || where!.evaluate(currentItem));
 
     if (event.eventType == EventType.create &&
@@ -134,8 +131,8 @@ int Function(M a, M b)? _createCompareFromSortBy<ModelIdentifier extends Object,
     return null;
   }
   return (M a, M b) {
-    int sortOrder = 0;
-    for (var nextSortBy in sortBy) {
+    var sortOrder = 0;
+    for (final nextSortBy in sortBy) {
       sortOrder = nextSortBy.compare(a, b);
       if (sortOrder != 0) return sortOrder;
     }

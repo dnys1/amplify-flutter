@@ -1,0 +1,16 @@
+name: amplify_test
+description: Test utilities for Amplify packages
+homepage: https://github.com/aws-amplify/amplify-flutter
+publish_to: none
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  amplify_core: any
+  aws_common: any
+  collection: ^1.15.0
+  meta: ^1.8.0
+
+dev_dependencies:
+  amplify_lints: any

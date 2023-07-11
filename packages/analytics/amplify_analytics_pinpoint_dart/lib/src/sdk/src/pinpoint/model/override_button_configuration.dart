@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_analytics_pinpoint_dart.pinpoint.model.override_button_configuration; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -34,9 +35,8 @@ abstract class OverrideButtonConfiguration
 
   const OverrideButtonConfiguration._();
 
-  static const List<_i3.SmithySerializer> serializers = [
-    OverrideButtonConfigurationRestJson1Serializer()
-  ];
+  static const List<_i3.SmithySerializer<OverrideButtonConfiguration>>
+      serializers = [OverrideButtonConfigurationRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(OverrideButtonConfigurationBuilder b) {}
@@ -53,15 +53,15 @@ abstract class OverrideButtonConfiguration
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('OverrideButtonConfiguration');
-    helper.add(
-      'buttonAction',
-      buttonAction,
-    );
-    helper.add(
-      'link',
-      link,
-    );
+    final helper = newBuiltValueToStringHelper('OverrideButtonConfiguration')
+      ..add(
+        'buttonAction',
+        buttonAction,
+      )
+      ..add(
+        'link',
+        link,
+      );
     return helper.toString();
   }
 }
@@ -95,21 +95,20 @@ class OverrideButtonConfigurationRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ButtonAction':
           result.buttonAction = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(_i2.ButtonAction),
           ) as _i2.ButtonAction);
-          break;
         case 'Link':
-          if (value != null) {
-            result.link = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.link = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -119,25 +118,26 @@ class OverrideButtonConfigurationRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    OverrideButtonConfiguration object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as OverrideButtonConfiguration);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final OverrideButtonConfiguration(:buttonAction, :link) = object;
+    result$.addAll([
       'ButtonAction',
       serializers.serialize(
-        payload.buttonAction,
+        buttonAction,
         specifiedType: const FullType(_i2.ButtonAction),
       ),
-    ];
-    if (payload.link != null) {
-      result
+    ]);
+    if (link != null) {
+      result$
         ..add('Link')
         ..add(serializers.serialize(
-          payload.link!,
+          link,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

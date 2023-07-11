@@ -1,3 +1,34 @@
+## 0.4.0+2
+
+- Minor bug fixes and improvements
+
+## 0.4.0+1
+
+- Minor bug fixes and improvements
+
+## 0.4.0
+
+### Features
+- Dart 3 support (must update Dart SDK constraint to `^3.0.0`)
+
+## 0.3.1+7
+
+### Fixes
+- fix(repo): Flutter 3.3 support
+
+## 0.3.1+6
+
+- Minor bug fixes and improvements
+
+## 0.3.1+5
+
+### Fixes
+- fix(sigv4): Query parameter encoding
+
+## 0.3.1+4
+
+- Minor bug fixes and improvements
+
 ## 0.3.1+3
 
 - Minor bug fixes and improvements

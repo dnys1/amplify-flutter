@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.transaction_canceled_exception; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -94,7 +95,7 @@ part 'transaction_canceled_exception.g.dart';
 ///
 ///         *   Throughput exceeds the current capacity for one or more global secondary indexes. DynamoDB is automatically scaling your index so please try again shortly.
 ///
-///             This message is returned when when writes get throttled on an On-Demand GSI as DynamoDB is automatically scaling the GSI.
+///             This message is returned when writes get throttled on an On-Demand GSI as DynamoDB is automatically scaling the GSI.
 ///
 /// *   Validation Error:
 ///
@@ -210,7 +211,7 @@ abstract class TransactionCanceledException
   ///
   ///         *   Throughput exceeds the current capacity for one or more global secondary indexes. DynamoDB is automatically scaling your index so please try again shortly.
   ///
-  ///             This message is returned when when writes get throttled on an On-Demand GSI as DynamoDB is automatically scaling the GSI.
+  ///             This message is returned when writes get throttled on an On-Demand GSI as DynamoDB is automatically scaling the GSI.
   ///
   /// *   Validation Error:
   ///
@@ -238,14 +239,14 @@ abstract class TransactionCanceledException
   ///
   ///         *   The provided expression refers to an attribute that does not exist in the item.
   factory TransactionCanceledException({
-    List<_i3.CancellationReason>? cancellationReasons,
     String? message,
+    List<_i3.CancellationReason>? cancellationReasons,
   }) {
     return _$TransactionCanceledException._(
+      message: message,
       cancellationReasons: cancellationReasons == null
           ? null
           : _i4.BuiltList(cancellationReasons),
-      message: message,
     );
   }
 
@@ -331,7 +332,7 @@ abstract class TransactionCanceledException
   ///
   ///         *   Throughput exceeds the current capacity for one or more global secondary indexes. DynamoDB is automatically scaling your index so please try again shortly.
   ///
-  ///             This message is returned when when writes get throttled on an On-Demand GSI as DynamoDB is automatically scaling the GSI.
+  ///             This message is returned when writes get throttled on an On-Demand GSI as DynamoDB is automatically scaling the GSI.
   ///
   /// *   Validation Error:
   ///
@@ -374,17 +375,16 @@ abstract class TransactionCanceledException
         b.headers = response.headers;
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
-    TransactionCanceledExceptionAwsJson10Serializer()
-  ];
+  static const List<_i2.SmithySerializer<TransactionCanceledException>>
+      serializers = [TransactionCanceledExceptionAwsJson10Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(TransactionCanceledExceptionBuilder b) {}
+  @override
+  String? get message;
 
   /// A list of cancellation reasons.
   _i4.BuiltList<_i3.CancellationReason>? get cancellationReasons;
-  @override
-  String? get message;
   @override
   _i2.ShapeId get shapeId => const _i2.ShapeId(
         namespace: 'com.amazonaws.dynamodb',
@@ -402,20 +402,20 @@ abstract class TransactionCanceledException
   Exception? get underlyingException => null;
   @override
   List<Object?> get props => [
-        cancellationReasons,
         message,
+        cancellationReasons,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('TransactionCanceledException');
-    helper.add(
-      'cancellationReasons',
-      cancellationReasons,
-    );
-    helper.add(
-      'message',
-      message,
-    );
+    final helper = newBuiltValueToStringHelper('TransactionCanceledException')
+      ..add(
+        'message',
+        message,
+      )
+      ..add(
+        'cancellationReasons',
+        cancellationReasons,
+      );
     return helper.toString();
   }
 }
@@ -449,26 +449,23 @@ class TransactionCanceledExceptionAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
-        case 'CancellationReasons':
-          if (value != null) {
-            result.cancellationReasons.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i4.BuiltList,
-                [FullType(_i3.CancellationReason)],
-              ),
-            ) as _i4.BuiltList<_i3.CancellationReason>));
-          }
-          break;
         case 'Message':
-          if (value != null) {
-            result.message = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.message = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'CancellationReasons':
+          result.cancellationReasons.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i4.BuiltList,
+              [FullType(_i3.CancellationReason)],
+            ),
+          ) as _i4.BuiltList<_i3.CancellationReason>));
       }
     }
 
@@ -478,30 +475,30 @@ class TransactionCanceledExceptionAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    TransactionCanceledException object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as TransactionCanceledException);
-    final result = <Object?>[];
-    if (payload.cancellationReasons != null) {
-      result
+    final result$ = <Object?>[];
+    final TransactionCanceledException(:message, :cancellationReasons) = object;
+    if (message != null) {
+      result$
+        ..add('Message')
+        ..add(serializers.serialize(
+          message,
+          specifiedType: const FullType(String),
+        ));
+    }
+    if (cancellationReasons != null) {
+      result$
         ..add('CancellationReasons')
         ..add(serializers.serialize(
-          payload.cancellationReasons!,
+          cancellationReasons,
           specifiedType: const FullType(
             _i4.BuiltList,
             [FullType(_i3.CancellationReason)],
           ),
         ));
     }
-    if (payload.message != null) {
-      result
-        ..add('Message')
-        ..add(serializers.serialize(
-          payload.message!,
-          specifiedType: const FullType(String),
-        ));
-    }
-    return result;
+    return result$;
   }
 }

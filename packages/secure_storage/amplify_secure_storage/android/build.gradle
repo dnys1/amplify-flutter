@@ -1,4 +1,4 @@
-group 'com.amazonaws.amplify.amplify_secure_storage.amplify_secure_storage'
+group 'com.amazonaws.amplify.amplify_secure_storage'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.0'
+        classpath 'com.android.tools.build:gradle:8.0.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -45,12 +45,17 @@ android {
     }
 
     testOptions.unitTests.includeAndroidResources = true
+
+    namespace 'com.amazonaws.amplify.amplify_secure_storage'
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.security:security-crypto:1.0.0'
+    // TODO(Jordan-Nelson): remove once security-crypto:1.1.0 is stable.
+    // See https://github.com/aws-amplify/amplify-flutter/issues/2640
+    implementation 'com.google.crypto.tink:tink-android:[1.8.0'
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.robolectric:robolectric:4.9'
+    testImplementation 'org.robolectric:robolectric:4.10.3'
     testImplementation 'androidx.test:core-ktx:1.5.0'
 }

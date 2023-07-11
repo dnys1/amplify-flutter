@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_storage_s3_dart.s3.model.upload_part_copy_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -28,20 +29,19 @@ abstract class UploadPartCopyRequest
     String? copySourceIfNoneMatch,
     DateTime? copySourceIfUnmodifiedSince,
     String? copySourceRange,
-    String? copySourceSseCustomerAlgorithm,
-    String? copySourceSseCustomerKey,
-    String? copySourceSseCustomerKeyMd5,
-    String? expectedBucketOwner,
-    String? expectedSourceBucketOwner,
     required String key,
     int? partNumber,
-    _i3.RequestPayer? requestPayer,
+    required String uploadId,
     String? sseCustomerAlgorithm,
     String? sseCustomerKey,
     String? sseCustomerKeyMd5,
-    required String uploadId,
+    String? copySourceSseCustomerAlgorithm,
+    String? copySourceSseCustomerKey,
+    String? copySourceSseCustomerKeyMd5,
+    _i3.RequestPayer? requestPayer,
+    String? expectedBucketOwner,
+    String? expectedSourceBucketOwner,
   }) {
-    partNumber ??= 0;
     return _$UploadPartCopyRequest._(
       bucket: bucket,
       copySource: copySource,
@@ -50,18 +50,18 @@ abstract class UploadPartCopyRequest
       copySourceIfNoneMatch: copySourceIfNoneMatch,
       copySourceIfUnmodifiedSince: copySourceIfUnmodifiedSince,
       copySourceRange: copySourceRange,
-      copySourceSseCustomerAlgorithm: copySourceSseCustomerAlgorithm,
-      copySourceSseCustomerKey: copySourceSseCustomerKey,
-      copySourceSseCustomerKeyMd5: copySourceSseCustomerKeyMd5,
-      expectedBucketOwner: expectedBucketOwner,
-      expectedSourceBucketOwner: expectedSourceBucketOwner,
       key: key,
       partNumber: partNumber,
-      requestPayer: requestPayer,
+      uploadId: uploadId,
       sseCustomerAlgorithm: sseCustomerAlgorithm,
       sseCustomerKey: sseCustomerKey,
       sseCustomerKeyMd5: sseCustomerKeyMd5,
-      uploadId: uploadId,
+      copySourceSseCustomerAlgorithm: copySourceSseCustomerAlgorithm,
+      copySourceSseCustomerKey: copySourceSseCustomerKey,
+      copySourceSseCustomerKeyMd5: copySourceSseCustomerKeyMd5,
+      requestPayer: requestPayer,
+      expectedBucketOwner: expectedBucketOwner,
+      expectedSourceBucketOwner: expectedSourceBucketOwner,
     );
   }
 
@@ -162,20 +162,17 @@ abstract class UploadPartCopyRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    UploadPartCopyRequestRestXmlSerializer()
-  ];
+  static const List<_i1.SmithySerializer<UploadPartCopyRequestPayload>>
+      serializers = [UploadPartCopyRequestRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(UploadPartCopyRequestBuilder b) {
-    b.partNumber = 0;
-  }
+  static void _init(UploadPartCopyRequestBuilder b) {}
 
   /// The bucket name.
   ///
   /// When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
   ///
-  /// When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `_AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com`. When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using Amazon S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
+  /// When you use this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `_AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com`. When you use this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts access point ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [What is S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
   String get bucket;
 
   /// Specifies the source object for the copy operation. You specify the value in one of two formats, depending on whether you want to access the source object through an [access point](https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points.html):
@@ -207,29 +204,14 @@ abstract class UploadPartCopyRequest
   /// The range of bytes to copy from the source object. The range value must use the form bytes=first-last, where the first and last are the zero-based byte offsets to copy. For example, bytes=0-9 indicates that you want to copy the first 10 bytes of the source. You can copy a range only if the source object is greater than 5 MB.
   String? get copySourceRange;
 
-  /// Specifies the algorithm to use when decrypting the source object (for example, AES256).
-  String? get copySourceSseCustomerAlgorithm;
-
-  /// Specifies the customer-provided encryption key for Amazon S3 to use to decrypt the source object. The encryption key provided in this header must be one that was used when the source object was created.
-  String? get copySourceSseCustomerKey;
-
-  /// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure that the encryption key was transmitted without error.
-  String? get copySourceSseCustomerKeyMd5;
-
-  /// The account ID of the expected destination bucket owner. If the destination bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
-  String? get expectedBucketOwner;
-
-  /// The account ID of the expected source bucket owner. If the source bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
-  String? get expectedSourceBucketOwner;
-
   /// Object key for which the multipart upload was initiated.
   String get key;
 
   /// Part number of part being copied. This is a positive integer between 1 and 10,000.
-  int get partNumber;
+  int? get partNumber;
 
-  /// Confirms that the requester knows that they will be charged for the request. Bucket owners need not specify this parameter in their requests. For information about downloading objects from Requester Pays buckets, see [Downloading Objects in Requester Pays Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html) in the _Amazon S3 User Guide_.
-  _i3.RequestPayer? get requestPayer;
+  /// Upload ID identifying the multipart upload whose part is being copied.
+  String get uploadId;
 
   /// Specifies the algorithm to use to when encrypting the object (for example, AES256).
   String? get sseCustomerAlgorithm;
@@ -240,8 +222,23 @@ abstract class UploadPartCopyRequest
   /// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure that the encryption key was transmitted without error.
   String? get sseCustomerKeyMd5;
 
-  /// Upload ID identifying the multipart upload whose part is being copied.
-  String get uploadId;
+  /// Specifies the algorithm to use when decrypting the source object (for example, AES256).
+  String? get copySourceSseCustomerAlgorithm;
+
+  /// Specifies the customer-provided encryption key for Amazon S3 to use to decrypt the source object. The encryption key provided in this header must be one that was used when the source object was created.
+  String? get copySourceSseCustomerKey;
+
+  /// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure that the encryption key was transmitted without error.
+  String? get copySourceSseCustomerKeyMd5;
+
+  /// Confirms that the requester knows that they will be charged for the request. Bucket owners need not specify this parameter in their requests. For information about downloading objects from Requester Pays buckets, see [Downloading Objects in Requester Pays Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html) in the _Amazon S3 User Guide_.
+  _i3.RequestPayer? get requestPayer;
+
+  /// The account ID of the expected destination bucket owner. If the destination bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
+  String? get expectedBucketOwner;
+
+  /// The account ID of the expected source bucket owner. If the source bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
+  String? get expectedSourceBucketOwner;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -267,98 +264,98 @@ abstract class UploadPartCopyRequest
         copySourceIfNoneMatch,
         copySourceIfUnmodifiedSince,
         copySourceRange,
-        copySourceSseCustomerAlgorithm,
-        copySourceSseCustomerKey,
-        copySourceSseCustomerKeyMd5,
-        expectedBucketOwner,
-        expectedSourceBucketOwner,
         key,
         partNumber,
-        requestPayer,
+        uploadId,
         sseCustomerAlgorithm,
         sseCustomerKey,
         sseCustomerKeyMd5,
-        uploadId,
+        copySourceSseCustomerAlgorithm,
+        copySourceSseCustomerKey,
+        copySourceSseCustomerKeyMd5,
+        requestPayer,
+        expectedBucketOwner,
+        expectedSourceBucketOwner,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('UploadPartCopyRequest');
-    helper.add(
-      'bucket',
-      bucket,
-    );
-    helper.add(
-      'copySource',
-      copySource,
-    );
-    helper.add(
-      'copySourceIfMatch',
-      copySourceIfMatch,
-    );
-    helper.add(
-      'copySourceIfModifiedSince',
-      copySourceIfModifiedSince,
-    );
-    helper.add(
-      'copySourceIfNoneMatch',
-      copySourceIfNoneMatch,
-    );
-    helper.add(
-      'copySourceIfUnmodifiedSince',
-      copySourceIfUnmodifiedSince,
-    );
-    helper.add(
-      'copySourceRange',
-      copySourceRange,
-    );
-    helper.add(
-      'copySourceSseCustomerAlgorithm',
-      copySourceSseCustomerAlgorithm,
-    );
-    helper.add(
-      'copySourceSseCustomerKey',
-      '***SENSITIVE***',
-    );
-    helper.add(
-      'copySourceSseCustomerKeyMd5',
-      copySourceSseCustomerKeyMd5,
-    );
-    helper.add(
-      'expectedBucketOwner',
-      expectedBucketOwner,
-    );
-    helper.add(
-      'expectedSourceBucketOwner',
-      expectedSourceBucketOwner,
-    );
-    helper.add(
-      'key',
-      key,
-    );
-    helper.add(
-      'partNumber',
-      partNumber,
-    );
-    helper.add(
-      'requestPayer',
-      requestPayer,
-    );
-    helper.add(
-      'sseCustomerAlgorithm',
-      sseCustomerAlgorithm,
-    );
-    helper.add(
-      'sseCustomerKey',
-      '***SENSITIVE***',
-    );
-    helper.add(
-      'sseCustomerKeyMd5',
-      sseCustomerKeyMd5,
-    );
-    helper.add(
-      'uploadId',
-      uploadId,
-    );
+    final helper = newBuiltValueToStringHelper('UploadPartCopyRequest')
+      ..add(
+        'bucket',
+        bucket,
+      )
+      ..add(
+        'copySource',
+        copySource,
+      )
+      ..add(
+        'copySourceIfMatch',
+        copySourceIfMatch,
+      )
+      ..add(
+        'copySourceIfModifiedSince',
+        copySourceIfModifiedSince,
+      )
+      ..add(
+        'copySourceIfNoneMatch',
+        copySourceIfNoneMatch,
+      )
+      ..add(
+        'copySourceIfUnmodifiedSince',
+        copySourceIfUnmodifiedSince,
+      )
+      ..add(
+        'copySourceRange',
+        copySourceRange,
+      )
+      ..add(
+        'key',
+        key,
+      )
+      ..add(
+        'partNumber',
+        partNumber,
+      )
+      ..add(
+        'uploadId',
+        uploadId,
+      )
+      ..add(
+        'sseCustomerAlgorithm',
+        sseCustomerAlgorithm,
+      )
+      ..add(
+        'sseCustomerKey',
+        '***SENSITIVE***',
+      )
+      ..add(
+        'sseCustomerKeyMd5',
+        sseCustomerKeyMd5,
+      )
+      ..add(
+        'copySourceSseCustomerAlgorithm',
+        copySourceSseCustomerAlgorithm,
+      )
+      ..add(
+        'copySourceSseCustomerKey',
+        '***SENSITIVE***',
+      )
+      ..add(
+        'copySourceSseCustomerKeyMd5',
+        copySourceSseCustomerKeyMd5,
+      )
+      ..add(
+        'requestPayer',
+        requestPayer,
+      )
+      ..add(
+        'expectedBucketOwner',
+        expectedBucketOwner,
+      )
+      ..add(
+        'expectedSourceBucketOwner',
+        expectedSourceBucketOwner,
+      );
     return helper.toString();
   }
 }
@@ -419,15 +416,16 @@ class UploadPartCopyRequestRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    UploadPartCopyRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName(
         'UploadPartCopyRequest',
         _i1.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    return result;
+
+    return result$;
   }
 }

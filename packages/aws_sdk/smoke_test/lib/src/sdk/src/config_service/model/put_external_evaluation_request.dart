@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.put_external_evaluation_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -41,9 +42,8 @@ abstract class PutExternalEvaluationRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    PutExternalEvaluationRequestAwsJson11Serializer()
-  ];
+  static const List<_i1.SmithySerializer<PutExternalEvaluationRequest>>
+      serializers = [PutExternalEvaluationRequestAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(PutExternalEvaluationRequestBuilder b) {}
@@ -62,15 +62,15 @@ abstract class PutExternalEvaluationRequest
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('PutExternalEvaluationRequest');
-    helper.add(
-      'configRuleName',
-      configRuleName,
-    );
-    helper.add(
-      'externalEvaluation',
-      externalEvaluation,
-    );
+    final helper = newBuiltValueToStringHelper('PutExternalEvaluationRequest')
+      ..add(
+        'configRuleName',
+        configRuleName,
+      )
+      ..add(
+        'externalEvaluation',
+        externalEvaluation,
+      );
     return helper.toString();
   }
 }
@@ -104,19 +104,20 @@ class PutExternalEvaluationRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ConfigRuleName':
           result.configRuleName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'ExternalEvaluation':
           result.externalEvaluation.replace((serializers.deserialize(
             value,
             specifiedType: const FullType(_i3.ExternalEvaluation),
           ) as _i3.ExternalEvaluation));
-          break;
       }
     }
 
@@ -126,22 +127,24 @@ class PutExternalEvaluationRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    PutExternalEvaluationRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as PutExternalEvaluationRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final PutExternalEvaluationRequest(:configRuleName, :externalEvaluation) =
+        object;
+    result$.addAll([
       'ConfigRuleName',
       serializers.serialize(
-        payload.configRuleName,
+        configRuleName,
         specifiedType: const FullType(String),
       ),
       'ExternalEvaluation',
       serializers.serialize(
-        payload.externalEvaluation,
+        externalEvaluation,
         specifiedType: const FullType(_i3.ExternalEvaluation),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

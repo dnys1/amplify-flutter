@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.delete_gateway_response_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -24,12 +25,12 @@ abstract class DeleteGatewayResponseRequest
         _i1.HasPayload<DeleteGatewayResponseRequestPayload> {
   /// Clears any customization of a GatewayResponse of a specified response type on the given RestApi and resets it with the default settings.
   factory DeleteGatewayResponseRequest({
-    required _i3.GatewayResponseType responseType,
     required String restApiId,
+    required _i3.GatewayResponseType responseType,
   }) {
     return _$DeleteGatewayResponseRequest._(
-      responseType: responseType,
       restApiId: restApiId,
+      responseType: responseType,
     );
   }
 
@@ -55,18 +56,17 @@ abstract class DeleteGatewayResponseRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    DeleteGatewayResponseRequestRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<DeleteGatewayResponseRequestPayload>>
+      serializers = [DeleteGatewayResponseRequestRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DeleteGatewayResponseRequestBuilder b) {}
 
-  /// The response type of the associated GatewayResponse.
-  _i3.GatewayResponseType get responseType;
-
   /// The string identifier of the associated RestApi.
   String get restApiId;
+
+  /// The response type of the associated GatewayResponse.
+  _i3.GatewayResponseType get responseType;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -86,20 +86,20 @@ abstract class DeleteGatewayResponseRequest
       DeleteGatewayResponseRequestPayload();
   @override
   List<Object?> get props => [
-        responseType,
         restApiId,
+        responseType,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DeleteGatewayResponseRequest');
-    helper.add(
-      'responseType',
-      responseType,
-    );
-    helper.add(
-      'restApiId',
-      restApiId,
-    );
+    final helper = newBuiltValueToStringHelper('DeleteGatewayResponseRequest')
+      ..add(
+        'restApiId',
+        restApiId,
+      )
+      ..add(
+        'responseType',
+        responseType,
+      );
     return helper.toString();
   }
 }
@@ -161,7 +161,7 @@ class DeleteGatewayResponseRequestRestJson1Serializer extends _i1
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteGatewayResponseRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) =>
       const <Object?>[];

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v1.rest_json_protocol.operation.all_query_string_types_operation; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -198,6 +199,20 @@ class AllQueryStringTypesOperation extends _i1.HttpOperation<
             );
           }
         }
+        if (input.queryIntegerEnum != null) {
+          b.queryParameters.add(
+            'IntegerEnum',
+            input.queryIntegerEnum!.toString(),
+          );
+        }
+        if (input.queryIntegerEnumList != null) {
+          for (var value in input.queryIntegerEnumList!) {
+            b.queryParameters.add(
+              'IntegerEnumList',
+              value.toString(),
+            );
+          }
+        }
         if (input.queryParamsMapOfStringList != null) {
           for (var entry in input.queryParamsMapOfStringList!.toMap().entries) {
             for (var value in entry.value) {
@@ -241,7 +256,7 @@ class AllQueryStringTypesOperation extends _i1.HttpOperation<
       ),
       zoneValues: {
         ...?_awsEndpoint.credentialScope?.zoneValues,
-        ...{_i6.AWSHeaders.sdkInvocationId: _i6.uuid(secure: true)}
+        ...{_i6.AWSHeaders.sdkInvocationId: _i6.uuid(secure: true)},
       },
     );
   }

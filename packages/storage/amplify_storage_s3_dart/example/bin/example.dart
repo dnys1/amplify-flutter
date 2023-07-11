@@ -49,34 +49,24 @@ Future<void> main() async {
     switch (operationNum) {
       case 1:
         await listOperation();
-        break;
       case 2:
         await getPropertiesOperation();
-        break;
       case 3:
         await getUrlOperation();
-        break;
       case 4:
         await downloadDataOperation();
-        break;
       case 5:
         await downloadFileOperation();
-        break;
       case 6:
-        await uploadDataUrlOperation();
         break;
       case 7:
         await uploadFileOperation();
-        break;
       case 8:
         await copyOperation();
-        break;
       case 9:
         await moveOperation();
-        break;
       case 10:
         await removeOperation();
-        break;
       case null:
         break;
       case 0:
@@ -99,8 +89,11 @@ Future<void> listOperation() async {
   // get plugin with plugin key to gain S3 specific interface
   final s3Plugin = Amplify.Storage.getPlugin(AmplifyStorageS3Dart.pluginKey);
   final options = listAll
-      ? const S3ListOptions.listAll()
-      : S3ListOptions(
+      ? StorageListOptions(
+          accessLevel: accessLevel,
+          pluginOptions: const S3ListPluginOptions.listAll(),
+        )
+      : StorageListOptions(
           accessLevel: accessLevel,
           pageSize: pageSize,
         );
@@ -144,7 +137,7 @@ Future<void> listOperation() async {
     result = await s3Plugin
         .list(
           path: path,
-          options: S3ListOptions(
+          options: StorageListOptions(
             accessLevel: accessLevel,
             pageSize: pageSize,
             nextToken: result.nextToken,
@@ -163,7 +156,7 @@ Future<void> getPropertiesOperation() async {
   final s3Plugin = Amplify.Storage.getPlugin(AmplifyStorageS3Dart.pluginKey);
   final getPropertiesOperation = s3Plugin.getProperties(
     key: key,
-    options: S3GetPropertiesOptions(
+    options: StorageGetPropertiesOptions(
       accessLevel: accessLevel,
     ),
   );
@@ -188,13 +181,15 @@ Future<void> getUrlOperation() async {
   final s3Plugin = Amplify.Storage.getPlugin(AmplifyStorageS3Dart.pluginKey);
   final getUrlOperation = s3Plugin.getUrl(
     key: key,
-    options: S3GetUrlOptions(
+    options: StorageGetUrlOptions(
       accessLevel: accessLevel,
-      expiresIn: const Duration(
-        minutes: 10,
+      pluginOptions: S3GetUrlPluginOptions(
+        expiresIn: const Duration(
+          minutes: 10,
+        ),
+        validateObjectExistence: true,
+        useAccelerateEndpoint: useAccelerateEndpoint,
       ),
-      checkObjectExistence: true,
-      useAccelerateEndpoint: useAccelerateEndpoint,
     ),
   );
 
@@ -219,9 +214,11 @@ Future<void> downloadDataOperation() async {
   final s3Plugin = Amplify.Storage.getPlugin(AmplifyStorageS3Dart.pluginKey);
   final downloadDataOperation = s3Plugin.downloadData(
     key: key,
-    options: S3DownloadDataOptions(
+    options: StorageDownloadDataOptions(
       accessLevel: accessLevel,
-      getProperties: true,
+      pluginOptions: const S3DownloadDataPluginOptions(
+        getProperties: true,
+      ),
     ),
     onProgress: onTransferProgress,
   );
@@ -262,10 +259,12 @@ Future<void> downloadFileOperation() async {
   final downloadFileOperation = s3Plugin.downloadFile(
     key: key,
     localFile: localFile,
-    options: S3DownloadFileOptions(
-      getProperties: true,
+    options: StorageDownloadFileOptions(
       accessLevel: accessLevel,
-      useAccelerateEndpoint: useAccelerateEndpoint,
+      pluginOptions: S3DownloadFilePluginOptions(
+        getProperties: true,
+        useAccelerateEndpoint: useAccelerateEndpoint,
+      ),
     ),
     onProgress: onTransferProgress,
   );
@@ -301,9 +300,11 @@ Future<void> uploadDataUrlOperation() async {
   final uploadDataOperation = s3Plugin.uploadData(
     data: S3DataPayload.dataUrl(dataUrl),
     key: key,
-    options: S3UploadDataOptions(
+    options: StorageUploadDataOptions(
       accessLevel: accessLevel,
-      getProperties: true,
+      pluginOptions: const S3UploadDataPluginOptions(
+        getProperties: true,
+      ),
     ),
   );
 
@@ -345,13 +346,15 @@ Future<void> uploadFileOperation() async {
     localFile: file,
     key: key,
     onProgress: onTransferProgress,
-    options: S3UploadFileOptions(
+    options: StorageUploadFileOptions(
       accessLevel: accessLevel,
-      getProperties: true,
       metadata: {
         'nameTag': nameTag,
       },
-      useAccelerateEndpoint: useAccelerateEndpoint,
+      pluginOptions: S3UploadFilePluginOptions(
+        getProperties: true,
+        useAccelerateEndpoint: useAccelerateEndpoint,
+      ),
     ),
   );
 
@@ -395,7 +398,9 @@ Future<void> copyOperation() async {
       storageItem: S3Item(key: destinationKey),
       accessLevel: destinationStorageAccessLevel,
     ),
-    options: const S3CopyOptions(getProperties: true),
+    options: const StorageCopyOptions(
+      pluginOptions: S3CopyPluginOptions(getProperties: true),
+    ),
   );
 
   try {
@@ -434,7 +439,9 @@ Future<void> moveOperation() async {
       storageItem: S3Item(key: destinationKey),
       accessLevel: destinationStorageAccessLevel,
     ),
-    options: const S3MoveOptions(getProperties: true),
+    options: const StorageMoveOptions(
+      pluginOptions: S3MovePluginOptions(getProperties: true),
+    ),
   );
 
   try {
@@ -462,7 +469,7 @@ Future<void> removeOperation() async {
   final s3Plugin = Amplify.Storage.getPlugin(AmplifyStorageS3Dart.pluginKey);
   final removeOperation = s3Plugin.remove(
     key: key,
-    options: S3RemoveOptions(
+    options: StorageRemoveOptions(
       accessLevel: accessLevel,
     ),
   );

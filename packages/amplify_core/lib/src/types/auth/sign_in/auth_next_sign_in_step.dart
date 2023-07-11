@@ -2,28 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'package:amplify_core/amplify_core.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 part 'auth_next_sign_in_step.g.dart';
 
-@JsonSerializable(
-  genericArgumentFactories: true,
-  includeIfNull: false,
-  explicitToJson: true,
-  // TODO(dnys1): Fix generic serialization
-  createFactory: false,
-)
-class AuthNextSignInStep<Key extends AuthUserAttributeKey> extends AuthNextStep
-    with
-        // TODO(dnys1): https://github.com/dart-lang/sdk/issues/49484
-        AWSEquatable<AuthNextSignInStep<Key>>,
-        AWSDebuggable {
+@zAmplifySerializable
+class AuthNextSignInStep extends AuthNextStep
+    with AWSEquatable<AuthNextSignInStep>, AWSDebuggable {
   const AuthNextSignInStep({
     super.additionalInfo,
     super.codeDeliveryDetails,
     required this.signInStep,
     this.missingAttributes = const [],
   });
+
+  factory AuthNextSignInStep.fromJson(Map<String, Object?> json) =>
+      _$AuthNextSignInStepFromJson(json);
 
   final AuthSignInStep signInStep;
 
@@ -32,7 +25,7 @@ class AuthNextSignInStep<Key extends AuthUserAttributeKey> extends AuthNextStep
   ///
   /// Values for these attributes should be passed to the next
   /// `Amplify.Auth.confirmSignIn` call.
-  final List<Key> missingAttributes;
+  final List<AuthUserAttributeKey> missingAttributes;
 
   @override
   List<Object?> get props => [
@@ -44,8 +37,5 @@ class AuthNextSignInStep<Key extends AuthUserAttributeKey> extends AuthNextStep
   String get runtimeTypeName => 'AuthNextSignInStep';
 
   @override
-  Map<String, Object?> toJson() => _$AuthNextSignInStepToJson(
-        this,
-        (Key key) => key.toJson(),
-      );
+  Map<String, Object?> toJson() => _$AuthNextSignInStepToJson(this);
 }

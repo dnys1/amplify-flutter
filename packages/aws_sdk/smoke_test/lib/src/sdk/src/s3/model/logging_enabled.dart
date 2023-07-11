@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.logging_enabled; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -34,7 +35,7 @@ abstract class LoggingEnabled
 
   const LoggingEnabled._();
 
-  static const List<_i4.SmithySerializer> serializers = [
+  static const List<_i4.SmithySerializer<LoggingEnabled>> serializers = [
     LoggingEnabledRestXmlSerializer()
   ];
 
@@ -59,19 +60,19 @@ abstract class LoggingEnabled
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('LoggingEnabled');
-    helper.add(
-      'targetBucket',
-      targetBucket,
-    );
-    helper.add(
-      'targetGrants',
-      targetGrants,
-    );
-    helper.add(
-      'targetPrefix',
-      targetPrefix,
-    );
+    final helper = newBuiltValueToStringHelper('LoggingEnabled')
+      ..add(
+        'targetBucket',
+        targetBucket,
+      )
+      ..add(
+        'targetGrants',
+        targetGrants,
+      )
+      ..add(
+        'targetPrefix',
+        targetPrefix,
+      );
     return helper.toString();
   }
 }
@@ -101,36 +102,34 @@ class LoggingEnabledRestXmlSerializer
     final result = LoggingEnabledBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'TargetBucket':
           result.targetBucket = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'TargetGrants':
-          if (value != null) {
-            result.targetGrants.replace(
-                (const _i4.XmlBuiltListSerializer(memberName: 'Grant')
-                    .deserialize(
-              serializers,
-              (value as Iterable<Object?>),
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.TargetGrant)],
-              ),
-            ) as _i3.BuiltList<_i2.TargetGrant>));
-          }
-          break;
+          result.targetGrants.replace(
+              (const _i4.XmlBuiltListSerializer(memberName: 'Grant')
+                  .deserialize(
+            serializers,
+            value is String ? const [] : (value as Iterable<Object?>),
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.TargetGrant)],
+            ),
+          ) as _i3.BuiltList<_i2.TargetGrant>));
         case 'TargetPrefix':
           result.targetPrefix = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -140,40 +139,40 @@ class LoggingEnabledRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    LoggingEnabled object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as LoggingEnabled);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i4.XmlElementName(
         'LoggingEnabled',
         _i4.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    result
+    final LoggingEnabled(:targetBucket, :targetGrants, :targetPrefix) = object;
+    result$
       ..add(const _i4.XmlElementName('TargetBucket'))
       ..add(serializers.serialize(
-        payload.targetBucket,
+        targetBucket,
         specifiedType: const FullType(String),
       ));
-    if (payload.targetGrants != null) {
-      result
+    if (targetGrants != null) {
+      result$
         ..add(const _i4.XmlElementName('TargetGrants'))
         ..add(const _i4.XmlBuiltListSerializer(memberName: 'Grant').serialize(
           serializers,
-          payload.targetGrants!,
+          targetGrants,
           specifiedType: const FullType.nullable(
             _i3.BuiltList,
             [FullType(_i2.TargetGrant)],
           ),
         ));
     }
-    result
+    result$
       ..add(const _i4.XmlElementName('TargetPrefix'))
       ..add(serializers.serialize(
-        payload.targetPrefix,
+        targetPrefix,
         specifiedType: const FullType(String),
       ));
-    return result;
+    return result$;
   }
 }

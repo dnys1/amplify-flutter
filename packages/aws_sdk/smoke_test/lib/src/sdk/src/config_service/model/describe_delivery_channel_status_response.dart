@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.describe_delivery_channel_status_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -42,7 +43,8 @@ abstract class DescribeDeliveryChannelStatusResponse
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
+  static const List<_i4.SmithySerializer<DescribeDeliveryChannelStatusResponse>>
+      serializers = [
     DescribeDeliveryChannelStatusResponseAwsJson11Serializer()
   ];
 
@@ -56,11 +58,11 @@ abstract class DescribeDeliveryChannelStatusResponse
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DescribeDeliveryChannelStatusResponse');
-    helper.add(
-      'deliveryChannelsStatus',
-      deliveryChannelsStatus,
-    );
+        newBuiltValueToStringHelper('DescribeDeliveryChannelStatusResponse')
+          ..add(
+            'deliveryChannelsStatus',
+            deliveryChannelsStatus,
+          );
     return helper.toString();
   }
 }
@@ -94,18 +96,18 @@ class DescribeDeliveryChannelStatusResponseAwsJson11Serializer extends _i4
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'DeliveryChannelsStatus':
-          if (value != null) {
-            result.deliveryChannelsStatus.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.DeliveryChannelStatus)],
-              ),
-            ) as _i3.BuiltList<_i2.DeliveryChannelStatus>));
-          }
-          break;
+          result.deliveryChannelsStatus.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.DeliveryChannelStatus)],
+            ),
+          ) as _i3.BuiltList<_i2.DeliveryChannelStatus>));
       }
     }
 
@@ -115,22 +117,23 @@ class DescribeDeliveryChannelStatusResponseAwsJson11Serializer extends _i4
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeDeliveryChannelStatusResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeDeliveryChannelStatusResponse);
-    final result = <Object?>[];
-    if (payload.deliveryChannelsStatus != null) {
-      result
+    final result$ = <Object?>[];
+    final DescribeDeliveryChannelStatusResponse(:deliveryChannelsStatus) =
+        object;
+    if (deliveryChannelsStatus != null) {
+      result$
         ..add('DeliveryChannelsStatus')
         ..add(serializers.serialize(
-          payload.deliveryChannelsStatus!,
+          deliveryChannelsStatus,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(_i2.DeliveryChannelStatus)],
           ),
         ));
     }
-    return result;
+    return result$;
   }
 }

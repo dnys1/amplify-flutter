@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.bucket_logging_status; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -26,7 +27,7 @@ abstract class BucketLoggingStatus
 
   const BucketLoggingStatus._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<BucketLoggingStatus>> serializers = [
     BucketLoggingStatusRestXmlSerializer()
   ];
 
@@ -39,11 +40,11 @@ abstract class BucketLoggingStatus
   List<Object?> get props => [loggingEnabled];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('BucketLoggingStatus');
-    helper.add(
-      'loggingEnabled',
-      loggingEnabled,
-    );
+    final helper = newBuiltValueToStringHelper('BucketLoggingStatus')
+      ..add(
+        'loggingEnabled',
+        loggingEnabled,
+      );
     return helper.toString();
   }
 }
@@ -73,18 +74,18 @@ class BucketLoggingStatusRestXmlSerializer
     final result = BucketLoggingStatusBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'LoggingEnabled':
-          if (value != null) {
-            result.loggingEnabled.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.LoggingEnabled),
-            ) as _i2.LoggingEnabled));
-          }
-          break;
+          result.loggingEnabled.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.LoggingEnabled),
+          ) as _i2.LoggingEnabled));
       }
     }
 
@@ -94,24 +95,24 @@ class BucketLoggingStatusRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    BucketLoggingStatus object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as BucketLoggingStatus);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i3.XmlElementName(
         'BucketLoggingStatus',
         _i3.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    if (payload.loggingEnabled != null) {
-      result
+    final BucketLoggingStatus(:loggingEnabled) = object;
+    if (loggingEnabled != null) {
+      result$
         ..add(const _i3.XmlElementName('LoggingEnabled'))
         ..add(serializers.serialize(
-          payload.loggingEnabled!,
+          loggingEnabled,
           specifiedType: const FullType(_i2.LoggingEnabled),
         ));
     }
-    return result;
+    return result$;
   }
 }

@@ -1,7 +1,17 @@
-// ignore_for_file: prefer_single_quotes
-
-// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-// SPDX-License-Identifier: Apache-2.0
+/*
+* Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+*
+* Licensed under the Apache License, Version 2.0 (the "License").
+* You may not use this file except in compliance with the License.
+* A copy of the License is located at
+*
+*  http://aws.amazon.com/apache2.0
+*
+* or in the "license" file accompanying this file. This file is distributed
+* on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+* express or implied. See the License for the specific language governing
+* permissions and limitations under the License.
+*/
 
 // NOTE: This file is generated and may not follow lint rules defined in your app
 // Generated files can be excluded from analysis in analysis_options.yaml
@@ -12,17 +22,33 @@
 import 'package:amplify_core/amplify_core.dart';
 import 'Blog.dart';
 import 'Comment.dart';
+import 'CpkOneToOneBidirectionalChildExplicitCD.dart';
+import 'CpkOneToOneBidirectionalChildImplicitCD.dart';
+import 'CpkOneToOneBidirectionalParentCD.dart';
+import 'OwnerOnly.dart';
 import 'Post.dart';
 
 export 'Blog.dart';
 export 'Comment.dart';
+export 'CpkOneToOneBidirectionalChildExplicitCD.dart';
+export 'CpkOneToOneBidirectionalChildImplicitCD.dart';
+export 'CpkOneToOneBidirectionalParentCD.dart';
+export 'OwnerOnly.dart';
 export 'Post.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "c7c4debaf4550d687965261c73055590";
+  String version = "a88eeb9e37e28459e7e16f3f2f218f9e";
   @override
-  List<ModelSchema> modelSchemas = [Blog.schema, Comment.schema, Post.schema];
+  List<ModelSchema> modelSchemas = [
+    Blog.schema,
+    Comment.schema,
+    CpkOneToOneBidirectionalChildExplicitCD.schema,
+    CpkOneToOneBidirectionalChildImplicitCD.schema,
+    CpkOneToOneBidirectionalParentCD.schema,
+    OwnerOnly.schema,
+    Post.schema
+  ];
   static final ModelProvider _instance = ModelProvider();
   @override
   List<ModelSchema> customTypeSchemas = [];
@@ -35,6 +61,14 @@ class ModelProvider implements ModelProviderInterface {
         return Blog.classType;
       case "Comment":
         return Comment.classType;
+      case "CpkOneToOneBidirectionalChildExplicitCD":
+        return CpkOneToOneBidirectionalChildExplicitCD.classType;
+      case "CpkOneToOneBidirectionalChildImplicitCD":
+        return CpkOneToOneBidirectionalChildImplicitCD.classType;
+      case "CpkOneToOneBidirectionalParentCD":
+        return CpkOneToOneBidirectionalParentCD.classType;
+      case "OwnerOnly":
+        return OwnerOnly.classType;
       case "Post":
         return Post.classType;
       default:

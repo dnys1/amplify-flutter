@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.storage_class; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -59,14 +60,20 @@ class StorageClass extends _i1.SmithyEnum<StorageClass> {
     'REDUCED_REDUNDANCY',
   );
 
-  static const standard = StorageClass._(
+  static const snow = StorageClass._(
     7,
+    'SNOW',
+    'SNOW',
+  );
+
+  static const standard = StorageClass._(
+    8,
     'STANDARD',
     'STANDARD',
   );
 
   static const standardIa = StorageClass._(
-    8,
+    9,
     'STANDARD_IA',
     'STANDARD_IA',
   );
@@ -80,6 +87,7 @@ class StorageClass extends _i1.SmithyEnum<StorageClass> {
     StorageClass.onezoneIa,
     StorageClass.outposts,
     StorageClass.reducedRedundancy,
+    StorageClass.snow,
     StorageClass.standard,
     StorageClass.standardIa,
   ];

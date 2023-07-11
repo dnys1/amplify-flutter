@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.index_document; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -24,7 +25,7 @@ abstract class IndexDocument
 
   const IndexDocument._();
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<IndexDocument>> serializers = [
     IndexDocumentRestXmlSerializer()
   ];
 
@@ -39,11 +40,11 @@ abstract class IndexDocument
   List<Object?> get props => [suffix];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('IndexDocument');
-    helper.add(
-      'suffix',
-      suffix,
-    );
+    final helper = newBuiltValueToStringHelper('IndexDocument')
+      ..add(
+        'suffix',
+        suffix,
+      );
     return helper.toString();
   }
 }
@@ -73,16 +74,18 @@ class IndexDocumentRestXmlSerializer
     final result = IndexDocumentBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'Suffix':
           result.suffix = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -92,22 +95,22 @@ class IndexDocumentRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    IndexDocument object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as IndexDocument);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i2.XmlElementName(
         'IndexDocument',
         _i2.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    result
+    final IndexDocument(:suffix) = object;
+    result$
       ..add(const _i2.XmlElementName('Suffix'))
       ..add(serializers.serialize(
-        payload.suffix,
+        suffix,
         specifiedType: const FullType(String),
       ));
-    return result;
+    return result$;
   }
 }

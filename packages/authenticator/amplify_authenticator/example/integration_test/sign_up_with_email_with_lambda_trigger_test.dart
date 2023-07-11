@@ -1,44 +1,28 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_authenticator_test/amplify_authenticator_test.dart';
-import 'package:flutter/material.dart';
+import 'package:amplify_integration_test/amplify_integration_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 
-import 'config.dart';
-import 'utils/mock_data.dart';
+import 'test_runner.dart';
 import 'utils/test_utils.dart';
 
 // This test follows the Amplify UI feature "sign-up-with-email-with-lambda-trigger"
 // https://github.com/aws-amplify/amplify-ui/blob/main/packages/e2e/features/ui/components/authenticator/sign-up-with-email-with-lambda-trigger.feature
 
 void main() {
-  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  // resolves issue on iOS. See: https://github.com/flutter/flutter/issues/89651
-  binding.deferFirstFrame();
-
-  final authenticator = Authenticator(
-    child: MaterialApp(
-      builder: Authenticator.builder(),
-      home: const Scaffold(
-        body: Center(
-          child: SignOutButton(),
-        ),
-      ),
-    ),
-  );
+  testRunner.setupTests();
 
   group(
     'Sign Up with Email with Pre Sign Up Lambda Trigger for Auto Confirmation',
     () {
       // Background
-      setUpAll(() async {
+      setUp(() async {
         // Given I'm running the example
         // "ui/components/authenticator/sign-up-with-email-lambda"
-        await loadConfiguration(
-          'ui/components/authenticator/sign-in-with-email-lambda',
+        await testRunner.configure(
+          environmentName: 'sign-in-with-email-lambda-trigger',
         );
       });
 
@@ -46,7 +30,17 @@ void main() {
       testWidgets(
         'Login mechanism set to "email"',
         (WidgetTester tester) async {
-          await loadAuthenticator(tester: tester, authenticator: authenticator);
+          await loadAuthenticator(tester: tester);
+
+          expect(
+            tester.bloc.stream,
+            emitsInOrder([
+              UnauthenticatedState.signIn,
+              UnauthenticatedState.signUp,
+              emitsDone,
+            ]),
+          );
+
           await SignInPage(tester: tester).navigateToSignUp();
           final po = SignUpPage(tester: tester);
 
@@ -58,6 +52,8 @@ void main() {
 
           // And I don't see "Phone Number" as an input field
           po.expectUsername(label: 'Phone Number', isPresent: false);
+
+          await tester.bloc.close();
         },
       );
 
@@ -65,7 +61,18 @@ void main() {
       testWidgets(
         'Sign up with a new email & password with confirmed info',
         (WidgetTester tester) async {
-          await loadAuthenticator(tester: tester, authenticator: authenticator);
+          await loadAuthenticator(tester: tester);
+
+          expect(
+            tester.bloc.stream,
+            emitsInOrder([
+              UnauthenticatedState.signIn,
+              UnauthenticatedState.signUp,
+              isA<AuthenticatedState>(),
+              emitsDone,
+            ]),
+          );
+
           await SignInPage(tester: tester).navigateToSignUp();
           final po = SignUpPage(tester: tester);
 
@@ -81,23 +88,13 @@ void main() {
           // And I confirm my password
           await po.enterPasswordConfirmation(password);
 
-          // And I intercept '{ "headers": { "X-Amz-Target": "AWSCognitoIdentityProviderService.SignUp" } }'
-          // with fixture "sign-up-with-email-with-lambda-trigger"
-          noOp();
-
-          // And I mock 'Amplify.Auth.signIn' with fixture
-          // "Auth.signIn-verified-email"
-          noOp();
-
-          // And I mock 'Amplify.Auth.currentAuthenticatedUser' with fixture
-          // "Auth.currentAuthenticatedUser-verified-email"
-          noOp();
-
           // And I click the "Create Account" button
           await po.submitSignUp();
 
           // Then I see "Sign out"
           await po.expectAuthenticated();
+
+          await tester.bloc.close();
         },
       );
     },

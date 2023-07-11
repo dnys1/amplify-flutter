@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.get_stages_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -21,12 +22,12 @@ abstract class GetStagesRequest
         _i1.HasPayload<GetStagesRequestPayload> {
   /// Requests API Gateway to get information about one or more Stage resources.
   factory GetStagesRequest({
-    String? deploymentId,
     required String restApiId,
+    String? deploymentId,
   }) {
     return _$GetStagesRequest._(
-      deploymentId: deploymentId,
       restApiId: restApiId,
+      deploymentId: deploymentId,
     );
   }
 
@@ -50,18 +51,17 @@ abstract class GetStagesRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    GetStagesRequestRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<GetStagesRequestPayload>> serializers =
+      [GetStagesRequestRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetStagesRequestBuilder b) {}
 
-  /// The stages' deployment identifiers.
-  String? get deploymentId;
-
   /// The string identifier of the associated RestApi.
   String get restApiId;
+
+  /// The stages' deployment identifiers.
+  String? get deploymentId;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -78,20 +78,20 @@ abstract class GetStagesRequest
   GetStagesRequestPayload getPayload() => GetStagesRequestPayload();
   @override
   List<Object?> get props => [
-        deploymentId,
         restApiId,
+        deploymentId,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('GetStagesRequest');
-    helper.add(
-      'deploymentId',
-      deploymentId,
-    );
-    helper.add(
-      'restApiId',
-      restApiId,
-    );
+    final helper = newBuiltValueToStringHelper('GetStagesRequest')
+      ..add(
+        'restApiId',
+        restApiId,
+      )
+      ..add(
+        'deploymentId',
+        deploymentId,
+      );
     return helper.toString();
   }
 }
@@ -149,7 +149,7 @@ class GetStagesRequestRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetStagesRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) =>
       const <Object?>[];

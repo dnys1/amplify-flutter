@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.delete_configuration_recorder_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -38,9 +39,8 @@ abstract class DeleteConfigurationRecorderRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    DeleteConfigurationRecorderRequestAwsJson11Serializer()
-  ];
+  static const List<_i1.SmithySerializer<DeleteConfigurationRecorderRequest>>
+      serializers = [DeleteConfigurationRecorderRequestAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DeleteConfigurationRecorderRequestBuilder b) {}
@@ -54,11 +54,11 @@ abstract class DeleteConfigurationRecorderRequest
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DeleteConfigurationRecorderRequest');
-    helper.add(
-      'configurationRecorderName',
-      configurationRecorderName,
-    );
+        newBuiltValueToStringHelper('DeleteConfigurationRecorderRequest')
+          ..add(
+            'configurationRecorderName',
+            configurationRecorderName,
+          );
     return helper.toString();
   }
 }
@@ -92,13 +92,15 @@ class DeleteConfigurationRecorderRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ConfigurationRecorderName':
           result.configurationRecorderName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -108,17 +110,19 @@ class DeleteConfigurationRecorderRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteConfigurationRecorderRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DeleteConfigurationRecorderRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final DeleteConfigurationRecorderRequest(:configurationRecorderName) =
+        object;
+    result$.addAll([
       'ConfigurationRecorderName',
       serializers.serialize(
-        payload.configurationRecorderName,
+        configurationRecorderName,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

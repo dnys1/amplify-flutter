@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.organization_managed_rule_metadata; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -12,53 +13,55 @@ import 'package:smoke_test/src/sdk/src/config_service/model/maximum_execution_fr
 
 part 'organization_managed_rule_metadata.g.dart';
 
-/// An object that specifies organization managed rule metadata such as resource type and ID of Amazon Web Services resource along with the rule identifier. It also provides the frequency with which you want Config to run evaluations for the rule if the trigger type is periodic.
+/// organization managed rule metadata such as resource type and ID of Amazon Web Services resource along with the rule identifier. It also provides the frequency with which you want Config to run evaluations for the rule if the trigger type is periodic.
 abstract class OrganizationManagedRuleMetadata
     with
         _i1.AWSEquatable<OrganizationManagedRuleMetadata>
     implements
         Built<OrganizationManagedRuleMetadata,
             OrganizationManagedRuleMetadataBuilder> {
-  /// An object that specifies organization managed rule metadata such as resource type and ID of Amazon Web Services resource along with the rule identifier. It also provides the frequency with which you want Config to run evaluations for the rule if the trigger type is periodic.
+  /// organization managed rule metadata such as resource type and ID of Amazon Web Services resource along with the rule identifier. It also provides the frequency with which you want Config to run evaluations for the rule if the trigger type is periodic.
   factory OrganizationManagedRuleMetadata({
     String? description,
+    required String ruleIdentifier,
     String? inputParameters,
     _i2.MaximumExecutionFrequency? maximumExecutionFrequency,
-    String? resourceIdScope,
     List<String>? resourceTypesScope,
-    required String ruleIdentifier,
+    String? resourceIdScope,
     String? tagKeyScope,
     String? tagValueScope,
   }) {
     return _$OrganizationManagedRuleMetadata._(
       description: description,
+      ruleIdentifier: ruleIdentifier,
       inputParameters: inputParameters,
       maximumExecutionFrequency: maximumExecutionFrequency,
-      resourceIdScope: resourceIdScope,
       resourceTypesScope:
           resourceTypesScope == null ? null : _i3.BuiltList(resourceTypesScope),
-      ruleIdentifier: ruleIdentifier,
+      resourceIdScope: resourceIdScope,
       tagKeyScope: tagKeyScope,
       tagValueScope: tagValueScope,
     );
   }
 
-  /// An object that specifies organization managed rule metadata such as resource type and ID of Amazon Web Services resource along with the rule identifier. It also provides the frequency with which you want Config to run evaluations for the rule if the trigger type is periodic.
+  /// organization managed rule metadata such as resource type and ID of Amazon Web Services resource along with the rule identifier. It also provides the frequency with which you want Config to run evaluations for the rule if the trigger type is periodic.
   factory OrganizationManagedRuleMetadata.build(
           [void Function(OrganizationManagedRuleMetadataBuilder) updates]) =
       _$OrganizationManagedRuleMetadata;
 
   const OrganizationManagedRuleMetadata._();
 
-  static const List<_i4.SmithySerializer> serializers = [
-    OrganizationManagedRuleMetadataAwsJson11Serializer()
-  ];
+  static const List<_i4.SmithySerializer<OrganizationManagedRuleMetadata>>
+      serializers = [OrganizationManagedRuleMetadataAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(OrganizationManagedRuleMetadataBuilder b) {}
 
   /// The description that you provide for your organization Config rule.
   String? get description;
+
+  /// For organization config managed rules, a predefined identifier from a list. For example, `IAM\_PASSWORD\_POLICY` is a managed rule. To reference a managed rule, see [Using Config managed rules](https://docs.aws.amazon.com/config/latest/developerguide/evaluate-config_use-managed-rules.html).
+  String get ruleIdentifier;
 
   /// A string, in JSON format, that is passed to your organization Config rule Lambda function.
   String? get inputParameters;
@@ -68,14 +71,11 @@ abstract class OrganizationManagedRuleMetadata
   /// By default, rules with a periodic trigger are evaluated every 24 hours. To change the frequency, specify a valid value for the `MaximumExecutionFrequency` parameter.
   _i2.MaximumExecutionFrequency? get maximumExecutionFrequency;
 
-  /// The ID of the Amazon Web Services resource that was evaluated.
-  String? get resourceIdScope;
-
   /// The type of the Amazon Web Services resource that was evaluated.
   _i3.BuiltList<String>? get resourceTypesScope;
 
-  /// For organization config managed rules, a predefined identifier from a list. For example, `IAM\_PASSWORD\_POLICY` is a managed rule. To reference a managed rule, see [Using Config managed rules](https://docs.aws.amazon.com/config/latest/developerguide/evaluate-config_use-managed-rules.html).
-  String get ruleIdentifier;
+  /// The ID of the Amazon Web Services resource that was evaluated.
+  String? get resourceIdScope;
 
   /// One part of a key-value pair that make up a tag. A key is a general label that acts like a category for more specific tag values.
   String? get tagKeyScope;
@@ -85,50 +85,50 @@ abstract class OrganizationManagedRuleMetadata
   @override
   List<Object?> get props => [
         description,
+        ruleIdentifier,
         inputParameters,
         maximumExecutionFrequency,
-        resourceIdScope,
         resourceTypesScope,
-        ruleIdentifier,
+        resourceIdScope,
         tagKeyScope,
         tagValueScope,
       ];
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('OrganizationManagedRuleMetadata');
-    helper.add(
-      'description',
-      description,
-    );
-    helper.add(
-      'inputParameters',
-      inputParameters,
-    );
-    helper.add(
-      'maximumExecutionFrequency',
-      maximumExecutionFrequency,
-    );
-    helper.add(
-      'resourceIdScope',
-      resourceIdScope,
-    );
-    helper.add(
-      'resourceTypesScope',
-      resourceTypesScope,
-    );
-    helper.add(
-      'ruleIdentifier',
-      ruleIdentifier,
-    );
-    helper.add(
-      'tagKeyScope',
-      tagKeyScope,
-    );
-    helper.add(
-      'tagValueScope',
-      tagValueScope,
-    );
+        newBuiltValueToStringHelper('OrganizationManagedRuleMetadata')
+          ..add(
+            'description',
+            description,
+          )
+          ..add(
+            'ruleIdentifier',
+            ruleIdentifier,
+          )
+          ..add(
+            'inputParameters',
+            inputParameters,
+          )
+          ..add(
+            'maximumExecutionFrequency',
+            maximumExecutionFrequency,
+          )
+          ..add(
+            'resourceTypesScope',
+            resourceTypesScope,
+          )
+          ..add(
+            'resourceIdScope',
+            resourceIdScope,
+          )
+          ..add(
+            'tagKeyScope',
+            tagKeyScope,
+          )
+          ..add(
+            'tagValueScope',
+            tagValueScope,
+          );
     return helper.toString();
   }
 }
@@ -162,72 +162,53 @@ class OrganizationManagedRuleMetadataAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'Description':
-          if (value != null) {
-            result.description = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
-        case 'InputParameters':
-          if (value != null) {
-            result.inputParameters = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
-        case 'MaximumExecutionFrequency':
-          if (value != null) {
-            result.maximumExecutionFrequency = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.MaximumExecutionFrequency),
-            ) as _i2.MaximumExecutionFrequency);
-          }
-          break;
-        case 'ResourceIdScope':
-          if (value != null) {
-            result.resourceIdScope = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
-        case 'ResourceTypesScope':
-          if (value != null) {
-            result.resourceTypesScope.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(String)],
-              ),
-            ) as _i3.BuiltList<String>));
-          }
-          break;
-        case 'RuleIdentifier':
-          result.ruleIdentifier = (serializers.deserialize(
-            value!,
+          result.description = (serializers.deserialize(
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
+        case 'RuleIdentifier':
+          result.ruleIdentifier = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'InputParameters':
+          result.inputParameters = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
+        case 'MaximumExecutionFrequency':
+          result.maximumExecutionFrequency = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.MaximumExecutionFrequency),
+          ) as _i2.MaximumExecutionFrequency);
+        case 'ResourceTypesScope':
+          result.resourceTypesScope.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(String)],
+            ),
+          ) as _i3.BuiltList<String>));
+        case 'ResourceIdScope':
+          result.resourceIdScope = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'TagKeyScope':
-          if (value != null) {
-            result.tagKeyScope = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.tagKeyScope = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'TagValueScope':
-          if (value != null) {
-            result.tagValueScope = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.tagValueScope = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -237,76 +218,86 @@ class OrganizationManagedRuleMetadataAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    OrganizationManagedRuleMetadata object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as OrganizationManagedRuleMetadata);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final OrganizationManagedRuleMetadata(
+      :description,
+      :ruleIdentifier,
+      :inputParameters,
+      :maximumExecutionFrequency,
+      :resourceTypesScope,
+      :resourceIdScope,
+      :tagKeyScope,
+      :tagValueScope
+    ) = object;
+    result$.addAll([
       'RuleIdentifier',
       serializers.serialize(
-        payload.ruleIdentifier,
+        ruleIdentifier,
         specifiedType: const FullType(String),
       ),
-    ];
-    if (payload.description != null) {
-      result
+    ]);
+    if (description != null) {
+      result$
         ..add('Description')
         ..add(serializers.serialize(
-          payload.description!,
+          description,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.inputParameters != null) {
-      result
+    if (inputParameters != null) {
+      result$
         ..add('InputParameters')
         ..add(serializers.serialize(
-          payload.inputParameters!,
+          inputParameters,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.maximumExecutionFrequency != null) {
-      result
+    if (maximumExecutionFrequency != null) {
+      result$
         ..add('MaximumExecutionFrequency')
         ..add(serializers.serialize(
-          payload.maximumExecutionFrequency!,
+          maximumExecutionFrequency,
           specifiedType: const FullType(_i2.MaximumExecutionFrequency),
         ));
     }
-    if (payload.resourceIdScope != null) {
-      result
-        ..add('ResourceIdScope')
-        ..add(serializers.serialize(
-          payload.resourceIdScope!,
-          specifiedType: const FullType(String),
-        ));
-    }
-    if (payload.resourceTypesScope != null) {
-      result
+    if (resourceTypesScope != null) {
+      result$
         ..add('ResourceTypesScope')
         ..add(serializers.serialize(
-          payload.resourceTypesScope!,
+          resourceTypesScope,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(String)],
           ),
         ));
     }
-    if (payload.tagKeyScope != null) {
-      result
+    if (resourceIdScope != null) {
+      result$
+        ..add('ResourceIdScope')
+        ..add(serializers.serialize(
+          resourceIdScope,
+          specifiedType: const FullType(String),
+        ));
+    }
+    if (tagKeyScope != null) {
+      result$
         ..add('TagKeyScope')
         ..add(serializers.serialize(
-          payload.tagKeyScope!,
+          tagKeyScope,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.tagValueScope != null) {
-      result
+    if (tagValueScope != null) {
+      result$
         ..add('TagValueScope')
         ..add(serializers.serialize(
-          payload.tagValueScope!,
+          tagValueScope,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

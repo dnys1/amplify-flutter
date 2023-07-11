@@ -7,17 +7,20 @@ import 'package:amplify_core/amplify_core.dart';
 /// The configurable parameters invoking the Storage S3 plugin `uploadData`
 /// API.
 /// {@endtemplate}
+@Deprecated(
+  'use StorageUploadDataOptions(pluginOptions: S3UploadDataPluginOptions(...)) instead.',
+)
 class S3UploadDataOptions extends StorageUploadDataOptions {
   /// {@macro storage.amplify_storage_s3.upload_data_options}
+  @Deprecated(
+    'use StorageUploadDataOptions(pluginOptions: S3UploadDataPluginOptions(...)) instead.',
+  )
   const S3UploadDataOptions({
     super.accessLevel = StorageAccessLevel.guest,
     this.getProperties = false,
-    this.metadata,
+    super.metadata,
     this.useAccelerateEndpoint = false,
   });
-
-  /// The metadata attached to the object to be uploaded.
-  final Map<String, String>? metadata;
 
   /// Whether to retrieve properties for the uploaded object using the
   /// `getProperties` API.

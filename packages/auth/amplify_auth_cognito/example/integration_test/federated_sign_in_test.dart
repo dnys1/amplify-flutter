@@ -6,24 +6,26 @@ import 'dart:convert';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 // ignore: invalid_use_of_internal_member
 import 'package:amplify_auth_cognito_dart/src/credentials/cognito_keys.dart';
+// ignore: invalid_use_of_internal_member
+import 'package:amplify_auth_cognito_dart/src/model/sign_in_parameters.dart';
+// ignore: invalid_use_of_internal_member
+import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_auth_cognito_example/amplifyconfiguration.dart';
+import 'package:amplify_auth_integration_test/amplify_auth_integration_test.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_test/amplify_test.dart';
+import 'package:amplify_integration_test/amplify_integration_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 
-import 'utils/mock_data.dart';
-import 'utils/setup_utils.dart';
-import 'utils/test_utils.dart';
+import 'test_runner.dart';
 
-void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
-  group('federateToIdentityPool', () {
-    late final cognitoPlugin = Amplify.Auth.getPlugin(
+AmplifyAuthCognito get cognitoPlugin => Amplify.Auth.getPlugin(
       AmplifyAuthCognito.pluginKey,
     );
 
+void main() {
+  testRunner.setupTests();
+
+  group('federateToIdentityPool', () {
     // We test federated sign-in using Cognito. The combination of calling
     // `federateWithIdentityPool` with `AuthProvider.custom` allows testing
     // the critical code paths related to federated sign-in, even though on
@@ -38,17 +40,24 @@ void main() {
     final username = generateUsername();
     final password = generatePassword();
 
-    Future<CognitoUserPoolTokens> getUserPoolTokens() async {
-      final signInResult = await cognitoPlugin.signIn(
-        username: username,
-        password: password,
+    Future<void> signIn() async {
+      cognitoPlugin.stateMachine.create(SignInStateMachine.type);
+      await cognitoPlugin.stateMachine.acceptAndComplete<SignInSuccess>(
+        SignInEvent.initiate(
+          parameters: SignInParameters(
+            (b) => b
+              ..username = username
+              ..password = password,
+          ),
+        ),
       );
-      expect(signInResult.nextStep.signInStep, AuthSignInStep.done);
+    }
 
+    Future<CognitoUserPoolTokens> getUserPoolTokens() async {
+      await signIn();
       final signInSession = await cognitoPlugin.fetchAuthSession();
       final userPoolTokens = signInSession.userPoolTokensResult.value;
       // Clear but do not sign out so that tokens are still valid.
-      // ignore: invalid_use_of_protected_member
       await cognitoPlugin.stateMachine.clearCredentials();
 
       return userPoolTokens;
@@ -69,8 +78,8 @@ void main() {
       } catch (_) {}
     }
 
-    setUpAll(() async {
-      await configureAuth();
+    setUp(() async {
+      await testRunner.configure();
       await adminCreateUser(
         username,
         password,
@@ -82,20 +91,8 @@ void main() {
       await signOutUser();
     });
 
-    tearDownAll(Amplify.reset);
-
-    tearDown(() async {
-      await clearFederation();
-      await signOutUser();
-    });
-
     asyncTest('throws when signed in', (_) async {
-      final signInResult = await cognitoPlugin.signIn(
-        username: username,
-        password: password,
-      );
-      expect(signInResult.nextStep.signInStep, AuthSignInStep.done);
-
+      await signIn();
       await expectLater(
         cognitoPlugin.federateToIdentityPool(
           token: 'dummyToken',
@@ -141,11 +138,7 @@ void main() {
       final unauthSession = await cognitoPlugin.fetchAuthSession();
       final identityId = unauthSession.identityIdResult.value;
 
-      final signInResult = await cognitoPlugin.signIn(
-        username: username,
-        password: password,
-      );
-      expect(signInResult.nextStep.signInStep, AuthSignInStep.done);
+      await signIn();
 
       final userPoolTokens =
           (await cognitoPlugin.fetchAuthSession()).userPoolTokensResult.value;

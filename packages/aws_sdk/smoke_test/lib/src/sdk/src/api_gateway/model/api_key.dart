@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.api_key; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -16,28 +17,29 @@ abstract class ApiKey
     implements Built<ApiKey, ApiKeyBuilder> {
   /// A resource that can be distributed to callers for executing Method resources that require an API key. API keys can be mapped to any Stage on any RestApi, which indicates that the callers with the API key can make requests to that stage.
   factory ApiKey({
-    DateTime? createdDate,
+    String? id,
+    String? value,
+    String? name,
     String? customerId,
     String? description,
     bool? enabled,
-    String? id,
+    DateTime? createdDate,
     DateTime? lastUpdatedDate,
-    String? name,
     List<String>? stageKeys,
     Map<String, String>? tags,
-    String? value,
   }) {
+    enabled ??= false;
     return _$ApiKey._(
-      createdDate: createdDate,
+      id: id,
+      value: value,
+      name: name,
       customerId: customerId,
       description: description,
       enabled: enabled,
-      id: id,
+      createdDate: createdDate,
       lastUpdatedDate: lastUpdatedDate,
-      name: name,
       stageKeys: stageKeys == null ? null : _i2.BuiltList(stageKeys),
       tags: tags == null ? null : _i2.BuiltMap(tags),
-      value: value,
     );
   }
 
@@ -53,15 +55,23 @@ abstract class ApiKey
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<ApiKey>> serializers = [
     ApiKeyRestJson1Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(ApiKeyBuilder b) {}
+  static void _init(ApiKeyBuilder b) {
+    b.enabled = false;
+  }
 
-  /// The timestamp when the API Key was created.
-  DateTime? get createdDate;
+  /// The identifier of the API Key.
+  String? get id;
+
+  /// The value of the API Key.
+  String? get value;
+
+  /// The name of the API Key.
+  String? get name;
 
   /// An AWS Marketplace customer identifier , when integrating with the AWS SaaS Marketplace.
   String? get customerId;
@@ -70,81 +80,75 @@ abstract class ApiKey
   String? get description;
 
   /// Specifies whether the API Key can be used by callers.
-  bool? get enabled;
+  bool get enabled;
 
-  /// The identifier of the API Key.
-  String? get id;
+  /// The timestamp when the API Key was created.
+  DateTime? get createdDate;
 
   /// The timestamp when the API Key was last updated.
   DateTime? get lastUpdatedDate;
-
-  /// The name of the API Key.
-  String? get name;
 
   /// A list of Stage resources that are associated with the ApiKey resource.
   _i2.BuiltList<String>? get stageKeys;
 
   /// The collection of tags. Each tag element is associated with a given resource.
   _i2.BuiltMap<String, String>? get tags;
-
-  /// The value of the API Key.
-  String? get value;
   @override
   List<Object?> get props => [
-        createdDate,
+        id,
+        value,
+        name,
         customerId,
         description,
         enabled,
-        id,
+        createdDate,
         lastUpdatedDate,
-        name,
         stageKeys,
         tags,
-        value,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ApiKey');
-    helper.add(
-      'createdDate',
-      createdDate,
-    );
-    helper.add(
-      'customerId',
-      customerId,
-    );
-    helper.add(
-      'description',
-      description,
-    );
-    helper.add(
-      'enabled',
-      enabled,
-    );
-    helper.add(
-      'id',
-      id,
-    );
-    helper.add(
-      'lastUpdatedDate',
-      lastUpdatedDate,
-    );
-    helper.add(
-      'name',
-      name,
-    );
-    helper.add(
-      'stageKeys',
-      stageKeys,
-    );
-    helper.add(
-      'tags',
-      tags,
-    );
-    helper.add(
-      'value',
-      value,
-    );
+    final helper = newBuiltValueToStringHelper('ApiKey')
+      ..add(
+        'id',
+        id,
+      )
+      ..add(
+        'value',
+        value,
+      )
+      ..add(
+        'name',
+        name,
+      )
+      ..add(
+        'customerId',
+        customerId,
+      )
+      ..add(
+        'description',
+        description,
+      )
+      ..add(
+        'enabled',
+        enabled,
+      )
+      ..add(
+        'createdDate',
+        createdDate,
+      )
+      ..add(
+        'lastUpdatedDate',
+        lastUpdatedDate,
+      )
+      ..add(
+        'stageKeys',
+        stageKeys,
+      )
+      ..add(
+        'tags',
+        tags,
+      );
     return helper.toString();
   }
 }
@@ -176,96 +180,69 @@ class ApiKeyRestJson1Serializer extends _i3.StructuredSmithySerializer<ApiKey> {
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'createdDate':
-          if (value != null) {
-            result.createdDate = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(DateTime),
-            ) as DateTime);
-          }
-          break;
+          result.createdDate = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(DateTime),
+          ) as DateTime);
         case 'customerId':
-          if (value != null) {
-            result.customerId = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.customerId = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'description':
-          if (value != null) {
-            result.description = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.description = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'enabled':
-          if (value != null) {
-            result.enabled = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(bool),
-            ) as bool);
-          }
-          break;
+          result.enabled = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
         case 'id':
-          if (value != null) {
-            result.id = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.id = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'lastUpdatedDate':
-          if (value != null) {
-            result.lastUpdatedDate = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(DateTime),
-            ) as DateTime);
-          }
-          break;
+          result.lastUpdatedDate = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(DateTime),
+          ) as DateTime);
         case 'name':
-          if (value != null) {
-            result.name = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.name = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'stageKeys':
-          if (value != null) {
-            result.stageKeys.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i2.BuiltList,
-                [FullType(String)],
-              ),
-            ) as _i2.BuiltList<String>));
-          }
-          break;
+          result.stageKeys.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i2.BuiltList,
+              [FullType(String)],
+            ),
+          ) as _i2.BuiltList<String>));
         case 'tags':
-          if (value != null) {
-            result.tags.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i2.BuiltMap,
-                [
-                  FullType(String),
-                  FullType(String),
-                ],
-              ),
-            ) as _i2.BuiltMap<String, String>));
-          }
-          break;
+          result.tags.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i2.BuiltMap,
+              [
+                FullType(String),
+                FullType(String),
+              ],
+            ),
+          ) as _i2.BuiltMap<String, String>));
         case 'value':
-          if (value != null) {
-            result.value = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.value = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -275,83 +252,93 @@ class ApiKeyRestJson1Serializer extends _i3.StructuredSmithySerializer<ApiKey> {
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ApiKey object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ApiKey);
-    final result = <Object?>[];
-    if (payload.createdDate != null) {
-      result
+    final result$ = <Object?>[];
+    final ApiKey(
+      :createdDate,
+      :customerId,
+      :description,
+      :enabled,
+      :id,
+      :lastUpdatedDate,
+      :name,
+      :stageKeys,
+      :tags,
+      :value
+    ) = object;
+    result$.addAll([
+      'enabled',
+      serializers.serialize(
+        enabled,
+        specifiedType: const FullType(bool),
+      ),
+    ]);
+    if (createdDate != null) {
+      result$
         ..add('createdDate')
         ..add(serializers.serialize(
-          payload.createdDate!,
+          createdDate,
           specifiedType: const FullType(DateTime),
         ));
     }
-    if (payload.customerId != null) {
-      result
+    if (customerId != null) {
+      result$
         ..add('customerId')
         ..add(serializers.serialize(
-          payload.customerId!,
+          customerId,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.description != null) {
-      result
+    if (description != null) {
+      result$
         ..add('description')
         ..add(serializers.serialize(
-          payload.description!,
+          description,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.enabled != null) {
-      result
-        ..add('enabled')
-        ..add(serializers.serialize(
-          payload.enabled!,
-          specifiedType: const FullType(bool),
-        ));
-    }
-    if (payload.id != null) {
-      result
+    if (id != null) {
+      result$
         ..add('id')
         ..add(serializers.serialize(
-          payload.id!,
+          id,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.lastUpdatedDate != null) {
-      result
+    if (lastUpdatedDate != null) {
+      result$
         ..add('lastUpdatedDate')
         ..add(serializers.serialize(
-          payload.lastUpdatedDate!,
+          lastUpdatedDate,
           specifiedType: const FullType(DateTime),
         ));
     }
-    if (payload.name != null) {
-      result
+    if (name != null) {
+      result$
         ..add('name')
         ..add(serializers.serialize(
-          payload.name!,
+          name,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.stageKeys != null) {
-      result
+    if (stageKeys != null) {
+      result$
         ..add('stageKeys')
         ..add(serializers.serialize(
-          payload.stageKeys!,
+          stageKeys,
           specifiedType: const FullType(
             _i2.BuiltList,
             [FullType(String)],
           ),
         ));
     }
-    if (payload.tags != null) {
-      result
+    if (tags != null) {
+      result$
         ..add('tags')
         ..add(serializers.serialize(
-          payload.tags!,
+          tags,
           specifiedType: const FullType(
             _i2.BuiltMap,
             [
@@ -361,14 +348,14 @@ class ApiKeyRestJson1Serializer extends _i3.StructuredSmithySerializer<ApiKey> {
           ),
         ));
     }
-    if (payload.value != null) {
-      result
+    if (value != null) {
+      result$
         ..add('value')
         ..add(serializers.serialize(
-          payload.value!,
+          value,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

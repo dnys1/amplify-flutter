@@ -1,39 +1,28 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:amplify_api/amplify_api.dart';
+import 'package:amplify_auth_integration_test/amplify_auth_integration_test.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_test/amplify_test.dart';
+import 'package:amplify_integration_test/amplify_integration_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 
-import 'utils/mock_data.dart';
-import 'utils/setup_utils.dart';
-import 'utils/test_utils.dart';
+import 'test_runner.dart';
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  testRunner.setupTests();
 
   group(
     'MFA (SMS)',
     () {
-      setUpAll(() async {
-        await configureAuth(
-          additionalPlugins: [AmplifyAPI()],
-        );
-      });
-
-      tearDownAll(Amplify.reset);
-
       setUp(() async {
-        await signOutUser();
+        await testRunner.configure();
       });
 
       asyncTest('can sign in with SMS MFA', (_) async {
         final username = generateUsername();
         final password = generatePassword();
 
-        final otpResult = await getOtpCode(username);
+        final otpResult = await getOtpCode(UserAttribute.username(username));
 
         await adminCreateUser(
           username,

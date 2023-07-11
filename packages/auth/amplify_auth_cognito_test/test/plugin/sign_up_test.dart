@@ -5,29 +5,30 @@ import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart'
     hide SignUpRequest;
 import 'package:amplify_auth_cognito_dart/src/sdk/sdk_bridge.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
+import 'package:amplify_auth_cognito_test/common/mock_clients.dart';
+import 'package:amplify_auth_cognito_test/common/mock_config.dart';
+import 'package:amplify_auth_cognito_test/common/mock_secure_storage.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_secure_storage_dart/amplify_secure_storage_dart.dart';
 import 'package:test/test.dart';
-
-import '../common/mock_clients.dart';
-import '../common/mock_config.dart';
-import '../common/mock_secure_storage.dart';
 
 // Follows signUp test cases:
 // https://github.com/aws-amplify/amplify-android/tree/main/aws-auth-cognito/src/test/resources/feature-test/testsuites/signUp
 void main() {
   late AmplifyAuthCognitoDart plugin;
   late CognitoAuthStateMachine stateMachine;
-  late SecureStorageInterface secureStorage;
+  late MockSecureStorage secureStorage;
 
   final testAuthRepo = AmplifyAuthProviderRepository();
 
   group('AmplifyAuthCognitoDart', () {
     setUp(() async {
       secureStorage = MockSecureStorage();
-      stateMachine = CognitoAuthStateMachine()..addInstance(secureStorage);
+      SecureStorageInterface storageFactory(scope) => secureStorage;
+      stateMachine = CognitoAuthStateMachine();
 
-      plugin = AmplifyAuthCognitoDart(credentialStorage: secureStorage)
+      plugin = AmplifyAuthCognitoDart(secureStorageFactory: storageFactory)
         ..stateMachine = stateMachine;
     });
 
@@ -52,7 +53,7 @@ void main() {
           plugin.signUp(
             username: username,
             password: 'password',
-            options: CognitoSignUpOptions(
+            options: SignUpOptions(
               userAttributes: {
                 CognitoUserAttributeKey.email: 'user@domain.com',
               },
@@ -101,7 +102,7 @@ void main() {
           plugin.signUp(
             username: username,
             password: 'password',
-            options: CognitoSignUpOptions(
+            options: SignUpOptions(
               userAttributes: {
                 CognitoUserAttributeKey.email: 'user@domain.com',
               },

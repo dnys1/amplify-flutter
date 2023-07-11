@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.request_payment_configuration; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -27,9 +28,8 @@ abstract class RequestPaymentConfiguration
 
   const RequestPaymentConfiguration._();
 
-  static const List<_i3.SmithySerializer> serializers = [
-    RequestPaymentConfigurationRestXmlSerializer()
-  ];
+  static const List<_i3.SmithySerializer<RequestPaymentConfiguration>>
+      serializers = [RequestPaymentConfigurationRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(RequestPaymentConfigurationBuilder b) {}
@@ -40,11 +40,11 @@ abstract class RequestPaymentConfiguration
   List<Object?> get props => [payer];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('RequestPaymentConfiguration');
-    helper.add(
-      'payer',
-      payer,
-    );
+    final helper = newBuiltValueToStringHelper('RequestPaymentConfiguration')
+      ..add(
+        'payer',
+        payer,
+      );
     return helper.toString();
   }
 }
@@ -75,16 +75,18 @@ class RequestPaymentConfigurationRestXmlSerializer
     final result = RequestPaymentConfigurationBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'Payer':
           result.payer = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(_i2.Payer),
           ) as _i2.Payer);
-          break;
       }
     }
 
@@ -94,22 +96,22 @@ class RequestPaymentConfigurationRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    RequestPaymentConfiguration object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as RequestPaymentConfiguration);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i3.XmlElementName(
         'RequestPaymentConfiguration',
         _i3.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    result
+    final RequestPaymentConfiguration(:payer) = object;
+    result$
       ..add(const _i3.XmlElementName('Payer'))
       ..add(serializers.serialize(
-        payload.payer,
+        payer,
         specifiedType: const FullType.nullable(_i2.Payer),
       ));
-    return result;
+    return result$;
   }
 }

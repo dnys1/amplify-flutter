@@ -2,16 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'package:amplify_core/amplify_core.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 part 'sign_up_result.g.dart';
 
-@JsonSerializable(
-  includeIfNull: false,
-  explicitToJson: true,
-  // TODO(dnys1): Fix generic serialization
-  createFactory: false,
-)
+@zAmplifySerializable
 class SignUpResult
     with
         AWSEquatable<SignUpResult>,
@@ -22,6 +16,9 @@ class SignUpResult
     required this.nextStep,
     this.userId,
   });
+
+  factory SignUpResult.fromJson(Map<String, Object?> json) =>
+      _$SignUpResultFromJson(json);
 
   final bool isSignUpComplete;
   final AuthNextSignUpStep nextStep;

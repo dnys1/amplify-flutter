@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library aws_json1_0_v1.json_rpc_10.model.complex_nested_error_data; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -22,9 +23,8 @@ abstract class ComplexNestedErrorData
 
   const ComplexNestedErrorData._();
 
-  static const List<_i2.SmithySerializer> serializers = [
-    ComplexNestedErrorDataAwsJson10Serializer()
-  ];
+  static const List<_i2.SmithySerializer<ComplexNestedErrorData>> serializers =
+      [ComplexNestedErrorDataAwsJson10Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(ComplexNestedErrorDataBuilder b) {}
@@ -33,11 +33,11 @@ abstract class ComplexNestedErrorData
   List<Object?> get props => [foo];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ComplexNestedErrorData');
-    helper.add(
-      'foo',
-      foo,
-    );
+    final helper = newBuiltValueToStringHelper('ComplexNestedErrorData')
+      ..add(
+        'foo',
+        foo,
+      );
     return helper.toString();
   }
 }
@@ -71,15 +71,15 @@ class ComplexNestedErrorDataAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'Foo':
-          if (value != null) {
-            result.foo = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.foo = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -89,19 +89,19 @@ class ComplexNestedErrorDataAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ComplexNestedErrorData object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ComplexNestedErrorData);
-    final result = <Object?>[];
-    if (payload.foo != null) {
-      result
+    final result$ = <Object?>[];
+    final ComplexNestedErrorData(:foo) = object;
+    if (foo != null) {
+      result$
         ..add('Foo')
         ..add(serializers.serialize(
-          payload.foo!,
+          foo,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

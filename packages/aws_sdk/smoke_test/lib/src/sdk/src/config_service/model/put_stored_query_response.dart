@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.put_stored_query_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -29,9 +30,8 @@ abstract class PutStoredQueryResponse
   ) =>
       payload;
 
-  static const List<_i2.SmithySerializer> serializers = [
-    PutStoredQueryResponseAwsJson11Serializer()
-  ];
+  static const List<_i2.SmithySerializer<PutStoredQueryResponse>> serializers =
+      [PutStoredQueryResponseAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(PutStoredQueryResponseBuilder b) {}
@@ -42,11 +42,11 @@ abstract class PutStoredQueryResponse
   List<Object?> get props => [queryArn];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('PutStoredQueryResponse');
-    helper.add(
-      'queryArn',
-      queryArn,
-    );
+    final helper = newBuiltValueToStringHelper('PutStoredQueryResponse')
+      ..add(
+        'queryArn',
+        queryArn,
+      );
     return helper.toString();
   }
 }
@@ -80,15 +80,15 @@ class PutStoredQueryResponseAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'QueryArn':
-          if (value != null) {
-            result.queryArn = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.queryArn = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -98,19 +98,19 @@ class PutStoredQueryResponseAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    PutStoredQueryResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as PutStoredQueryResponse);
-    final result = <Object?>[];
-    if (payload.queryArn != null) {
-      result
+    final result$ = <Object?>[];
+    final PutStoredQueryResponse(:queryArn) = object;
+    if (queryArn != null) {
+      result$
         ..add('QueryArn')
         ..add(serializers.serialize(
-          payload.queryArn!,
+          queryArn,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

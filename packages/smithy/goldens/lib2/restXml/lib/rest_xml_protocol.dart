@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 /// A REST XML service that sends XML requests and responses.
 library rest_xml_v2.rest_xml_protocol;
@@ -15,6 +16,7 @@ export 'package:rest_xml_v2/src/rest_xml_protocol/model/constant_and_variable_qu
     hide ConstantAndVariableQueryStringInputPayload;
 export 'package:rest_xml_v2/src/rest_xml_protocol/model/constant_query_string_input.dart'
     hide ConstantQueryStringInputPayload;
+export 'package:rest_xml_v2/src/rest_xml_protocol/model/datetime_offsets_output.dart';
 export 'package:rest_xml_v2/src/rest_xml_protocol/model/empty_input_and_empty_output_input.dart';
 export 'package:rest_xml_v2/src/rest_xml_protocol/model/empty_input_and_empty_output_output.dart';
 export 'package:rest_xml_v2/src/rest_xml_protocol/model/environment_config.dart';
@@ -23,6 +25,7 @@ export 'package:rest_xml_v2/src/rest_xml_protocol/model/flattened_xml_map_input_
 export 'package:rest_xml_v2/src/rest_xml_protocol/model/flattened_xml_map_with_xml_name_input_output.dart';
 export 'package:rest_xml_v2/src/rest_xml_protocol/model/flattened_xml_map_with_xml_namespace_output.dart';
 export 'package:rest_xml_v2/src/rest_xml_protocol/model/foo_enum.dart';
+export 'package:rest_xml_v2/src/rest_xml_protocol/model/fractional_seconds_output.dart';
 export 'package:rest_xml_v2/src/rest_xml_protocol/model/greeting_struct.dart';
 export 'package:rest_xml_v2/src/rest_xml_protocol/model/greeting_with_errors_output.dart'
     hide GreetingWithErrorsOutputPayload;

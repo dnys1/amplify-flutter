@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.describe_limits_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -43,7 +44,7 @@ abstract class DescribeLimitsOutput
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<DescribeLimitsOutput>> serializers = [
     DescribeLimitsOutputAwsJson10Serializer()
   ];
 
@@ -70,23 +71,23 @@ abstract class DescribeLimitsOutput
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DescribeLimitsOutput');
-    helper.add(
-      'accountMaxReadCapacityUnits',
-      accountMaxReadCapacityUnits,
-    );
-    helper.add(
-      'accountMaxWriteCapacityUnits',
-      accountMaxWriteCapacityUnits,
-    );
-    helper.add(
-      'tableMaxReadCapacityUnits',
-      tableMaxReadCapacityUnits,
-    );
-    helper.add(
-      'tableMaxWriteCapacityUnits',
-      tableMaxWriteCapacityUnits,
-    );
+    final helper = newBuiltValueToStringHelper('DescribeLimitsOutput')
+      ..add(
+        'accountMaxReadCapacityUnits',
+        accountMaxReadCapacityUnits,
+      )
+      ..add(
+        'accountMaxWriteCapacityUnits',
+        accountMaxWriteCapacityUnits,
+      )
+      ..add(
+        'tableMaxReadCapacityUnits',
+        tableMaxReadCapacityUnits,
+      )
+      ..add(
+        'tableMaxWriteCapacityUnits',
+        tableMaxWriteCapacityUnits,
+      );
     return helper.toString();
   }
 }
@@ -120,39 +121,30 @@ class DescribeLimitsOutputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'AccountMaxReadCapacityUnits':
-          if (value != null) {
-            result.accountMaxReadCapacityUnits = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.Int64),
-            ) as _i2.Int64);
-          }
-          break;
+          result.accountMaxReadCapacityUnits = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.Int64),
+          ) as _i2.Int64);
         case 'AccountMaxWriteCapacityUnits':
-          if (value != null) {
-            result.accountMaxWriteCapacityUnits = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.Int64),
-            ) as _i2.Int64);
-          }
-          break;
+          result.accountMaxWriteCapacityUnits = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.Int64),
+          ) as _i2.Int64);
         case 'TableMaxReadCapacityUnits':
-          if (value != null) {
-            result.tableMaxReadCapacityUnits = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.Int64),
-            ) as _i2.Int64);
-          }
-          break;
+          result.tableMaxReadCapacityUnits = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.Int64),
+          ) as _i2.Int64);
         case 'TableMaxWriteCapacityUnits':
-          if (value != null) {
-            result.tableMaxWriteCapacityUnits = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.Int64),
-            ) as _i2.Int64);
-          }
-          break;
+          result.tableMaxWriteCapacityUnits = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.Int64),
+          ) as _i2.Int64);
       }
     }
 
@@ -162,43 +154,48 @@ class DescribeLimitsOutputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeLimitsOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeLimitsOutput);
-    final result = <Object?>[];
-    if (payload.accountMaxReadCapacityUnits != null) {
-      result
+    final result$ = <Object?>[];
+    final DescribeLimitsOutput(
+      :accountMaxReadCapacityUnits,
+      :accountMaxWriteCapacityUnits,
+      :tableMaxReadCapacityUnits,
+      :tableMaxWriteCapacityUnits
+    ) = object;
+    if (accountMaxReadCapacityUnits != null) {
+      result$
         ..add('AccountMaxReadCapacityUnits')
         ..add(serializers.serialize(
-          payload.accountMaxReadCapacityUnits!,
+          accountMaxReadCapacityUnits,
           specifiedType: const FullType(_i2.Int64),
         ));
     }
-    if (payload.accountMaxWriteCapacityUnits != null) {
-      result
+    if (accountMaxWriteCapacityUnits != null) {
+      result$
         ..add('AccountMaxWriteCapacityUnits')
         ..add(serializers.serialize(
-          payload.accountMaxWriteCapacityUnits!,
+          accountMaxWriteCapacityUnits,
           specifiedType: const FullType(_i2.Int64),
         ));
     }
-    if (payload.tableMaxReadCapacityUnits != null) {
-      result
+    if (tableMaxReadCapacityUnits != null) {
+      result$
         ..add('TableMaxReadCapacityUnits')
         ..add(serializers.serialize(
-          payload.tableMaxReadCapacityUnits!,
+          tableMaxReadCapacityUnits,
           specifiedType: const FullType(_i2.Int64),
         ));
     }
-    if (payload.tableMaxWriteCapacityUnits != null) {
-      result
+    if (tableMaxWriteCapacityUnits != null) {
+      result$
         ..add('TableMaxWriteCapacityUnits')
         ..add(serializers.serialize(
-          payload.tableMaxWriteCapacityUnits!,
+          tableMaxWriteCapacityUnits,
           specifiedType: const FullType(_i2.Int64),
         ));
     }
-    return result;
+    return result$;
   }
 }

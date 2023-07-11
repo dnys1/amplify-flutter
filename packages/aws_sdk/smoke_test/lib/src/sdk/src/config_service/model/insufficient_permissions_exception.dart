@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.insufficient_permissions_exception; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -17,11 +18,11 @@ part 'insufficient_permissions_exception.g.dart';
 ///
 /// *   For PutOrganizationConfigRule, organization Config rule cannot be created because you do not have permissions to call IAM `GetRole` action or create a service-linked role.
 ///
-/// *   For PutConformancePack and PutOrganizationConformancePack, a conformance pack cannot be created because you do not have permissions:
+/// *   For PutConformancePack and PutOrganizationConformancePack, a conformance pack cannot be created because you do not have the following permissions:
 ///
-///     *   To call IAM `GetRole` action or create a service-linked role.
+///     *   You do not have permission to call IAM `GetRole` action or create a service-linked role.
 ///
-///     *   To read Amazon S3 bucket or call SSM:GetDocument.
+///     *   You do not have permission to read Amazon S3 bucket or call SSM:GetDocument.
 abstract class InsufficientPermissionsException
     with
         _i1.AWSEquatable<InsufficientPermissionsException>
@@ -37,11 +38,11 @@ abstract class InsufficientPermissionsException
   ///
   /// *   For PutOrganizationConfigRule, organization Config rule cannot be created because you do not have permissions to call IAM `GetRole` action or create a service-linked role.
   ///
-  /// *   For PutConformancePack and PutOrganizationConformancePack, a conformance pack cannot be created because you do not have permissions:
+  /// *   For PutConformancePack and PutOrganizationConformancePack, a conformance pack cannot be created because you do not have the following permissions:
   ///
-  ///     *   To call IAM `GetRole` action or create a service-linked role.
+  ///     *   You do not have permission to call IAM `GetRole` action or create a service-linked role.
   ///
-  ///     *   To read Amazon S3 bucket or call SSM:GetDocument.
+  ///     *   You do not have permission to read Amazon S3 bucket or call SSM:GetDocument.
   factory InsufficientPermissionsException({String? message}) {
     return _$InsufficientPermissionsException._(message: message);
   }
@@ -54,11 +55,11 @@ abstract class InsufficientPermissionsException
   ///
   /// *   For PutOrganizationConfigRule, organization Config rule cannot be created because you do not have permissions to call IAM `GetRole` action or create a service-linked role.
   ///
-  /// *   For PutConformancePack and PutOrganizationConformancePack, a conformance pack cannot be created because you do not have permissions:
+  /// *   For PutConformancePack and PutOrganizationConformancePack, a conformance pack cannot be created because you do not have the following permissions:
   ///
-  ///     *   To call IAM `GetRole` action or create a service-linked role.
+  ///     *   You do not have permission to call IAM `GetRole` action or create a service-linked role.
   ///
-  ///     *   To read Amazon S3 bucket or call SSM:GetDocument.
+  ///     *   You do not have permission to read Amazon S3 bucket or call SSM:GetDocument.
   factory InsufficientPermissionsException.build(
           [void Function(InsufficientPermissionsExceptionBuilder) updates]) =
       _$InsufficientPermissionsException;
@@ -75,9 +76,8 @@ abstract class InsufficientPermissionsException
         b.headers = response.headers;
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
-    InsufficientPermissionsExceptionAwsJson11Serializer()
-  ];
+  static const List<_i2.SmithySerializer<InsufficientPermissionsException>>
+      serializers = [InsufficientPermissionsExceptionAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(InsufficientPermissionsExceptionBuilder b) {}
@@ -105,11 +105,11 @@ abstract class InsufficientPermissionsException
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('InsufficientPermissionsException');
-    helper.add(
-      'message',
-      message,
-    );
+        newBuiltValueToStringHelper('InsufficientPermissionsException')
+          ..add(
+            'message',
+            message,
+          );
     return helper.toString();
   }
 }
@@ -143,15 +143,15 @@ class InsufficientPermissionsExceptionAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'message':
-          if (value != null) {
-            result.message = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.message = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -161,19 +161,19 @@ class InsufficientPermissionsExceptionAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    InsufficientPermissionsException object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as InsufficientPermissionsException);
-    final result = <Object?>[];
-    if (payload.message != null) {
-      result
+    final result$ = <Object?>[];
+    final InsufficientPermissionsException(:message) = object;
+    if (message != null) {
+      result$
         ..add('message')
         ..add(serializers.serialize(
-          payload.message!,
+          message,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

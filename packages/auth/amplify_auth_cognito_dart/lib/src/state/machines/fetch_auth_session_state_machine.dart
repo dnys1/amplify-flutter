@@ -8,20 +8,24 @@ import 'package:amplify_auth_cognito_dart/src/credentials/auth_plugin_credential
 import 'package:amplify_auth_cognito_dart/src/credentials/cognito_keys.dart';
 import 'package:amplify_auth_cognito_dart/src/credentials/device_metadata_repository.dart';
 import 'package:amplify_auth_cognito_dart/src/flows/constants.dart';
+import 'package:amplify_auth_cognito_dart/src/flows/helpers.dart';
 import 'package:amplify_auth_cognito_dart/src/model/session/cognito_sign_in_details.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity.dart'
     hide NotAuthorizedException;
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart'
     as cognito_idp;
+import 'package:amplify_auth_cognito_dart/src/sdk/src/cognito_identity_provider/model/analytics_metadata_type.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
 import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_core/amplify_core.dart';
+import 'package:meta/meta.dart';
 
 /// {@template amplify_auth_cognito.fetch_auth_session_state_machine}
 /// Fetches the user's auth session from the credential store and, optionally,
 /// a Cognito Identity Pool.
 /// {@endtemplate}
-class FetchAuthSessionStateMachine extends StateMachine<FetchAuthSessionEvent,
-    FetchAuthSessionState, AuthEvent, AuthState, CognitoAuthStateMachine> {
+final class FetchAuthSessionStateMachine
+    extends AuthStateMachine<FetchAuthSessionEvent, FetchAuthSessionState> {
   /// {@macro amplify_auth_cognito.fetch_auth_session_state_machine}
   FetchAuthSessionStateMachine(CognitoAuthStateMachine manager)
       : super(manager, type);
@@ -53,39 +57,40 @@ class FetchAuthSessionStateMachine extends StateMachine<FetchAuthSessionEvent,
   /// The registered identity pool config
   CognitoIdentityCredentialsProvider? get _identityPoolConfig => get();
 
+  /// Invalidates the current session, forcing a refresh on the next retrieval
+  /// of credentials.
+  ///
+  /// This is useful in tests for mimicing credential expiration but should
+  /// not be used outside of tests.
+  @visibleForTesting
+  void invalidate() => _invalidated = true;
+  var _invalidated = false;
+
   @override
   Future<void> resolve(FetchAuthSessionEvent event) async {
-    switch (event.type) {
-      case FetchAuthSessionEventType.fetch:
-        event as FetchAuthSessionFetch;
-        emit(const FetchAuthSessionState.fetching());
-        await onFetchAuthSession(event);
-        break;
-      case FetchAuthSessionEventType.federate:
-        event as FetchAuthSessionFederate;
-        emit(const FetchAuthSessionState.fetching());
-        await onFederate(event);
-        break;
-      case FetchAuthSessionEventType.refresh:
-        event as FetchAuthSessionRefresh;
-        emit(const FetchAuthSessionState.refreshing());
-        await onRefresh(event);
-        break;
-      case FetchAuthSessionEventType.succeeded:
-        event as FetchAuthSessionSucceeded;
-        emit(FetchAuthSessionState.success(event.session));
-        break;
-      case FetchAuthSessionEventType.failed:
-        event as FetchAuthSessionFailed;
-        emit(FetchAuthSessionState.failure(event.exception));
-        break;
+    try {
+      switch (event) {
+        case FetchAuthSessionFetch _:
+          emit(const FetchAuthSessionState.fetching());
+          await onFetchAuthSession(event);
+        case FetchAuthSessionFederate _:
+          emit(const FetchAuthSessionState.fetching());
+          await onFederate(event);
+        case FetchAuthSessionRefresh _:
+          emit(const FetchAuthSessionState.refreshing());
+          await onRefresh(event);
+        case FetchAuthSessionSucceeded(:final session):
+          emit(FetchAuthSessionState.success(session));
+      }
+    } finally {
+      _invalidated = false;
     }
   }
 
   @override
-  FetchAuthSessionState? resolveError(Object error, [StackTrace? st]) {
+  FetchAuthSessionState? resolveError(Object error, StackTrace st) {
     if (error is Exception) {
-      return FetchAuthSessionFailure(error);
+      return FetchAuthSessionFailure(error, st);
     }
     return null;
   }
@@ -195,17 +200,20 @@ class FetchAuthSessionStateMachine extends StateMachine<FetchAuthSessionEvent,
   Future<void> onFetchAuthSession(
     FetchAuthSessionFetch event,
   ) async {
-    final options = event.options ?? const CognitoSessionOptions();
+    final options = event.options ?? const FetchAuthSessionOptions();
     final result = await manager.loadCredentials();
 
+    final hasUserPool = _userPoolConfig != null;
     final userPoolTokens = result.userPoolTokens;
     final accessTokenExpiration = userPoolTokens?.accessToken.claims.expiration;
     final idTokenExpiration = userPoolTokens?.idToken.claims.expiration;
     final forceRefreshUserPoolTokens =
         userPoolTokens != null && options.forceRefresh;
-    final refreshUserPoolTokens = forceRefreshUserPoolTokens ||
-        _isExpired(accessTokenExpiration) ||
-        _isExpired(idTokenExpiration);
+    final refreshUserPoolTokens = hasUserPool &&
+        (_invalidated ||
+            forceRefreshUserPoolTokens ||
+            _isExpired(accessTokenExpiration) ||
+            _isExpired(idTokenExpiration));
 
     final hasIdentityPool = _identityPoolConfig != null;
     final awsCredentials = result.awsCredentials;
@@ -213,7 +221,8 @@ class FetchAuthSessionStateMachine extends StateMachine<FetchAuthSessionEvent,
     final forceRefreshAwsCredentials = options.forceRefresh;
     final retrieveAwsCredentials = awsCredentials == null;
     final refreshAwsCredentials = hasIdentityPool &&
-        (retrieveAwsCredentials ||
+        (_invalidated ||
+            retrieveAwsCredentials ||
             forceRefreshAwsCredentials ||
             _isExpired(awsCredentialsExpiration));
 
@@ -245,7 +254,14 @@ class FetchAuthSessionStateMachine extends StateMachine<FetchAuthSessionEvent,
 
     final AuthResult<CognitoUserPoolTokens> userPoolTokensResult;
     final AuthResult<String> userSubResult;
-    if (userPoolTokens == null) {
+    if (!hasUserPool) {
+      userPoolTokensResult = const AuthResult.error(
+        InvalidAccountTypeException.noUserPool(),
+      );
+      userSubResult = const AuthResult.error(
+        InvalidAccountTypeException.noUserPool(),
+      );
+    } else if (userPoolTokens == null) {
       userPoolTokensResult = result.signedOut();
       userSubResult = result.signedOut();
     } else {
@@ -347,33 +363,39 @@ class FetchAuthSessionStateMachine extends StateMachine<FetchAuthSessionEvent,
     AuthResult<AWSCredentials> credentialsResult;
     AuthResult<String> identityIdResult;
 
+    final hasUserPool = _userPoolConfig != null;
     var userPoolTokens = result.userPoolTokens;
-    if (event.refreshUserPoolTokens) {
-      if (userPoolTokens == null) {
-        return emit(
-          const FetchAuthSessionState.failure(
-            UnknownException(
-              'No user pool tokens available for refresh',
-            ),
-          ),
-        );
-      }
-      try {
-        userPoolTokens = await _refreshUserPoolTokens(userPoolTokens);
-        userPoolTokensResult = AuthResult.success(userPoolTokens);
-        userSubResult = AuthResult.success(userPoolTokens.userId);
-      } on Exception catch (e, s) {
-        final authException = AuthException.fromException(e);
-        userPoolTokensResult = AuthResult.error(authException, s);
-        userSubResult = AuthResult.error(authException, s);
-      }
+    if (!hasUserPool) {
+      userPoolTokensResult = const AuthResult.error(
+        InvalidAccountTypeException.noUserPool(),
+      );
+      userSubResult = const AuthResult.error(
+        InvalidAccountTypeException.noUserPool(),
+      );
     } else {
-      if (userPoolTokens != null) {
-        userPoolTokensResult = AuthResult.success(userPoolTokens);
-        userSubResult = AuthResult.success(userPoolTokens.userId);
+      if (event.refreshUserPoolTokens) {
+        if (userPoolTokens == null) {
+          throw const UnknownException(
+            'No user pool tokens available for refresh',
+          );
+        }
+        try {
+          userPoolTokens = await _refreshUserPoolTokens(userPoolTokens);
+          userPoolTokensResult = AuthResult.success(userPoolTokens);
+          userSubResult = AuthResult.success(userPoolTokens.userId);
+        } on Exception catch (e, s) {
+          final authException = AuthException.fromException(e);
+          userPoolTokensResult = AuthResult.error(authException, s);
+          userSubResult = AuthResult.error(authException, s);
+        }
       } else {
-        userPoolTokensResult = result.signedOut();
-        userSubResult = result.signedOut();
+        if (userPoolTokens != null) {
+          userPoolTokensResult = AuthResult.success(userPoolTokens);
+          userSubResult = AuthResult.success(userPoolTokens.userId);
+        } else {
+          userPoolTokensResult = result.signedOut();
+          userSubResult = result.signedOut();
+        }
       }
     }
 
@@ -470,7 +492,7 @@ class FetchAuthSessionStateMachine extends StateMachine<FetchAuthSessionEvent,
       );
 
       return _AwsCredentialsResult(awsCredentials, identityId);
-    } on AuthNotAuthorizedException {
+    } on AuthNotAuthorizedException catch (e, st) {
       // If expired credentials were cached and trying to refresh them throws
       // a NotAuthorizedException, clear any AWS credentials which were being
       // refreshed, since they may have been from an authenticated user whose
@@ -479,22 +501,36 @@ class FetchAuthSessionStateMachine extends StateMachine<FetchAuthSessionEvent,
       await manager.clearCredentials(
         CognitoIdentityPoolKeys(identityPoolConfig),
       );
-      rethrow;
+      Error.throwWithStackTrace(
+        e.toSessionExpired('The AWS credentials could not be retrieved'),
+        st,
+      );
     }
   }
 
   Future<CognitoUserPoolTokens> _refreshUserPoolTokens(
     CognitoUserPoolTokens userPoolTokens,
   ) async {
-    final deviceSecrets = await getOrCreate(DeviceMetadataRepository.token)
+    final deviceSecrets = await getOrCreate<DeviceMetadataRepository>()
         .get(userPoolTokens.username);
+    final config = _userPoolConfig!;
     final refreshRequest = cognito_idp.InitiateAuthRequest.build((b) {
       b
         ..authFlow = cognito_idp.AuthFlowType.refreshTokenAuth
-        ..clientId = _userPoolConfig!.appClientId
+        ..clientId = config.appClientId
         ..authParameters.addAll({
           CognitoConstants.refreshToken: userPoolTokens.refreshToken,
-        });
+        })
+        ..analyticsMetadata = get<AnalyticsMetadataType>()?.toBuilder();
+
+      if (config.appClientSecret != null) {
+        b.authParameters[CognitoConstants.challengeParamSecretHash] =
+            computeSecretHash(
+          userPoolTokens.username,
+          config.appClientId,
+          config.appClientSecret!,
+        );
+      }
 
       final deviceKey = deviceSecrets?.deviceKey;
       if (deviceKey != null) {
@@ -529,15 +565,13 @@ class FetchAuthSessionStateMachine extends StateMachine<FetchAuthSessionEvent,
       );
 
       return newTokens;
-    } on AuthNotAuthorizedException {
+    } on AuthNotAuthorizedException catch (e, st) {
       late Iterable<String> keys;
       switch (userPoolTokens.signInMethod) {
         case CognitoSignInMethod.default$:
           keys = CognitoUserPoolKeys(expect());
-          break;
         case CognitoSignInMethod.hostedUi:
           keys = HostedUiKeys(expect());
-          break;
       }
       final identityPoolConfig = _identityPoolConfig;
       await manager.clearCredentials([
@@ -546,7 +580,10 @@ class FetchAuthSessionStateMachine extends StateMachine<FetchAuthSessionEvent,
           // Clear associated AWS credentials
           ...CognitoIdentityPoolKeys(identityPoolConfig),
       ]);
-      rethrow;
+      Error.throwWithStackTrace(
+        e.toSessionExpired('The tokens could not be refreshed'),
+        st,
+      );
     }
   }
 }
@@ -559,6 +596,20 @@ extension on CredentialStoreData {
       signInDetails is CognitoSignInDetailsFederated
           ? const InvalidStateException.federatedToIdentityPool()
           : const SignedOutException('No user is currently signed in'),
+    );
+  }
+}
+
+extension on AuthNotAuthorizedException {
+  /// In the fetch auth session state machine, all [AuthNotAuthorizedException]s
+  /// are mapped to [SessionExpiredException]s, since the only time they would
+  /// be thrown is due to expired/revoked credentials being used.
+  SessionExpiredException toSessionExpired(String message) {
+    return SessionExpiredException(
+      message,
+      recoverySuggestion:
+          'Invoke Amplify.Auth.signIn to re-authenticate the user',
+      underlyingException: underlyingException,
     );
   }
 }

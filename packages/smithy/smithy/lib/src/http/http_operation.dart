@@ -36,18 +36,15 @@ abstract class HttpOperation<InputPayload, Input, OutputPayload, Output>
   static String expandLabels(String template, HasLabel input) {
     final pattern = UriPattern.parse(template);
     return pattern.segments.map((segment) {
-      switch (segment.type) {
-        case SegmentType.literal:
-          return segment.content;
-        case SegmentType.label:
-          return _escapeLabel(input.labelFor(segment.content));
-        case SegmentType.greedyLabel:
-          return input
-              .labelFor(segment.content)
-              .split('/')
-              .map(_escapeLabel)
-              .join('/');
-      }
+      return switch (segment.type) {
+        SegmentType.literal => segment.content,
+        SegmentType.label => _escapeLabel(input.labelFor(segment.content)),
+        SegmentType.greedyLabel => input
+            .labelFor(segment.content)
+            .split('/')
+            .map(_escapeLabel)
+            .join('/'),
+      };
     }).join('/');
   }
 
@@ -64,10 +61,7 @@ abstract class HttpOperation<InputPayload, Input, OutputPayload, Output>
   /// Builds the output from the [payload] and metadata from the HTTP
   /// [response].
   Output buildOutput(
-    // This is (kind of) a hack to allow `OutputPayload` to always be non-null
-    // even if the payload type is nullable. We need the non-null version to
-    // interop with built_value correctly.
-    covariant Object? payload,
+    OutputPayload payload,
     AWSBaseHttpResponse response,
   );
 
@@ -174,7 +168,7 @@ abstract class HttpOperation<InputPayload, Input, OutputPayload, Output>
       ...request.queryParameters.asMap(),
       ...uri.queryParametersAll,
     };
-    final body = protocol.serialize(input, specifiedType: FullType(Input));
+    final body = protocol.serialize(input);
 
     final awsRequest = AWSStreamedHttpRequest.raw(
       method: AWSHttpMethod.fromString(request.method),
@@ -226,7 +220,14 @@ abstract class HttpOperation<InputPayload, Input, OutputPayload, Output>
           (response) => deserializeOutput(
             protocol: protocol,
             response: response,
-          ),
+            // Prevents errors thrown from registering as "Uncaught Exceptions"
+            // in the Dart debugger.
+            //
+            // This is a false positive because we do catch errors in the
+            // retryer which wraps this. Likely this is due to the use of
+            // completers in `CancelableOperation` or some other Zone-related
+            // nonsense.
+          ).catchError(Error.throwWithStackTrace),
         );
       },
       onCancel: () {
@@ -266,15 +267,11 @@ abstract class HttpOperation<InputPayload, Input, OutputPayload, Output>
     StackTrace? stackTrace;
     var successCode = this.successCode();
     try {
-      final payload = await protocol.deserialize(
-        response.split(),
-        specifiedType: FullType(OutputPayload),
-      );
-      if (payload is Output) {
-        output = payload;
-      } else {
-        output = buildOutput(payload, response);
-      }
+      final payload = await protocol.deserialize(response.split());
+      output = switch (payload) {
+        Output _ => payload,
+        _ => buildOutput(payload, response),
+      };
       successCode = this.successCode(output);
     } on Object catch (e, st) {
       error = e;
@@ -283,7 +280,7 @@ abstract class HttpOperation<InputPayload, Input, OutputPayload, Output>
     if (response.statusCode == successCode) {
       // Close the response so that the underlying subscription created by
       // `split` is cancelled as well.
-      response.close();
+      unawaited(response.close());
       if (output != null) {
         return output;
       }
@@ -297,8 +294,9 @@ abstract class HttpOperation<InputPayload, Input, OutputPayload, Output>
         smithyError =
             errorTypes.firstWhereOrNull((t) => t.shapeId.shape == resolvedType);
       }
-      smithyError ??= errorTypes
-          .singleWhereOrNull((t) => t.statusCode == response.statusCode);
+      smithyError ??= errorTypes.singleWhereOrNull(
+        (t) => t.statusCode == response.statusCode,
+      );
       if (smithyError == null) {
         throw SmithyHttpException(
           statusCode: response.statusCode,
@@ -306,19 +304,16 @@ abstract class HttpOperation<InputPayload, Input, OutputPayload, Output>
           headers: response.headers,
         );
       }
-      final Type errorType = smithyError.type;
-      final Function builder = smithyError.builder;
-      final Object? errorPayload = await protocol.deserialize(
-        response.body,
+      final errorType = smithyError.type;
+      final errorPayload = await protocol.wireSerializer.deserialize(
+        await response.bodyBytes,
         specifiedType: FullType(errorType),
       );
-      final SmithyException smithyException =
-          builder(errorPayload, response) as SmithyException;
-      throw smithyException;
+      throw smithyError.build(errorPayload, response);
     } finally {
       // Close the response so that the underlying subscription created by
       // `split` is cancelled as well.
-      response.close();
+      unawaited(response.close());
     }
   }
 
@@ -376,7 +371,7 @@ abstract class PaginatedHttpOperation<
       final token = getToken(output);
       final items = getItems(output);
       late PaginatedResult<Items, PageSize, Token> result;
-      result = PaginatedResult(
+      return result = PaginatedResult(
         items,
         nextContinuationToken: token,
 
@@ -401,7 +396,6 @@ abstract class PaginatedHttpOperation<
           );
         },
       );
-      return result;
     });
     return SmithyOperation(
       paginatedOperation,

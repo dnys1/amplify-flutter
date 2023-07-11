@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.put_configuration_aggregator_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,9 +37,8 @@ abstract class PutConfigurationAggregatorResponse
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
-    PutConfigurationAggregatorResponseAwsJson11Serializer()
-  ];
+  static const List<_i3.SmithySerializer<PutConfigurationAggregatorResponse>>
+      serializers = [PutConfigurationAggregatorResponseAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(PutConfigurationAggregatorResponseBuilder b) {}
@@ -50,11 +50,11 @@ abstract class PutConfigurationAggregatorResponse
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('PutConfigurationAggregatorResponse');
-    helper.add(
-      'configurationAggregator',
-      configurationAggregator,
-    );
+        newBuiltValueToStringHelper('PutConfigurationAggregatorResponse')
+          ..add(
+            'configurationAggregator',
+            configurationAggregator,
+          );
     return helper.toString();
   }
 }
@@ -88,15 +88,15 @@ class PutConfigurationAggregatorResponseAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ConfigurationAggregator':
-          if (value != null) {
-            result.configurationAggregator.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.ConfigurationAggregator),
-            ) as _i2.ConfigurationAggregator));
-          }
-          break;
+          result.configurationAggregator.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.ConfigurationAggregator),
+          ) as _i2.ConfigurationAggregator));
       }
     }
 
@@ -106,19 +106,19 @@ class PutConfigurationAggregatorResponseAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    PutConfigurationAggregatorResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as PutConfigurationAggregatorResponse);
-    final result = <Object?>[];
-    if (payload.configurationAggregator != null) {
-      result
+    final result$ = <Object?>[];
+    final PutConfigurationAggregatorResponse(:configurationAggregator) = object;
+    if (configurationAggregator != null) {
+      result$
         ..add('ConfigurationAggregator')
         ..add(serializers.serialize(
-          payload.configurationAggregator!,
+          configurationAggregator,
           specifiedType: const FullType(_i2.ConfigurationAggregator),
         ));
     }
-    return result;
+    return result$;
   }
 }

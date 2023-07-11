@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.tag; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -29,7 +30,7 @@ abstract class Tag
 
   const Tag._();
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<Tag>> serializers = [
     TagAwsJson11Serializer()
   ];
 
@@ -48,15 +49,15 @@ abstract class Tag
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('Tag');
-    helper.add(
-      'key',
-      key,
-    );
-    helper.add(
-      'value',
-      value,
-    );
+    final helper = newBuiltValueToStringHelper('Tag')
+      ..add(
+        'key',
+        key,
+      )
+      ..add(
+        'value',
+        value,
+      );
     return helper.toString();
   }
 }
@@ -88,23 +89,20 @@ class TagAwsJson11Serializer extends _i2.StructuredSmithySerializer<Tag> {
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'Key':
-          if (value != null) {
-            result.key = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.key = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'Value':
-          if (value != null) {
-            result.value = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.value = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -114,27 +112,27 @@ class TagAwsJson11Serializer extends _i2.StructuredSmithySerializer<Tag> {
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    Tag object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as Tag);
-    final result = <Object?>[];
-    if (payload.key != null) {
-      result
+    final result$ = <Object?>[];
+    final Tag(:key, :value) = object;
+    if (key != null) {
+      result$
         ..add('Key')
         ..add(serializers.serialize(
-          payload.key!,
+          key,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.value != null) {
-      result
+    if (value != null) {
+      result$
         ..add('Value')
         ..add(serializers.serialize(
-          payload.value!,
+          value,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_xml_v2.rest_xml_protocol.model.recursive_shapes_input_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -42,9 +43,8 @@ abstract class RecursiveShapesInputOutput
   ) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    RecursiveShapesInputOutputRestXmlSerializer()
-  ];
+  static const List<_i1.SmithySerializer<RecursiveShapesInputOutput>>
+      serializers = [RecursiveShapesInputOutputRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(RecursiveShapesInputOutputBuilder b) {}
@@ -55,11 +55,11 @@ abstract class RecursiveShapesInputOutput
   List<Object?> get props => [nested];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('RecursiveShapesInputOutput');
-    helper.add(
-      'nested',
-      nested,
-    );
+    final helper = newBuiltValueToStringHelper('RecursiveShapesInputOutput')
+      ..add(
+        'nested',
+        nested,
+      );
     return helper.toString();
   }
 }
@@ -90,19 +90,19 @@ class RecursiveShapesInputOutputRestXmlSerializer
     final result = RecursiveShapesInputOutputBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'nested':
-          if (value != null) {
-            result.nested.replace((serializers.deserialize(
-              value,
-              specifiedType:
-                  const FullType(_i3.RecursiveShapesInputOutputNested1),
-            ) as _i3.RecursiveShapesInputOutputNested1));
-          }
-          break;
+          result.nested.replace((serializers.deserialize(
+            value,
+            specifiedType:
+                const FullType(_i3.RecursiveShapesInputOutputNested1),
+          ) as _i3.RecursiveShapesInputOutputNested1));
       }
     }
 
@@ -112,21 +112,21 @@ class RecursiveShapesInputOutputRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    RecursiveShapesInputOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as RecursiveShapesInputOutput);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName('RecursiveShapesInputOutput')
     ];
-    if (payload.nested != null) {
-      result
+    final RecursiveShapesInputOutput(:nested) = object;
+    if (nested != null) {
+      result$
         ..add(const _i1.XmlElementName('nested'))
         ..add(serializers.serialize(
-          payload.nested!,
+          nested,
           specifiedType: const FullType(_i3.RecursiveShapesInputOutputNested1),
         ));
     }
-    return result;
+    return result$;
   }
 }

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.put_evaluations_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -22,6 +23,7 @@ abstract class PutEvaluationsRequest
     required String resultToken,
     bool? testMode,
   }) {
+    testMode ??= false;
     return _$PutEvaluationsRequest._(
       evaluations: evaluations == null ? null : _i4.BuiltList(evaluations),
       resultToken: resultToken,
@@ -42,12 +44,14 @@ abstract class PutEvaluationsRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<_i1.SmithySerializer<PutEvaluationsRequest>> serializers = [
     PutEvaluationsRequestAwsJson11Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(PutEvaluationsRequestBuilder b) {}
+  static void _init(PutEvaluationsRequestBuilder b) {
+    b.testMode = false;
+  }
 
   /// The assessments that the Lambda function performs. Each evaluation identifies an Amazon Web Services resource and indicates whether it complies with the Config rule that invokes the Lambda function.
   _i4.BuiltList<_i3.Evaluation>? get evaluations;
@@ -58,7 +62,7 @@ abstract class PutEvaluationsRequest
   /// Use this parameter to specify a test run for `PutEvaluations`. You can verify whether your Lambda function will deliver evaluation results to Config. No updates occur to your existing evaluations, and evaluation results are not sent to Config.
   ///
   /// When `TestMode` is `true`, `PutEvaluations` doesn't require a valid value for the `ResultToken` parameter, but the value cannot be null.
-  bool? get testMode;
+  bool get testMode;
   @override
   PutEvaluationsRequest getPayload() => this;
   @override
@@ -69,19 +73,19 @@ abstract class PutEvaluationsRequest
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('PutEvaluationsRequest');
-    helper.add(
-      'evaluations',
-      evaluations,
-    );
-    helper.add(
-      'resultToken',
-      resultToken,
-    );
-    helper.add(
-      'testMode',
-      testMode,
-    );
+    final helper = newBuiltValueToStringHelper('PutEvaluationsRequest')
+      ..add(
+        'evaluations',
+        evaluations,
+      )
+      ..add(
+        'resultToken',
+        resultToken,
+      )
+      ..add(
+        'testMode',
+        testMode,
+      );
     return helper.toString();
   }
 }
@@ -115,32 +119,28 @@ class PutEvaluationsRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'Evaluations':
-          if (value != null) {
-            result.evaluations.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i4.BuiltList,
-                [FullType(_i3.Evaluation)],
-              ),
-            ) as _i4.BuiltList<_i3.Evaluation>));
-          }
-          break;
+          result.evaluations.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i4.BuiltList,
+              [FullType(_i3.Evaluation)],
+            ),
+          ) as _i4.BuiltList<_i3.Evaluation>));
         case 'ResultToken':
           result.resultToken = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'TestMode':
-          if (value != null) {
-            result.testMode = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(bool),
-            ) as bool);
-          }
-          break;
+          result.testMode = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
       }
     }
 
@@ -150,36 +150,34 @@ class PutEvaluationsRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    PutEvaluationsRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as PutEvaluationsRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final PutEvaluationsRequest(:evaluations, :resultToken, :testMode) = object;
+    result$.addAll([
       'ResultToken',
       serializers.serialize(
-        payload.resultToken,
+        resultToken,
         specifiedType: const FullType(String),
       ),
-    ];
-    if (payload.evaluations != null) {
-      result
+      'TestMode',
+      serializers.serialize(
+        testMode,
+        specifiedType: const FullType(bool),
+      ),
+    ]);
+    if (evaluations != null) {
+      result$
         ..add('Evaluations')
         ..add(serializers.serialize(
-          payload.evaluations!,
+          evaluations,
           specifiedType: const FullType(
             _i4.BuiltList,
             [FullType(_i3.Evaluation)],
           ),
         ));
     }
-    if (payload.testMode != null) {
-      result
-        ..add('TestMode')
-        ..add(serializers.serialize(
-          payload.testMode!,
-          specifiedType: const FullType(bool),
-        ));
-    }
-    return result;
+    return result$;
   }
 }

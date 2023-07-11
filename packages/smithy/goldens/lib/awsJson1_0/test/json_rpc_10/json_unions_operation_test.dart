@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 // ignore_for_file: unused_element
 library aws_json1_0_v1.json_rpc_10.test.json_unions_operation_test_test; // ignore_for_file: no_leading_underscores_for_library_prefixes
@@ -252,6 +253,49 @@ void main() {
           bodyMediaType: 'application/json',
           params: {
             'contents': {'enumValue': 'Foo'}
+          },
+          vendorParamsShape: null,
+          vendorParams: {},
+          headers: {
+            'Content-Type': 'application/x-amz-json-1.0',
+            'X-Amz-Target': 'JsonRpc10.JsonUnions',
+          },
+          forbidHeaders: [],
+          requireHeaders: [],
+          tags: [],
+          appliesTo: null,
+          method: 'POST',
+          uri: '/',
+          host: null,
+          resolvedHost: null,
+          queryParams: [],
+          forbidQueryParams: [],
+          requireQueryParams: [],
+        ),
+        inputSerializers: const [JsonUnionsInputAwsJson10Serializer()],
+      );
+    },
+  );
+  _i1.test(
+    'AwsJson10SerializeIntEnumUnionValue (request)',
+    () async {
+      await _i2.httpRequestTest(
+        operation: _i3.JsonUnionsOperation(
+          region: 'us-east-1',
+          baseUri: Uri.parse('https://example.com'),
+        ),
+        testCase: const _i2.HttpRequestTestCase(
+          id: 'AwsJson10SerializeIntEnumUnionValue',
+          documentation: 'Serializes an intEnum union value',
+          protocol: _i4.ShapeId(
+            namespace: 'aws.protocols',
+            shape: 'awsJson1_0',
+          ),
+          authScheme: null,
+          body: '{\n    "contents": {\n        "intEnumValue": 1\n    }\n}',
+          bodyMediaType: 'application/json',
+          params: {
+            'contents': {'intEnumValue': 1}
           },
           vendorParamsShape: null,
           vendorParams: {},
@@ -625,6 +669,40 @@ void main() {
     },
   );
   _i1.test(
+    'AwsJson10DeserializeIntEnumUnionValue (response)',
+    () async {
+      await _i2.httpResponseTest(
+        operation: _i3.JsonUnionsOperation(
+          region: 'us-east-1',
+          baseUri: Uri.parse('https://example.com'),
+        ),
+        testCase: const _i2.HttpResponseTestCase(
+          id: 'AwsJson10DeserializeIntEnumUnionValue',
+          documentation: 'Deserializes an intEnum union value',
+          protocol: _i4.ShapeId(
+            namespace: 'aws.protocols',
+            shape: 'awsJson1_0',
+          ),
+          authScheme: null,
+          body: '{\n    "contents": {\n        "intEnumValue": 1\n    }\n}',
+          bodyMediaType: 'application/json',
+          params: {
+            'contents': {'intEnumValue': 1}
+          },
+          vendorParamsShape: null,
+          vendorParams: {},
+          headers: {'Content-Type': 'application/x-amz-json-1.0'},
+          forbidHeaders: [],
+          requireHeaders: [],
+          tags: [],
+          appliesTo: null,
+          code: 200,
+        ),
+        outputSerializers: const [JsonUnionsOutputAwsJson10Serializer()],
+      );
+    },
+  );
+  _i1.test(
     'AwsJson10DeserializeListUnionValue (response)',
     () async {
       await _i2.httpResponseTest(
@@ -768,15 +846,15 @@ class JsonUnionsInputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'contents':
-          if (value != null) {
-            result.contents = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i6.MyUnion),
-            ) as _i6.MyUnion);
-          }
-          break;
+          result.contents = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i6.MyUnion),
+          ) as _i6.MyUnion);
       }
     }
 
@@ -786,7 +864,7 @@ class JsonUnionsInputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    _i5.JsonUnionsInput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     throw StateError('Not supported for tests');
@@ -818,15 +896,15 @@ class JsonUnionsOutputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'contents':
-          if (value != null) {
-            result.contents = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i6.MyUnion),
-            ) as _i6.MyUnion);
-          }
-          break;
+          result.contents = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i6.MyUnion),
+          ) as _i6.MyUnion);
       }
     }
 
@@ -836,7 +914,7 @@ class JsonUnionsOutputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    _i7.JsonUnionsOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     throw StateError('Not supported for tests');

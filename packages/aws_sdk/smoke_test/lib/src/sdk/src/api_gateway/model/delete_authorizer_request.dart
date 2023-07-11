@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.delete_authorizer_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -21,12 +22,12 @@ abstract class DeleteAuthorizerRequest
         _i1.HasPayload<DeleteAuthorizerRequestPayload> {
   /// Request to delete an existing Authorizer resource.
   factory DeleteAuthorizerRequest({
-    required String authorizerId,
     required String restApiId,
+    required String authorizerId,
   }) {
     return _$DeleteAuthorizerRequest._(
-      authorizerId: authorizerId,
       restApiId: restApiId,
+      authorizerId: authorizerId,
     );
   }
 
@@ -51,18 +52,17 @@ abstract class DeleteAuthorizerRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
-    DeleteAuthorizerRequestRestJson1Serializer()
-  ];
+  static const List<_i1.SmithySerializer<DeleteAuthorizerRequestPayload>>
+      serializers = [DeleteAuthorizerRequestRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(DeleteAuthorizerRequestBuilder b) {}
 
-  /// The identifier of the Authorizer resource.
-  String get authorizerId;
-
   /// The string identifier of the associated RestApi.
   String get restApiId;
+
+  /// The identifier of the Authorizer resource.
+  String get authorizerId;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -82,20 +82,20 @@ abstract class DeleteAuthorizerRequest
       DeleteAuthorizerRequestPayload();
   @override
   List<Object?> get props => [
-        authorizerId,
         restApiId,
+        authorizerId,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DeleteAuthorizerRequest');
-    helper.add(
-      'authorizerId',
-      authorizerId,
-    );
-    helper.add(
-      'restApiId',
-      restApiId,
-    );
+    final helper = newBuiltValueToStringHelper('DeleteAuthorizerRequest')
+      ..add(
+        'restApiId',
+        restApiId,
+      )
+      ..add(
+        'authorizerId',
+        authorizerId,
+      );
     return helper.toString();
   }
 }
@@ -157,7 +157,7 @@ class DeleteAuthorizerRequestRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteAuthorizerRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) =>
       const <Object?>[];

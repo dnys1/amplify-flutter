@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.describe_configuration_aggregators_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -43,7 +44,9 @@ abstract class DescribeConfigurationAggregatorsResponse
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
+  static const List<
+          _i4.SmithySerializer<DescribeConfigurationAggregatorsResponse>>
+      serializers = [
     DescribeConfigurationAggregatorsResponseAwsJson11Serializer()
   ];
 
@@ -63,15 +66,15 @@ abstract class DescribeConfigurationAggregatorsResponse
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DescribeConfigurationAggregatorsResponse');
-    helper.add(
-      'configurationAggregators',
-      configurationAggregators,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+        newBuiltValueToStringHelper('DescribeConfigurationAggregatorsResponse')
+          ..add(
+            'configurationAggregators',
+            configurationAggregators,
+          )
+          ..add(
+            'nextToken',
+            nextToken,
+          );
     return helper.toString();
   }
 }
@@ -105,26 +108,23 @@ class DescribeConfigurationAggregatorsResponseAwsJson11Serializer extends _i4
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ConfigurationAggregators':
-          if (value != null) {
-            result.configurationAggregators.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.ConfigurationAggregator)],
-              ),
-            ) as _i3.BuiltList<_i2.ConfigurationAggregator>));
-          }
-          break;
+          result.configurationAggregators.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.ConfigurationAggregator)],
+            ),
+          ) as _i3.BuiltList<_i2.ConfigurationAggregator>));
         case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -134,30 +134,33 @@ class DescribeConfigurationAggregatorsResponseAwsJson11Serializer extends _i4
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeConfigurationAggregatorsResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeConfigurationAggregatorsResponse);
-    final result = <Object?>[];
-    if (payload.configurationAggregators != null) {
-      result
+    final result$ = <Object?>[];
+    final DescribeConfigurationAggregatorsResponse(
+      :configurationAggregators,
+      :nextToken
+    ) = object;
+    if (configurationAggregators != null) {
+      result$
         ..add('ConfigurationAggregators')
         ..add(serializers.serialize(
-          payload.configurationAggregators!,
+          configurationAggregators,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(_i2.ConfigurationAggregator)],
           ),
         ));
     }
-    if (payload.nextToken != null) {
-      result
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

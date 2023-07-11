@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.get_bucket_lifecycle_configuration_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,9 +37,8 @@ abstract class GetBucketLifecycleConfigurationOutput
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
-    GetBucketLifecycleConfigurationOutputRestXmlSerializer()
-  ];
+  static const List<_i4.SmithySerializer<GetBucketLifecycleConfigurationOutput>>
+      serializers = [GetBucketLifecycleConfigurationOutputRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetBucketLifecycleConfigurationOutputBuilder b) {}
@@ -50,11 +50,11 @@ abstract class GetBucketLifecycleConfigurationOutput
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('GetBucketLifecycleConfigurationOutput');
-    helper.add(
-      'rules',
-      rules,
-    );
+        newBuiltValueToStringHelper('GetBucketLifecycleConfigurationOutput')
+          ..add(
+            'rules',
+            rules,
+          );
     return helper.toString();
   }
 }
@@ -85,18 +85,18 @@ class GetBucketLifecycleConfigurationOutputRestXmlSerializer extends _i4
     final result = GetBucketLifecycleConfigurationOutputBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'Rule':
-          if (value != null) {
-            result.rules.add((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.LifecycleRule),
-            ) as _i2.LifecycleRule));
-          }
-          break;
+          result.rules.add((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.LifecycleRule),
+          ) as _i2.LifecycleRule));
       }
     }
 
@@ -106,27 +106,27 @@ class GetBucketLifecycleConfigurationOutputRestXmlSerializer extends _i4
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetBucketLifecycleConfigurationOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as GetBucketLifecycleConfigurationOutput);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i4.XmlElementName(
         'LifecycleConfiguration',
         _i4.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    if (payload.rules != null) {
-      result.addAll(
+    final GetBucketLifecycleConfigurationOutput(:rules) = object;
+    if (rules != null) {
+      result$.addAll(
           const _i4.XmlBuiltListSerializer(memberName: 'Rule').serialize(
         serializers,
-        payload.rules!,
+        rules,
         specifiedType: const FullType.nullable(
           _i3.BuiltList,
           [FullType(_i2.LifecycleRule)],
         ),
       ));
     }
-    return result;
+    return result$;
   }
 }

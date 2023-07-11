@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.describe_table_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -34,7 +35,7 @@ abstract class DescribeTableOutput
   ) =>
       payload;
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<DescribeTableOutput>> serializers = [
     DescribeTableOutputAwsJson10Serializer()
   ];
 
@@ -47,11 +48,11 @@ abstract class DescribeTableOutput
   List<Object?> get props => [table];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DescribeTableOutput');
-    helper.add(
-      'table',
-      table,
-    );
+    final helper = newBuiltValueToStringHelper('DescribeTableOutput')
+      ..add(
+        'table',
+        table,
+      );
     return helper.toString();
   }
 }
@@ -84,15 +85,15 @@ class DescribeTableOutputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'Table':
-          if (value != null) {
-            result.table.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.TableDescription),
-            ) as _i2.TableDescription));
-          }
-          break;
+          result.table.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.TableDescription),
+          ) as _i2.TableDescription));
       }
     }
 
@@ -102,19 +103,19 @@ class DescribeTableOutputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DescribeTableOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DescribeTableOutput);
-    final result = <Object?>[];
-    if (payload.table != null) {
-      result
+    final result$ = <Object?>[];
+    final DescribeTableOutput(:table) = object;
+    if (table != null) {
+      result$
         ..add('Table')
         ..add(serializers.serialize(
-          payload.table!,
+          table,
           specifiedType: const FullType(_i2.TableDescription),
         ));
     }
-    return result;
+    return result$;
   }
 }

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.condition; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -30,7 +31,7 @@ abstract class Condition
 
   const Condition._();
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<Condition>> serializers = [
     ConditionRestXmlSerializer()
   ];
 
@@ -51,15 +52,15 @@ abstract class Condition
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('Condition');
-    helper.add(
-      'httpErrorCodeReturnedEquals',
-      httpErrorCodeReturnedEquals,
-    );
-    helper.add(
-      'keyPrefixEquals',
-      keyPrefixEquals,
-    );
+    final helper = newBuiltValueToStringHelper('Condition')
+      ..add(
+        'httpErrorCodeReturnedEquals',
+        httpErrorCodeReturnedEquals,
+      )
+      ..add(
+        'keyPrefixEquals',
+        keyPrefixEquals,
+      );
     return helper.toString();
   }
 }
@@ -89,26 +90,23 @@ class ConditionRestXmlSerializer
     final result = ConditionBuilder();
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
-      final key = iterator.current;
+      final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
-      switch (key as String) {
+      if (value == null) {
+        continue;
+      }
+      switch (key) {
         case 'HttpErrorCodeReturnedEquals':
-          if (value != null) {
-            result.httpErrorCodeReturnedEquals = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.httpErrorCodeReturnedEquals = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'KeyPrefixEquals':
-          if (value != null) {
-            result.keyPrefixEquals = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.keyPrefixEquals = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -118,32 +116,32 @@ class ConditionRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    Condition object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as Condition);
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i2.XmlElementName(
         'Condition',
         _i2.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    if (payload.httpErrorCodeReturnedEquals != null) {
-      result
+    final Condition(:httpErrorCodeReturnedEquals, :keyPrefixEquals) = object;
+    if (httpErrorCodeReturnedEquals != null) {
+      result$
         ..add(const _i2.XmlElementName('HttpErrorCodeReturnedEquals'))
         ..add(serializers.serialize(
-          payload.httpErrorCodeReturnedEquals!,
+          httpErrorCodeReturnedEquals,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.keyPrefixEquals != null) {
-      result
+    if (keyPrefixEquals != null) {
+      result$
         ..add(const _i2.XmlElementName('KeyPrefixEquals'))
         ..add(serializers.serialize(
-          payload.keyPrefixEquals!,
+          keyPrefixEquals,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.list_tags_for_resource_response; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -16,12 +17,12 @@ abstract class ListTagsForResourceResponse
     implements
         Built<ListTagsForResourceResponse, ListTagsForResourceResponseBuilder> {
   factory ListTagsForResourceResponse({
-    String? nextToken,
     List<_i2.Tag>? tags,
+    String? nextToken,
   }) {
     return _$ListTagsForResourceResponse._(
-      nextToken: nextToken,
       tags: tags == null ? null : _i3.BuiltList(tags),
+      nextToken: nextToken,
     );
   }
 
@@ -38,34 +39,33 @@ abstract class ListTagsForResourceResponse
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
-    ListTagsForResourceResponseAwsJson11Serializer()
-  ];
+  static const List<_i4.SmithySerializer<ListTagsForResourceResponse>>
+      serializers = [ListTagsForResourceResponseAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(ListTagsForResourceResponseBuilder b) {}
 
-  /// The `nextToken` string returned on a previous page that you use to get the next page of results in a paginated response.
-  String? get nextToken;
-
   /// The tags for the resource.
   _i3.BuiltList<_i2.Tag>? get tags;
+
+  /// The `nextToken` string returned on a previous page that you use to get the next page of results in a paginated response.
+  String? get nextToken;
   @override
   List<Object?> get props => [
-        nextToken,
         tags,
+        nextToken,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ListTagsForResourceResponse');
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
-    helper.add(
-      'tags',
-      tags,
-    );
+    final helper = newBuiltValueToStringHelper('ListTagsForResourceResponse')
+      ..add(
+        'tags',
+        tags,
+      )
+      ..add(
+        'nextToken',
+        nextToken,
+      );
     return helper.toString();
   }
 }
@@ -99,26 +99,23 @@ class ListTagsForResourceResponseAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
-        case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
         case 'Tags':
-          if (value != null) {
-            result.tags.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.Tag)],
-              ),
-            ) as _i3.BuiltList<_i2.Tag>));
-          }
-          break;
+          result.tags.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.Tag)],
+            ),
+          ) as _i3.BuiltList<_i2.Tag>));
+        case 'NextToken':
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -128,30 +125,30 @@ class ListTagsForResourceResponseAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ListTagsForResourceResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ListTagsForResourceResponse);
-    final result = <Object?>[];
-    if (payload.nextToken != null) {
-      result
-        ..add('NextToken')
-        ..add(serializers.serialize(
-          payload.nextToken!,
-          specifiedType: const FullType(String),
-        ));
-    }
-    if (payload.tags != null) {
-      result
+    final result$ = <Object?>[];
+    final ListTagsForResourceResponse(:tags, :nextToken) = object;
+    if (tags != null) {
+      result$
         ..add('Tags')
         ..add(serializers.serialize(
-          payload.tags!,
+          tags,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(_i2.Tag)],
           ),
         ));
     }
-    return result;
+    if (nextToken != null) {
+      result$
+        ..add('NextToken')
+        ..add(serializers.serialize(
+          nextToken,
+          specifiedType: const FullType(String),
+        ));
+    }
+    return result$;
   }
 }

@@ -6,15 +6,17 @@ import 'dart:async';
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart'
     hide InternalErrorException;
 import 'package:amplify_auth_cognito_dart/src/credentials/cognito_keys.dart';
+import 'package:amplify_auth_cognito_dart/src/flows/hosted_ui/hosted_ui_platform.dart';
 import 'package:amplify_auth_cognito_dart/src/sdk/cognito_identity_provider.dart';
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
+import 'package:amplify_auth_cognito_dart/src/state/state.dart';
+import 'package:amplify_auth_cognito_test/common/mock_clients.dart';
+import 'package:amplify_auth_cognito_test/common/mock_config.dart';
+import 'package:amplify_auth_cognito_test/common/mock_hosted_ui.dart';
+import 'package:amplify_auth_cognito_test/common/mock_secure_storage.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_secure_storage_dart/amplify_secure_storage_dart.dart';
 import 'package:test/test.dart';
-
-import '../common/mock_clients.dart';
-import '../common/mock_config.dart';
-import '../common/mock_hosted_ui.dart';
-import '../common/mock_secure_storage.dart';
 
 final throwsSignedOutException = throwsA(isA<SignedOutException>());
 
@@ -27,7 +29,7 @@ void main() {
 
   late AmplifyAuthCognitoDart plugin;
   late CognitoAuthStateMachine stateMachine;
-  late SecureStorageInterface secureStorage;
+  late MockSecureStorage secureStorage;
 
   late StreamController<AuthHubEvent> hubEventsController;
   late Stream<AuthHubEvent> hubEvents;
@@ -45,25 +47,23 @@ void main() {
   group('AmplifyAuthCognitoDart', () {
     setUp(() async {
       secureStorage = MockSecureStorage();
+      SecureStorageInterface storageFactory(scope) => secureStorage;
       stateMachine = CognitoAuthStateMachine()
-        ..addInstance(secureStorage)
-        ..addBuilder(
+        ..addBuilder<HostedUiPlatform>(
           createHostedUiFactory(
             signIn: (
               HostedUiPlatform platform,
-              CognitoSignInWithWebUIOptions options,
+              CognitoSignInWithWebUIPluginOptions options,
               AuthProvider? provider,
             ) async {},
             signOut: (
               HostedUiPlatform platform,
-              CognitoSignOutWithWebUIOptions options,
-              bool isPreferPrivateSession,
+              CognitoSignInWithWebUIPluginOptions options,
             ) async {},
           ),
-          HostedUiPlatform.token,
         );
 
-      plugin = AmplifyAuthCognitoDart(credentialStorage: secureStorage)
+      plugin = AmplifyAuthCognitoDart(secureStorageFactory: storageFactory)
         ..stateMachine = stateMachine;
 
       hubEventsController = StreamController();
@@ -128,12 +128,15 @@ void main() {
         );
         stateMachine.addInstance<CognitoIdentityProviderClient>(mockIdp);
 
-        await expectLater(plugin.getUserPoolTokens(), completes);
+        await expectLater(plugin.stateMachine.getUserPoolTokens(), completes);
         await expectLater(
           plugin.signOut(),
           completion(isA<CognitoCompleteSignOut>()),
         );
-        expect(plugin.getUserPoolTokens(), throwsSignedOutException);
+        expect(
+          plugin.stateMachine.getUserPoolTokens(),
+          throwsSignedOutException,
+        );
         expect(hubEvents, emitsSignOutEvent);
       });
 
@@ -156,7 +159,7 @@ void main() {
         );
         stateMachine.addInstance<CognitoIdentityProviderClient>(mockIdp);
 
-        await expectLater(plugin.getUserPoolTokens(), completes);
+        await expectLater(plugin.stateMachine.getUserPoolTokens(), completes);
         await expectLater(
           plugin.signOut(
             options: const SignOutOptions(globalSignOut: true),
@@ -184,7 +187,10 @@ void main() {
                 ),
           ),
         );
-        expect(plugin.getUserPoolTokens(), throwsSignedOutException);
+        expect(
+          plugin.stateMachine.getUserPoolTokens(),
+          throwsSignedOutException,
+        );
         expect(hubEvents, emitsSignOutEvent);
       });
 
@@ -206,7 +212,7 @@ void main() {
         );
         stateMachine.addInstance<CognitoIdentityProviderClient>(mockIdp);
 
-        await expectLater(plugin.getUserPoolTokens(), completes);
+        await expectLater(plugin.stateMachine.getUserPoolTokens(), completes);
         await expectLater(
           plugin.signOut(
             options: const SignOutOptions(globalSignOut: true),
@@ -234,7 +240,10 @@ void main() {
                 ),
           ),
         );
-        expect(plugin.getUserPoolTokens(), throwsSignedOutException);
+        expect(
+          plugin.stateMachine.getUserPoolTokens(),
+          throwsSignedOutException,
+        );
         expect(hubEvents, emitsSignOutEvent);
       });
 
@@ -244,6 +253,13 @@ void main() {
           config: userPoolOnlyConfig,
           authProviderRepo: testAuthRepo,
         );
+
+        final mockIdp = MockCognitoIdentityProviderClient(
+          globalSignOut: () async => GlobalSignOutResponse(),
+          revokeToken: () async => RevokeTokenResponse(),
+        );
+        stateMachine.addInstance<CognitoIdentityProviderClient>(mockIdp);
+
         expect(plugin.signOut(), completion(isA<CognitoCompleteSignOut>()));
       });
 
@@ -266,12 +282,15 @@ void main() {
           );
           stateMachine.addInstance<CognitoIdentityProviderClient>(mockIdp);
 
-          await expectLater(plugin.getUserPoolTokens(), completes);
+          await expectLater(plugin.stateMachine.getUserPoolTokens(), completes);
           await expectLater(
             plugin.signOut(),
             completion(isA<CognitoCompleteSignOut>()),
           );
-          expect(plugin.getUserPoolTokens(), throwsSignedOutException);
+          expect(
+            plugin.stateMachine.getUserPoolTokens(),
+            throwsSignedOutException,
+          );
           expect(hubEvents, emitsSignOutEvent);
         });
 
@@ -294,7 +313,7 @@ void main() {
           );
           stateMachine.addInstance<CognitoIdentityProviderClient>(mockIdp);
 
-          await expectLater(plugin.getUserPoolTokens(), completes);
+          await expectLater(plugin.stateMachine.getUserPoolTokens(), completes);
           await expectLater(
             plugin.signOut(
               options: const SignOutOptions(globalSignOut: true),
@@ -307,7 +326,10 @@ void main() {
               ),
             ),
           );
-          expect(plugin.getUserPoolTokens(), throwsSignedOutException);
+          expect(
+            plugin.stateMachine.getUserPoolTokens(),
+            throwsSignedOutException,
+          );
           expect(hubEvents, emitsSignOutEvent);
         });
 
@@ -329,7 +351,7 @@ void main() {
           );
           stateMachine.addInstance<CognitoIdentityProviderClient>(mockIdp);
 
-          await expectLater(plugin.getUserPoolTokens(), completes);
+          await expectLater(plugin.stateMachine.getUserPoolTokens(), completes);
           await expectLater(
             plugin.signOut(
               options: const SignOutOptions(globalSignOut: true),
@@ -342,7 +364,10 @@ void main() {
               ),
             ),
           );
-          expect(plugin.getUserPoolTokens(), throwsSignedOutException);
+          expect(
+            plugin.stateMachine.getUserPoolTokens(),
+            throwsSignedOutException,
+          );
           expect(hubEvents, emitsSignOutEvent);
         });
 
@@ -352,21 +377,19 @@ void main() {
             identityPoolKeys: identityPoolKeys,
             hostedUiKeys: hostedUiKeys,
           );
-          stateMachine.addBuilder(
+          stateMachine.addBuilder<HostedUiPlatform>(
             createHostedUiFactory(
               signIn: (
                 HostedUiPlatform platform,
-                CognitoSignInWithWebUIOptions options,
+                CognitoSignInWithWebUIPluginOptions options,
                 AuthProvider? provider,
               ) async {},
               signOut: (
                 HostedUiPlatform platform,
-                CognitoSignOutWithWebUIOptions options,
-                bool isPreferPrivateSession,
+                CognitoSignInWithWebUIPluginOptions options,
               ) async =>
                   throw _HostedUiException(),
             ),
-            HostedUiPlatform.token,
           );
           await plugin.configure(
             config: mockConfig,
@@ -378,7 +401,7 @@ void main() {
           );
           stateMachine.addInstance<CognitoIdentityProviderClient>(mockIdp);
 
-          await expectLater(plugin.getUserPoolTokens(), completes);
+          await expectLater(plugin.stateMachine.getUserPoolTokens(), completes);
           await expectLater(
             plugin.signOut(),
             completion(
@@ -393,7 +416,10 @@ void main() {
               ),
             ),
           );
-          expect(plugin.getUserPoolTokens(), throwsSignedOutException);
+          expect(
+            plugin.stateMachine.getUserPoolTokens(),
+            throwsSignedOutException,
+          );
           expect(hubEvents, emitsSignOutEvent);
         });
 
@@ -405,28 +431,29 @@ void main() {
               identityPoolKeys: identityPoolKeys,
               hostedUiKeys: hostedUiKeys,
             );
-            stateMachine.addBuilder(
+            stateMachine.addBuilder<HostedUiPlatform>(
               createHostedUiFactory(
                 signIn: (
                   HostedUiPlatform platform,
-                  CognitoSignInWithWebUIOptions options,
+                  CognitoSignInWithWebUIPluginOptions options,
                   AuthProvider? provider,
                 ) async {},
                 signOut: (
                   HostedUiPlatform platform,
-                  CognitoSignOutWithWebUIOptions options,
-                  bool isPreferPrivateSession,
+                  CognitoSignInWithWebUIPluginOptions options,
                 ) async =>
                     throw const UserCancelledException(''),
               ),
-              HostedUiPlatform.token,
             );
             await plugin.configure(
               config: mockConfig,
               authProviderRepo: testAuthRepo,
             );
 
-            await expectLater(plugin.getUserPoolTokens(), completes);
+            await expectLater(
+              plugin.stateMachine.getUserPoolTokens(),
+              completes,
+            );
             await expectLater(
               plugin.signOut(),
               completion(
@@ -438,7 +465,7 @@ void main() {
               ),
             );
             expect(
-              plugin.getUserPoolTokens(),
+              plugin.stateMachine.getUserPoolTokens(),
               completes,
               reason: 'Credentials were not cleared',
             );

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.api_gateway.model.deployment_canary_settings; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -21,6 +22,8 @@ abstract class DeploymentCanarySettings
     Map<String, String>? stageVariableOverrides,
     bool? useStageCache,
   }) {
+    percentTraffic ??= 0;
+    useStageCache ??= false;
     return _$DeploymentCanarySettings._(
       percentTraffic: percentTraffic,
       stageVariableOverrides: stageVariableOverrides == null
@@ -37,21 +40,23 @@ abstract class DeploymentCanarySettings
 
   const DeploymentCanarySettings._();
 
-  static const List<_i3.SmithySerializer> serializers = [
-    DeploymentCanarySettingsRestJson1Serializer()
-  ];
+  static const List<_i3.SmithySerializer<DeploymentCanarySettings>>
+      serializers = [DeploymentCanarySettingsRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _init(DeploymentCanarySettingsBuilder b) {}
+  static void _init(DeploymentCanarySettingsBuilder b) {
+    b.percentTraffic = 0;
+    b.useStageCache = false;
+  }
 
   /// The percentage (0.0-100.0) of traffic routed to the canary deployment.
-  double? get percentTraffic;
+  double get percentTraffic;
 
   /// A stage variable overrides used for the canary release deployment. They can override existing stage variables or add new stage variables for the canary release deployment. These stage variables are represented as a string-to-string map between stage variable names and their values.
   _i2.BuiltMap<String, String>? get stageVariableOverrides;
 
   /// A Boolean flag to indicate whether the canary release deployment uses the stage cache or not.
-  bool? get useStageCache;
+  bool get useStageCache;
   @override
   List<Object?> get props => [
         percentTraffic,
@@ -60,19 +65,19 @@ abstract class DeploymentCanarySettings
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('DeploymentCanarySettings');
-    helper.add(
-      'percentTraffic',
-      percentTraffic,
-    );
-    helper.add(
-      'stageVariableOverrides',
-      stageVariableOverrides,
-    );
-    helper.add(
-      'useStageCache',
-      useStageCache,
-    );
+    final helper = newBuiltValueToStringHelper('DeploymentCanarySettings')
+      ..add(
+        'percentTraffic',
+        percentTraffic,
+      )
+      ..add(
+        'stageVariableOverrides',
+        stageVariableOverrides,
+      )
+      ..add(
+        'useStageCache',
+        useStageCache,
+      );
     return helper.toString();
   }
 }
@@ -106,37 +111,31 @@ class DeploymentCanarySettingsRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'percentTraffic':
-          if (value != null) {
-            result.percentTraffic = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(double),
-            ) as double);
-          }
-          break;
+          result.percentTraffic = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(double),
+          ) as double);
         case 'stageVariableOverrides':
-          if (value != null) {
-            result.stageVariableOverrides.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i2.BuiltMap,
-                [
-                  FullType(String),
-                  FullType(String),
-                ],
-              ),
-            ) as _i2.BuiltMap<String, String>));
-          }
-          break;
+          result.stageVariableOverrides.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i2.BuiltMap,
+              [
+                FullType(String),
+                FullType(String),
+              ],
+            ),
+          ) as _i2.BuiltMap<String, String>));
         case 'useStageCache':
-          if (value != null) {
-            result.useStageCache = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(bool),
-            ) as bool);
-          }
-          break;
+          result.useStageCache = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
       }
     }
 
@@ -146,24 +145,32 @@ class DeploymentCanarySettingsRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeploymentCanarySettings object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as DeploymentCanarySettings);
-    final result = <Object?>[];
-    if (payload.percentTraffic != null) {
-      result
-        ..add('percentTraffic')
-        ..add(serializers.serialize(
-          payload.percentTraffic!,
-          specifiedType: const FullType(double),
-        ));
-    }
-    if (payload.stageVariableOverrides != null) {
-      result
+    final result$ = <Object?>[];
+    final DeploymentCanarySettings(
+      :percentTraffic,
+      :stageVariableOverrides,
+      :useStageCache
+    ) = object;
+    result$.addAll([
+      'percentTraffic',
+      serializers.serialize(
+        percentTraffic,
+        specifiedType: const FullType(double),
+      ),
+      'useStageCache',
+      serializers.serialize(
+        useStageCache,
+        specifiedType: const FullType(bool),
+      ),
+    ]);
+    if (stageVariableOverrides != null) {
+      result$
         ..add('stageVariableOverrides')
         ..add(serializers.serialize(
-          payload.stageVariableOverrides!,
+          stageVariableOverrides,
           specifiedType: const FullType(
             _i2.BuiltMap,
             [
@@ -173,14 +180,6 @@ class DeploymentCanarySettingsRestJson1Serializer
           ),
         ));
     }
-    if (payload.useStageCache != null) {
-      result
-        ..add('useStageCache')
-        ..add(serializers.serialize(
-          payload.useStageCache!,
-          specifiedType: const FullType(bool),
-        ));
-    }
-    return result;
+    return result$;
   }
 }

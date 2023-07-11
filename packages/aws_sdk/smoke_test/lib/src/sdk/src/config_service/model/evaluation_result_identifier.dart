@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.evaluation_result_identifier; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -20,10 +21,12 @@ abstract class EvaluationResultIdentifier
   factory EvaluationResultIdentifier({
     _i2.EvaluationResultQualifier? evaluationResultQualifier,
     DateTime? orderingTimestamp,
+    String? resourceEvaluationId,
   }) {
     return _$EvaluationResultIdentifier._(
       evaluationResultQualifier: evaluationResultQualifier,
       orderingTimestamp: orderingTimestamp,
+      resourceEvaluationId: resourceEvaluationId,
     );
   }
 
@@ -34,9 +37,8 @@ abstract class EvaluationResultIdentifier
 
   const EvaluationResultIdentifier._();
 
-  static const List<_i3.SmithySerializer> serializers = [
-    EvaluationResultIdentifierAwsJson11Serializer()
-  ];
+  static const List<_i3.SmithySerializer<EvaluationResultIdentifier>>
+      serializers = [EvaluationResultIdentifierAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(EvaluationResultIdentifierBuilder b) {}
@@ -46,22 +48,30 @@ abstract class EvaluationResultIdentifier
 
   /// The time of the event that triggered the evaluation of your Amazon Web Services resources. The time can indicate when Config delivered a configuration item change notification, or it can indicate when Config delivered the configuration snapshot, depending on which event triggered the evaluation.
   DateTime? get orderingTimestamp;
+
+  /// A Unique ID for an evaluation result.
+  String? get resourceEvaluationId;
   @override
   List<Object?> get props => [
         evaluationResultQualifier,
         orderingTimestamp,
+        resourceEvaluationId,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('EvaluationResultIdentifier');
-    helper.add(
-      'evaluationResultQualifier',
-      evaluationResultQualifier,
-    );
-    helper.add(
-      'orderingTimestamp',
-      orderingTimestamp,
-    );
+    final helper = newBuiltValueToStringHelper('EvaluationResultIdentifier')
+      ..add(
+        'evaluationResultQualifier',
+        evaluationResultQualifier,
+      )
+      ..add(
+        'orderingTimestamp',
+        orderingTimestamp,
+      )
+      ..add(
+        'resourceEvaluationId',
+        resourceEvaluationId,
+      );
     return helper.toString();
   }
 }
@@ -95,23 +105,25 @@ class EvaluationResultIdentifierAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'EvaluationResultQualifier':
-          if (value != null) {
-            result.evaluationResultQualifier.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.EvaluationResultQualifier),
-            ) as _i2.EvaluationResultQualifier));
-          }
-          break;
+          result.evaluationResultQualifier.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i2.EvaluationResultQualifier),
+          ) as _i2.EvaluationResultQualifier));
         case 'OrderingTimestamp':
-          if (value != null) {
-            result.orderingTimestamp = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(DateTime),
-            ) as DateTime);
-          }
-          break;
+          result.orderingTimestamp = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(DateTime),
+          ) as DateTime);
+        case 'ResourceEvaluationId':
+          result.resourceEvaluationId = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -121,27 +133,39 @@ class EvaluationResultIdentifierAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    EvaluationResultIdentifier object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as EvaluationResultIdentifier);
-    final result = <Object?>[];
-    if (payload.evaluationResultQualifier != null) {
-      result
+    final result$ = <Object?>[];
+    final EvaluationResultIdentifier(
+      :evaluationResultQualifier,
+      :orderingTimestamp,
+      :resourceEvaluationId
+    ) = object;
+    if (evaluationResultQualifier != null) {
+      result$
         ..add('EvaluationResultQualifier')
         ..add(serializers.serialize(
-          payload.evaluationResultQualifier!,
+          evaluationResultQualifier,
           specifiedType: const FullType(_i2.EvaluationResultQualifier),
         ));
     }
-    if (payload.orderingTimestamp != null) {
-      result
+    if (orderingTimestamp != null) {
+      result$
         ..add('OrderingTimestamp')
         ..add(serializers.serialize(
-          payload.orderingTimestamp!,
+          orderingTimestamp,
           specifiedType: const FullType(DateTime),
         ));
     }
-    return result;
+    if (resourceEvaluationId != null) {
+      result$
+        ..add('ResourceEvaluationId')
+        ..add(serializers.serialize(
+          resourceEvaluationId,
+          specifiedType: const FullType(String),
+        ));
+    }
+    return result$;
   }
 }

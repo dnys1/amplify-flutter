@@ -7,6 +7,12 @@ import 'package:amplify_auth_cognito/src/credentials/legacy_ios_cognito_keys.dar
 import 'package:amplify_auth_cognito/src/credentials/secure_storage_extension.dart';
 import 'package:amplify_auth_cognito/src/native_auth_plugin.g.dart';
 import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
+// ignore: implementation_imports
+import 'package:amplify_auth_cognito_dart/src/credentials/legacy_credential_provider.dart';
+// ignore: implementation_imports
+import 'package:amplify_auth_cognito_dart/src/state/cognito_state_machine.dart';
+// ignore: implementation_imports, invalid_use_of_internal_member
+import 'package:amplify_auth_cognito_dart/src/state/state.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:async/async.dart';
 
@@ -173,7 +179,9 @@ class LegacyCredentialProviderIOS implements LegacyCredentialProvider {
   /// The namespace is used as the "service" on iOS and the key-value
   /// repository name on Android.
   SecureStorageInterface _getSecureStorageInstance(String namespace) {
-    return _secureStorageInstances[namespace] ??= AmplifySecureStorageDart(
+    return _secureStorageInstances[namespace] ??=
+        // ignore: invalid_use_of_internal_member
+        AmplifySecureStorageDart(
       config: AmplifySecureStorageConfig.byNamespace(namespace: namespace),
     );
   }

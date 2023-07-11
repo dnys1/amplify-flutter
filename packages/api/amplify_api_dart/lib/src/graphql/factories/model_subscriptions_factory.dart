@@ -6,7 +6,7 @@ import 'package:amplify_core/amplify_core.dart';
 
 // ignore_for_file: public_member_api_docs
 
-class ModelSubscriptionsFactory extends ModelSubscriptionsInterface {
+class ModelSubscriptionsFactory {
   // Singleton methods/properties
   // usage: ModelSubscriptionsFactory.instance;
   ModelSubscriptionsFactory._();
@@ -25,10 +25,11 @@ class ModelSubscriptionsFactory extends ModelSubscriptionsInterface {
     String? apiName,
     APIAuthorizationType? authorizationMode,
     Map<String, String>? headers,
+    QueryPredicate? where,
   }) {
     return GraphQLRequestFactory.instance.buildRequest<ModelIdentifier, M>(
       modelType: modelType,
-      variables: <String, dynamic>{},
+      variables: variables,
       requestType: GraphQLRequestType.subscription,
       requestOperation: GraphQLRequestOperation.onCreate,
       apiName: apiName,
@@ -47,10 +48,11 @@ class ModelSubscriptionsFactory extends ModelSubscriptionsInterface {
     String? apiName,
     APIAuthorizationType? authorizationMode,
     Map<String, String>? headers,
+    QueryPredicate? where,
   }) {
     return GraphQLRequestFactory.instance.buildRequest<ModelIdentifier, M>(
       modelType: modelType,
-      variables: <String, dynamic>{},
+      variables: variables,
       requestType: GraphQLRequestType.subscription,
       requestOperation: GraphQLRequestOperation.onUpdate,
       apiName: apiName,
@@ -69,10 +71,11 @@ class ModelSubscriptionsFactory extends ModelSubscriptionsInterface {
     String? apiName,
     APIAuthorizationType? authorizationMode,
     Map<String, String>? headers,
+    QueryPredicate? where,
   }) {
     return GraphQLRequestFactory.instance.buildRequest<ModelIdentifier, M>(
       modelType: modelType,
-      variables: <String, dynamic>{},
+      variables: variables,
       requestType: GraphQLRequestType.subscription,
       requestOperation: GraphQLRequestOperation.onDelete,
       apiName: apiName,

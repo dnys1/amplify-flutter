@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.config_service.model.conformance_pack_input_parameter; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -34,9 +35,8 @@ abstract class ConformancePackInputParameter
 
   const ConformancePackInputParameter._();
 
-  static const List<_i2.SmithySerializer> serializers = [
-    ConformancePackInputParameterAwsJson11Serializer()
-  ];
+  static const List<_i2.SmithySerializer<ConformancePackInputParameter>>
+      serializers = [ConformancePackInputParameterAwsJson11Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(ConformancePackInputParameterBuilder b) {}
@@ -53,15 +53,15 @@ abstract class ConformancePackInputParameter
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ConformancePackInputParameter');
-    helper.add(
-      'parameterName',
-      parameterName,
-    );
-    helper.add(
-      'parameterValue',
-      parameterValue,
-    );
+    final helper = newBuiltValueToStringHelper('ConformancePackInputParameter')
+      ..add(
+        'parameterName',
+        parameterName,
+      )
+      ..add(
+        'parameterValue',
+        parameterValue,
+      );
     return helper.toString();
   }
 }
@@ -95,19 +95,20 @@ class ConformancePackInputParameterAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ParameterName':
           result.parameterName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'ParameterValue':
           result.parameterValue = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -117,22 +118,24 @@ class ConformancePackInputParameterAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ConformancePackInputParameter object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ConformancePackInputParameter);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final ConformancePackInputParameter(:parameterName, :parameterValue) =
+        object;
+    result$.addAll([
       'ParameterName',
       serializers.serialize(
-        payload.parameterName,
+        parameterName,
         specifiedType: const FullType(String),
       ),
       'ParameterValue',
       serializers.serialize(
-        payload.parameterValue,
+        parameterValue,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

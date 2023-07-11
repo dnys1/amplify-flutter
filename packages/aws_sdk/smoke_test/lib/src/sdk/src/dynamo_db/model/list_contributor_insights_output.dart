@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.list_contributor_insights_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -43,9 +44,8 @@ abstract class ListContributorInsightsOutput
   ) =>
       payload;
 
-  static const List<_i4.SmithySerializer> serializers = [
-    ListContributorInsightsOutputAwsJson10Serializer()
-  ];
+  static const List<_i4.SmithySerializer<ListContributorInsightsOutput>>
+      serializers = [ListContributorInsightsOutputAwsJson10Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(ListContributorInsightsOutputBuilder b) {}
@@ -63,15 +63,15 @@ abstract class ListContributorInsightsOutput
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ListContributorInsightsOutput');
-    helper.add(
-      'contributorInsightsSummaries',
-      contributorInsightsSummaries,
-    );
-    helper.add(
-      'nextToken',
-      nextToken,
-    );
+    final helper = newBuiltValueToStringHelper('ListContributorInsightsOutput')
+      ..add(
+        'contributorInsightsSummaries',
+        contributorInsightsSummaries,
+      )
+      ..add(
+        'nextToken',
+        nextToken,
+      );
     return helper.toString();
   }
 }
@@ -105,27 +105,23 @@ class ListContributorInsightsOutputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'ContributorInsightsSummaries':
-          if (value != null) {
-            result.contributorInsightsSummaries
-                .replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltList,
-                [FullType(_i2.ContributorInsightsSummary)],
-              ),
-            ) as _i3.BuiltList<_i2.ContributorInsightsSummary>));
-          }
-          break;
+          result.contributorInsightsSummaries.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltList,
+              [FullType(_i2.ContributorInsightsSummary)],
+            ),
+          ) as _i3.BuiltList<_i2.ContributorInsightsSummary>));
         case 'NextToken':
-          if (value != null) {
-            result.nextToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.nextToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -135,30 +131,33 @@ class ListContributorInsightsOutputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ListContributorInsightsOutput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ListContributorInsightsOutput);
-    final result = <Object?>[];
-    if (payload.contributorInsightsSummaries != null) {
-      result
+    final result$ = <Object?>[];
+    final ListContributorInsightsOutput(
+      :contributorInsightsSummaries,
+      :nextToken
+    ) = object;
+    if (contributorInsightsSummaries != null) {
+      result$
         ..add('ContributorInsightsSummaries')
         ..add(serializers.serialize(
-          payload.contributorInsightsSummaries!,
+          contributorInsightsSummaries,
           specifiedType: const FullType(
             _i3.BuiltList,
             [FullType(_i2.ContributorInsightsSummary)],
           ),
         ));
     }
-    if (payload.nextToken != null) {
-      result
+    if (nextToken != null) {
+      result$
         ..add('NextToken')
         ..add(serializers.serialize(
-          payload.nextToken!,
+          nextToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

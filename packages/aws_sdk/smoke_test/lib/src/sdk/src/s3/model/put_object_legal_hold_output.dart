@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.put_object_legal_hold_output; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -39,9 +40,8 @@ abstract class PutObjectLegalHoldOutput
         }
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
-    PutObjectLegalHoldOutputRestXmlSerializer()
-  ];
+  static const List<_i2.SmithySerializer<PutObjectLegalHoldOutputPayload>>
+      serializers = [PutObjectLegalHoldOutputRestXmlSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(PutObjectLegalHoldOutputBuilder b) {}
@@ -55,11 +55,11 @@ abstract class PutObjectLegalHoldOutput
   List<Object?> get props => [requestCharged];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('PutObjectLegalHoldOutput');
-    helper.add(
-      'requestCharged',
-      requestCharged,
-    );
+    final helper = newBuiltValueToStringHelper('PutObjectLegalHoldOutput')
+      ..add(
+        'requestCharged',
+        requestCharged,
+      );
     return helper.toString();
   }
 }
@@ -121,15 +121,16 @@ class PutObjectLegalHoldOutputRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    PutObjectLegalHoldOutputPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i2.XmlElementName(
         'PutObjectLegalHoldOutput',
         _i2.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    return result;
+
+    return result$;
   }
 }

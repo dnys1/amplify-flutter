@@ -14,6 +14,7 @@ import 'package:amplify_secure_storage_dart/src/exception/secure_storage_excepti
 import 'package:amplify_secure_storage_dart/src/exception/unknown_exception.dart';
 import 'package:amplify_secure_storage_dart/src/ffi/cupertino/cupertino.dart';
 import 'package:ffi/ffi.dart';
+import 'package:meta/meta.dart';
 
 /// {@template amplify_secure_storage_dart.amplify_secure_storage_cupertino}
 /// The implementation of [SecureStorageInterface] for iOS and MacOS.
@@ -313,29 +314,30 @@ class AmplifySecureStorageCupertino extends AmplifySecureStorageInterface {
 
   /// Maps the result code to a [SecureStorageException].
   SecureStorageException _getExceptionFromResultCode(int code) {
-    final securityFrameworkError = _SecurityFrameworkError.fromCode(code);
+    final securityFrameworkError = SecurityFrameworkError.fromCode(code);
     return securityFrameworkError.toSecureStorageException();
   }
 }
 
 /// An error from the Security Framework.
-class _SecurityFrameworkError {
-  _SecurityFrameworkError({required this.code, required this.message});
+@visibleForTesting
+class SecurityFrameworkError {
+  SecurityFrameworkError({required this.code, required this.message});
 
   /// Creates an error from the given result code.
-  factory _SecurityFrameworkError.fromCode(int code) {
+  factory SecurityFrameworkError.fromCode(int code) {
     final cfString = security.SecCopyErrorMessageString(code, nullptr);
     if (cfString == nullptr) {
-      return _SecurityFrameworkError(
+      return SecurityFrameworkError(
         code: code,
         message: _noErrorStringMessage,
       );
     }
     try {
       final message = cfString.toDartString() ?? _noErrorStringMessage;
-      return _SecurityFrameworkError(code: code, message: message);
+      return SecurityFrameworkError(code: code, message: message);
     } on Exception {
-      return _SecurityFrameworkError(
+      return SecurityFrameworkError(
         code: code,
         message: 'The error string could not be parsed.',
       );
@@ -350,6 +352,12 @@ class _SecurityFrameworkError {
   final String message;
 
   static const _noErrorStringMessage = 'No error string is available.';
+
+  static const _missingEntitlementRecoveryMacOS =
+      'Ensure that you have followed the step to enable Keychain Sharing in the '
+      'platform setup steps for macOS, See: '
+      'https://docs.amplify.aws/lib/project-setup/platform-setup/q/platform/flutter/#macos '
+      'for details.';
 
   /// Maps the error to a [SecureStorageException].
   SecureStorageException toSecureStorageException() {
@@ -380,9 +388,8 @@ class _SecurityFrameworkError {
           underlyingException: this,
         );
       case errSecMissingEntitlement:
-        // TODO(Jordan-Nelson): point to amplify documentation when available.
         final recoverySuggestion = Platform.isMacOS
-            ? 'If you have not explicitly disabled `useDataProtection` this may be a result of your app not being in any app groups. See `MacOSSecureStorageOptions.useDataProtection` for more info.'
+            ? _missingEntitlementRecoveryMacOS
             : SecureStorageException.missingRecovery;
         return AccessDeniedException(
           'Could not access the items in the keychain due to a missing entitlement.',

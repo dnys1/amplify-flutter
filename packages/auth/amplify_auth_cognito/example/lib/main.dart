@@ -1,8 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import 'dart:io';
-
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_auth_cognito_example/screens/confirm_user_attribute.dart';
@@ -19,7 +17,7 @@ import 'amplifyconfiguration.dart';
 final AmplifyLogger _logger = AmplifyLogger('MyApp');
 
 void main() {
-  AmplifyLogger().logLevel = LogLevel.debug;
+  AmplifyLogger().logLevel = LogLevel.verbose;
   runApp(const MyApp());
 }
 
@@ -79,36 +77,36 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _configure() async {
     try {
-      if (!zIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-        await Amplify.addPlugin(AmplifyAPI());
-      }
-      final secureStorage = AmplifySecureStorage(
-        config: AmplifySecureStorageConfig(
-          scope: 'auth',
+      await Amplify.addPlugins([
+        AmplifyAPI(),
+        AmplifyAuthCognito(
           // FIXME: In your app, make sure to remove this line and set up
           /// Keychain Sharing in Xcode as described in the docs:
           /// https://docs.amplify.aws/lib/project-setup/platform-setup/q/platform/flutter/#enable-keychain
-          // ignore: invalid_use_of_visible_for_testing_member
-          macOSOptions: MacOSSecureStorageOptions(useDataProtection: false),
+          secureStorageFactory: AmplifySecureStorage.factoryFrom(
+            macOSOptions:
+                // ignore: invalid_use_of_visible_for_testing_member
+                MacOSSecureStorageOptions(useDataProtection: false),
+          ),
         ),
-      );
-      await Amplify.addPlugin(
-        AmplifyAuthCognito(credentialStorage: secureStorage),
-      );
+      ]);
+
       // Uncomment this block, and comment out the one above to change how
       // credentials are persisted.
-      // await Amplify.addPlugin(
-      //   AmplifyAuthCognito(
-      //     credentialStorage: AmplifySecureStorage(
-      //       config: AmplifySecureStorageConfig(
-      //         scope: 'authtest',
-      //         webOptions: WebSecureStorageOptions(
-      //           persistenceOption: WebPersistenceOption.inMemory,
-      //         ),
-      //       ),
-      //     ),
-      //   ),
-      // );
+      /*
+      await Amplify.addPlugin(
+          AmplifyAuthCognito(
+             secureStorageFactory: (scope) => AmplifySecureStorage.fromConfig(
+               config: AmplifySecureStorageConfig(
+                 scope: scope.name,
+                 webOptions: WebSecureStorageOptions(
+                   persistenceOption: WebPersistenceOption.inMemory,
+                 ),
+               ),
+             ),
+           ),
+         );
+       */
       await Amplify.configure(amplifyconfig);
       _logger.debug('Successfully configured Amplify');
 
@@ -127,9 +125,8 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp.router(
         title: 'Flutter Demo',
         builder: Authenticator.builder(),
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        theme: ThemeData.light(useMaterial3: true),
+        darkTheme: ThemeData.dark(useMaterial3: true),
         routeInformationParser: _router.routeInformationParser,
         routerDelegate: _router.routerDelegate,
         debugShowCheckedModeBanner: false,

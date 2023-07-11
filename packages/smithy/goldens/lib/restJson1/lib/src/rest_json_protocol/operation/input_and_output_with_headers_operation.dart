@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v1.rest_json_protocol.operation.input_and_output_with_headers_operation; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -156,6 +157,17 @@ class InputAndOutputWithHeadersOperation extends _i1.HttpOperation<
                 .join(', ');
           }
         }
+        if (input.headerIntegerEnum != null) {
+          b.headers['X-IntegerEnum'] = input.headerIntegerEnum!.toString();
+        }
+        if (input.headerIntegerEnumList != null) {
+          if (input.headerIntegerEnumList!.isNotEmpty) {
+            b.headers['X-IntegerEnumList'] = input.headerIntegerEnumList!
+                .map((el) => el.toString())
+                .map((el) => _i1.sanitizeHeader(el))
+                .join(', ');
+          }
+        }
       });
   @override
   int successCode([_i2.InputAndOutputWithHeadersIo? output]) => 200;
@@ -192,7 +204,7 @@ class InputAndOutputWithHeadersOperation extends _i1.HttpOperation<
       ),
       zoneValues: {
         ...?_awsEndpoint.credentialScope?.zoneValues,
-        ...{_i6.AWSHeaders.sdkInvocationId: _i6.uuid(secure: true)}
+        ...{_i6.AWSHeaders.sdkInvocationId: _i6.uuid(secure: true)},
       },
     );
   }

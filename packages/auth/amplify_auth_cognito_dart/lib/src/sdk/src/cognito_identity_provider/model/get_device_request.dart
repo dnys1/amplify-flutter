@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_auth_cognito_dart.cognito_identity_provider.model.get_device_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -15,12 +16,12 @@ abstract class GetDeviceRequest
     implements Built<GetDeviceRequest, GetDeviceRequestBuilder> {
   /// Represents the request to get the device.
   factory GetDeviceRequest({
-    String? accessToken,
     required String deviceKey,
+    String? accessToken,
   }) {
     return _$GetDeviceRequest._(
-      accessToken: accessToken,
       deviceKey: deviceKey,
+      accessToken: accessToken,
     );
   }
 
@@ -37,36 +38,36 @@ abstract class GetDeviceRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<_i1.SmithySerializer<GetDeviceRequest>> serializers = [
     GetDeviceRequestAwsJson11Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(GetDeviceRequestBuilder b) {}
 
-  /// A valid access token that Amazon Cognito issued to the user whose device information you want to request.
-  String? get accessToken;
-
   /// The device key.
   String get deviceKey;
+
+  /// A valid access token that Amazon Cognito issued to the user whose device information you want to request.
+  String? get accessToken;
   @override
   GetDeviceRequest getPayload() => this;
   @override
   List<Object?> get props => [
-        accessToken,
         deviceKey,
+        accessToken,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('GetDeviceRequest');
-    helper.add(
-      'accessToken',
-      '***SENSITIVE***',
-    );
-    helper.add(
-      'deviceKey',
-      deviceKey,
-    );
+    final helper = newBuiltValueToStringHelper('GetDeviceRequest')
+      ..add(
+        'deviceKey',
+        deviceKey,
+      )
+      ..add(
+        'accessToken',
+        '***SENSITIVE***',
+      );
     return helper.toString();
   }
 }
@@ -99,21 +100,20 @@ class GetDeviceRequestAwsJson11Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
-        case 'AccessToken':
-          if (value != null) {
-            result.accessToken = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
         case 'DeviceKey':
           result.deviceKey = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
+        case 'AccessToken':
+          result.accessToken = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -123,25 +123,26 @@ class GetDeviceRequestAwsJson11Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    GetDeviceRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as GetDeviceRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final GetDeviceRequest(:deviceKey, :accessToken) = object;
+    result$.addAll([
       'DeviceKey',
       serializers.serialize(
-        payload.deviceKey,
+        deviceKey,
         specifiedType: const FullType(String),
       ),
-    ];
-    if (payload.accessToken != null) {
-      result
+    ]);
+    if (accessToken != null) {
+      result$
         ..add('AccessToken')
         ..add(serializers.serialize(
-          payload.accessToken!,
+          accessToken,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

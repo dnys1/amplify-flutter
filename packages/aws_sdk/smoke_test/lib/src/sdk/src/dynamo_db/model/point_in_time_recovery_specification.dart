@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.point_in_time_recovery_specification; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -30,9 +31,8 @@ abstract class PointInTimeRecoverySpecification
 
   const PointInTimeRecoverySpecification._();
 
-  static const List<_i2.SmithySerializer> serializers = [
-    PointInTimeRecoverySpecificationAwsJson10Serializer()
-  ];
+  static const List<_i2.SmithySerializer<PointInTimeRecoverySpecification>>
+      serializers = [PointInTimeRecoverySpecificationAwsJson10Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(PointInTimeRecoverySpecificationBuilder b) {
@@ -46,11 +46,11 @@ abstract class PointInTimeRecoverySpecification
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('PointInTimeRecoverySpecification');
-    helper.add(
-      'pointInTimeRecoveryEnabled',
-      pointInTimeRecoveryEnabled,
-    );
+        newBuiltValueToStringHelper('PointInTimeRecoverySpecification')
+          ..add(
+            'pointInTimeRecoveryEnabled',
+            pointInTimeRecoveryEnabled,
+          );
     return helper.toString();
   }
 }
@@ -84,13 +84,15 @@ class PointInTimeRecoverySpecificationAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'PointInTimeRecoveryEnabled':
           result.pointInTimeRecoveryEnabled = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(bool),
           ) as bool);
-          break;
       }
     }
 
@@ -100,17 +102,19 @@ class PointInTimeRecoverySpecificationAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    PointInTimeRecoverySpecification object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as PointInTimeRecoverySpecification);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final PointInTimeRecoverySpecification(:pointInTimeRecoveryEnabled) =
+        object;
+    result$.addAll([
       'PointInTimeRecoveryEnabled',
       serializers.serialize(
-        payload.pointInTimeRecoveryEnabled,
+        pointInTimeRecoveryEnabled,
         specifiedType: const FullType(bool),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

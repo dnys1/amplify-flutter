@@ -17,8 +17,8 @@ class AmplifyAuthorizationRestClient extends AWSBaseHttpClient {
     required this.endpointConfig,
     required this.authProviderRepo,
     this.authorizationMode,
-    AWSHttpClient? baseClient,
-  }) : baseClient = baseClient ?? AWSHttpClient();
+    required this.baseClient,
+  });
 
   /// [AmplifyAuthProviderRepository] for any auth modes this client may use.
   final AmplifyAuthProviderRepository authProviderRepo;
@@ -39,7 +39,9 @@ class AmplifyAuthorizationRestClient extends AWSBaseHttpClient {
   @override
   Future<AWSBaseHttpRequest> transformRequest(AWSBaseHttpRequest request) {
     if (request.scheme != 'https') {
-      throw const ApiException('Non-HTTPS requests not supported.');
+      throw const ApiOperationException(
+        'Non-HTTPS requests not supported.',
+      );
     }
     return authorizeHttpRequest(
       request,
@@ -56,13 +58,11 @@ class AmplifyAuthorizationRestClient extends AWSBaseHttpClient {
     // For REST endpoints, throw [RestException] on non-successful responses.
     if (endpointConfig.endpointType == EndpointType.rest &&
         (response.statusCode < 200 || response.statusCode >= 300)) {
-      late AWSHttpResponse responseForException;
-      if (response is AWSStreamedHttpResponse) {
-        responseForException = await response.read();
-      } else {
-        responseForException = response as AWSHttpResponse;
-      }
-      throw RestException(responseForException);
+      final responseForException = switch (response) {
+        AWSStreamedHttpResponse _ => await response.read(),
+        AWSHttpResponse _ => response,
+      };
+      throw HttpStatusException(responseForException);
     }
     return response;
   }

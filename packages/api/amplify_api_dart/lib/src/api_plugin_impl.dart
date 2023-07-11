@@ -29,7 +29,6 @@ class AmplifyAPIDart extends APIPluginInterface with AWSDebuggable {
   })  : _baseHttpClient = baseHttpClient,
         _connectivity = connectivity {
     authProviders.forEach(registerAuthProvider);
-    Amplify.Hub.addChannel(HubChannel.Api, _hubEventController.stream);
   }
 
   late final AWSApiPluginConfig _apiConfig;
@@ -46,9 +45,6 @@ class AmplifyAPIDart extends APIPluginInterface with AWSDebuggable {
   /// A map of the keys from the Amplify API config websocket connections to use
   /// for that endpoint.
   final Map<String, WebSocketBloc> _webSocketBlocPool = {};
-
-  /// The registered [APIAuthProvider] instances.
-  final Map<APIAuthorizationType, APIAuthProvider> _authProviders = {};
 
   final StreamController<ApiHubEvent> _hubEventController =
       StreamController<ApiHubEvent>.broadcast();
@@ -67,6 +63,7 @@ class AmplifyAPIDart extends APIPluginInterface with AWSDebuggable {
     );
 
     await _hubEventController.close();
+    await super.reset();
   }
 
   @override
@@ -94,6 +91,7 @@ class AmplifyAPIDart extends APIPluginInterface with AWSDebuggable {
     _apiConfig = apiConfig;
     _authProviderRepo = authProviderRepo;
     _registerApiPluginAuthProviders();
+    Amplify.Hub.addChannel(HubChannel.Api, _hubEventController.stream);
   }
 
   /// Register AmplifyAuthProviders that are specific to API category (API key,
@@ -115,7 +113,7 @@ class AmplifyAPIDart extends APIPluginInterface with AWSDebuggable {
     });
 
     // Register OIDC/Lambda auth providers.
-    for (final authProvider in _authProviders.values) {
+    for (final authProvider in authProviders.values) {
       _authProviderRepo.registerAuthProvider(
         authProvider.type.authProviderToken,
         OidcFunctionAuthProvider(authProvider),
@@ -155,13 +153,14 @@ class AmplifyAPIDart extends APIPluginInterface with AWSDebuggable {
         authorizationMode ?? endpoint.config.authorizationType;
     final clientPoolKey = '${endpoint.name}.${authModeForClientKey.name}';
     return _clientPool[clientPoolKey] ??= AmplifyHttpClient(
+      dependencies,
       baseClient: AmplifyAuthorizationRestClient(
         endpointConfig: endpoint.config,
-        baseClient: _baseHttpClient,
+        baseClient: _baseHttpClient ?? dependencies.getOrCreate(),
         authorizationMode: authorizationMode,
         authProviderRepo: _authProviderRepo,
       ),
-    )..supportedProtocols = SupportedProtocols.http1;
+    );
   }
 
   WebSocketBloc _webSocketBloc({String? apiName}) {
@@ -216,11 +215,6 @@ class AmplifyAPIDart extends APIPluginInterface with AWSDebuggable {
 
   @override
   final ModelProviderInterface? modelProvider;
-
-  @override
-  void registerAuthProvider(APIAuthProvider authProvider) {
-    _authProviders[authProvider.type] = authProvider;
-  }
 
   // ====== GraphQL ======
 

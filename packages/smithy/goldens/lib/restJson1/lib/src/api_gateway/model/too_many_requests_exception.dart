@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library rest_json1_v1.api_gateway.model.too_many_requests_exception; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -17,12 +18,12 @@ abstract class TooManyRequestsException
         _i2.HasPayload<TooManyRequestsExceptionPayload>,
         _i2.SmithyHttpException {
   factory TooManyRequestsException({
-    String? message,
     String? retryAfterSeconds,
+    String? message,
   }) {
     return _$TooManyRequestsException._(
-      message: message,
       retryAfterSeconds: retryAfterSeconds,
+      message: message,
     );
   }
 
@@ -45,15 +46,14 @@ abstract class TooManyRequestsException
         b.headers = response.headers;
       });
 
-  static const List<_i2.SmithySerializer> serializers = [
-    TooManyRequestsExceptionRestJson1Serializer()
-  ];
+  static const List<_i2.SmithySerializer<TooManyRequestsExceptionPayload>>
+      serializers = [TooManyRequestsExceptionRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(TooManyRequestsExceptionBuilder b) {}
+  String? get retryAfterSeconds;
   @override
   String? get message;
-  String? get retryAfterSeconds;
   @override
   TooManyRequestsExceptionPayload getPayload() =>
       TooManyRequestsExceptionPayload((b) {
@@ -76,20 +76,20 @@ abstract class TooManyRequestsException
   Exception? get underlyingException => null;
   @override
   List<Object?> get props => [
-        message,
         retryAfterSeconds,
+        message,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('TooManyRequestsException');
-    helper.add(
-      'message',
-      message,
-    );
-    helper.add(
-      'retryAfterSeconds',
-      retryAfterSeconds,
-    );
+    final helper = newBuiltValueToStringHelper('TooManyRequestsException')
+      ..add(
+        'retryAfterSeconds',
+        retryAfterSeconds,
+      )
+      ..add(
+        'message',
+        message,
+      );
     return helper.toString();
   }
 }
@@ -115,11 +115,11 @@ abstract class TooManyRequestsExceptionPayload
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('TooManyRequestsExceptionPayload');
-    helper.add(
-      'message',
-      message,
-    );
+        newBuiltValueToStringHelper('TooManyRequestsExceptionPayload')
+          ..add(
+            'message',
+            message,
+          );
     return helper.toString();
   }
 }
@@ -155,15 +155,15 @@ class TooManyRequestsExceptionRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'message':
-          if (value != null) {
-            result.message = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.message = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
       }
     }
 
@@ -173,21 +173,19 @@ class TooManyRequestsExceptionRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    TooManyRequestsExceptionPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = object is TooManyRequestsException
-        ? object.getPayload()
-        : (object as TooManyRequestsExceptionPayload);
-    final result = <Object?>[];
-    if (payload.message != null) {
-      result
+    final result$ = <Object?>[];
+    final TooManyRequestsExceptionPayload(:message) = object;
+    if (message != null) {
+      result$
         ..add('message')
         ..add(serializers.serialize(
-          payload.message!,
+          message,
           specifiedType: const FullType(String),
         ));
     }
-    return result;
+    return result$;
   }
 }

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.s3.model.delete_bucket_metrics_configuration_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -21,13 +22,13 @@ abstract class DeleteBucketMetricsConfigurationRequest
         _i1.HasPayload<DeleteBucketMetricsConfigurationRequestPayload> {
   factory DeleteBucketMetricsConfigurationRequest({
     required String bucket,
-    String? expectedBucketOwner,
     required String id,
+    String? expectedBucketOwner,
   }) {
     return _$DeleteBucketMetricsConfigurationRequest._(
       bucket: bucket,
-      expectedBucketOwner: expectedBucketOwner,
       id: id,
+      expectedBucketOwner: expectedBucketOwner,
     );
   }
 
@@ -55,7 +56,9 @@ abstract class DeleteBucketMetricsConfigurationRequest
         }
       });
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<
+          _i1.SmithySerializer<DeleteBucketMetricsConfigurationRequestPayload>>
+      serializers = [
     DeleteBucketMetricsConfigurationRequestRestXmlSerializer()
   ];
 
@@ -65,11 +68,11 @@ abstract class DeleteBucketMetricsConfigurationRequest
   /// The name of the bucket containing the metrics configuration to delete.
   String get bucket;
 
+  /// The ID used to identify the metrics configuration. The ID has a 64 character limit and can only contain letters, numbers, periods, dashes, and underscores.
+  String get id;
+
   /// The account ID of the expected bucket owner. If the bucket is owned by a different account, the request fails with the HTTP status code `403 Forbidden` (access denied).
   String? get expectedBucketOwner;
-
-  /// The ID used to identify the metrics configuration.
-  String get id;
   @override
   String labelFor(String key) {
     switch (key) {
@@ -88,25 +91,25 @@ abstract class DeleteBucketMetricsConfigurationRequest
   @override
   List<Object?> get props => [
         bucket,
-        expectedBucketOwner,
         id,
+        expectedBucketOwner,
       ];
   @override
   String toString() {
     final helper =
-        newBuiltValueToStringHelper('DeleteBucketMetricsConfigurationRequest');
-    helper.add(
-      'bucket',
-      bucket,
-    );
-    helper.add(
-      'expectedBucketOwner',
-      expectedBucketOwner,
-    );
-    helper.add(
-      'id',
-      id,
-    );
+        newBuiltValueToStringHelper('DeleteBucketMetricsConfigurationRequest')
+          ..add(
+            'bucket',
+            bucket,
+          )
+          ..add(
+            'id',
+            id,
+          )
+          ..add(
+            'expectedBucketOwner',
+            expectedBucketOwner,
+          );
     return helper.toString();
   }
 }
@@ -169,15 +172,16 @@ class DeleteBucketMetricsConfigurationRequestRestXmlSerializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    DeleteBucketMetricsConfigurationRequestPayload object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = <Object?>[
+    final result$ = <Object?>[
       const _i1.XmlElementName(
         'DeleteBucketMetricsConfigurationRequest',
         _i1.XmlNamespace('http://s3.amazonaws.com/doc/2006-03-01/'),
       )
     ];
-    return result;
+
+    return result$;
   }
 }

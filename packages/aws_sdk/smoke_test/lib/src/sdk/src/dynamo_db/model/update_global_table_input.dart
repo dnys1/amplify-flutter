@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library smoke_test.dynamo_db.model.update_global_table_input; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -40,9 +41,8 @@ abstract class UpdateGlobalTableInput
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
-    UpdateGlobalTableInputAwsJson10Serializer()
-  ];
+  static const List<_i1.SmithySerializer<UpdateGlobalTableInput>> serializers =
+      [UpdateGlobalTableInputAwsJson10Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(UpdateGlobalTableInputBuilder b) {}
@@ -61,15 +61,15 @@ abstract class UpdateGlobalTableInput
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('UpdateGlobalTableInput');
-    helper.add(
-      'globalTableName',
-      globalTableName,
-    );
-    helper.add(
-      'replicaUpdates',
-      replicaUpdates,
-    );
+    final helper = newBuiltValueToStringHelper('UpdateGlobalTableInput')
+      ..add(
+        'globalTableName',
+        globalTableName,
+      )
+      ..add(
+        'replicaUpdates',
+        replicaUpdates,
+      );
     return helper.toString();
   }
 }
@@ -103,13 +103,15 @@ class UpdateGlobalTableInputAwsJson10Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'GlobalTableName':
           result.globalTableName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'ReplicaUpdates':
           result.replicaUpdates.replace((serializers.deserialize(
             value,
@@ -118,7 +120,6 @@ class UpdateGlobalTableInputAwsJson10Serializer
               [FullType(_i3.ReplicaUpdate)],
             ),
           ) as _i4.BuiltList<_i3.ReplicaUpdate>));
-          break;
       }
     }
 
@@ -128,25 +129,26 @@ class UpdateGlobalTableInputAwsJson10Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    UpdateGlobalTableInput object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as UpdateGlobalTableInput);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final UpdateGlobalTableInput(:globalTableName, :replicaUpdates) = object;
+    result$.addAll([
       'GlobalTableName',
       serializers.serialize(
-        payload.globalTableName,
+        globalTableName,
         specifiedType: const FullType(String),
       ),
       'ReplicaUpdates',
       serializers.serialize(
-        payload.replicaUpdates,
+        replicaUpdates,
         specifiedType: const FullType(
           _i4.BuiltList,
           [FullType(_i3.ReplicaUpdate)],
         ),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

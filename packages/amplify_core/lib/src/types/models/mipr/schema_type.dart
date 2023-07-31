@@ -23,7 +23,7 @@ part 'schema_type.g.dart';
 /// {@template amplify_core.models.appsync_scalar}
 /// A primitive GraphQL type used in an AppSync schema.
 /// {@endtemplate}
-class AppSyncScalar extends EnumClass {
+final class AppSyncScalar extends EnumClass {
   const AppSyncScalar._(super.name);
 
   /// {@template amplify_core.models.appsync_scalar_id}
@@ -181,7 +181,7 @@ class AppSyncScalar extends EnumClass {
 /// - [EnumType]
 /// - [ListType]
 /// {@endtemplate}
-abstract class SchemaType with AWSSerializable<Map<String, Object?>> {
+sealed class SchemaType with AWSSerializable<Map<String, Object?>> {
   /// {@macro amplify_core.models.schema_type}
   const SchemaType();
 
@@ -295,7 +295,7 @@ abstract class SchemaType with AWSSerializable<Map<String, Object?>> {
 }
 
 /// {@macro amplify_core.models.scalar_type}
-class ScalarType extends SchemaType with AWSEquatable<ScalarType> {
+final class ScalarType extends SchemaType with AWSEquatable<ScalarType> {
   /// {@macro amplify_core.models.scalar_type}
   const ScalarType._(this.value, {this.isRequired = false});
 
@@ -318,7 +318,7 @@ class ScalarType extends SchemaType with AWSEquatable<ScalarType> {
 }
 
 /// {@macro amplify_core.models.model_type}
-class ModelType extends SchemaType with AWSEquatable<ModelType> {
+final class ModelType extends SchemaType with AWSEquatable<ModelType> {
   /// {@macro amplify_core.models.model_type}
   const ModelType._(this.name, {this.isRequired = false});
 
@@ -338,7 +338,7 @@ class ModelType extends SchemaType with AWSEquatable<ModelType> {
 }
 
 /// {@macro amplify_core.models.non_model_type}
-class NonModelType extends SchemaType with AWSEquatable<NonModelType> {
+final class NonModelType extends SchemaType with AWSEquatable<NonModelType> {
   /// {@macro amplify_core.models.non_model_type}
   const NonModelType._(this.name, {this.isRequired = false});
 
@@ -358,7 +358,7 @@ class NonModelType extends SchemaType with AWSEquatable<NonModelType> {
 }
 
 /// {@macro amplify_core.models.enum_type}
-class EnumType extends SchemaType with AWSEquatable<EnumType> {
+final class EnumType extends SchemaType with AWSEquatable<EnumType> {
   /// {@macro amplify_core.models.enum_type}
   const EnumType._(this.name, {this.isRequired = false});
 
@@ -378,7 +378,7 @@ class EnumType extends SchemaType with AWSEquatable<EnumType> {
 }
 
 /// {@macro amplify_core.models.list_type}
-class ListType extends SchemaType with AWSEquatable<ListType> {
+final class ListType extends SchemaType with AWSEquatable<ListType> {
   /// {@macro amplify_core.models.list_type}
   const ListType._(this.elementType, {this.isRequired = false});
 

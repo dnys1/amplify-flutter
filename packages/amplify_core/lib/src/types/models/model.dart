@@ -118,6 +118,8 @@ abstract class Model<ModelIdentifier extends Object,
 
   /// Returns the value of [field].
   T valueFor<T extends Object?>(QueryField<ModelIdentifier, M, T> field);
+
+  R withModelIdentifier<R>(R Function<T>() fn) => fn<ModelIdentifier>();
 }
 
 /// Methods used in codegen V1, added to support interoperability.

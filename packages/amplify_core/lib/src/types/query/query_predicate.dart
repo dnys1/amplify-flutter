@@ -44,8 +44,6 @@ class QueryPredicateOperation<ModelIdentifier extends Object,
         M extends Model<ModelIdentifier, M>>
     extends QueryPredicate<ModelIdentifier, M> {
   const QueryPredicateOperation(this.field, this.queryFieldOperator);
-  final String field;
-  final QueryFieldOperator queryFieldOperator;
 
   final String field;
   final QueryFieldOperator<Object?> queryFieldOperator;
@@ -100,9 +98,6 @@ class QueryByIdentifierOperation<ModelIdentifier extends Object,
   final String field;
   final QueryFieldOperator<ModelIdentifier> queryFieldOperator;
 
-  final String field;
-  final QueryFieldOperator<Object?> queryFieldOperator;
-
   @override
   bool evaluate(M model) {
     return queryFieldOperator.evaluate(model.modelIdentifier);
@@ -122,6 +117,8 @@ enum QueryPredicateGroupType { and, or, not }
 class QueryPredicateGroup<ModelIdentifier extends Object,
         M extends Model<ModelIdentifier, M>>
     extends QueryPredicate<ModelIdentifier, M> {
+  const QueryPredicateGroup(this.type, this.predicates);
+
   final QueryPredicateGroupType type;
   final List<QueryPredicate<ModelIdentifier, M>> predicates;
 
@@ -186,7 +183,7 @@ enum QueryPredicateConstantType { none, all }
 class _QueryPredicateConstant<ModelIdentifier extends Object,
         M extends Model<ModelIdentifier, M>>
     extends QueryPredicate<ModelIdentifier, M> {
-  final QueryPredicateConstantType _type;
+  const _QueryPredicateConstant(this._type);
 
   final QueryPredicateConstantType _type;
 

@@ -28,6 +28,11 @@ class AWSFileLoaderImpl extends AWSFileLoader {
     AWSProfileFileType type,
     String filepath,
   ) async {
+    if (Platform.isAndroid || Platform.isIOS) {
+      throw Exception(
+        'Profile loading not supported on this platform',
+      );
+    }
     final resolvedFilepath = await _pathProvider.resolve(filepath);
     if (resolvedFilepath == null) {
       AWSFileLoader.logger.warn('Could not resolve filepath for: $filepath');
@@ -38,10 +43,12 @@ class AWSFileLoaderImpl extends AWSFileLoader {
       AWSFileLoader.logger.warn('File does not exist: $resolvedFilepath');
       return _empty(type);
     }
-    return ResolvedFile(
+    final resolvedFile = ResolvedFile(
       type,
       await file.readAsString(),
       resolvedFilepath,
     );
+    AWSFileLoader.logger.debug('$type file loaded from: $filepath');
+    return resolvedFile;
   }
 }

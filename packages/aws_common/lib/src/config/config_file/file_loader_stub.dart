@@ -21,7 +21,7 @@ class AWSFileLoaderImpl extends AWSFileLoader {
     String filepath,
   ) =>
       Future.error(
-        StateError(
+        Exception(
           'Loading configuration files is currently not supported on '
           'non-VM platforms',
         ),

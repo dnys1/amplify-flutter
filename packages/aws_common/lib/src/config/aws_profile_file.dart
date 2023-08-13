@@ -60,15 +60,26 @@ abstract class AWSProfileFile
 
   const AWSProfileFile._();
 
+  /// The name of the default AWS profile.
+  static const defaultProfileName = 'default';
+
   /// The AWS profiles.
   BuiltMap<String, AWSProfile> get profiles;
 
   /// Loads the region for [profileName].
-  String? region(String profileName) => profiles[profileName]?.region;
+  AWSRegion? region(String profileName) => profiles[profileName]?.region;
 
   /// Loads credentials for [profileName].
   AWSCredentialsProvider? credentials(String profileName) =>
       profiles[profileName]?.credentials;
+
+  /// Loads the FIPS configuration value for [profileName].
+  bool? useFipsEndpoint(String profileName) =>
+      profiles[profileName]?.useFipsEndpoint;
+
+  /// Loads the dual-stack configuration value for [profileName].
+  bool? useDualstackEndpoint(String profileName) =>
+      profiles[profileName]?.useDualstackEndpoint;
 
   @override
   Map<String, Object?> toJson() =>
@@ -83,7 +94,7 @@ abstract class AWSProfileFile
 /// A collection of AWS configuration properties.
 /// {@endtemplate}
 abstract class AWSProfile
-    with AWSSerializable<Map<String, Object?>>
+    with AWSDebuggable, AWSSerializable<Map<String, Object?>>, AWSLoggerMixin
     implements Built<AWSProfile, AWSProfileBuilder> {
   /// {@macro aws_common.config.aws_profile}
   factory AWSProfile({
@@ -111,13 +122,42 @@ abstract class AWSProfile
   BuiltMap<String, AWSProperty> get properties;
 
   /// The region of the profile, if specified.
-  String? get region => properties['region']?.value;
+  AWSRegion? get region {
+    final value = properties['region']?.value;
+    if (value == null) {
+      return null;
+    }
+    return AWSRegion(value);
+  }
+
+  /// The `use_fips_endpoint` override, if specified.
+  ///
+  /// See: https://docs.aws.amazon.com/sdkref/latest/guide/feature-endpoints.html
+  bool? get useFipsEndpoint {
+    final value = properties['use_fips_endpoint']?.value;
+    if (value == null) {
+      return null;
+    }
+    return bool.parse(value);
+  }
+
+  /// The `use_dualstack_endpoint` override, if specified.
+  ///
+  /// See: https://docs.aws.amazon.com/sdkref/latest/guide/feature-endpoints.html
+  bool? get useDualstackEndpoint {
+    final value = properties['use_dualstack_endpoint']?.value;
+    if (value == null) {
+      return null;
+    }
+    return bool.parse(value);
+  }
 
   /// The credentials of the profile, if specified.
   AWSCredentialsProvider? get credentials {
     final roleArn = properties['role_arn'];
     if (roleArn != null) {
       // TODO(dnys1): Assume role credentials provider
+      logger.warn('Assume role credentials is not yet supported');
       return null;
     }
     final accessKeyId = properties['aws_access_key_id']?.value;
@@ -138,6 +178,9 @@ abstract class AWSProfile
     }
     return null;
   }
+
+  @override
+  String get runtimeTypeName => 'AWSProfile';
 
   @override
   Map<String, Object?> toJson() =>

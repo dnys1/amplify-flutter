@@ -223,3 +223,16 @@ class CodegenContext {
   R run<R>(R Function() action) =>
       runZoned(action, zoneValues: {CodegenContext: this});
 }
+
+final class GeneratedTypes
+    extends DelegatingMap<Reference, GeneratedTypeConfig> {
+  GeneratedTypes() : super({});
+
+  void hideForSymbol(Reference symbol, String topLevelType) {
+    (this[symbol] ??= GeneratedTypeConfig()).hide.add(topLevelType);
+  }
+}
+
+final class GeneratedTypeConfig {
+  final Set<String> hide = {};
+}

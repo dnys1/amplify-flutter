@@ -172,4 +172,3 @@ export 'package:rest_json1_v1/src/rest_json_protocol/model/timestamp_format_head
 export 'package:rest_json1_v1/src/rest_json_protocol/model/union_input_output.dart';
 export 'package:rest_json1_v1/src/rest_json_protocol/model/union_with_json_name.dart';
 export 'package:rest_json1_v1/src/rest_json_protocol/rest_json_protocol_client.dart';
-export 'package:rest_json1_v1/src/rest_json_protocol/rest_json_protocol_server.dart';

@@ -44,4 +44,3 @@ export 'package:rest_json1_v2/src/rest_json_validation_protocol/model/sensitive_
 export 'package:rest_json1_v2/src/rest_json_validation_protocol/model/validation_exception.dart';
 export 'package:rest_json1_v2/src/rest_json_validation_protocol/model/validation_exception_field.dart';
 export 'package:rest_json1_v2/src/rest_json_validation_protocol/rest_json_validation_protocol_client.dart';
-export 'package:rest_json1_v2/src/rest_json_validation_protocol/rest_json_validation_protocol_server.dart';

@@ -11,7 +11,7 @@ import 'package:aws_common/src/config/config_file/file_loader.dart';
 export 'package:aws_common/src/config/aws_config_stub.dart'
     if (dart.library.io) 'package:aws_common/src/config/aws_config_io.dart';
 
-T _identity<T extends Object>(String o) => o as T;
+T _identity<T extends Object?>(String o) => o as T;
 
 /// A configuration value for use with AWS packages.
 enum AWSConfigValue<T extends Object?> {
@@ -139,9 +139,8 @@ abstract interface class AWSConfigValueResolver<T extends Object?>
   FutureOr<T> resolve();
 }
 
-typedef _Nullable<T extends Object?> = T?;
-
-bool _isNullable<T extends Object?>() => T == _Nullable<T>;
+/// Whether [T] is a nullable type.
+bool _isNullable<T extends Object?>() => null is T;
 
 /// {@template aws_common.config.aws_config_value_environment_resolver}
 /// Resolves an AWS configuration value of type [T] from the environment.

@@ -14,13 +14,8 @@ import 'package:smithy_aws/smithy_aws.dart' as _i2;
 
 /// The example tests how requests serialize different timestamp formats in the URI path.
 class HttpRequestWithLabelsAndTimestampFormatOperation extends _i1
-<<<<<<< Updated upstream
     .HttpOperation<HttpRequestWithLabelsAndTimestampFormatInputPayload,
         HttpRequestWithLabelsAndTimestampFormatInput, _i1.Unit, _i1.Unit> {
-=======
-    .HttpOperation<_i2.HttpRequestWithLabelsAndTimestampFormatInputPayload,
-        _i2.HttpRequestWithLabelsAndTimestampFormatInput, _i1.Unit, _i1.Unit> {
->>>>>>> Stashed changes
   /// The example tests how requests serialize different timestamp formats in the URI path.
   HttpRequestWithLabelsAndTimestampFormatOperation({
     required String region,

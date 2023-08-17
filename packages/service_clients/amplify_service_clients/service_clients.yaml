@@ -1,0 +1,7 @@
+unsupported:
+  ec2: "Smithy work is incomplete"
+additional_exports:
+  "*":
+    - package:amplify_service_clients/src/util/logger.dart
+  s3:
+    - package:amplify_service_clients/src/s3/presigner.dart

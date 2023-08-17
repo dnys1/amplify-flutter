@@ -5,7 +5,6 @@
 library rest_json1_v2.api_gateway;
 
 export 'package:rest_json1_v2/src/api_gateway/api_gateway_client.dart';
-export 'package:rest_json1_v2/src/api_gateway/api_gateway_server.dart';
 export 'package:rest_json1_v2/src/api_gateway/model/api_key_source_type.dart';
 export 'package:rest_json1_v2/src/api_gateway/model/aws_config.dart';
 export 'package:rest_json1_v2/src/api_gateway/model/bad_request_exception.dart';

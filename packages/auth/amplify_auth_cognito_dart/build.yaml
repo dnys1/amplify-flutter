@@ -8,6 +8,17 @@ targets:
         enabled: true
       build_web_compilers:entrypoint:
         enabled: false
+      built_value_generator:built_value:
+        generate_for:
+          include:
+            - lib/src/asf/asf_context_data.dart
+            - lib/src/asf/asf_worker.dart
+            - lib/src/flows/**/*.dart
+            - lib/src/model/*.dart
+            - lib/src/model/hosted_ui/*.dart
+            - lib/src/model/session/cognito_sign_in_details.dart
+            - lib/src/model/session/cognito_user_pool_tokens.dart
+            - lib/src/sdk/**/model/**.dart
   debug:
     auto_apply_builders: false
     builders:

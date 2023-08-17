@@ -6,3 +6,7 @@ targets:
           dart2js_args:
             - --define=dart.vm.product=true
             - --enable-asserts
+      built_value_generator:built_value:
+        generate_for:
+          include:
+            - lib/src/sdk/**/model/**.dart

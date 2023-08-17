@@ -3,6 +3,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:aft/aft.dart';
 import 'package:aws_common/aws_common.dart';
@@ -87,7 +88,7 @@ class GenerateGoldensCommand extends AmplifyCommand {
   /// in which they were updated.
   Future<void> updateModels() async {
     const url = 'https://github.com/awslabs/smithy';
-    final tmpDir = Directory.systemTemp.createTempSync('smithy');
+    final tmpDir = await Directory.systemTemp.createTemp('smithy');
     final process = await Process.start(
       'git',
       [
@@ -158,10 +159,10 @@ class GenerateGoldensCommand extends AmplifyCommand {
 
     // Replace `coral` references
     final allModelFiles =
-        Directory(modelsPath).listSync(recursive: true).whereType<File>();
-    for (final file in allModelFiles) {
-      final content = file.readAsStringSync();
-      file.writeAsStringSync(content.replaceAll('coral', 'example'));
+        await Directory(modelsPath).list(recursive: true).toList();
+    for (final file in allModelFiles.whereType<File>()) {
+      final content = await file.readAsString();
+      await file.writeAsString(content.replaceAll('coral', 'example'));
     }
 
     // Update smithy-build.json and smithy-version
@@ -176,8 +177,8 @@ class GenerateGoldensCommand extends AmplifyCommand {
           'software.amazon.smithy:smithy-aws-traits:$latestVersion',
           'software.amazon.smithy:smithy-mqtt-traits:$latestVersion',
           'software.amazon.smithy:smithy-protocol-test-traits:$latestVersion',
-          'software.amazon.smithy:smithy-validation-model:$latestVersion'
-        ]
+          'software.amazon.smithy:smithy-validation-model:$latestVersion',
+        ],
       }),
     );
     final smithyVersion = File(p.join(goldensRoot, 'smithy-version'));
@@ -188,12 +189,12 @@ class GenerateGoldensCommand extends AmplifyCommand {
     SmithyVersion version,
     String modelPath, {
     required String protocolName,
-    required Directory tempOutputs,
+    required String tempOutputsPath,
   }) async {
     stdout.writeln('Generating AST for $modelPath');
 
     final tempModel = File(
-      p.join(tempOutputs.path, '${modelPath}_${version.name}.json'),
+      p.join(tempOutputsPath, '${modelPath}_${version.name}.json'),
     );
     final result = await Process.run(
       './gradlew',
@@ -213,7 +214,7 @@ class GenerateGoldensCommand extends AmplifyCommand {
       exit(result.exitCode);
     }
 
-    final astJson = tempModel.readAsStringSync();
+    final astJson = await tempModel.readAsString();
     return parseAstJson(astJson);
   }
 
@@ -230,18 +231,19 @@ class GenerateGoldensCommand extends AmplifyCommand {
       protocolName,
     );
     final dir = Directory(outputPath);
-    if (dir.existsSync()) {
-      dir.deleteSync(recursive: true);
+    if (await dir.exists()) {
+      await dir.delete(recursive: true);
     }
 
     final packageName = '${protocolName.snakeCase}_${version.name}';
-    final outputs = generateForAst(
-      ast,
-      packageName: packageName,
-      additionalShapes: const [
-        ShapeId(namespace: 'aws.protocoltests.config', shape: 'AwsConfig'),
-      ],
-      generateServer: true,
+    final outputs = await Isolate.run(
+      () => generateForAst(
+        ast,
+        packageName: packageName,
+        additionalShapes: const [
+          ShapeId(namespace: 'aws.protocoltests.config', shape: 'AwsConfig'),
+        ],
+      ),
     );
 
     final dependencies = <String>{};
@@ -250,25 +252,27 @@ class GenerateGoldensCommand extends AmplifyCommand {
       final outPath = p.join(outputPath, smithyLibrary.projectRelativePath);
       final output = library.emit();
       dependencies.addAll(library.dependencies);
-      File(outPath)
-        ..createSync(recursive: true)
-        ..writeAsStringSync(output);
+      final outFile = File(outPath);
+      await outFile.create(recursive: true);
+      await outFile.writeAsString(output);
     }
 
     // Create dummy pubspec
     final pubspecPath = p.join(outputPath, 'pubspec.yaml');
     final pubspec = Pubspec(packageName);
     final localSmithyPath = Directory(goldensRoot).uri.resolve('..').path;
-    final pubspecYaml = PubspecGenerator(
-      pubspec,
-      dependencies,
-      smithyPath: p.relative(localSmithyPath, from: outputPath),
-    ).generate();
-    File(pubspecPath).writeAsStringSync(pubspecYaml);
+    final pubspecYaml = await Isolate.run(
+      () => PubspecGenerator(
+        pubspec,
+        dependencies,
+        smithyPath: p.relative(localSmithyPath, from: outputPath),
+      ).generate(),
+    );
+    await File(pubspecPath).writeAsString(pubspecYaml);
 
     // Create analysis options
     final analysisOptionsPath = p.join(outputPath, 'analysis_options.yaml');
-    File(analysisOptionsPath).writeAsStringSync('''
+    await File(analysisOptionsPath).writeAsString('''
 include: package:lints/recommended.yaml
 
 analyzer:
@@ -280,58 +284,31 @@ analyzer:
 
     // Create mono_pkg for testing
     final dartTestPath = p.join(outputPath, 'dart_test.yaml');
-    File(dartTestPath).writeAsStringSync('''
+    await File(dartTestPath).writeAsString('''
 override_platforms:
   firefox:
     settings:
       arguments: -headless
 ''');
 
-    // Run `dart pub get`
-    final pubGetRes = await Process.run(
-      'dart',
-      [
-        'pub',
-        'get',
-      ],
-      workingDirectory: outputPath,
-      stdoutEncoding: utf8,
-      stderrEncoding: utf8,
-    );
-    if (pubGetRes.exitCode != 0) {
-      stderr
-        ..write('`dart pub get` failed for $outputPath: ')
-        ..writeln(pubGetRes.stdout)
-        ..writeln(pubGetRes.stderr);
-      exit(pubGetRes.exitCode);
-    }
+    final buildYamlPath = p.join(outputPath, 'build.yaml');
+    await File(buildYamlPath).writeAsString(r'''
+targets:
+  $default:
+    builders:
+      built_value_generator:built_value:
+        generate_for:
+          include:
+            - lib/**/model/**.dart
+''');
 
     // Run built_value generator
-    final buildRunnerCmd = await Process.start(
-      'dart',
-      [
-        'run',
-        'build_runner',
-        'build',
-        '--delete-conflicting-outputs',
-      ],
-      workingDirectory: outputPath,
+    final package = PackageInfo.fromDirectory(Directory(outputPath))!;
+    await runBuildRunner(
+      package,
+      logger: logger,
+      verbose: verbose,
     );
-    buildRunnerCmd.stdout
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen(stdout.writeln);
-    buildRunnerCmd.stderr
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen(stderr.writeln);
-    final exitCode = await buildRunnerCmd.exitCode;
-    if (exitCode != 0) {
-      stderr.write(
-        '`dart run build_runner build` failed for $outputPath: $exitCode.',
-      );
-      exit(exitCode);
-    }
   }
 
   @override
@@ -342,12 +319,12 @@ override_platforms:
     }
     final glob =
         Glob(argResults!.rest.length == 1 ? argResults!.rest.single : '*');
-    final futures = <Future<void> Function()>[];
-    final entites = glob.listFileSystemSync(
-      const LocalFileSystem(),
-      root: modelsPath,
-    );
-    final tempOutputs = Directory.systemTemp.createTempSync('smithy_goldens_');
+    final futures = <Future<void>>[];
+    final entites = await glob
+        .listFileSystem(const LocalFileSystem(), root: modelsPath)
+        .toList();
+    final tempOutputs =
+        (await Directory.systemTemp.createTemp('smithy_goldens_')).path;
     for (final modelEnt in entites.whereType<Directory>()) {
       final modelPath = p.relative(modelEnt.path, from: modelsPath);
       final protocolName = p.basename(modelPath);
@@ -358,21 +335,21 @@ override_platforms:
         if (version == SmithyVersion.v1 && skipV1.contains(protocolName)) {
           continue;
         }
-        final ast = await _transform(
-          version,
-          modelPath,
-          protocolName: protocolName,
-          tempOutputs: tempOutputs,
-        );
-        futures.add(
-          () => _generateFor(
+        futures.add(() async {
+          final ast = await _transform(
+            version,
+            modelPath,
+            protocolName: protocolName,
+            tempOutputsPath: tempOutputs,
+          );
+          return _generateFor(
             ast: ast,
             version: version,
             protocolName: protocolName,
-          ),
-        );
+          );
+        }());
       }
     }
-    await Future.wait<void>(futures.map((fut) => fut()));
+    await Future.wait<void>(futures);
   }
 }

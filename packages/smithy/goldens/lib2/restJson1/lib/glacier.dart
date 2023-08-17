@@ -5,7 +5,6 @@
 library rest_json1_v2.glacier;
 
 export 'package:rest_json1_v2/src/glacier/glacier_client.dart';
-export 'package:rest_json1_v2/src/glacier/glacier_server.dart';
 export 'package:rest_json1_v2/src/glacier/model/archive_creation_output.dart'
     hide ArchiveCreationOutputPayload;
 export 'package:rest_json1_v2/src/glacier/model/aws_config.dart';

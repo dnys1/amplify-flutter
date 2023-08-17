@@ -4,6 +4,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:aft/aft.dart';
 import 'package:aft/src/options/glob_options.dart';
@@ -73,11 +74,7 @@ class GenerateSdkCommand extends AmplifyCommand with GlobOptions {
           ..info('Downloading models...')
           ..verbose('Cloning models to ${cloneDir.path}');
         await runGit(
-          [
-            'clone',
-            'https://github.com/aws/aws-models.git',
-            cloneDir.path,
-          ],
+          ['clone', 'https://github.com/aws/aws-models.git', cloneDir.path],
           echoOutput: verbose,
         );
         logger.info('Successfully cloned models');
@@ -137,7 +134,7 @@ class GenerateSdkCommand extends AmplifyCommand with GlobOptions {
         exitError('Model directory ($modelsDir) does not exist');
       }
       // Checkout models if modelsPath is a git repository.
-      if (File(p.join(modelsPath, '.git')).existsSync()) {
+      if (await File(p.join(modelsPath, '.git')).exists()) {
         modelsDir = await _checkoutModelsRef(modelsDir, ref);
       } else {
         logger.warn(
@@ -179,13 +176,15 @@ class GenerateSdkCommand extends AmplifyCommand with GlobOptions {
 
     final modelsDir = await _modelsDirForRef(config.ref);
     final models = modelsDir.list().whereType<File>();
+
+    logger.debug('Parsing models');
     await for (final model in models) {
       final serviceName = p.basenameWithoutExtension(model.path);
       if (!config.apis.keys.contains(serviceName)) {
         continue;
       }
       final astJson = await model.readAsString();
-      final ast = parseAstJson(astJson);
+      final ast = await parseAstJson(astJson);
 
       smithyModel.shapes!.addAll(ast.shapes);
     }
@@ -219,13 +218,15 @@ class GenerateSdkCommand extends AmplifyCommand with GlobOptions {
     }
 
     // Generate SDK for combined operations
-    final output = generateForAst(
+    logger.debug('Generating AST');
+    final output = await generateForAst(
       smithyAst,
       packageName: packageName,
       basePath: outputPath,
       includeShapes: includeShapes,
     );
 
+    logger.debug('Emitting libraries');
     final dependencies = <String>{};
     for (final library in output.values.expand((out) => out.libraries)) {
       final smithyLibrary = library.smithyLibrary;
@@ -254,38 +255,31 @@ class GenerateSdkCommand extends AmplifyCommand with GlobOptions {
           ..metadata.replace(smithyAst.metadata)
           ..version = smithyAst.version,
       );
-      final pluginCmd = await Process.start(
-        'dart',
-        [
-          plugin,
-          jsonEncode(generatedAst),
-        ],
-        mode: ProcessStartMode.inheritStdio,
-        workingDirectory: package.path,
+      final json = await Isolate.run(() => jsonEncode(generatedAst));
+      final onExit = ReceivePort();
+      final onError = ReceivePort();
+      await Isolate.spawnUri(
+        p.toUri(p.join(package.path, plugin)),
+        [json],
+        null,
+        onExit: onExit.sendPort,
+        onError: onError.sendPort,
+        packageConfig: p.toUri(
+          p.join(package.path, '.dart_tool', 'package_config.json'),
+        ),
       );
-      final exitCode = await pluginCmd.exitCode;
-      if (exitCode != 0) {
-        exitError('`dart $plugin <AST>` failed: $exitCode.');
+      final error = await Future.any([
+        onExit.firstOrNull.then((_) => null),
+        onError.firstOrNull,
+      ]);
+      if (error != null) {
+        final [e, st] = error as List<Object>;
+        exitError('`dart $plugin <AST>` failed: $e\n$st.');
       }
     }
 
     // Run built_value generator
-    logger.info('Running build_runner...');
-    final buildRunnerCmd = await Process.start(
-      'dart',
-      [
-        'run',
-        'build_runner',
-        'build',
-        '--delete-conflicting-outputs',
-      ],
-      mode: verbose ? ProcessStartMode.inheritStdio : ProcessStartMode.normal,
-      workingDirectory: package.path,
-    );
-    final exitCode = await buildRunnerCmd.exitCode;
-    if (exitCode != 0) {
-      exitError('`dart run build_runner build` failed: $exitCode.');
-    }
+    await runBuildRunner(package, logger: logger, verbose: verbose);
   }
 
   /// Generates common AWS configuration files, e.g. `aws_service.dart`.
@@ -312,7 +306,7 @@ class GenerateSdkCommand extends AmplifyCommand with GlobOptions {
                 (p) => p
                   ..toThis = true
                   ..name = 'service',
-              )
+              ),
             ]),
         ),
       )
@@ -323,7 +317,7 @@ class GenerateSdkCommand extends AmplifyCommand with GlobOptions {
             ..docs.add('/// The SigV4 service name, used in signing.')
             ..name = 'service'
             ..type = refer('String'),
-        )
+        ),
       ]);
 
     final modelsDir = await _modelsDirForRef('master');
@@ -331,7 +325,7 @@ class GenerateSdkCommand extends AmplifyCommand with GlobOptions {
     final services = <Field>[];
     await for (final model in models) {
       final astJson = await model.readAsString();
-      final ast = parseAstJson(astJson);
+      final ast = await parseAstJson(astJson);
       final serviceShape = ast.shapes.values.whereType<ServiceShape>().single;
       final sigV4Trait = serviceShape.getTrait<SigV4Trait>();
       final serviceTrait = serviceShape.expectTrait<ServiceTrait>();
@@ -401,9 +395,11 @@ ${library.accept(emitter)}
       logger.info('Nothing to generate');
       return;
     }
+    final waiters = <Future<void>>[];
     for (final package in commandPackages.values) {
-      await _generateForPackage(package);
+      waiters.add(_generateForPackage(package));
     }
+    await Future.wait(waiters);
     logger.info('Successfully generated SDK');
   }
 }

@@ -9,7 +9,7 @@ import 'package:smithy/ast.dart';
 import 'package:smithy_codegen/smithy_codegen.dart';
 import 'package:smithy_codegen/src/util/shape_ext.dart';
 
-const output = 'lib/src/sdk/sdk_exception.dart';
+final output = Platform.script.resolve('../lib/src/sdk/sdk_exception.dart');
 
 /// Exception types specified by `amplify_core`.
 ///
@@ -24,10 +24,10 @@ const authExceptions = {
   'ValidationException': 'ValidationServiceException',
 };
 
-void main(List<String> args) {
+Future<void> main(List<String> args) async {
   // Should be run with `aft generate-sdk`
   final astJson = args.single;
-  final ast = parseAstJson(astJson);
+  final ast = await parseAstJson(astJson);
 
   final exceptions = StringBuffer(r'''
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
@@ -222,6 +222,17 @@ Object transformSdkException(Object e) {
 }
 ''');
 
-  File(output).writeAsStringSync(exceptions.toString());
-  Process.runSync('dart', ['format', '--fix', output]);
+  await File.fromUri(output).writeAsString(exceptions.toString());
+  safePrint('Wrote SDK exceptions to: $output');
+
+  final formatResult = await Process.run(
+    'dart',
+    ['format', '--fix', output.toFilePath()],
+    workingDirectory: Platform.script.resolve('..').toFilePath(),
+  );
+  if (formatResult.exitCode == 0) {
+    safePrint('Formatted SDK exceptions output');
+    return;
+  }
+  throw Exception('Could not format: ${formatResult.stderr}');
 }

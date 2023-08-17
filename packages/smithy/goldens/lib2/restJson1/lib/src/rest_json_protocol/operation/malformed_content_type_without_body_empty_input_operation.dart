@@ -13,16 +13,8 @@ import 'package:smithy/smithy.dart' as _i1;
 import 'package:smithy_aws/smithy_aws.dart' as _i2;
 
 class MalformedContentTypeWithoutBodyEmptyInputOperation extends _i1
-<<<<<<< Updated upstream
     .HttpOperation<MalformedContentTypeWithoutBodyEmptyInputInputPayload,
         MalformedContentTypeWithoutBodyEmptyInputInput, _i1.Unit, _i1.Unit> {
-=======
-    .HttpOperation<
-        _i2.MalformedContentTypeWithoutBodyEmptyInputInputPayload,
-        _i2.MalformedContentTypeWithoutBodyEmptyInputInput,
-        _i1.Unit,
-        _i1.Unit> {
->>>>>>> Stashed changes
   MalformedContentTypeWithoutBodyEmptyInputOperation({
     required String region,
     Uri? baseUri,

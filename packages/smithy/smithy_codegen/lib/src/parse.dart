@@ -2,10 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'dart:convert';
+import 'dart:isolate';
 
 import 'package:smithy/ast.dart';
 
 /// Parses the AST JSON received as a string via stdin.
-SmithyAst parseAstJson(String json) {
-  return SmithyAst.fromJson(jsonDecode(json) as Map<String, Object?>);
+Future<SmithyAst> parseAstJson(String json) {
+  return Isolate.run(
+    () => SmithyAst.fromJson(jsonDecode(json) as Map<String, Object?>),
+  );
 }

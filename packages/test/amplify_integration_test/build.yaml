@@ -1,8 +1,5 @@
 targets:
   $default:
-    sources:
-      exclude:
-        - example/**
     builders:
       built_value_generator:built_value:
         generate_for:

@@ -53,6 +53,7 @@ export 'src/util/globals.dart';
 export 'src/util/json.dart';
 export 'src/util/print.dart';
 export 'src/util/recase.dart';
+export 'src/util/sensitive.dart';
 export 'src/util/serializable.dart';
 export 'src/util/stream.dart';
 export 'src/util/uuid.dart';

@@ -23,16 +23,18 @@ abstract base class AWSCredentialsProviderChain
   @override
   Future<AWSCredentials> retrieve() async {
     final chain = List.of(this.chain);
-    for (final credentialsProvider in chain) {
-      final providerType = credentialsProvider.runtimeTypeName;
-      logger.verbose('Loading credentials from $providerType');
-      try {
-        final credentials = await credentialsProvider.retrieve();
-        logger.verbose('Successfully loaded credentials from $providerType');
-        return credentials;
-      } on Object {
-        logger.verbose('Failed to loaded credentials from $providerType');
-        continue;
+    for (final provider in chain) {
+      final providerType = provider.runtimeTypeName;
+      switch (await AWSResult.capture(provider.retrieve)) {
+        case AWSSuccessResult(value: final credentials):
+          logger.verbose('Successfully loaded credentials from $providerType');
+          return credentials;
+        case AWSErrorResult(:final exception, :final stackTrace):
+          logger.verbose(
+            'Failed to load credentials from $providerType',
+            exception,
+            stackTrace,
+          );
       }
     }
     throw InvalidCredentialsException.couldNotLoad(
@@ -43,16 +45,21 @@ abstract base class AWSCredentialsProviderChain
 }
 
 /// {@macro aws_signature_v4.default_credentials_provider_chain}
-final class DefaultCredentialsProviderChain
+final class AWSCredentialsProviderDefaultChain
     extends AWSCredentialsProviderChain {
   /// {@macro aws_signature_v4.default_credentials_provider_chain}
-  const DefaultCredentialsProviderChain();
+  const AWSCredentialsProviderDefaultChain({
+    this.profileName,
+  });
+
+  /// The profile name to use when attempting to load from the on-disk
+  /// AWS profile as part of the chain.
+  final String? profileName;
 
   @override
-  List<AWSCredentialsProvider> get chain => const [
-        EnvironmentCredentialsProvider(),
-        ProfileCredentialsProvider(),
-        // TODO(dnys1): EC2 IMDS + ECS
+  List<AWSCredentialsProvider> get chain => [
+        const EnvironmentCredentialsProvider(),
+        ProfileCredentialsProvider(profileName),
       ];
 
   @override

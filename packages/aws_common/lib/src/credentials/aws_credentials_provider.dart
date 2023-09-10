@@ -87,8 +87,8 @@ abstract interface class AWSCredentialsProvider with AWSDebuggable {
   /// - ECS container (TODO)
   /// - EC2 IMDS service (TODO)
   /// {@endtemplate}
-  const factory AWSCredentialsProvider.defaultChain() =
-      DefaultCredentialsProviderChain;
+  const factory AWSCredentialsProvider.defaultChain({String? profileName}) =
+      AWSCredentialsProviderDefaultChain;
 
   /// Retrieves AWS credentials.
   FutureOr<AWSCredentials> retrieve();
@@ -185,7 +185,8 @@ class EnvironmentCredentialsProvider implements AWSCredentialsProvider {
 /// {@macro aws_signature_v4.profile_credentials_provider}
 class ProfileCredentialsProvider implements AWSCredentialsProvider {
   /// {@macro aws_signature_v4.profile_credentials_provider}
-  const ProfileCredentialsProvider([this.profileName = 'default']);
+  const ProfileCredentialsProvider([String? profileName])
+      : profileName = profileName ?? AWSProfileFile.defaultProfileName;
 
   /// The name of the profile to use from the AWS configuration and shared
   /// credentials files.

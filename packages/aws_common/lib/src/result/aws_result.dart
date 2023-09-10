@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+import 'dart:async';
+
 import 'package:aws_common/aws_common.dart';
 
 /// {@template aws_common.aws_result}
@@ -20,6 +22,29 @@ sealed class AWSResult<V extends Object?, E extends Exception>
   const factory AWSResult.success(V value) = AWSSuccessResult<V, E>;
 
   const AWSResult._();
+
+  /// Captures the result of a synchronous [computation].
+  static AWSResult<V, E> captureSync<V extends Object?, E extends Exception>(
+    V Function() computation,
+  ) {
+    try {
+      return AWSResult.success(computation());
+    } on E catch (e, st) {
+      return AWSResult.error(e, st);
+    }
+  }
+
+  /// Captures the result of an asynchronous [computation].
+  static Future<AWSResult<V, E>>
+      capture<V extends Object?, E extends Exception>(
+    FutureOr<V> Function() computation,
+  ) async {
+    try {
+      return AWSResult.success(await computation());
+    } on E catch (e, st) {
+      return AWSResult.error(e, st);
+    }
+  }
 
   /// The exception that occurred while attempting to retrieve the value.
   E? get exception;

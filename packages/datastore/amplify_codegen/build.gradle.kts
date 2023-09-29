@@ -11,7 +11,7 @@ repositories {
 }
 
 kotlin {
-   jvmToolchain(8)
+   jvmToolchain(17)
 }
 
 application {
@@ -19,6 +19,6 @@ application {
 }
 
 dependencies {
-    implementation("software.amazon.smithy:smithy-model:1.27.0")
-    implementation("software.amazon.smithy:smithy-aws-traits:1.27.0")
+    implementation("software.amazon.smithy:smithy-model:1.34.0")
+    implementation("software.amazon.smithy:smithy-aws-traits:1.34.0")
 }

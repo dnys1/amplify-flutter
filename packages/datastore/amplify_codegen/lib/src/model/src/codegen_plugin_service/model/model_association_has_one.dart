@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.model_association_has_one; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -16,19 +17,20 @@ abstract class ModelAssociationHasOne
     with _i1.AWSEquatable<ModelAssociationHasOne>
     implements Built<ModelAssociationHasOne, ModelAssociationHasOneBuilder> {
   factory ModelAssociationHasOne({
+    required String connectedModel,
+    @Deprecated('Use targetNames instead.')
+        required String targetName,
+    required List<String> targetNames,
     @Deprecated('Use associatedWithFields instead.')
         required _i2.ModelField associatedWith,
     required List<_i2.ModelField> associatedWithFields,
-    required String connectedModel,
-    @Deprecated('Use targetNames instead.') required String targetName,
-    required List<String> targetNames,
   }) {
     return _$ModelAssociationHasOne._(
-      associatedWith: associatedWith,
-      associatedWithFields: _i3.BuiltList(associatedWithFields),
       connectedModel: connectedModel,
       targetName: targetName,
       targetNames: _i3.BuiltList(targetNames),
+      associatedWith: associatedWith,
+      associatedWithFields: _i3.BuiltList(associatedWithFields),
     );
   }
 
@@ -38,52 +40,51 @@ abstract class ModelAssociationHasOne
 
   const ModelAssociationHasOne._();
 
-  static const List<_i4.SmithySerializer> serializers = [
-    ModelAssociationHasOneRestJson1Serializer()
-  ];
+  static const List<_i4.SmithySerializer<ModelAssociationHasOne>> serializers =
+      [ModelAssociationHasOneRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(ModelAssociationHasOneBuilder b) {}
-  @Deprecated('Use associatedWithFields instead.')
-  _i2.ModelField get associatedWith;
-  _i3.BuiltList<_i2.ModelField> get associatedWithFields;
 
   /// The name of the associated model.
   String get connectedModel;
   @Deprecated('Use targetNames instead.')
   String get targetName;
   _i3.BuiltList<String> get targetNames;
+  @Deprecated('Use associatedWithFields instead.')
+  _i2.ModelField get associatedWith;
+  _i3.BuiltList<_i2.ModelField> get associatedWithFields;
   @override
   List<Object?> get props => [
-        associatedWith,
-        associatedWithFields,
         connectedModel,
         targetName,
         targetNames,
+        associatedWith,
+        associatedWithFields,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ModelAssociationHasOne');
-    helper.add(
-      'associatedWith',
-      associatedWith,
-    );
-    helper.add(
-      'associatedWithFields',
-      associatedWithFields,
-    );
-    helper.add(
-      'connectedModel',
-      connectedModel,
-    );
-    helper.add(
-      'targetName',
-      targetName,
-    );
-    helper.add(
-      'targetNames',
-      targetNames,
-    );
+    final helper = newBuiltValueToStringHelper('ModelAssociationHasOne')
+      ..add(
+        'connectedModel',
+        connectedModel,
+      )
+      ..add(
+        'targetName',
+        targetName,
+      )
+      ..add(
+        'targetNames',
+        targetNames,
+      )
+      ..add(
+        'associatedWith',
+        associatedWith,
+      )
+      ..add(
+        'associatedWithFields',
+        associatedWithFields,
+      );
     return helper.toString();
   }
 }
@@ -117,13 +118,15 @@ class ModelAssociationHasOneRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'associatedWith':
           result.associatedWith.replace((serializers.deserialize(
             value,
             specifiedType: const FullType(_i2.ModelField),
           ) as _i2.ModelField));
-          break;
         case 'associatedWithFields':
           result.associatedWithFields.replace((serializers.deserialize(
             value,
@@ -132,19 +135,16 @@ class ModelAssociationHasOneRestJson1Serializer
               [FullType(_i2.ModelField)],
             ),
           ) as _i3.BuiltList<_i2.ModelField>));
-          break;
         case 'connectedModel':
           result.connectedModel = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'targetName':
           result.targetName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'targetNames':
           result.targetNames.replace((serializers.deserialize(
             value,
@@ -153,7 +153,6 @@ class ModelAssociationHasOneRestJson1Serializer
               [FullType(String)],
             ),
           ) as _i3.BuiltList<String>));
-          break;
       }
     }
 
@@ -163,19 +162,26 @@ class ModelAssociationHasOneRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ModelAssociationHasOne object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ModelAssociationHasOne);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final ModelAssociationHasOne(
+      :associatedWith,
+      :associatedWithFields,
+      :connectedModel,
+      :targetName,
+      :targetNames
+    ) = object;
+    result$.addAll([
       'associatedWith',
       serializers.serialize(
-        payload.associatedWith,
+        associatedWith,
         specifiedType: const FullType(_i2.ModelField),
       ),
       'associatedWithFields',
       serializers.serialize(
-        payload.associatedWithFields,
+        associatedWithFields,
         specifiedType: const FullType(
           _i3.BuiltList,
           [FullType(_i2.ModelField)],
@@ -183,23 +189,23 @@ class ModelAssociationHasOneRestJson1Serializer
       ),
       'connectedModel',
       serializers.serialize(
-        payload.connectedModel,
+        connectedModel,
         specifiedType: const FullType(String),
       ),
       'targetName',
       serializers.serialize(
-        payload.targetName,
+        targetName,
         specifiedType: const FullType(String),
       ),
       'targetNames',
       serializers.serialize(
-        payload.targetNames,
+        targetNames,
         specifiedType: const FullType(
           _i3.BuiltList,
           [FullType(String)],
         ),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

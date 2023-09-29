@@ -206,14 +206,14 @@ class _$EnumTypeDefinitionSerializer
   }
 }
 
-abstract class SchemaTypeDefinitionBuilder {
+abstract mixin class SchemaTypeDefinitionBuilder {
   void replace(SchemaTypeDefinition other);
   void update(void Function(SchemaTypeDefinitionBuilder) updates);
   String? get name;
   set name(String? name);
 }
 
-abstract class StructureTypeDefinitionBuilder
+abstract mixin class StructureTypeDefinitionBuilder
     implements SchemaTypeDefinitionBuilder {
   void replace(covariant StructureTypeDefinition other);
   void update(void Function(StructureTypeDefinitionBuilder) updates);

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.scalar_type; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -33,7 +34,7 @@ abstract class ScalarType
 
   const ScalarType._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<ScalarType>> serializers = [
     ScalarTypeRestJson1Serializer()
   ];
 
@@ -54,15 +55,15 @@ abstract class ScalarType
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ScalarType');
-    helper.add(
-      'isRequired',
-      isRequired,
-    );
-    helper.add(
-      'scalar',
-      scalar,
-    );
+    final helper = newBuiltValueToStringHelper('ScalarType')
+      ..add(
+        'isRequired',
+        isRequired,
+      )
+      ..add(
+        'scalar',
+        scalar,
+      );
     return helper.toString();
   }
 }
@@ -95,19 +96,20 @@ class ScalarTypeRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'isRequired':
           result.isRequired = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(bool),
           ) as bool);
-          break;
         case 'scalar':
           result.scalar = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(_i2.AppSyncScalar),
           ) as _i2.AppSyncScalar);
-          break;
       }
     }
 
@@ -117,22 +119,23 @@ class ScalarTypeRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ScalarType object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ScalarType);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final ScalarType(:isRequired, :scalar) = object;
+    result$.addAll([
       'isRequired',
       serializers.serialize(
-        payload.isRequired,
+        isRequired,
         specifiedType: const FullType(bool),
       ),
       'scalar',
       serializers.serialize(
-        payload.scalar,
+        scalar,
         specifiedType: const FullType(_i2.AppSyncScalar),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

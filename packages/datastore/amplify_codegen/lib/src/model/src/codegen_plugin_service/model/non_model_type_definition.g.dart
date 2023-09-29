@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of amplify_codegen.codegen_plugin_service.model.non_model_type_definition;
+part of 'non_model_type_definition.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
@@ -8,20 +8,20 @@ part of amplify_codegen.codegen_plugin_service.model.non_model_type_definition;
 
 class _$NonModelTypeDefinition extends NonModelTypeDefinition {
   @override
-  final _i3.BuiltMap<String, _i2.ModelField> fields;
-  @override
   final String name;
+  @override
+  final _i3.BuiltMap<String, _i2.ModelField> fields;
 
   factory _$NonModelTypeDefinition(
           [void Function(NonModelTypeDefinitionBuilder)? updates]) =>
       (new NonModelTypeDefinitionBuilder()..update(updates))._build();
 
-  _$NonModelTypeDefinition._({required this.fields, required this.name})
+  _$NonModelTypeDefinition._({required this.name, required this.fields})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
-        fields, r'NonModelTypeDefinition', 'fields');
-    BuiltValueNullFieldError.checkNotNull(
         name, r'NonModelTypeDefinition', 'name');
+    BuiltValueNullFieldError.checkNotNull(
+        fields, r'NonModelTypeDefinition', 'fields');
   }
 
   @override
@@ -37,15 +37,15 @@ class _$NonModelTypeDefinition extends NonModelTypeDefinition {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is NonModelTypeDefinition &&
-        fields == other.fields &&
-        name == other.name;
+        name == other.name &&
+        fields == other.fields;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
-    _$hash = $jc(_$hash, fields.hashCode);
     _$hash = $jc(_$hash, name.hashCode);
+    _$hash = $jc(_$hash, fields.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -55,15 +55,15 @@ class NonModelTypeDefinitionBuilder
     implements Builder<NonModelTypeDefinition, NonModelTypeDefinitionBuilder> {
   _$NonModelTypeDefinition? _$v;
 
+  String? _name;
+  String? get name => _$this._name;
+  set name(String? name) => _$this._name = name;
+
   _i3.MapBuilder<String, _i2.ModelField>? _fields;
   _i3.MapBuilder<String, _i2.ModelField> get fields =>
       _$this._fields ??= new _i3.MapBuilder<String, _i2.ModelField>();
   set fields(_i3.MapBuilder<String, _i2.ModelField>? fields) =>
       _$this._fields = fields;
-
-  String? _name;
-  String? get name => _$this._name;
-  set name(String? name) => _$this._name = name;
 
   NonModelTypeDefinitionBuilder() {
     NonModelTypeDefinition._init(this);
@@ -72,8 +72,8 @@ class NonModelTypeDefinitionBuilder
   NonModelTypeDefinitionBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _fields = $v.fields.toBuilder();
       _name = $v.name;
+      _fields = $v.fields.toBuilder();
       _$v = null;
     }
     return this;
@@ -98,9 +98,9 @@ class NonModelTypeDefinitionBuilder
     try {
       _$result = _$v ??
           new _$NonModelTypeDefinition._(
-              fields: fields.build(),
               name: BuiltValueNullFieldError.checkNotNull(
-                  name, r'NonModelTypeDefinition', 'name'));
+                  name, r'NonModelTypeDefinition', 'name'),
+              fields: fields.build());
     } catch (_) {
       late String _$failedField;
       try {

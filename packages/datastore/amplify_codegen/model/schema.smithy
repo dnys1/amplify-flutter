@@ -38,6 +38,7 @@ structure SchemaDefinition {
         "Post": ["Comment"],
         "Comment": []
     }
+    ```
     """
 )
 map ModelGraph {

@@ -1,11 +1,12 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.auth_rule; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
 import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/auth_model_operation.dart'
-    as _i3;
-import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/auth_provider.dart'
     as _i4;
+import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/auth_provider.dart'
+    as _i3;
 import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/auth_strategy.dart'
     as _i2;
 import 'package:aws_common/aws_common.dart' as _i1;
@@ -21,23 +22,23 @@ abstract class AuthRule
     implements Built<AuthRule, AuthRuleBuilder> {
   factory AuthRule({
     required _i2.AuthStrategy authStrategy,
+    String? ownerField,
+    String? identityClaim,
     String? groupClaim,
     List<String>? groups,
     String? groupsField,
-    String? identityClaim,
-    List<_i3.AuthModelOperation>? operations,
-    String? ownerField,
-    _i4.AuthProvider? provider,
+    _i3.AuthProvider? provider,
+    List<_i4.AuthModelOperation>? operations,
   }) {
     return _$AuthRule._(
       authStrategy: authStrategy,
+      ownerField: ownerField,
+      identityClaim: identityClaim,
       groupClaim: groupClaim,
       groups: groups == null ? null : _i5.BuiltList(groups),
       groupsField: groupsField,
-      identityClaim: identityClaim,
-      operations: operations == null ? null : _i5.BuiltList(operations),
-      ownerField: ownerField,
       provider: provider,
+      operations: operations == null ? null : _i5.BuiltList(operations),
     );
   }
 
@@ -45,66 +46,66 @@ abstract class AuthRule
 
   const AuthRule._();
 
-  static const List<_i6.SmithySerializer> serializers = [
+  static const List<_i6.SmithySerializer<AuthRule>> serializers = [
     AuthRuleRestJson1Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(AuthRuleBuilder b) {}
   _i2.AuthStrategy get authStrategy;
+  String? get ownerField;
+  String? get identityClaim;
   String? get groupClaim;
   _i5.BuiltList<String>? get groups;
   String? get groupsField;
-  String? get identityClaim;
-  _i5.BuiltList<_i3.AuthModelOperation>? get operations;
-  String? get ownerField;
-  _i4.AuthProvider? get provider;
+  _i3.AuthProvider? get provider;
+  _i5.BuiltList<_i4.AuthModelOperation>? get operations;
   @override
   List<Object?> get props => [
         authStrategy,
+        ownerField,
+        identityClaim,
         groupClaim,
         groups,
         groupsField,
-        identityClaim,
-        operations,
-        ownerField,
         provider,
+        operations,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('AuthRule');
-    helper.add(
-      'authStrategy',
-      authStrategy,
-    );
-    helper.add(
-      'groupClaim',
-      groupClaim,
-    );
-    helper.add(
-      'groups',
-      groups,
-    );
-    helper.add(
-      'groupsField',
-      groupsField,
-    );
-    helper.add(
-      'identityClaim',
-      identityClaim,
-    );
-    helper.add(
-      'operations',
-      operations,
-    );
-    helper.add(
-      'ownerField',
-      ownerField,
-    );
-    helper.add(
-      'provider',
-      provider,
-    );
+    final helper = newBuiltValueToStringHelper('AuthRule')
+      ..add(
+        'authStrategy',
+        authStrategy,
+      )
+      ..add(
+        'ownerField',
+        ownerField,
+      )
+      ..add(
+        'identityClaim',
+        identityClaim,
+      )
+      ..add(
+        'groupClaim',
+        groupClaim,
+      )
+      ..add(
+        'groups',
+        groups,
+      )
+      ..add(
+        'groupsField',
+        groupsField,
+      )
+      ..add(
+        'provider',
+        provider,
+      )
+      ..add(
+        'operations',
+        operations,
+      );
     return helper.toString();
   }
 }
@@ -137,75 +138,56 @@ class AuthRuleRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'authStrategy':
           result.authStrategy = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(_i2.AuthStrategy),
           ) as _i2.AuthStrategy);
-          break;
         case 'groupClaim':
-          if (value != null) {
-            result.groupClaim = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.groupClaim = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'groups':
-          if (value != null) {
-            result.groups.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i5.BuiltList,
-                [FullType(String)],
-              ),
-            ) as _i5.BuiltList<String>));
-          }
-          break;
+          result.groups.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i5.BuiltList,
+              [FullType(String)],
+            ),
+          ) as _i5.BuiltList<String>));
         case 'groupsField':
-          if (value != null) {
-            result.groupsField = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.groupsField = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'identityClaim':
-          if (value != null) {
-            result.identityClaim = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.identityClaim = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'operations':
-          if (value != null) {
-            result.operations.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i5.BuiltList,
-                [FullType(_i3.AuthModelOperation)],
-              ),
-            ) as _i5.BuiltList<_i3.AuthModelOperation>));
-          }
-          break;
+          result.operations.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i5.BuiltList,
+              [FullType(_i4.AuthModelOperation)],
+            ),
+          ) as _i5.BuiltList<_i4.AuthModelOperation>));
         case 'ownerField':
-          if (value != null) {
-            result.ownerField = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(String),
-            ) as String);
-          }
-          break;
+          result.ownerField = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String);
         case 'provider':
-          if (value != null) {
-            result.provider = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i4.AuthProvider),
-            ) as _i4.AuthProvider);
-          }
-          break;
+          result.provider = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i3.AuthProvider),
+          ) as _i3.AuthProvider);
       }
     }
 
@@ -215,79 +197,89 @@ class AuthRuleRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    AuthRule object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as AuthRule);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final AuthRule(
+      :authStrategy,
+      :groupClaim,
+      :groups,
+      :groupsField,
+      :identityClaim,
+      :operations,
+      :ownerField,
+      :provider
+    ) = object;
+    result$.addAll([
       'authStrategy',
       serializers.serialize(
-        payload.authStrategy,
+        authStrategy,
         specifiedType: const FullType(_i2.AuthStrategy),
       ),
-    ];
-    if (payload.groupClaim != null) {
-      result
+    ]);
+    if (groupClaim != null) {
+      result$
         ..add('groupClaim')
         ..add(serializers.serialize(
-          payload.groupClaim!,
+          groupClaim,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.groups != null) {
-      result
+    if (groups != null) {
+      result$
         ..add('groups')
         ..add(serializers.serialize(
-          payload.groups!,
+          groups,
           specifiedType: const FullType(
             _i5.BuiltList,
             [FullType(String)],
           ),
         ));
     }
-    if (payload.groupsField != null) {
-      result
+    if (groupsField != null) {
+      result$
         ..add('groupsField')
         ..add(serializers.serialize(
-          payload.groupsField!,
+          groupsField,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.identityClaim != null) {
-      result
+    if (identityClaim != null) {
+      result$
         ..add('identityClaim')
         ..add(serializers.serialize(
-          payload.identityClaim!,
+          identityClaim,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.operations != null) {
-      result
+    if (operations != null) {
+      result$
         ..add('operations')
         ..add(serializers.serialize(
-          payload.operations!,
+          operations,
           specifiedType: const FullType(
             _i5.BuiltList,
-            [FullType(_i3.AuthModelOperation)],
+            [FullType(_i4.AuthModelOperation)],
           ),
         ));
     }
-    if (payload.ownerField != null) {
-      result
+    if (ownerField != null) {
+      result$
         ..add('ownerField')
         ..add(serializers.serialize(
-          payload.ownerField!,
+          ownerField,
           specifiedType: const FullType(String),
         ));
     }
-    if (payload.provider != null) {
-      result
+    if (provider != null) {
+      result$
         ..add('provider')
         ..add(serializers.serialize(
-          payload.provider!,
-          specifiedType: const FullType(_i4.AuthProvider),
+          provider,
+          specifiedType: const FullType(_i3.AuthProvider),
         ));
     }
-    return result;
+    return result$;
   }
 }

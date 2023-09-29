@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of amplify_codegen.codegen_plugin_service.model.model_foreign_key;
+part of 'model_foreign_key.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
@@ -8,25 +8,25 @@ part of amplify_codegen.codegen_plugin_service.model.model_foreign_key;
 
 class _$ModelForeignKey extends ModelForeignKey {
   @override
-  final String name;
-  @override
   final String primaryField;
   @override
   final _i2.BuiltList<String> sortKeyFields;
+  @override
+  final String name;
 
   factory _$ModelForeignKey([void Function(ModelForeignKeyBuilder)? updates]) =>
       (new ModelForeignKeyBuilder()..update(updates))._build();
 
   _$ModelForeignKey._(
-      {required this.name,
-      required this.primaryField,
-      required this.sortKeyFields})
+      {required this.primaryField,
+      required this.sortKeyFields,
+      required this.name})
       : super._() {
-    BuiltValueNullFieldError.checkNotNull(name, r'ModelForeignKey', 'name');
     BuiltValueNullFieldError.checkNotNull(
         primaryField, r'ModelForeignKey', 'primaryField');
     BuiltValueNullFieldError.checkNotNull(
         sortKeyFields, r'ModelForeignKey', 'sortKeyFields');
+    BuiltValueNullFieldError.checkNotNull(name, r'ModelForeignKey', 'name');
   }
 
   @override
@@ -41,17 +41,17 @@ class _$ModelForeignKey extends ModelForeignKey {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is ModelForeignKey &&
-        name == other.name &&
         primaryField == other.primaryField &&
-        sortKeyFields == other.sortKeyFields;
+        sortKeyFields == other.sortKeyFields &&
+        name == other.name;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
-    _$hash = $jc(_$hash, name.hashCode);
     _$hash = $jc(_$hash, primaryField.hashCode);
     _$hash = $jc(_$hash, sortKeyFields.hashCode);
+    _$hash = $jc(_$hash, name.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -60,10 +60,6 @@ class _$ModelForeignKey extends ModelForeignKey {
 class ModelForeignKeyBuilder
     implements Builder<ModelForeignKey, ModelForeignKeyBuilder> {
   _$ModelForeignKey? _$v;
-
-  String? _name;
-  String? get name => _$this._name;
-  set name(String? name) => _$this._name = name;
 
   String? _primaryField;
   String? get primaryField => _$this._primaryField;
@@ -75,6 +71,10 @@ class ModelForeignKeyBuilder
   set sortKeyFields(_i2.ListBuilder<String>? sortKeyFields) =>
       _$this._sortKeyFields = sortKeyFields;
 
+  String? _name;
+  String? get name => _$this._name;
+  set name(String? name) => _$this._name = name;
+
   ModelForeignKeyBuilder() {
     ModelForeignKey._init(this);
   }
@@ -82,9 +82,9 @@ class ModelForeignKeyBuilder
   ModelForeignKeyBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _name = $v.name;
       _primaryField = $v.primaryField;
       _sortKeyFields = $v.sortKeyFields.toBuilder();
+      _name = $v.name;
       _$v = null;
     }
     return this;
@@ -109,11 +109,11 @@ class ModelForeignKeyBuilder
     try {
       _$result = _$v ??
           new _$ModelForeignKey._(
-              name: BuiltValueNullFieldError.checkNotNull(
-                  name, r'ModelForeignKey', 'name'),
               primaryField: BuiltValueNullFieldError.checkNotNull(
                   primaryField, r'ModelForeignKey', 'primaryField'),
-              sortKeyFields: sortKeyFields.build());
+              sortKeyFields: sortKeyFields.build(),
+              name: BuiltValueNullFieldError.checkNotNull(
+                  name, r'ModelForeignKey', 'name'));
     } catch (_) {
       late String _$failedField;
       try {

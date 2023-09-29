@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of amplify_codegen.codegen_plugin_service.model.enum_type;
+part of 'enum_type.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
@@ -8,17 +8,17 @@ part of amplify_codegen.codegen_plugin_service.model.enum_type;
 
 class _$EnumType extends EnumType {
   @override
-  final String enum_;
-  @override
   final bool isRequired;
+  @override
+  final String enum_;
 
   factory _$EnumType([void Function(EnumTypeBuilder)? updates]) =>
       (new EnumTypeBuilder()..update(updates))._build();
 
-  _$EnumType._({required this.enum_, required this.isRequired}) : super._() {
-    BuiltValueNullFieldError.checkNotNull(enum_, r'EnumType', 'enum_');
+  _$EnumType._({required this.isRequired, required this.enum_}) : super._() {
     BuiltValueNullFieldError.checkNotNull(
         isRequired, r'EnumType', 'isRequired');
+    BuiltValueNullFieldError.checkNotNull(enum_, r'EnumType', 'enum_');
   }
 
   @override
@@ -32,15 +32,15 @@ class _$EnumType extends EnumType {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is EnumType &&
-        enum_ == other.enum_ &&
-        isRequired == other.isRequired;
+        isRequired == other.isRequired &&
+        enum_ == other.enum_;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
-    _$hash = $jc(_$hash, enum_.hashCode);
     _$hash = $jc(_$hash, isRequired.hashCode);
+    _$hash = $jc(_$hash, enum_.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -49,13 +49,13 @@ class _$EnumType extends EnumType {
 class EnumTypeBuilder implements Builder<EnumType, EnumTypeBuilder> {
   _$EnumType? _$v;
 
-  String? _enum_;
-  String? get enum_ => _$this._enum_;
-  set enum_(String? enum_) => _$this._enum_ = enum_;
-
   bool? _isRequired;
   bool? get isRequired => _$this._isRequired;
   set isRequired(bool? isRequired) => _$this._isRequired = isRequired;
+
+  String? _enum_;
+  String? get enum_ => _$this._enum_;
+  set enum_(String? enum_) => _$this._enum_ = enum_;
 
   EnumTypeBuilder() {
     EnumType._init(this);
@@ -64,8 +64,8 @@ class EnumTypeBuilder implements Builder<EnumType, EnumTypeBuilder> {
   EnumTypeBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _enum_ = $v.enum_;
       _isRequired = $v.isRequired;
+      _enum_ = $v.enum_;
       _$v = null;
     }
     return this;
@@ -88,10 +88,10 @@ class EnumTypeBuilder implements Builder<EnumType, EnumTypeBuilder> {
   _$EnumType _build() {
     final _$result = _$v ??
         new _$EnumType._(
-            enum_: BuiltValueNullFieldError.checkNotNull(
-                enum_, r'EnumType', 'enum_'),
             isRequired: BuiltValueNullFieldError.checkNotNull(
-                isRequired, r'EnumType', 'isRequired'));
+                isRequired, r'EnumType', 'isRequired'),
+            enum_: BuiltValueNullFieldError.checkNotNull(
+                enum_, r'EnumType', 'enum_'));
     replace(_$result);
     return _$result;
   }

@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.enum_type_definition; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -29,7 +30,7 @@ abstract class EnumTypeDefinition
 
   const EnumTypeDefinition._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<EnumTypeDefinition>> serializers = [
     EnumTypeDefinitionRestJson1Serializer()
   ];
 
@@ -44,15 +45,15 @@ abstract class EnumTypeDefinition
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('EnumTypeDefinition');
-    helper.add(
-      'name',
-      name,
-    );
-    helper.add(
-      'values',
-      values,
-    );
+    final helper = newBuiltValueToStringHelper('EnumTypeDefinition')
+      ..add(
+        'name',
+        name,
+      )
+      ..add(
+        'values',
+        values,
+      );
     return helper.toString();
   }
 }
@@ -85,13 +86,15 @@ class EnumTypeDefinitionRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'name':
           result.name = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'values':
           result.values.replace((serializers.deserialize(
             value,
@@ -100,7 +103,6 @@ class EnumTypeDefinitionRestJson1Serializer
               [FullType(String)],
             ),
           ) as _i2.BuiltList<String>));
-          break;
       }
     }
 
@@ -110,25 +112,26 @@ class EnumTypeDefinitionRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    EnumTypeDefinition object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as EnumTypeDefinition);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final EnumTypeDefinition(:name, :values) = object;
+    result$.addAll([
       'name',
       serializers.serialize(
-        payload.name,
+        name,
         specifiedType: const FullType(String),
       ),
       'values',
       serializers.serialize(
-        payload.values,
+        values,
         specifiedType: const FullType(
           _i2.BuiltList,
           [FullType(String)],
         ),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

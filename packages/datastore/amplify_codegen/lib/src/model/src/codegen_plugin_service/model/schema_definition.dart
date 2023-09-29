@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.schema_definition; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -16,13 +17,13 @@ abstract class SchemaDefinition
     with _i1.AWSEquatable<SchemaDefinition>
     implements Built<SchemaDefinition, SchemaDefinitionBuilder> {
   factory SchemaDefinition({
-    Map<String, Set<String>>? modelGraph,
     Map<String, _i2.SchemaTypeDefinition>? typeDefinitions,
+    Map<String, Set<String>>? modelGraph,
   }) {
     return _$SchemaDefinition._(
-      modelGraph: modelGraph == null ? null : _i3.BuiltSetMultimap(modelGraph),
       typeDefinitions:
           typeDefinitions == null ? null : _i3.BuiltMap(typeDefinitions),
+      modelGraph: modelGraph == null ? null : _i3.BuiltSetMultimap(modelGraph),
     );
   }
 
@@ -31,32 +32,32 @@ abstract class SchemaDefinition
 
   const SchemaDefinition._();
 
-  static const List<_i4.SmithySerializer> serializers = [
+  static const List<_i4.SmithySerializer<SchemaDefinition>> serializers = [
     SchemaDefinitionRestJson1Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(SchemaDefinitionBuilder b) {}
-
-  /// The adjacency list representation of the model graph, indexed by model name with the values representing the dependent model types. ## Example For the Blog, Post, Comment schema: \`\`\`graphql type Blog @model { posts: \[Post\] @hasMany } type Post @model { blog: Blog @belongsTo comments: \[Comment\] @hasMany } type Comment @model { post: Post @belongsTo } \`\`\` The model graph would look like: ```json { "Blog": \["Post", "Comment"\], "Post": \["Comment"\], "Comment": \[\] }
-  _i3.BuiltSetMultimap<String, String>? get modelGraph;
   _i3.BuiltMap<String, _i2.SchemaTypeDefinition>? get typeDefinitions;
+
+  /// The adjacency list representation of the model graph, indexed by model name with the values representing the dependent model types. ## Example For the Blog, Post, Comment schema: \`\`\`graphql type Blog @model { posts: \[Post\] @hasMany } type Post @model { blog: Blog @belongsTo comments: \[Comment\] @hasMany } type Comment @model { post: Post @belongsTo } \`\`\` The model graph would look like: \`\`\`json { "Blog": \["Post", "Comment"\], "Post": \["Comment"\], "Comment": \[\] } \`\`\`
+  _i3.BuiltSetMultimap<String, String>? get modelGraph;
   @override
   List<Object?> get props => [
-        modelGraph,
         typeDefinitions,
+        modelGraph,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('SchemaDefinition');
-    helper.add(
-      'modelGraph',
-      modelGraph,
-    );
-    helper.add(
-      'typeDefinitions',
-      typeDefinitions,
-    );
+    final helper = newBuiltValueToStringHelper('SchemaDefinition')
+      ..add(
+        'typeDefinitions',
+        typeDefinitions,
+      )
+      ..add(
+        'modelGraph',
+        modelGraph,
+      );
     return helper.toString();
   }
 }
@@ -89,35 +90,32 @@ class SchemaDefinitionRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'modelGraph':
-          if (value != null) {
-            result.modelGraph.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltSetMultimap,
-                [
-                  FullType(String),
-                  FullType(String),
-                ],
-              ),
-            ) as _i3.BuiltSetMultimap<String, String>));
-          }
-          break;
+          result.modelGraph.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltSetMultimap,
+              [
+                FullType(String),
+                FullType(String),
+              ],
+            ),
+          ) as _i3.BuiltSetMultimap<String, String>));
         case 'typeDefinitions':
-          if (value != null) {
-            result.typeDefinitions.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i3.BuiltMap,
-                [
-                  FullType(String),
-                  FullType(_i2.SchemaTypeDefinition),
-                ],
-              ),
-            ) as _i3.BuiltMap<String, _i2.SchemaTypeDefinition>));
-          }
-          break;
+          result.typeDefinitions.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i3.BuiltMap,
+              [
+                FullType(String),
+                FullType(_i2.SchemaTypeDefinition),
+              ],
+            ),
+          ) as _i3.BuiltMap<String, _i2.SchemaTypeDefinition>));
       }
     }
 
@@ -127,16 +125,16 @@ class SchemaDefinitionRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    SchemaDefinition object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as SchemaDefinition);
-    final result = <Object?>[];
-    if (payload.modelGraph != null) {
-      result
+    final result$ = <Object?>[];
+    final SchemaDefinition(:modelGraph, :typeDefinitions) = object;
+    if (modelGraph != null) {
+      result$
         ..add('modelGraph')
         ..add(serializers.serialize(
-          payload.modelGraph!,
+          modelGraph,
           specifiedType: const FullType(
             _i3.BuiltSetMultimap,
             [
@@ -146,11 +144,11 @@ class SchemaDefinitionRestJson1Serializer
           ),
         ));
     }
-    if (payload.typeDefinitions != null) {
-      result
+    if (typeDefinitions != null) {
+      result$
         ..add('typeDefinitions')
         ..add(serializers.serialize(
-          payload.typeDefinitions!,
+          typeDefinitions,
           specifiedType: const FullType(
             _i3.BuiltMap,
             [
@@ -160,6 +158,6 @@ class SchemaDefinitionRestJson1Serializer
           ),
         ));
     }
-    return result;
+    return result$;
   }
 }

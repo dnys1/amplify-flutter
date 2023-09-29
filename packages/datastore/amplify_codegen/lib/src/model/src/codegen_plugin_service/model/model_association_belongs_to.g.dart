@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of amplify_codegen.codegen_plugin_service.model.model_association_belongs_to;
+part of 'model_association_belongs_to.dart';
 
 // **************************************************************************
 // BuiltValueGenerator

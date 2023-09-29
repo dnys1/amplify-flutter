@@ -26,6 +26,53 @@ enum AuthStrategy {
     CUSTOM = "custom"
 }
 
+// structure AuthRule {
+//     @required
+//     authStrategy: AuthStrategy
+//     operations: AuthModelOperationList
+// }
+
+// union AuthStrategy {
+//     public: AuthStrategyPublic
+//     private: AuthStrategyPrivate
+//     owner: AuthStrategyOwner
+//     groups: AuthStrategyGroups
+//     custom: Unit
+// }
+
+// structure AuthStrategyPublic {
+//     @required
+//     provider: AuthProvider = "apiKey"
+// }
+
+// structure AuthStrategyPrivate {
+//     @required
+//     provider: AuthProvider = "userPools"
+// }
+
+// structure AuthStrategyOwner {
+//     @required
+//     ownerField: String = "owner"
+//     identityClaim: String = "sub::username"
+// }
+
+// union AuthStrategyGroups {
+//     static: AuthStrategyStaticGroup
+//     dynamic: AuthStrategyDynamicGroup
+// }
+
+// structure AuthStrategyStaticGroup {
+//     @required
+//     groups: StringList
+//     groupClaim: String
+// }
+
+// structure AuthStrategyDynamicGroup {
+//     @required
+//     groupsField: String
+//     groupClaim: String
+// }
+
 enum AuthProvider {
     API_KEY = "apiKey"
     AWS_IAM = "iam"

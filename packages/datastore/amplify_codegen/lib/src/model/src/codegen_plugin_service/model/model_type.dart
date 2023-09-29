@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.model_type; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -31,7 +32,7 @@ abstract class ModelType
 
   const ModelType._();
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<ModelType>> serializers = [
     ModelTypeRestJson1Serializer()
   ];
 
@@ -52,15 +53,15 @@ abstract class ModelType
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ModelType');
-    helper.add(
-      'isRequired',
-      isRequired,
-    );
-    helper.add(
-      'model',
-      model,
-    );
+    final helper = newBuiltValueToStringHelper('ModelType')
+      ..add(
+        'isRequired',
+        isRequired,
+      )
+      ..add(
+        'model',
+        model,
+      );
     return helper.toString();
   }
 }
@@ -93,19 +94,20 @@ class ModelTypeRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'isRequired':
           result.isRequired = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(bool),
           ) as bool);
-          break;
         case 'model':
           result.model = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -115,22 +117,23 @@ class ModelTypeRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ModelType object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ModelType);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final ModelType(:isRequired, :model) = object;
+    result$.addAll([
       'isRequired',
       serializers.serialize(
-        payload.isRequired,
+        isRequired,
         specifiedType: const FullType(bool),
       ),
       'model',
       serializers.serialize(
-        payload.model,
+        model,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

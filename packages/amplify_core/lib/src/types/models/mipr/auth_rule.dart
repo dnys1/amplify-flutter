@@ -13,11 +13,10 @@
 // limitations under the License.
 
 import 'package:amplify_core/amplify_core.dart';
+import 'package:amplify_core/src/types/models/mipr/serializers.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-
-import 'serializers.dart';
 
 part 'auth_rule.g.dart';
 
@@ -178,6 +177,14 @@ class ModelOperation extends EnumClass {
   /// The values of [ModelOperation].
   static BuiltSet<ModelOperation> get values => _$ModelOperationValues;
 
+  /// All default values of [ModelOperation].
+  static Set<ModelOperation> get allDefault => {
+        create,
+        read,
+        update,
+        delete,
+      };
+
   /// The [ModelOperation] value corresponding to [name].
   static ModelOperation valueOf(String name) => _$ModelOperationValueOf(name);
 
@@ -192,7 +199,7 @@ class ModelOperation extends EnumClass {
 /// Represents an authorization rule which govern access to a model or field
 /// as part of a collection of [AuthRule].
 /// {@endtemplate}
-abstract class AuthRule
+sealed class AuthRule
     with AWSSerializable<Map<String, Object?>>
     implements Built<AuthRule, AuthRuleBuilder> {
   /// {@macro amplify_core.models.mipr.auth_rule}
@@ -224,6 +231,41 @@ abstract class AuthRule
     });
   }
 
+  factory AuthRule.public({
+    AuthRuleProvider? provider,
+    Iterable<ModelOperation>? operations,
+  }) = PublicAuthRule;
+
+  factory AuthRule.private({
+    AuthRuleProvider? provider,
+    Iterable<ModelOperation>? operations,
+  }) = PrivateAuthRule;
+
+  factory AuthRule.owner({
+    String ownerField,
+    String identityClaim,
+    AuthRuleProvider? provider,
+    Iterable<ModelOperation>? operations,
+  }) = OwnerAuthRule;
+
+  factory AuthRule.staticGroup({
+    required Iterable<String> groups,
+    AuthRuleProvider? provider,
+    Iterable<ModelOperation>? operations,
+  }) = StaticGroupAuthRule;
+
+  factory AuthRule.dynamicGroup({
+    String groupsField,
+    String groupClaim,
+    AuthRuleProvider? provider,
+    Iterable<ModelOperation>? operations,
+  }) = DynamicGroupAuthRule;
+
+  factory AuthRule.custom({
+    AuthRuleProvider? provider,
+    Iterable<ModelOperation>? operations,
+  }) = CustomAuthRule;
+
   /// {@macro amplify_core.models.mipr.auth_rule}
   factory AuthRule.fromJson(Map<String, Object?> json) {
     return serializers.deserializeWith(serializer, json) as AuthRule;
@@ -246,17 +288,12 @@ abstract class AuthRule
           );
         }
         b.groupsField ??= 'groups';
-        break;
       case AuthStrategy.owner:
         b.ownerField ??= 'owner';
         b.identityClaim ??= 'sub::username';
-        break;
       case AuthStrategy.private:
-        break;
       case AuthStrategy.public:
-        break;
       case AuthStrategy.custom:
-        break;
     }
     if (b.operations.isEmpty) {
       b.operations.addAll([
@@ -317,4 +354,95 @@ abstract class AuthRule
 
   /// The serializer for [AuthRule].
   static Serializer<AuthRule> get serializer => _$authRuleSerializer;
+}
+
+final class PublicAuthRule extends _$AuthRule {
+  PublicAuthRule({
+    AuthRuleProvider? provider,
+    Iterable<ModelOperation>? operations,
+  }) : super._(
+          authStrategy: AuthStrategy.public,
+          provider: provider ?? AuthStrategy.public.defaultProvider,
+          operations: (operations ?? ModelOperation.allDefault).toBuiltSet(),
+        );
+}
+
+final class PrivateAuthRule extends _$AuthRule {
+  PrivateAuthRule({
+    AuthRuleProvider? provider,
+    Iterable<ModelOperation>? operations,
+  }) : super._(
+          authStrategy: AuthStrategy.private,
+          provider: provider ?? AuthStrategy.private.defaultProvider,
+          operations: (operations ?? ModelOperation.allDefault).toBuiltSet(),
+        );
+}
+
+final class OwnerAuthRule extends _$AuthRule {
+  OwnerAuthRule({
+    String ownerField = 'owner',
+    String identityClaim = 'sub::username',
+    AuthRuleProvider? provider,
+    Iterable<ModelOperation>? operations,
+  }) : super._(
+          authStrategy: AuthStrategy.owner,
+          provider: provider ?? AuthStrategy.owner.defaultProvider,
+          ownerField: ownerField,
+          identityClaim: identityClaim,
+          operations: (operations ?? ModelOperation.allDefault).toBuiltSet(),
+        );
+
+  @override
+  String get ownerField => super.ownerField!;
+
+  @override
+  String get identityClaim => super.identityClaim!;
+}
+
+final class StaticGroupAuthRule extends _$AuthRule {
+  StaticGroupAuthRule({
+    required Iterable<String> groups,
+    AuthRuleProvider? provider,
+    Iterable<ModelOperation>? operations,
+  }) : super._(
+          authStrategy: AuthStrategy.groups,
+          groups: groups.toBuiltSet(),
+          provider: provider ?? AuthStrategy.groups.defaultProvider,
+          operations: (operations ?? ModelOperation.allDefault).toBuiltSet(),
+        );
+
+  @override
+  BuiltSet<String> get groups => super.groups!;
+}
+
+final class DynamicGroupAuthRule extends _$AuthRule {
+  DynamicGroupAuthRule({
+    String groupClaim = 'cognito:groups',
+    String groupsField = 'groups',
+    AuthRuleProvider? provider,
+    Iterable<ModelOperation>? operations,
+  }) : super._(
+          authStrategy: AuthStrategy.groups,
+          groupClaim: groupClaim,
+          groupsField: groupsField,
+          provider: provider ?? AuthStrategy.groups.defaultProvider,
+          operations: (operations ?? ModelOperation.allDefault).toBuiltSet(),
+        );
+
+  @override
+  String get groupClaim => super.groupClaim!;
+
+  @override
+  String get groupsField => super.groupsField!;
+}
+
+final class CustomAuthRule extends _$AuthRule {
+  CustomAuthRule({
+    AuthRuleProvider? provider,
+    Iterable<ModelOperation>? operations,
+  }) : super._(
+          authStrategy: AuthStrategy.custom,
+          provider: provider ?? AuthStrategy.custom.defaultProvider,
+          operations: (operations ?? ModelOperation.allDefault).toBuiltSet(),
+        );
 }

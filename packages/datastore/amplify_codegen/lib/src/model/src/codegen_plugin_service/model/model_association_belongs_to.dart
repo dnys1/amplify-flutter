@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.model_association_belongs_to; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -32,9 +33,8 @@ abstract class ModelAssociationBelongsTo
 
   const ModelAssociationBelongsTo._();
 
-  static const List<_i3.SmithySerializer> serializers = [
-    ModelAssociationBelongsToRestJson1Serializer()
-  ];
+  static const List<_i3.SmithySerializer<ModelAssociationBelongsTo>>
+      serializers = [ModelAssociationBelongsToRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(ModelAssociationBelongsToBuilder b) {}
@@ -52,19 +52,19 @@ abstract class ModelAssociationBelongsTo
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ModelAssociationBelongsTo');
-    helper.add(
-      'connectedModel',
-      connectedModel,
-    );
-    helper.add(
-      'targetName',
-      targetName,
-    );
-    helper.add(
-      'targetNames',
-      targetNames,
-    );
+    final helper = newBuiltValueToStringHelper('ModelAssociationBelongsTo')
+      ..add(
+        'connectedModel',
+        connectedModel,
+      )
+      ..add(
+        'targetName',
+        targetName,
+      )
+      ..add(
+        'targetNames',
+        targetNames,
+      );
     return helper.toString();
   }
 }
@@ -98,19 +98,20 @@ class ModelAssociationBelongsToRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'connectedModel':
           result.connectedModel = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'targetName':
           result.targetName = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'targetNames':
           result.targetNames.replace((serializers.deserialize(
             value,
@@ -119,7 +120,6 @@ class ModelAssociationBelongsToRestJson1Serializer
               [FullType(String)],
             ),
           ) as _i2.BuiltList<String>));
-          break;
       }
     }
 
@@ -129,30 +129,35 @@ class ModelAssociationBelongsToRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ModelAssociationBelongsTo object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ModelAssociationBelongsTo);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final ModelAssociationBelongsTo(
+      :connectedModel,
+      :targetName,
+      :targetNames
+    ) = object;
+    result$.addAll([
       'connectedModel',
       serializers.serialize(
-        payload.connectedModel,
+        connectedModel,
         specifiedType: const FullType(String),
       ),
       'targetName',
       serializers.serialize(
-        payload.targetName,
+        targetName,
         specifiedType: const FullType(String),
       ),
       'targetNames',
       serializers.serialize(
-        payload.targetNames,
+        targetNames,
         specifiedType: const FullType(
           _i2.BuiltList,
           [FullType(String)],
         ),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

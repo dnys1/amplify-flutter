@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of amplify_codegen.codegen_plugin_service.model.list_type;
+part of 'list_type.dart';
 
 // **************************************************************************
 // BuiltValueGenerator

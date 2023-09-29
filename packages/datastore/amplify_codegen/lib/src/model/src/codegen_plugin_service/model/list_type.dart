@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.list_type; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -32,7 +33,7 @@ abstract class ListType
 
   const ListType._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<ListType>> serializers = [
     ListTypeRestJson1Serializer()
   ];
 
@@ -53,15 +54,15 @@ abstract class ListType
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ListType');
-    helper.add(
-      'isRequired',
-      isRequired,
-    );
-    helper.add(
-      'ofType',
-      ofType,
-    );
+    final helper = newBuiltValueToStringHelper('ListType')
+      ..add(
+        'isRequired',
+        isRequired,
+      )
+      ..add(
+        'ofType',
+        ofType,
+      );
     return helper.toString();
   }
 }
@@ -94,19 +95,20 @@ class ListTypeRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'isRequired':
           result.isRequired = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(bool),
           ) as bool);
-          break;
         case 'ofType':
           result.ofType = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(_i2.SchemaType),
           ) as _i2.SchemaType);
-          break;
       }
     }
 
@@ -116,22 +118,23 @@ class ListTypeRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ListType object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ListType);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final ListType(:isRequired, :ofType) = object;
+    result$.addAll([
       'isRequired',
       serializers.serialize(
-        payload.isRequired,
+        isRequired,
         specifiedType: const FullType(bool),
       ),
       'ofType',
       serializers.serialize(
-        payload.ofType,
+        ofType,
         specifiedType: const FullType(_i2.SchemaType),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

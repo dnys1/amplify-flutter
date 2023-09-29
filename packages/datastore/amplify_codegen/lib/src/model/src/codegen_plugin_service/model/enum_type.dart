@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.enum_type; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -15,13 +16,13 @@ abstract class EnumType
     implements Built<EnumType, EnumTypeBuilder> {
   /// A custom enumeration. \`\`\`graphql # \`MyEnum` is an enum type. enum MyEnum { VALUE1 VALUE2 } ```
   factory EnumType({
-    required String enum_,
     bool? isRequired,
+    required String enum_,
   }) {
     isRequired ??= false;
     return _$EnumType._(
-      enum_: enum_,
       isRequired: isRequired,
+      enum_: enum_,
     );
   }
 
@@ -30,7 +31,7 @@ abstract class EnumType
 
   const EnumType._();
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<EnumType>> serializers = [
     EnumTypeRestJson1Serializer()
   ];
 
@@ -39,27 +40,27 @@ abstract class EnumType
     b.isRequired = false;
   }
 
-  /// The name of the enum type, as defined in the schema.
-  String get enum_;
-
   /// Whether the type is required (non-nullable) in this context.
   bool get isRequired;
+
+  /// The name of the enum type, as defined in the schema.
+  String get enum_;
   @override
   List<Object?> get props => [
-        enum_,
         isRequired,
+        enum_,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('EnumType');
-    helper.add(
-      'enum_',
-      enum_,
-    );
-    helper.add(
-      'isRequired',
-      isRequired,
-    );
+    final helper = newBuiltValueToStringHelper('EnumType')
+      ..add(
+        'isRequired',
+        isRequired,
+      )
+      ..add(
+        'enum_',
+        enum_,
+      );
     return helper.toString();
   }
 }
@@ -92,19 +93,20 @@ class EnumTypeRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'enum':
           result.enum_ = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'isRequired':
           result.isRequired = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(bool),
           ) as bool);
-          break;
       }
     }
 
@@ -114,22 +116,23 @@ class EnumTypeRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    EnumType object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as EnumType);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final EnumType(:enum_, :isRequired) = object;
+    result$.addAll([
       'enum',
       serializers.serialize(
-        payload.enum_,
+        enum_,
         specifiedType: const FullType(String),
       ),
       'isRequired',
       serializers.serialize(
-        payload.isRequired,
+        isRequired,
         specifiedType: const FullType(bool),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

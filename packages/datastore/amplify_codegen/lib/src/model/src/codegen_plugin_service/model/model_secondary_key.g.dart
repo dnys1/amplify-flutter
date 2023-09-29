@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of amplify_codegen.codegen_plugin_service.model.model_secondary_key;
+part of 'model_secondary_key.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
@@ -8,27 +8,27 @@ part of amplify_codegen.codegen_plugin_service.model.model_secondary_key;
 
 class _$ModelSecondaryKey extends ModelSecondaryKey {
   @override
-  final String name;
-  @override
   final String primaryField;
   @override
-  final String queryField;
-  @override
   final _i2.BuiltList<String>? sortKeyFields;
+  @override
+  final String name;
+  @override
+  final String queryField;
 
   factory _$ModelSecondaryKey(
           [void Function(ModelSecondaryKeyBuilder)? updates]) =>
       (new ModelSecondaryKeyBuilder()..update(updates))._build();
 
   _$ModelSecondaryKey._(
-      {required this.name,
-      required this.primaryField,
-      required this.queryField,
-      this.sortKeyFields})
+      {required this.primaryField,
+      this.sortKeyFields,
+      required this.name,
+      required this.queryField})
       : super._() {
-    BuiltValueNullFieldError.checkNotNull(name, r'ModelSecondaryKey', 'name');
     BuiltValueNullFieldError.checkNotNull(
         primaryField, r'ModelSecondaryKey', 'primaryField');
+    BuiltValueNullFieldError.checkNotNull(name, r'ModelSecondaryKey', 'name');
     BuiltValueNullFieldError.checkNotNull(
         queryField, r'ModelSecondaryKey', 'queryField');
   }
@@ -45,19 +45,19 @@ class _$ModelSecondaryKey extends ModelSecondaryKey {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is ModelSecondaryKey &&
-        name == other.name &&
         primaryField == other.primaryField &&
-        queryField == other.queryField &&
-        sortKeyFields == other.sortKeyFields;
+        sortKeyFields == other.sortKeyFields &&
+        name == other.name &&
+        queryField == other.queryField;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
-    _$hash = $jc(_$hash, name.hashCode);
     _$hash = $jc(_$hash, primaryField.hashCode);
-    _$hash = $jc(_$hash, queryField.hashCode);
     _$hash = $jc(_$hash, sortKeyFields.hashCode);
+    _$hash = $jc(_$hash, name.hashCode);
+    _$hash = $jc(_$hash, queryField.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -67,23 +67,23 @@ class ModelSecondaryKeyBuilder
     implements Builder<ModelSecondaryKey, ModelSecondaryKeyBuilder> {
   _$ModelSecondaryKey? _$v;
 
-  String? _name;
-  String? get name => _$this._name;
-  set name(String? name) => _$this._name = name;
-
   String? _primaryField;
   String? get primaryField => _$this._primaryField;
   set primaryField(String? primaryField) => _$this._primaryField = primaryField;
-
-  String? _queryField;
-  String? get queryField => _$this._queryField;
-  set queryField(String? queryField) => _$this._queryField = queryField;
 
   _i2.ListBuilder<String>? _sortKeyFields;
   _i2.ListBuilder<String> get sortKeyFields =>
       _$this._sortKeyFields ??= new _i2.ListBuilder<String>();
   set sortKeyFields(_i2.ListBuilder<String>? sortKeyFields) =>
       _$this._sortKeyFields = sortKeyFields;
+
+  String? _name;
+  String? get name => _$this._name;
+  set name(String? name) => _$this._name = name;
+
+  String? _queryField;
+  String? get queryField => _$this._queryField;
+  set queryField(String? queryField) => _$this._queryField = queryField;
 
   ModelSecondaryKeyBuilder() {
     ModelSecondaryKey._init(this);
@@ -92,10 +92,10 @@ class ModelSecondaryKeyBuilder
   ModelSecondaryKeyBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _name = $v.name;
       _primaryField = $v.primaryField;
-      _queryField = $v.queryField;
       _sortKeyFields = $v.sortKeyFields?.toBuilder();
+      _name = $v.name;
+      _queryField = $v.queryField;
       _$v = null;
     }
     return this;
@@ -120,13 +120,13 @@ class ModelSecondaryKeyBuilder
     try {
       _$result = _$v ??
           new _$ModelSecondaryKey._(
-              name: BuiltValueNullFieldError.checkNotNull(
-                  name, r'ModelSecondaryKey', 'name'),
               primaryField: BuiltValueNullFieldError.checkNotNull(
                   primaryField, r'ModelSecondaryKey', 'primaryField'),
+              sortKeyFields: _sortKeyFields?.build(),
+              name: BuiltValueNullFieldError.checkNotNull(
+                  name, r'ModelSecondaryKey', 'name'),
               queryField: BuiltValueNullFieldError.checkNotNull(
-                  queryField, r'ModelSecondaryKey', 'queryField'),
-              sortKeyFields: _sortKeyFields?.build());
+                  queryField, r'ModelSecondaryKey', 'queryField'));
     } catch (_) {
       late String _$failedField;
       try {

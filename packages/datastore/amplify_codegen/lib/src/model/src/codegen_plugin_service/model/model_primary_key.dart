@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.model_primary_key; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -32,7 +33,7 @@ abstract class ModelPrimaryKey
 
   const ModelPrimaryKey._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<ModelPrimaryKey>> serializers = [
     ModelPrimaryKeyRestJson1Serializer()
   ];
 
@@ -51,15 +52,15 @@ abstract class ModelPrimaryKey
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ModelPrimaryKey');
-    helper.add(
-      'primaryField',
-      primaryField,
-    );
-    helper.add(
-      'sortKeyFields',
-      sortKeyFields,
-    );
+    final helper = newBuiltValueToStringHelper('ModelPrimaryKey')
+      ..add(
+        'primaryField',
+        primaryField,
+      )
+      ..add(
+        'sortKeyFields',
+        sortKeyFields,
+      );
     return helper.toString();
   }
 }
@@ -92,24 +93,23 @@ class ModelPrimaryKeyRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'primaryField':
           result.primaryField = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'sortKeyFields':
-          if (value != null) {
-            result.sortKeyFields.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i2.BuiltList,
-                [FullType(String)],
-              ),
-            ) as _i2.BuiltList<String>));
-          }
-          break;
+          result.sortKeyFields.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i2.BuiltList,
+              [FullType(String)],
+            ),
+          ) as _i2.BuiltList<String>));
       }
     }
 
@@ -119,28 +119,29 @@ class ModelPrimaryKeyRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ModelPrimaryKey object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ModelPrimaryKey);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final ModelPrimaryKey(:primaryField, :sortKeyFields) = object;
+    result$.addAll([
       'primaryField',
       serializers.serialize(
-        payload.primaryField,
+        primaryField,
         specifiedType: const FullType(String),
       ),
-    ];
-    if (payload.sortKeyFields != null) {
-      result
+    ]);
+    if (sortKeyFields != null) {
+      result$
         ..add('sortKeyFields')
         ..add(serializers.serialize(
-          payload.sortKeyFields!,
+          sortKeyFields,
           specifiedType: const FullType(
             _i2.BuiltList,
             [FullType(String)],
           ),
         ));
     }
-    return result;
+    return result$;
   }
 }

@@ -1,0 +1,15 @@
+name: amplify_test_schemas
+description: A sample command-line application.
+publish_to: none
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  amplify_core: any
+  collection: ^1.18.0
+  gql: ^1.0.0
+
+dev_dependencies:
+  amplify_lints: any
+  test: ^1.21.0

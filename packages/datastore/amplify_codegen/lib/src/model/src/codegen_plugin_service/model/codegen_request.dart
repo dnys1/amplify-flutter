@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.codegen_request; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -36,7 +37,7 @@ abstract class CodegenRequest
   }) =>
       payload;
 
-  static const List<_i1.SmithySerializer> serializers = [
+  static const List<_i1.SmithySerializer<CodegenRequest>> serializers = [
     CodegenRequestRestJson1Serializer()
   ];
 
@@ -57,15 +58,15 @@ abstract class CodegenRequest
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('CodegenRequest');
-    helper.add(
-      'projectRoot',
-      projectRoot,
-    );
-    helper.add(
-      'schemaDefinition',
-      schemaDefinition,
-    );
+    final helper = newBuiltValueToStringHelper('CodegenRequest')
+      ..add(
+        'projectRoot',
+        projectRoot,
+      )
+      ..add(
+        'schemaDefinition',
+        schemaDefinition,
+      );
     return helper.toString();
   }
 }
@@ -98,19 +99,20 @@ class CodegenRequestRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'projectRoot':
           result.projectRoot = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'schemaDefinition':
           result.schemaDefinition.replace((serializers.deserialize(
             value,
             specifiedType: const FullType(_i3.SchemaDefinition),
           ) as _i3.SchemaDefinition));
-          break;
       }
     }
 
@@ -120,22 +122,23 @@ class CodegenRequestRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    CodegenRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as CodegenRequest);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final CodegenRequest(:projectRoot, :schemaDefinition) = object;
+    result$.addAll([
       'projectRoot',
       serializers.serialize(
-        payload.projectRoot,
+        projectRoot,
         specifiedType: const FullType(String),
       ),
       'schemaDefinition',
       serializers.serialize(
-        payload.schemaDefinition,
+        schemaDefinition,
         specifiedType: const FullType(_i3.SchemaDefinition),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

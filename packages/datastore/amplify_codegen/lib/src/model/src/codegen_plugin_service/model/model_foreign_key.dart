@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.model_foreign_key; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -16,14 +17,14 @@ abstract class ModelForeignKey
     implements Built<ModelForeignKey, ModelForeignKeyBuilder> {
   /// A foreign key model index, which is a special case of a secondary key.
   factory ModelForeignKey({
-    required String name,
     required String primaryField,
     required List<String> sortKeyFields,
+    required String name,
   }) {
     return _$ModelForeignKey._(
-      name: name,
       primaryField: primaryField,
       sortKeyFields: _i2.BuiltList(sortKeyFields),
+      name: name,
     );
   }
 
@@ -33,42 +34,42 @@ abstract class ModelForeignKey
 
   const ModelForeignKey._();
 
-  static const List<_i3.SmithySerializer> serializers = [
+  static const List<_i3.SmithySerializer<ModelForeignKey>> serializers = [
     ModelForeignKeyRestJson1Serializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(ModelForeignKeyBuilder b) {}
 
-  /// The name of the the foreign key to use in the generated code.
-  String get name;
-
   /// The primary field for the index. This is the field to which the `@index` or `@primaryKey` directive is attached. For foreign keys, this is the field with the relational directive.
   String get primaryField;
 
   /// The list of field names which, combined with \[field\], form a composite key or index. This is the list of fields specified by the \`sortKeyFields\` argument to the `@index` or `@primaryKey` directive. For foreign keys, this is the list of target fields in this model.
   _i2.BuiltList<String> get sortKeyFields;
+
+  /// The name of the the foreign key to use in the generated code.
+  String get name;
   @override
   List<Object?> get props => [
-        name,
         primaryField,
         sortKeyFields,
+        name,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ModelForeignKey');
-    helper.add(
-      'name',
-      name,
-    );
-    helper.add(
-      'primaryField',
-      primaryField,
-    );
-    helper.add(
-      'sortKeyFields',
-      sortKeyFields,
-    );
+    final helper = newBuiltValueToStringHelper('ModelForeignKey')
+      ..add(
+        'primaryField',
+        primaryField,
+      )
+      ..add(
+        'sortKeyFields',
+        sortKeyFields,
+      )
+      ..add(
+        'name',
+        name,
+      );
     return helper.toString();
   }
 }
@@ -101,19 +102,20 @@ class ModelForeignKeyRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'name':
           result.name = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'primaryField':
           result.primaryField = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'sortKeyFields':
           result.sortKeyFields.replace((serializers.deserialize(
             value,
@@ -122,7 +124,6 @@ class ModelForeignKeyRestJson1Serializer
               [FullType(String)],
             ),
           ) as _i2.BuiltList<String>));
-          break;
       }
     }
 
@@ -132,30 +133,31 @@ class ModelForeignKeyRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ModelForeignKey object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ModelForeignKey);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final ModelForeignKey(:name, :primaryField, :sortKeyFields) = object;
+    result$.addAll([
       'name',
       serializers.serialize(
-        payload.name,
+        name,
         specifiedType: const FullType(String),
       ),
       'primaryField',
       serializers.serialize(
-        payload.primaryField,
+        primaryField,
         specifiedType: const FullType(String),
       ),
       'sortKeyFields',
       serializers.serialize(
-        payload.sortKeyFields,
+        sortKeyFields,
         specifiedType: const FullType(
           _i2.BuiltList,
           [FullType(String)],
         ),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

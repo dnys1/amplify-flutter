@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.non_model_type; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -31,7 +32,7 @@ abstract class NonModelType
 
   const NonModelType._();
 
-  static const List<_i2.SmithySerializer> serializers = [
+  static const List<_i2.SmithySerializer<NonModelType>> serializers = [
     NonModelTypeRestJson1Serializer()
   ];
 
@@ -52,15 +53,15 @@ abstract class NonModelType
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('NonModelType');
-    helper.add(
-      'isRequired',
-      isRequired,
-    );
-    helper.add(
-      'nonModel',
-      nonModel,
-    );
+    final helper = newBuiltValueToStringHelper('NonModelType')
+      ..add(
+        'isRequired',
+        isRequired,
+      )
+      ..add(
+        'nonModel',
+        nonModel,
+      );
     return helper.toString();
   }
 }
@@ -93,19 +94,20 @@ class NonModelTypeRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'isRequired':
           result.isRequired = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(bool),
           ) as bool);
-          break;
         case 'nonModel':
           result.nonModel = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -115,22 +117,23 @@ class NonModelTypeRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    NonModelType object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as NonModelType);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final NonModelType(:isRequired, :nonModel) = object;
+    result$.addAll([
       'isRequired',
       serializers.serialize(
-        payload.isRequired,
+        isRequired,
         specifiedType: const FullType(bool),
       ),
       'nonModel',
       serializers.serialize(
-        payload.nonModel,
+        nonModel,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

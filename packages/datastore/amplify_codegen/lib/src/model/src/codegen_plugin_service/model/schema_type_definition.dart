@@ -1,101 +1,78 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.schema_type_definition; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/enum_type_definition.dart'
-    as _i2;
-import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/model_type_definition.dart'
-    as _i3;
-import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/non_model_type_definition.dart'
+import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/auth_rule.dart'
     as _i4;
+import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/enum_type_definition.dart'
+    as _i7;
+import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/model_field.dart'
+    as _i2;
+import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/model_index.dart'
+    as _i3;
+import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/model_type_definition.dart'
+    as _i5;
+import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/non_model_type_definition.dart'
+    as _i6;
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:smithy/smithy.dart' as _i1;
 
-/// The discrete values of [SchemaTypeDefinition].
-enum SchemaTypeDefinitionType<T extends SchemaTypeDefinition> {
-  /// The type for [SchemaTypeDefinitionEnum$].
-  enum$<SchemaTypeDefinitionEnum$>(r'enum'),
-
-  /// The type for [SchemaTypeDefinitionModel$].
-  model<SchemaTypeDefinitionModel$>(r'model'),
-
-  /// The type for [SchemaTypeDefinitionNonModel$].
-  nonModel<SchemaTypeDefinitionNonModel$>(r'nonModel'),
-
-  /// The type for an unknown value.
-  sdkUnknown<SchemaTypeDefinitionSdkUnknown$>('sdkUnknown');
-
-  /// The discrete values of [SchemaTypeDefinition].
-  const SchemaTypeDefinitionType(this.value);
-
-  /// The Smithy value.
-  final String value;
-}
-
-abstract class SchemaTypeDefinition
+sealed class SchemaTypeDefinition
     extends _i1.SmithyUnion<SchemaTypeDefinition> {
   const SchemaTypeDefinition._();
 
-  const factory SchemaTypeDefinition.enum$(_i2.EnumTypeDefinition enum$) =
-      SchemaTypeDefinitionEnum$;
+  factory SchemaTypeDefinition.model({
+    required String name,
+    required String pluralName,
+    required Map<String, _i2.ModelField> fields,
+    required List<_i3.ModelIndex> indexes,
+    List<_i4.AuthRule>? authRules,
+  }) =>
+      SchemaTypeDefinitionModel(_i5.ModelTypeDefinition(
+        name: name,
+        pluralName: pluralName,
+        fields: fields,
+        indexes: indexes,
+        authRules: authRules,
+      ));
 
-  const factory SchemaTypeDefinition.model(_i3.ModelTypeDefinition model) =
-      SchemaTypeDefinitionModel$;
+  factory SchemaTypeDefinition.nonModel({
+    required String name,
+    required Map<String, _i2.ModelField> fields,
+  }) =>
+      SchemaTypeDefinitionNonModel(_i6.NonModelTypeDefinition(
+        name: name,
+        fields: fields,
+      ));
 
-  const factory SchemaTypeDefinition.nonModel(
-      _i4.NonModelTypeDefinition nonModel) = SchemaTypeDefinitionNonModel$;
+  factory SchemaTypeDefinition.enum$({
+    required String name,
+    required List<String> values,
+  }) =>
+      SchemaTypeDefinitionEnum(_i7.EnumTypeDefinition(
+        name: name,
+        values: values,
+      ));
 
   const factory SchemaTypeDefinition.sdkUnknown(
     String name,
     Object value,
-  ) = SchemaTypeDefinitionSdkUnknown$;
+  ) = SchemaTypeDefinitionSdkUnknown;
 
   static const List<_i1.SmithySerializer<SchemaTypeDefinition>> serializers = [
     SchemaTypeDefinitionRestJson1Serializer()
   ];
 
-  _i2.EnumTypeDefinition? get enum$ => null;
-  _i3.ModelTypeDefinition? get model => null;
-  _i4.NonModelTypeDefinition? get nonModel => null;
-  SchemaTypeDefinitionType get type;
+  _i5.ModelTypeDefinition? get model => null;
+  _i6.NonModelTypeDefinition? get nonModel => null;
+  _i7.EnumTypeDefinition? get enum$ => null;
   @override
-  Object get value => (enum$ ?? model ?? nonModel)!;
-  @override
-  T? when<T>({
-    T Function(_i2.EnumTypeDefinition)? enum$,
-    T Function(_i3.ModelTypeDefinition)? model,
-    T Function(_i4.NonModelTypeDefinition)? nonModel,
-    T Function(
-      String,
-      Object,
-    )?
-        sdkUnknown,
-  }) {
-    if (this is SchemaTypeDefinitionEnum$) {
-      return enum$?.call((this as SchemaTypeDefinitionEnum$).enum$);
-    }
-    if (this is SchemaTypeDefinitionModel$) {
-      return model?.call((this as SchemaTypeDefinitionModel$).model);
-    }
-    if (this is SchemaTypeDefinitionNonModel$) {
-      return nonModel?.call((this as SchemaTypeDefinitionNonModel$).nonModel);
-    }
-    return sdkUnknown?.call(
-      name,
-      value,
-    );
-  }
-
+  Object get value => (model ?? nonModel ?? enum$)!;
   @override
   String toString() {
     final helper = newBuiltValueToStringHelper(r'SchemaTypeDefinition');
-    if (enum$ != null) {
-      helper.add(
-        r'enum$',
-        enum$,
-      );
-    }
     if (model != null) {
       helper.add(
         r'model',
@@ -108,48 +85,48 @@ abstract class SchemaTypeDefinition
         nonModel,
       );
     }
+    if (enum$ != null) {
+      helper.add(
+        r'enum$',
+        enum$,
+      );
+    }
     return helper.toString();
   }
 }
 
-class SchemaTypeDefinitionEnum$ extends SchemaTypeDefinition {
-  const SchemaTypeDefinitionEnum$(this.enum$) : super._();
+final class SchemaTypeDefinitionModel extends SchemaTypeDefinition {
+  const SchemaTypeDefinitionModel(this.model) : super._();
 
   @override
-  final _i2.EnumTypeDefinition enum$;
+  final _i5.ModelTypeDefinition model;
 
-  @override
-  SchemaTypeDefinitionType get type => SchemaTypeDefinitionType.enum$;
-  @override
-  String get name => 'enum';
-}
-
-class SchemaTypeDefinitionModel$ extends SchemaTypeDefinition {
-  const SchemaTypeDefinitionModel$(this.model) : super._();
-
-  @override
-  final _i3.ModelTypeDefinition model;
-
-  @override
-  SchemaTypeDefinitionType get type => SchemaTypeDefinitionType.model;
   @override
   String get name => 'model';
 }
 
-class SchemaTypeDefinitionNonModel$ extends SchemaTypeDefinition {
-  const SchemaTypeDefinitionNonModel$(this.nonModel) : super._();
+final class SchemaTypeDefinitionNonModel extends SchemaTypeDefinition {
+  const SchemaTypeDefinitionNonModel(this.nonModel) : super._();
 
   @override
-  final _i4.NonModelTypeDefinition nonModel;
+  final _i6.NonModelTypeDefinition nonModel;
 
-  @override
-  SchemaTypeDefinitionType get type => SchemaTypeDefinitionType.nonModel;
   @override
   String get name => 'nonModel';
 }
 
-class SchemaTypeDefinitionSdkUnknown$ extends SchemaTypeDefinition {
-  const SchemaTypeDefinitionSdkUnknown$(
+final class SchemaTypeDefinitionEnum extends SchemaTypeDefinition {
+  const SchemaTypeDefinitionEnum(this.enum$) : super._();
+
+  @override
+  final _i7.EnumTypeDefinition enum$;
+
+  @override
+  String get name => 'enum';
+}
+
+final class SchemaTypeDefinitionSdkUnknown extends SchemaTypeDefinition {
+  const SchemaTypeDefinitionSdkUnknown(
     this.name,
     this.value,
   ) : super._();
@@ -159,9 +136,6 @@ class SchemaTypeDefinitionSdkUnknown$ extends SchemaTypeDefinition {
 
   @override
   final Object value;
-
-  @override
-  SchemaTypeDefinitionType get type => SchemaTypeDefinitionType.sdkUnknown;
 }
 
 class SchemaTypeDefinitionRestJson1Serializer
@@ -172,9 +146,9 @@ class SchemaTypeDefinitionRestJson1Serializer
   @override
   Iterable<Type> get types => const [
         SchemaTypeDefinition,
-        SchemaTypeDefinitionEnum$,
-        SchemaTypeDefinitionModel$,
-        SchemaTypeDefinitionNonModel$,
+        SchemaTypeDefinitionModel,
+        SchemaTypeDefinitionNonModel,
+        SchemaTypeDefinitionEnum,
       ];
   @override
   Iterable<_i1.ShapeId> get supportedProtocols => const [
@@ -189,27 +163,23 @@ class SchemaTypeDefinitionRestJson1Serializer
     Iterable<Object?> serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final iterator = serialized.iterator;
-    iterator.moveNext();
-    final key = iterator.current as String;
-    iterator.moveNext();
-    final value = iterator.current as Object;
+    final [key as String, value as Object] = serialized.toList();
     switch (key) {
-      case 'enum':
-        return SchemaTypeDefinitionEnum$((serializers.deserialize(
-          value,
-          specifiedType: const FullType(_i2.EnumTypeDefinition),
-        ) as _i2.EnumTypeDefinition));
       case 'model':
-        return SchemaTypeDefinitionModel$((serializers.deserialize(
+        return SchemaTypeDefinitionModel((serializers.deserialize(
           value,
-          specifiedType: const FullType(_i3.ModelTypeDefinition),
-        ) as _i3.ModelTypeDefinition));
+          specifiedType: const FullType(_i5.ModelTypeDefinition),
+        ) as _i5.ModelTypeDefinition));
       case 'nonModel':
-        return SchemaTypeDefinitionNonModel$((serializers.deserialize(
+        return SchemaTypeDefinitionNonModel((serializers.deserialize(
           value,
-          specifiedType: const FullType(_i4.NonModelTypeDefinition),
-        ) as _i4.NonModelTypeDefinition));
+          specifiedType: const FullType(_i6.NonModelTypeDefinition),
+        ) as _i6.NonModelTypeDefinition));
+      case 'enum':
+        return SchemaTypeDefinitionEnum((serializers.deserialize(
+          value,
+          specifiedType: const FullType(_i7.EnumTypeDefinition),
+        ) as _i7.EnumTypeDefinition));
     }
     return SchemaTypeDefinition.sdkUnknown(
       key,
@@ -220,32 +190,26 @@ class SchemaTypeDefinitionRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    SchemaTypeDefinition object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    (object as SchemaTypeDefinition);
     return [
       object.name,
-      object.when<Object?>(
-        enum$: (_i2.EnumTypeDefinition enum$) => serializers.serialize(
-          enum$,
-          specifiedType: const FullType(_i2.EnumTypeDefinition),
-        ),
-        model: (_i3.ModelTypeDefinition model) => serializers.serialize(
-          model,
-          specifiedType: const FullType(_i3.ModelTypeDefinition),
-        ),
-        nonModel: (_i4.NonModelTypeDefinition nonModel) =>
-            serializers.serialize(
-          nonModel,
-          specifiedType: const FullType(_i4.NonModelTypeDefinition),
-        ),
-        sdkUnknown: (
-          String _,
-          Object sdkUnknown,
-        ) =>
-            sdkUnknown,
-      )!,
+      switch (object) {
+        SchemaTypeDefinitionModel(:final value) => serializers.serialize(
+            value,
+            specifiedType: const FullType(_i5.ModelTypeDefinition),
+          ),
+        SchemaTypeDefinitionNonModel(:final value) => serializers.serialize(
+            value,
+            specifiedType: const FullType(_i6.NonModelTypeDefinition),
+          ),
+        SchemaTypeDefinitionEnum(:final value) => serializers.serialize(
+            value,
+            specifiedType: const FullType(_i7.EnumTypeDefinition),
+          ),
+        SchemaTypeDefinitionSdkUnknown(:final value) => value,
+      },
     ];
   }
 }

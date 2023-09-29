@@ -1,0 +1,1 @@
+library amplify_test_schemas;

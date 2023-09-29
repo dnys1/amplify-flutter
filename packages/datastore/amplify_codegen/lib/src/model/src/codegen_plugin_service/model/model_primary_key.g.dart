@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of amplify_codegen.codegen_plugin_service.model.model_primary_key;
+part of 'model_primary_key.dart';
 
 // **************************************************************************
 // BuiltValueGenerator

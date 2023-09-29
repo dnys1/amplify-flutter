@@ -1,4 +1,5 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.non_model_type_definition; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
@@ -16,12 +17,12 @@ abstract class NonModelTypeDefinition
     with _i1.AWSEquatable<NonModelTypeDefinition>
     implements Built<NonModelTypeDefinition, NonModelTypeDefinitionBuilder> {
   factory NonModelTypeDefinition({
-    required Map<String, _i2.ModelField> fields,
     required String name,
+    required Map<String, _i2.ModelField> fields,
   }) {
     return _$NonModelTypeDefinition._(
-      fields: _i3.BuiltMap(fields),
       name: name,
+      fields: _i3.BuiltMap(fields),
     );
   }
 
@@ -31,30 +32,29 @@ abstract class NonModelTypeDefinition
 
   const NonModelTypeDefinition._();
 
-  static const List<_i4.SmithySerializer> serializers = [
-    NonModelTypeDefinitionRestJson1Serializer()
-  ];
+  static const List<_i4.SmithySerializer<NonModelTypeDefinition>> serializers =
+      [NonModelTypeDefinitionRestJson1Serializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(NonModelTypeDefinitionBuilder b) {}
-  _i3.BuiltMap<String, _i2.ModelField> get fields;
   String get name;
+  _i3.BuiltMap<String, _i2.ModelField> get fields;
   @override
   List<Object?> get props => [
-        fields,
         name,
+        fields,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('NonModelTypeDefinition');
-    helper.add(
-      'fields',
-      fields,
-    );
-    helper.add(
-      'name',
-      name,
-    );
+    final helper = newBuiltValueToStringHelper('NonModelTypeDefinition')
+      ..add(
+        'name',
+        name,
+      )
+      ..add(
+        'fields',
+        fields,
+      );
     return helper.toString();
   }
 }
@@ -88,6 +88,9 @@ class NonModelTypeDefinitionRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'fields':
           result.fields.replace((serializers.deserialize(
@@ -100,13 +103,11 @@ class NonModelTypeDefinitionRestJson1Serializer
               ],
             ),
           ) as _i3.BuiltMap<String, _i2.ModelField>));
-          break;
         case 'name':
           result.name = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
       }
     }
 
@@ -116,14 +117,15 @@ class NonModelTypeDefinitionRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    NonModelTypeDefinition object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as NonModelTypeDefinition);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final NonModelTypeDefinition(:fields, :name) = object;
+    result$.addAll([
       'fields',
       serializers.serialize(
-        payload.fields,
+        fields,
         specifiedType: const FullType(
           _i3.BuiltMap,
           [
@@ -134,10 +136,10 @@ class NonModelTypeDefinitionRestJson1Serializer
       ),
       'name',
       serializers.serialize(
-        payload.name,
+        name,
         specifiedType: const FullType(String),
       ),
-    ];
-    return result;
+    ]);
+    return result$;
   }
 }

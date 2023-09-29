@@ -1,13 +1,14 @@
 // Generated with smithy-dart 0.3.1. DO NOT MODIFY.
+// ignore_for_file: avoid_unused_constructor_parameters,deprecated_member_use_from_same_package,non_constant_identifier_names
 
 library amplify_codegen.codegen_plugin_service.model.model_field; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
 import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/auth_rule.dart'
-    as _i3;
-import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/model_association.dart'
-    as _i2;
-import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/schema_type.dart'
     as _i4;
+import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/model_association.dart'
+    as _i3;
+import 'package:amplify_codegen/src/model/src/codegen_plugin_service/model/schema_type.dart'
+    as _i2;
 import 'package:aws_common/aws_common.dart' as _i1;
 import 'package:built_collection/built_collection.dart' as _i5;
 import 'package:built_value/built_value.dart';
@@ -20,19 +21,19 @@ abstract class ModelField
     with _i1.AWSEquatable<ModelField>
     implements Built<ModelField, ModelFieldBuilder> {
   factory ModelField({
-    _i2.ModelAssociation? association,
-    List<_i3.AuthRule>? authRules,
-    bool? isReadOnly,
     required String name,
-    required _i4.SchemaType type,
+    required _i2.SchemaType type,
+    bool? isReadOnly,
+    _i3.ModelAssociation? association,
+    List<_i4.AuthRule>? authRules,
   }) {
     isReadOnly ??= false;
     return _$ModelField._(
-      association: association,
-      authRules: authRules == null ? null : _i5.BuiltList(authRules),
-      isReadOnly: isReadOnly,
       name: name,
       type: type,
+      isReadOnly: isReadOnly,
+      association: association,
+      authRules: authRules == null ? null : _i5.BuiltList(authRules),
     );
   }
 
@@ -41,7 +42,7 @@ abstract class ModelField
 
   const ModelField._();
 
-  static const List<_i6.SmithySerializer> serializers = [
+  static const List<_i6.SmithySerializer<ModelField>> serializers = [
     ModelFieldRestJson1Serializer()
   ];
 
@@ -50,44 +51,44 @@ abstract class ModelField
     b.isReadOnly = false;
   }
 
-  _i2.ModelAssociation? get association;
-  _i5.BuiltList<_i3.AuthRule>? get authRules;
-  bool? get isReadOnly;
   String get name;
 
   /// A reference to an Amplify schema type. An Amplify schema type is either a scalar, model, non-model, enum, or a collection of one of these.
-  _i4.SchemaType get type;
+  _i2.SchemaType get type;
+  bool? get isReadOnly;
+  _i3.ModelAssociation? get association;
+  _i5.BuiltList<_i4.AuthRule>? get authRules;
   @override
   List<Object?> get props => [
-        association,
-        authRules,
-        isReadOnly,
         name,
         type,
+        isReadOnly,
+        association,
+        authRules,
       ];
   @override
   String toString() {
-    final helper = newBuiltValueToStringHelper('ModelField');
-    helper.add(
-      'association',
-      association,
-    );
-    helper.add(
-      'authRules',
-      authRules,
-    );
-    helper.add(
-      'isReadOnly',
-      isReadOnly,
-    );
-    helper.add(
-      'name',
-      name,
-    );
-    helper.add(
-      'type',
-      type,
-    );
+    final helper = newBuiltValueToStringHelper('ModelField')
+      ..add(
+        'name',
+        name,
+      )
+      ..add(
+        'type',
+        type,
+      )
+      ..add(
+        'isReadOnly',
+        isReadOnly,
+      )
+      ..add(
+        'association',
+        association,
+      )
+      ..add(
+        'authRules',
+        authRules,
+      );
     return helper.toString();
   }
 }
@@ -120,46 +121,38 @@ class ModelFieldRestJson1Serializer
       final key = iterator.current as String;
       iterator.moveNext();
       final value = iterator.current;
+      if (value == null) {
+        continue;
+      }
       switch (key) {
         case 'association':
-          if (value != null) {
-            result.association = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(_i2.ModelAssociation),
-            ) as _i2.ModelAssociation);
-          }
-          break;
+          result.association = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(_i3.ModelAssociation),
+          ) as _i3.ModelAssociation);
         case 'authRules':
-          if (value != null) {
-            result.authRules.replace((serializers.deserialize(
-              value,
-              specifiedType: const FullType(
-                _i5.BuiltList,
-                [FullType(_i3.AuthRule)],
-              ),
-            ) as _i5.BuiltList<_i3.AuthRule>));
-          }
-          break;
+          result.authRules.replace((serializers.deserialize(
+            value,
+            specifiedType: const FullType(
+              _i5.BuiltList,
+              [FullType(_i4.AuthRule)],
+            ),
+          ) as _i5.BuiltList<_i4.AuthRule>));
         case 'isReadOnly':
-          if (value != null) {
-            result.isReadOnly = (serializers.deserialize(
-              value,
-              specifiedType: const FullType(bool),
-            ) as bool);
-          }
-          break;
+          result.isReadOnly = (serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool);
         case 'name':
           result.name = (serializers.deserialize(
-            value!,
+            value,
             specifiedType: const FullType(String),
           ) as String);
-          break;
         case 'type':
           result.type = (serializers.deserialize(
-            value!,
-            specifiedType: const FullType(_i4.SchemaType),
-          ) as _i4.SchemaType);
-          break;
+            value,
+            specifiedType: const FullType(_i2.SchemaType),
+          ) as _i2.SchemaType);
       }
     }
 
@@ -169,49 +162,51 @@ class ModelFieldRestJson1Serializer
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    Object? object, {
+    ModelField object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final payload = (object as ModelField);
-    final result = <Object?>[
+    final result$ = <Object?>[];
+    final ModelField(:association, :authRules, :isReadOnly, :name, :type) =
+        object;
+    result$.addAll([
       'name',
       serializers.serialize(
-        payload.name,
+        name,
         specifiedType: const FullType(String),
       ),
       'type',
       serializers.serialize(
-        payload.type,
-        specifiedType: const FullType(_i4.SchemaType),
+        type,
+        specifiedType: const FullType(_i2.SchemaType),
       ),
-    ];
-    if (payload.association != null) {
-      result
+    ]);
+    if (association != null) {
+      result$
         ..add('association')
         ..add(serializers.serialize(
-          payload.association!,
-          specifiedType: const FullType(_i2.ModelAssociation),
+          association,
+          specifiedType: const FullType(_i3.ModelAssociation),
         ));
     }
-    if (payload.authRules != null) {
-      result
+    if (authRules != null) {
+      result$
         ..add('authRules')
         ..add(serializers.serialize(
-          payload.authRules!,
+          authRules,
           specifiedType: const FullType(
             _i5.BuiltList,
-            [FullType(_i3.AuthRule)],
+            [FullType(_i4.AuthRule)],
           ),
         ));
     }
-    if (payload.isReadOnly != null) {
-      result
+    if (isReadOnly != null) {
+      result$
         ..add('isReadOnly')
         ..add(serializers.serialize(
-          payload.isReadOnly!,
+          isReadOnly,
           specifiedType: const FullType(bool),
         ));
     }
-    return result;
+    return result$;
   }
 }

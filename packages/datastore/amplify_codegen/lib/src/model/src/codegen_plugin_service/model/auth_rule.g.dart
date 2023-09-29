@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of amplify_codegen.codegen_plugin_service.model.auth_rule;
+part of 'auth_rule.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
@@ -10,32 +10,32 @@ class _$AuthRule extends AuthRule {
   @override
   final _i2.AuthStrategy authStrategy;
   @override
+  final String? ownerField;
+  @override
+  final String? identityClaim;
+  @override
   final String? groupClaim;
   @override
   final _i5.BuiltList<String>? groups;
   @override
   final String? groupsField;
   @override
-  final String? identityClaim;
+  final _i3.AuthProvider? provider;
   @override
-  final _i5.BuiltList<_i3.AuthModelOperation>? operations;
-  @override
-  final String? ownerField;
-  @override
-  final _i4.AuthProvider? provider;
+  final _i5.BuiltList<_i4.AuthModelOperation>? operations;
 
   factory _$AuthRule([void Function(AuthRuleBuilder)? updates]) =>
       (new AuthRuleBuilder()..update(updates))._build();
 
   _$AuthRule._(
       {required this.authStrategy,
+      this.ownerField,
+      this.identityClaim,
       this.groupClaim,
       this.groups,
       this.groupsField,
-      this.identityClaim,
-      this.operations,
-      this.ownerField,
-      this.provider})
+      this.provider,
+      this.operations})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
         authStrategy, r'AuthRule', 'authStrategy');
@@ -53,26 +53,26 @@ class _$AuthRule extends AuthRule {
     if (identical(other, this)) return true;
     return other is AuthRule &&
         authStrategy == other.authStrategy &&
+        ownerField == other.ownerField &&
+        identityClaim == other.identityClaim &&
         groupClaim == other.groupClaim &&
         groups == other.groups &&
         groupsField == other.groupsField &&
-        identityClaim == other.identityClaim &&
-        operations == other.operations &&
-        ownerField == other.ownerField &&
-        provider == other.provider;
+        provider == other.provider &&
+        operations == other.operations;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
     _$hash = $jc(_$hash, authStrategy.hashCode);
+    _$hash = $jc(_$hash, ownerField.hashCode);
+    _$hash = $jc(_$hash, identityClaim.hashCode);
     _$hash = $jc(_$hash, groupClaim.hashCode);
     _$hash = $jc(_$hash, groups.hashCode);
     _$hash = $jc(_$hash, groupsField.hashCode);
-    _$hash = $jc(_$hash, identityClaim.hashCode);
-    _$hash = $jc(_$hash, operations.hashCode);
-    _$hash = $jc(_$hash, ownerField.hashCode);
     _$hash = $jc(_$hash, provider.hashCode);
+    _$hash = $jc(_$hash, operations.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -85,6 +85,15 @@ class AuthRuleBuilder implements Builder<AuthRule, AuthRuleBuilder> {
   _i2.AuthStrategy? get authStrategy => _$this._authStrategy;
   set authStrategy(_i2.AuthStrategy? authStrategy) =>
       _$this._authStrategy = authStrategy;
+
+  String? _ownerField;
+  String? get ownerField => _$this._ownerField;
+  set ownerField(String? ownerField) => _$this._ownerField = ownerField;
+
+  String? _identityClaim;
+  String? get identityClaim => _$this._identityClaim;
+  set identityClaim(String? identityClaim) =>
+      _$this._identityClaim = identityClaim;
 
   String? _groupClaim;
   String? get groupClaim => _$this._groupClaim;
@@ -99,24 +108,15 @@ class AuthRuleBuilder implements Builder<AuthRule, AuthRuleBuilder> {
   String? get groupsField => _$this._groupsField;
   set groupsField(String? groupsField) => _$this._groupsField = groupsField;
 
-  String? _identityClaim;
-  String? get identityClaim => _$this._identityClaim;
-  set identityClaim(String? identityClaim) =>
-      _$this._identityClaim = identityClaim;
+  _i3.AuthProvider? _provider;
+  _i3.AuthProvider? get provider => _$this._provider;
+  set provider(_i3.AuthProvider? provider) => _$this._provider = provider;
 
-  _i5.ListBuilder<_i3.AuthModelOperation>? _operations;
-  _i5.ListBuilder<_i3.AuthModelOperation> get operations =>
-      _$this._operations ??= new _i5.ListBuilder<_i3.AuthModelOperation>();
-  set operations(_i5.ListBuilder<_i3.AuthModelOperation>? operations) =>
+  _i5.ListBuilder<_i4.AuthModelOperation>? _operations;
+  _i5.ListBuilder<_i4.AuthModelOperation> get operations =>
+      _$this._operations ??= new _i5.ListBuilder<_i4.AuthModelOperation>();
+  set operations(_i5.ListBuilder<_i4.AuthModelOperation>? operations) =>
       _$this._operations = operations;
-
-  String? _ownerField;
-  String? get ownerField => _$this._ownerField;
-  set ownerField(String? ownerField) => _$this._ownerField = ownerField;
-
-  _i4.AuthProvider? _provider;
-  _i4.AuthProvider? get provider => _$this._provider;
-  set provider(_i4.AuthProvider? provider) => _$this._provider = provider;
 
   AuthRuleBuilder() {
     AuthRule._init(this);
@@ -126,13 +126,13 @@ class AuthRuleBuilder implements Builder<AuthRule, AuthRuleBuilder> {
     final $v = _$v;
     if ($v != null) {
       _authStrategy = $v.authStrategy;
+      _ownerField = $v.ownerField;
+      _identityClaim = $v.identityClaim;
       _groupClaim = $v.groupClaim;
       _groups = $v.groups?.toBuilder();
       _groupsField = $v.groupsField;
-      _identityClaim = $v.identityClaim;
-      _operations = $v.operations?.toBuilder();
-      _ownerField = $v.ownerField;
       _provider = $v.provider;
+      _operations = $v.operations?.toBuilder();
       _$v = null;
     }
     return this;
@@ -159,13 +159,13 @@ class AuthRuleBuilder implements Builder<AuthRule, AuthRuleBuilder> {
           new _$AuthRule._(
               authStrategy: BuiltValueNullFieldError.checkNotNull(
                   authStrategy, r'AuthRule', 'authStrategy'),
+              ownerField: ownerField,
+              identityClaim: identityClaim,
               groupClaim: groupClaim,
               groups: _groups?.build(),
               groupsField: groupsField,
-              identityClaim: identityClaim,
-              operations: _operations?.build(),
-              ownerField: ownerField,
-              provider: provider);
+              provider: provider,
+              operations: _operations?.build());
     } catch (_) {
       late String _$failedField;
       try {

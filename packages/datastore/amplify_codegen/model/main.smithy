@@ -6,7 +6,7 @@ use aws.protocols#restJson1
 @restJson1
 service CodegenPluginService {
   version: "1.0"
-  operations: [Codegen]
+  operations: [Codegen, GenerateTestSchemas]
 }
 
 @http(code: 200, method: "POST", uri: "/codegen")

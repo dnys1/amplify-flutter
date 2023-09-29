@@ -62,6 +62,9 @@ dev_dependencies:
   built_value_generator: 8.6.1
   checks: ^0.2.2
   json_serializable: 6.7.1
+  logging: ^1.2.0
+  native_assets_cli: ^0.2.0
+  native_toolchain_c: ^0.2.0
   test: ^1.22.1
   test_descriptor: ^2.0.1
 

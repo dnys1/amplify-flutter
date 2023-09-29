@@ -106,10 +106,9 @@ Future<SmithyAst> _transform(
       );
       model = transformer.copyServiceErrorsToOperations(model, serviceShape);
     }
-    model = switch (version) {
-      SmithyVersion.v1 => transformer.downgradeToV1(model),
-      _ => model,
-    };
+    if (version == SmithyVersion.v1) {
+      model = transformer.downgradeToV1(model);
+    }
     model = transformer.getModelWithoutTraitShapes(model);
   });
 
@@ -117,15 +116,12 @@ Future<SmithyAst> _transform(
     (b) => b.includePrelude(false).build(),
   );
   final jsonRef = serializer.use((serializer) {
-    // TODO(dnys1): Fix UTF8 encoding.
-    /// Does this need support for modified UTF8?
-    /// https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html#modified_utf_8_strings
     return Node.prettyPrintJson(
       Node.fromRef(serializer.serialize(model).reference),
     );
   });
 
-  return parseAstJson(jsonRef.toDartString());
+  return parseAstJson(jsonRef.toDartString(deleteOriginal: true));
 }
 
 Future<void> _generateFor({

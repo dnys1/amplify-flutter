@@ -1,7 +1,9 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+import 'package:async/async.dart';
 import 'package:code_builder/code_builder.dart';
+import 'package:jni/jni.dart';
 import 'package:smithy/ast.dart';
 import 'package:smithy_codegen/smithy_codegen.dart';
 import 'package:smithy_codegen/src/generator/visitors/library_visitor.dart';
@@ -77,74 +79,107 @@ class GeneratedOutput {
   final List<GeneratedLibrary> libraries;
 }
 
-/// Generates a Dart file for each of the relevant shape types in [ast].
-///
-/// Returns a map from the library to its formatted definition file.
-Map<ShapeId, GeneratedOutput> generateForAst(
-  SmithyAst ast, {
-  required String packageName,
-  String? serviceName,
-  String? basePath,
-  Iterable<ShapeId> includeShapes = const [],
-  Iterable<ShapeId> additionalShapes = const [],
-  bool generateServer = false,
-  Map<ShapeId, ShapeOverrides>? shapeOverrides,
-}) {
-  const transformers = <ShapeVisitor<Shape>>[
-    _CognitoWorkaroundVisitor(),
-  ];
-  for (final transformer in transformers) {
-    ast = ast.rebuild((ast) {
-      ast.shapes!.updateAll((_, shape) => shape.accept(transformer));
+final class SmithyGenerator {
+  SmithyGenerator._(this._dylibDir, this._classPath);
+
+  static final AsyncMemoizer<SmithyGenerator> _initMemo = AsyncMemoizer();
+
+  static Future<SmithyGenerator> getInstance() {
+    return _initMemo.runOnce(() async {
+      throw UnimplementedError();
     });
   }
 
-  var serviceShapes = ast.shapes.values.whereType<ServiceShape>();
-  if (serviceName != null) {
-    if (serviceShapes.length != 1) {
-      throw CodegenException(
-        'When specifying a service name, it is assumed that only one service is '
-        'to be generated. However, the provided AST contains '
-        '${serviceShapes.length} service shapes.',
-      );
-    }
-    serviceShapes = [serviceShapes.first];
-  }
+  final String _dylibDir;
+  final List<String> _classPath;
 
-  final outputs = <ShapeId, GeneratedOutput>{};
-
-  for (final serviceShape in serviceShapes) {
-    final context = buildContext(
-      ast,
-      serviceShape: serviceShape,
-      packageName: packageName,
-      basePath: basePath,
-      serviceName: serviceShapes.length == 1 ? serviceName : null,
-      includeShapes: includeShapes,
-      additionalShapes: additionalShapes,
-      generateServer: generateServer,
-      shapeOverrides: shapeOverrides,
+  void _init() {
+    Jni.spawnIfNotExists(
+      dylibDir: _dylibDir,
+      classPath: _classPath,
     );
-
-    context.run(() {
-      // Generate libraries for relevant shape types.
-      //
-      // Build service shapes last, since they aggregate generated types.
-      final operations = context.shapes.values.whereType<OperationShape>();
-      final visitor = LibraryVisitor(context);
-      final libraries = [
-        ...operations,
-        ...additionalShapes.map(context.shapeFor),
-        serviceShape,
-      ].expand<GeneratedLibrary>((shape) => shape.accept(visitor) ?? const []);
-      outputs[serviceShape.shapeId] = GeneratedOutput(
-        context: context,
-        libraries: libraries.toSet().toList(),
-      );
-    });
   }
 
-  return outputs;
+  Map<ShapeId, GeneratedOutput> generateForIdl(
+    String smithyIdl, {
+    required String packageName,
+    String? serviceName,
+    String? basePath,
+    Iterable<ShapeId> includeShapes = const [],
+    Iterable<ShapeId> additionalShapes = const [],
+    Map<ShapeId, ShapeOverrides>? shapeOverrides,
+  }) {
+    throw UnimplementedError();
+  }
+
+  /// Generates a Dart file for each of the relevant shape types in [ast].
+  ///
+  /// Returns a map from the library to its formatted definition file.
+  Map<ShapeId, GeneratedOutput> generateForAst(
+    SmithyAst ast, {
+    required String packageName,
+    String? serviceName,
+    String? basePath,
+    Iterable<ShapeId> includeShapes = const [],
+    Iterable<ShapeId> additionalShapes = const [],
+    Map<ShapeId, ShapeOverrides>? shapeOverrides,
+  }) {
+    const transformers = <ShapeVisitor<Shape>>[
+      _CognitoWorkaroundVisitor(),
+    ];
+    for (final transformer in transformers) {
+      ast = ast.rebuild((ast) {
+        ast.shapes!.updateAll((_, shape) => shape.accept(transformer));
+      });
+    }
+
+    var serviceShapes = ast.shapes.values.whereType<ServiceShape>();
+    if (serviceName != null) {
+      if (serviceShapes.length != 1) {
+        throw CodegenException(
+          'When specifying a service name, it is assumed that only one service is '
+          'to be generated. However, the provided AST contains '
+          '${serviceShapes.length} service shapes.',
+        );
+      }
+      serviceShapes = [serviceShapes.first];
+    }
+
+    final outputs = <ShapeId, GeneratedOutput>{};
+
+    for (final serviceShape in serviceShapes) {
+      final context = buildContext(
+        ast,
+        serviceShape: serviceShape,
+        packageName: packageName,
+        basePath: basePath,
+        serviceName: serviceShapes.length == 1 ? serviceName : null,
+        includeShapes: includeShapes,
+        additionalShapes: additionalShapes,
+        shapeOverrides: shapeOverrides,
+      );
+
+      context.run(() {
+        // Generate libraries for relevant shape types.
+        //
+        // Build service shapes last, since they aggregate generated types.
+        final operations = context.shapes.values.whereType<OperationShape>();
+        final visitor = LibraryVisitor(context);
+        final libraries = [
+          ...operations,
+          ...additionalShapes.map(context.shapeFor),
+          serviceShape,
+        ].expand<GeneratedLibrary>(
+            (shape) => shape.accept(visitor) ?? const []);
+        outputs[serviceShape.shapeId] = GeneratedOutput(
+          context: context,
+          libraries: libraries.toSet().toList(),
+        );
+      });
+    }
+
+    return outputs;
+  }
 }
 
 /// Workarounds for issues with Cognito IDP Smithy models.

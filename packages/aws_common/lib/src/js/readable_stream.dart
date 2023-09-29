@@ -402,7 +402,6 @@ extension StreamToReadableStream on Stream<List<int>> {
       createUnderlyingSource(
         pull: (controller) async {
           if (!await queue.hasNext) {
-            await queue.cancel();
             controller.close();
             return;
           }
@@ -410,15 +409,14 @@ extension StreamToReadableStream on Stream<List<int>> {
             final chunk = await queue.next;
             controller.enqueue(Uint8List.fromList(chunk));
           } on Object catch (e, st) {
-            await queue.cancel();
             // Allow error to propagate before closing.
-            scheduleMicrotask(() {
-              try {
-                controller.close();
-              } on Object {
-                // ignore errors closing the controller
-              }
-            });
+            // scheduleMicrotask(() {
+            //   try {
+            //     controller.close();
+            //   } on Object {
+            //     // ignore errors closing the controller
+            //   }
+            // });
             if (onError == null) {
               rethrow;
             }

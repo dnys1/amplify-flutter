@@ -23,6 +23,8 @@ Future<void> generateParserTests() async {
     '''
 // Generated with tool/generate_tests.dart. Do not modify by hand.
 
+@TestOn('vm')
+
 import 'dart:convert';
 
 import 'package:aws_common/src/config/aws_profile_file.dart';
@@ -33,7 +35,7 @@ import 'package:test/test.dart';
 
 void main() {
   const loader = AWSProfileFileLoader();
-  group(testOn: 'vm', 'AWSProfileFileParser', () {
+  group('AWSProfileFileParser', () {
 ''',
   );
   for (final testJson in tests) {
@@ -132,13 +134,15 @@ Future<void> generateFileLocationTests() async {
     '''
 // Generated with tool/generate_tests.dart. Do not modify by hand.
 
+@TestOn('vm')
+
 import 'package:aws_common/aws_common.dart';
 import 'package:os_detect/override.dart';
 import 'package:test/test.dart';
 
 void main() {
   const pathProvider = AWSPathProvider();
-  group(testOn: 'vm', 'AWSPathProvider', () {
+  group('AWSPathProvider', () {
 ''',
   );
   for (final testJson in tests) {

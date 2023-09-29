@@ -22,7 +22,7 @@ dependencies:
   path: ^1.8.0
   stream_transform: ^2.0.0
   uuid: ">=3.0.6 <=3.0.7"
-  web: ^0.1.0-beta
+  web: ^0.1.3-beta
 
 dependency_overrides:
   test:

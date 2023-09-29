@@ -4,9 +4,11 @@
 import 'dart:async';
 
 import 'package:aws_common/src/config/aws_config_stub.dart'
+    if (dart.library.js_interop) 'package:aws_common/src/config/aws_config_stub.dart'
     if (dart.library.io) 'package:aws_common/src/config/aws_config_io.dart';
 
 export 'package:aws_common/src/config/aws_config_stub.dart'
+    if (dart.library.js_interop) 'package:aws_common/src/config/aws_config_stub.dart'
     if (dart.library.io) 'package:aws_common/src/config/aws_config_io.dart';
 
 T _identity<T extends Object>(String o) => o as T;

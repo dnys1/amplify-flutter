@@ -11,7 +11,6 @@ import 'package:async/async.dart';
 import 'package:aws_common/aws_common.dart';
 import 'package:aws_common/web.dart';
 import 'package:test/test.dart';
-import 'package:web/web.dart' as html;
 
 import 'utils.dart';
 
@@ -20,12 +19,16 @@ void main() {
     const testStringContent = 'I ❤️ Amplify, œ 小新';
     const testContentType = 'text/plain';
     final testBytes = utf8.encode(testStringContent) as Uint8List;
-    final testBlob = html.Blob(
+    final testBlob = Blob(
       [testBytes.toJS].toJS,
-      html.BlobPropertyBag(type: testContentType.toJS),
+      BlobOptions(type: testContentType.toJS),
     );
-    final testFile = html.File([testBlob.toJS].toJS, 'test_file.txt'.toJS);
-    final testFilePath = html.URL.createObjectURL(testFile as JSAny);
+    final testFile = File(
+      [testBlob.toJS].toJS,
+      'test_file.txt'.toJS,
+      FileOptions(type: testBlob.type),
+    );
+    final testFilePath = URL.createObjectURL(testFile);
 
     group('getChunkedStreamReader() API', () {
       test('should return ChunkedStreamReader over html File', () async {

@@ -11,27 +11,8 @@ import 'package:aws_common/src/js/common.dart';
 import 'package:aws_common/src/js/promise.dart';
 import 'package:aws_common/src/js/readable_stream.dart';
 
-/// Controls what browsers do with credentials (cookies, HTTP authentication
-/// entries, and TLS client certificates).
-enum RequestCredentials with JSEnum {
-  /// Tells browsers to include credentials in both same- and cross-origin
-  /// requests, and always use any credentials sent back in responses.
-  include,
-
-  /// Tells browsers to exclude credentials from the request, and ignore any
-  /// credentials sent back in the response (e.g., any `Set-Cookie` header).
-  omit,
-
-  /// Tells browsers to include credentials with requests to same-origin URLs,
-  /// and use any credentials sent back in responses from same-origin URLs.
-  sameOrigin,
-}
-
 /// How to handle a redirect response of a [Request].
 enum RequestRedirect with JSEnum {
-  /// The default behavior.
-  default$,
-
   /// Automatically follow redirects.
   follow,
 
@@ -44,9 +25,6 @@ enum RequestRedirect with JSEnum {
 
 /// The mode used for a [Request].
 enum RequestMode with JSEnum {
-  /// The default behavior.
-  default$,
-
   /// Allows cross-origin requests, for example to access various APIs offered
   /// by 3rd party vendors.
   cors,
@@ -77,7 +55,6 @@ enum RequestMode with JSEnum {
 abstract class RequestInit {
   /// {@macro aws_common.js.request_init}
   factory RequestInit({
-    RequestCredentials credentials = RequestCredentials.include,
     RequestMode mode = RequestMode.cors,
     RequestRedirect redirect = RequestRedirect.follow,
 
@@ -100,7 +77,6 @@ abstract class RequestInit {
       _ => throw ArgumentError('Invalid body: $body (${body.runtimeType})'),
     };
     return RequestInit._(
-      credentials: credentials.jsValue,
       mode: mode.jsValue,
       redirect: redirect.jsValue,
       headers: headers.jsify() as JSObject?,
@@ -115,13 +91,9 @@ abstract class RequestInit {
   }
 
   external factory RequestInit._({
-    JSString? cache,
-    JSString? credentials,
     JSString? mode,
     JSString? redirect,
-    JSString? referrer,
     JSObject? headers,
-    JSString? integrity,
     JSString? duplex,
     AbortSignal? signal,
     JSBoolean? keepalive,
@@ -230,6 +202,8 @@ extension PropsResponse on Response {
 
   /// Whether or not the response is the result of a redirect.
   external JSBoolean get redirected;
+
+  external JSPromise blob();
 }
 
 @JS('fetch')

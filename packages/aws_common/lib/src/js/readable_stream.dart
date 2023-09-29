@@ -58,37 +58,34 @@ abstract class UnderlyingSource {
       ReadableStreamController? controller,
     ])? cancel,
   }) {
-    final startFn = (ReadableStreamController controller) {
-      return Promise.fromFuture(
-        Future(() async {
-          await start?.call(controller);
-          return null;
-        }),
-      );
-    }.toJS;
-    final pullFn = (ReadableStreamController controller) {
-      return Promise.fromFuture(
-        Future(() async {
-          await pull?.call(controller);
-          return null;
-        }),
-      );
-    }.toJS;
-    final cancelFn = (
-      JSString? reason,
-      ReadableStreamController? controller,
-    ) {
-      return Promise.fromFuture(
-        Future(() async {
-          await cancel?.call(reason?.toDart, controller);
-          return null;
-        }),
-      );
-    }.toJS;
     return UnderlyingSource._(
-      start: startFn,
-      pull: pullFn,
-      cancel: cancelFn,
+      start: (ReadableStreamController controller) {
+        return Promise.fromFuture(
+          Future(() async {
+            await start?.call(controller);
+            return null;
+          }),
+        );
+      }.toJS,
+      pull: (ReadableStreamController controller) {
+        return Promise.fromFuture(
+          Future(() async {
+            await pull?.call(controller);
+            return null;
+          }),
+        );
+      }.toJS,
+      cancel: (
+        JSString? reason,
+        ReadableStreamController? controller,
+      ) {
+        return Promise.fromFuture(
+          Future(() async {
+            await cancel?.call(reason?.toDart, controller);
+            return null;
+          }),
+        );
+      }.toJS,
     );
   }
 
@@ -270,12 +267,16 @@ extension PropsReadableStreamChunk on ReadableStreamChunk {
 final class ReadableStreamView extends StreamView<List<int>> {
   /// {@macro aws_common.js.readable_stream_view}
   factory ReadableStreamView(ReadableStream stream) {
-    // False positives. These are closed in `_pipeFrom`.
-    // ignore: close_sinks
-    final controller = StreamController<List<int>>(sync: true);
-    // ignore: close_sinks
-    final progressController = StreamController<int>.broadcast(sync: true);
-    _pipeFrom(stream, controller.sink, progressController.sink);
+    final controller = StreamController<List<int>>();
+    final progressController = StreamController<int>.broadcast();
+    _pipeFrom(
+      stream,
+      controller.sink,
+      progressController.sink,
+    ).whenComplete(() {
+      controller.close();
+      progressController.close();
+    });
     return ReadableStreamView._(
       controller.stream,
       progressController.stream,
@@ -315,9 +316,6 @@ final class ReadableStreamView extends StreamView<List<int>> {
       sink.addError(e.dartify()!, st);
     } on Object catch (e, st) {
       sink.addError(e, st);
-    } finally {
-      unawaited(sink.close());
-      unawaited(progressSink.close());
     }
   }
 }

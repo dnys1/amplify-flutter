@@ -1,10 +1,12 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+import 'dart:async';
+
 import 'package:async/async.dart';
 import 'package:aws_common/aws_common.dart';
-import 'package:aws_common/src/io/aws_file_platform.dart'
-    if (dart.library.js_interop) 'aws_file_platform_html.dart'
+import 'package:aws_common/src/io/aws_file_platform_stub.dart'
+    if (dart.library.js_interop) 'aws_file_platform_js.dart'
     if (dart.library.io) 'aws_file_platform_io.dart';
 import 'package:meta/meta.dart';
 
@@ -104,37 +106,31 @@ abstract class AWSFile {
 
   /// Protected constructor of [AWSFile].
   @protected
-  AWSFile.protected({
-    this.path,
-    this.bytes,
-    this.name,
-    String? contentType,
-  }) : _contentType = contentType;
+  AWSFile.protected();
 
   /// Stream of the file content.
-  Stream<List<int>> get stream;
+  Stream<List<int>> get stream => openRead();
 
   /// The cached bytes content of the file.
-  final List<int>? bytes;
+  List<int>? get bytes => null;
 
   /// The name of the file if provided or read from OS.
-  final String? name;
+  String? get name => null;
 
   /// The path of the file if provided.
-  final String? path;
-
-  final String? _contentType;
+  String? get path => null;
 
   /// Size of the file.
-  Future<int> get size;
+  FutureOr<int> get size;
 
   /// The content type of the file if provided.
-  Future<String?> get contentType async => _contentType;
+  FutureOr<String?> get contentType => null;
 
   /// {@template amplify_core.io.aws_file.chunked_reader}
   /// Returns a [ChunkedStreamReader] over the stream of bytes of the file.
   /// {@endtemplate}
-  ChunkedStreamReader<int> getChunkedStreamReader();
+  ChunkedStreamReader<int> getChunkedStreamReader() =>
+      ChunkedStreamReader(stream);
 
   /// {@template amplify_core.io.aws_file.open_read}
   /// Creates a new independent Stream for the contents of this file starting

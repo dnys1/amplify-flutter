@@ -4,6 +4,7 @@
 import 'dart:async';
 
 import 'package:aws_common/src/config/aws_config_value.dart';
+import 'package:aws_common/src/util/globals.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -42,23 +43,27 @@ void main() {
       );
     });
 
-    test('throws when override cannot be parsed', () {
-      expect(
-        AWSConfigValue.maxAttempts.value,
-        equals(AWSConfigValue.maxAttempts.defaultValue),
-      );
+    test(
+      'throws when override cannot be parsed',
+      () {
+        expect(
+          AWSConfigValue.maxAttempts.value,
+          equals(AWSConfigValue.maxAttempts.defaultValue),
+        );
 
-      runZoned(
-        () {
-          expect(
-            () => AWSConfigValue.maxAttempts.value,
-            throwsA(isA<FormatException>()),
-          );
-        },
-        zoneValues: {
-          AWSConfigValue.maxAttempts: 'abc',
-        },
-      );
-    });
+        runZoned(
+          () {
+            expect(
+              () => AWSConfigValue.maxAttempts.value,
+              throwsA(isA<FormatException>()),
+            );
+          },
+          zoneValues: {
+            AWSConfigValue.maxAttempts: 'abc',
+          },
+        );
+      },
+      skip: zIsWasm,
+    );
   });
 }

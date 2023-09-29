@@ -1,12 +1,14 @@
 // Generated with tool/generate_tests.dart. Do not modify by hand.
 
+@TestOn('vm')
+
 import 'package:aws_common/aws_common.dart';
 import 'package:os_detect/override.dart';
 import 'package:test/test.dart';
 
 void main() {
   const pathProvider = AWSPathProvider();
-  group(testOn: 'vm', 'AWSPathProvider', () {
+  group('AWSPathProvider', () {
     test(
         r'User home is loaded from $HOME with highest priority on non-windows platforms.',
         () {

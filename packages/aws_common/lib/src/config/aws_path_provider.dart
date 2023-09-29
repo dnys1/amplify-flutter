@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:aws_common/aws_common.dart';
 import 'package:aws_common/src/config/aws_path_provider_stub.dart'
+    if (dart.library.js_interop) 'package:aws_common/src/config/aws_path_provider_stub.dart'
     if (dart.library.io) 'package:aws_common/src/config/aws_path_provider_io.dart';
 import 'package:meta/meta.dart';
 import 'package:os_detect/os_detect.dart' as os;

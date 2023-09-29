@@ -47,30 +47,25 @@ void main() {
       expect(controller.stream, emitsDone);
     });
 
-    test(
-      'allows controller to be used independently',
-      () {
-        final controller = StreamController<int>();
-        Future.sync(() async {
-          for (final n in [1, 3, 5, 7, 9]) {
-            await Future.delayed(Duration.zero, () => controller.add(n));
-          }
-        });
-        () async* {
-          for (final n in [2, 4, 6, 8, 10]) {
-            await Future<void>.delayed(Duration.zero);
-            yield n;
-          }
-        }()
-            .forward(controller);
-        expect(
-          controller.stream,
-          emitsInOrder([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, emitsDone]),
-        );
-      },
-      // Blocked by https://github.com/dart-lang/sdk/issues/50778
-      skip: zIsWasm,
-    );
+    test('allows controller to be used independently', () {
+      final controller = StreamController<int>();
+      Future.sync(() async {
+        for (final n in [1, 3, 5, 7, 9]) {
+          await Future.delayed(Duration.zero, () => controller.add(n));
+        }
+      });
+      () async* {
+        for (final n in [2, 4, 6, 8, 10]) {
+          await Future<void>.delayed(Duration.zero);
+          yield n;
+        }
+      }()
+          .forward(controller);
+      expect(
+        controller.stream,
+        emitsInOrder([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, emitsDone]),
+      );
+    });
 
     test('keeps controller alive', () async {
       final controller = StreamController<int>();

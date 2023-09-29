@@ -247,11 +247,14 @@ extension PropsMessagePort on MessagePort {
         transfer?.map<JSAny?>((o) => o.jsify()).toList().toJS,
       );
 
+  @JS('start')
+  external JSVoid _start();
+
   /// Starts the sending of messages queued on the port.
   ///
   /// Only needed when using `EventTarget.addEventListener`; it is implied when
   /// using [onMessage].
-  external JSVoid start();
+  void start() => _start();
 
   /// Disconnects the port, so it is no longer active.
   external JSVoid close();
@@ -372,4 +375,10 @@ extension PropsMessageChannel on MessageChannel {
 abstract class JSON {
   /// Stringifies a JSON-like object.
   external static JSString stringify(JSObject? object);
+}
+
+@JS()
+@staticInterop
+class URL {
+  external static JSString createObjectURL(JSAny obj);
 }

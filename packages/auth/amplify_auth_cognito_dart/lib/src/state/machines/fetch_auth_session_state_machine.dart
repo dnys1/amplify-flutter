@@ -53,7 +53,7 @@ class FetchAuthSessionStateMachine extends FetchAuthSessionStateMachineBase {
   CognitoIdentityClient get _cognitoIdentityClient => expect();
 
   /// The registered user pool config.
-  CognitoUserPoolConfig get _userPoolConfig => expect();
+  CognitoUserPoolConfig? get _userPoolConfig => get();
 
   /// The registered identity pool config
   CognitoIdentityCredentialsProvider? get _identityPoolConfig => get();
@@ -87,8 +87,12 @@ class FetchAuthSessionStateMachine extends FetchAuthSessionStateMachineBase {
   /// The logins map, used to associate the ID token to the Cognito identity
   /// when retrieving an authenticated identity.
   Map<String, String> _logins(String? idToken) {
-    final userPoolKey = 'cognito-idp.${_userPoolConfig.region}.amazonaws.com/'
-        '${_userPoolConfig.poolId}';
+    final userPoolConfig = _userPoolConfig;
+    if (userPoolConfig == null) {
+      return const {};
+    }
+    final userPoolKey = 'cognito-idp.${userPoolConfig.region}.amazonaws.com/'
+        '${userPoolConfig.poolId}';
     return {
       if (idToken != null) userPoolKey: idToken,
     };
@@ -122,6 +126,8 @@ class FetchAuthSessionStateMachine extends FetchAuthSessionStateMachineBase {
     final resp = await _withZoneOverrides(
       () => _cognitoIdentityClient.getCredentialsForIdentity(
         GetCredentialsForIdentityInput(
+          customRoleArn:
+              'arn:aws:iam::135644786197:role/RUM-Monitor-us-west-2-135644786197-8750339958561-Unauth',
           identityId: identityId,
           logins: BuiltMap(_logins(idToken)),
         ),
@@ -307,7 +313,7 @@ class FetchAuthSessionStateMachine extends FetchAuthSessionStateMachineBase {
     final refreshRequest = cognito_idp.InitiateAuthRequest.build((b) {
       b
         ..authFlow = cognito_idp.AuthFlowType.refreshTokenAuth
-        ..clientId = _userPoolConfig.appClientId
+        ..clientId = _userPoolConfig!.appClientId
         ..authParameters.addAll({
           CognitoConstants.refreshToken: userPoolTokens.refreshToken,
         });
@@ -351,7 +357,7 @@ class FetchAuthSessionStateMachine extends FetchAuthSessionStateMachineBase {
       late Iterable<String> keys;
       switch (userPoolTokens.signInMethod) {
         case CognitoSignInMethod.default$:
-          keys = CognitoUserPoolKeys(_userPoolConfig);
+          keys = CognitoUserPoolKeys(_userPoolConfig!);
           break;
         case CognitoSignInMethod.hostedUi:
           keys = HostedUiKeys(expect());

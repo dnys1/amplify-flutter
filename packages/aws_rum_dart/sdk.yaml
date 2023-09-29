@@ -1,0 +1,6 @@
+apis:
+  rum:
+  - com.amazonaws.rum#ListTagsForResource
+  - com.amazonaws.rum#PutRumEvents
+  - com.amazonaws.rum#TagResource
+  - com.amazonaws.rum#UntagResource

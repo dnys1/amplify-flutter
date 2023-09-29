@@ -18,23 +18,23 @@ class _$AuthUserPoolConfig extends AuthUserPoolConfig {
   @override
   final Uri? endpoint;
   @override
-  final _i2.AuthenticationFlowType? authFlowType;
+  final AuthenticationFlowType? authFlowType;
   @override
-  final _i8.BuiltList<_i2.AuthProvider>? socialProviders;
+  final _i2.BuiltList<AuthProvider>? socialProviders;
   @override
-  final _i8.BuiltList<_i3.AuthUsernameAttribute>? usernameAttributes;
+  final _i2.BuiltList<AuthUsernameAttribute>? usernameAttributes;
   @override
-  final _i8.BuiltList<_i2.CognitoUserAttributeKey>? signUpAttributes;
+  final _i2.BuiltList<CognitoUserAttributeKey>? signUpAttributes;
   @override
-  final _i8.BuiltList<_i2.CognitoUserAttributeKey>? verificationMechanisms;
+  final _i2.BuiltList<CognitoUserAttributeKey>? verificationMechanisms;
   @override
-  final _i4.AnalyticsPinpointConfig? pinpointConfig;
+  final AnalyticsPinpointConfig? pinpointConfig;
   @override
-  final _i5.AuthPasswordPolicy? passwordPolicy;
+  final AuthPasswordPolicy? passwordPolicy;
   @override
-  final _i6.AuthMfaConfiguration? mfaConfiguration;
+  final AuthMfaConfiguration? mfaConfiguration;
   @override
-  final _i7.AuthHostedUiConfig? hostedUi;
+  final AuthHostedUiConfig? hostedUi;
 
   factory _$AuthUserPoolConfig(
           [void Function(AuthUserPoolConfigBuilder)? updates]) =>
@@ -139,64 +139,63 @@ class AuthUserPoolConfigBuilder
   Uri? get endpoint => _$this._endpoint;
   set endpoint(Uri? endpoint) => _$this._endpoint = endpoint;
 
-  _i2.AuthenticationFlowType? _authFlowType;
-  _i2.AuthenticationFlowType? get authFlowType => _$this._authFlowType;
-  set authFlowType(_i2.AuthenticationFlowType? authFlowType) =>
+  AuthenticationFlowType? _authFlowType;
+  AuthenticationFlowType? get authFlowType => _$this._authFlowType;
+  set authFlowType(AuthenticationFlowType? authFlowType) =>
       _$this._authFlowType = authFlowType;
 
-  _i8.ListBuilder<_i2.AuthProvider>? _socialProviders;
-  _i8.ListBuilder<_i2.AuthProvider> get socialProviders =>
-      _$this._socialProviders ??= new _i8.ListBuilder<_i2.AuthProvider>();
-  set socialProviders(_i8.ListBuilder<_i2.AuthProvider>? socialProviders) =>
+  _i2.ListBuilder<AuthProvider>? _socialProviders;
+  _i2.ListBuilder<AuthProvider> get socialProviders =>
+      _$this._socialProviders ??= new _i2.ListBuilder<AuthProvider>();
+  set socialProviders(_i2.ListBuilder<AuthProvider>? socialProviders) =>
       _$this._socialProviders = socialProviders;
 
-  _i8.ListBuilder<_i3.AuthUsernameAttribute>? _usernameAttributes;
-  _i8.ListBuilder<_i3.AuthUsernameAttribute> get usernameAttributes =>
+  _i2.ListBuilder<AuthUsernameAttribute>? _usernameAttributes;
+  _i2.ListBuilder<AuthUsernameAttribute> get usernameAttributes =>
       _$this._usernameAttributes ??=
-          new _i8.ListBuilder<_i3.AuthUsernameAttribute>();
+          new _i2.ListBuilder<AuthUsernameAttribute>();
   set usernameAttributes(
-          _i8.ListBuilder<_i3.AuthUsernameAttribute>? usernameAttributes) =>
+          _i2.ListBuilder<AuthUsernameAttribute>? usernameAttributes) =>
       _$this._usernameAttributes = usernameAttributes;
 
-  _i8.ListBuilder<_i2.CognitoUserAttributeKey>? _signUpAttributes;
-  _i8.ListBuilder<_i2.CognitoUserAttributeKey> get signUpAttributes =>
+  _i2.ListBuilder<CognitoUserAttributeKey>? _signUpAttributes;
+  _i2.ListBuilder<CognitoUserAttributeKey> get signUpAttributes =>
       _$this._signUpAttributes ??=
-          new _i8.ListBuilder<_i2.CognitoUserAttributeKey>();
+          new _i2.ListBuilder<CognitoUserAttributeKey>();
   set signUpAttributes(
-          _i8.ListBuilder<_i2.CognitoUserAttributeKey>? signUpAttributes) =>
+          _i2.ListBuilder<CognitoUserAttributeKey>? signUpAttributes) =>
       _$this._signUpAttributes = signUpAttributes;
 
-  _i8.ListBuilder<_i2.CognitoUserAttributeKey>? _verificationMechanisms;
-  _i8.ListBuilder<_i2.CognitoUserAttributeKey> get verificationMechanisms =>
+  _i2.ListBuilder<CognitoUserAttributeKey>? _verificationMechanisms;
+  _i2.ListBuilder<CognitoUserAttributeKey> get verificationMechanisms =>
       _$this._verificationMechanisms ??=
-          new _i8.ListBuilder<_i2.CognitoUserAttributeKey>();
+          new _i2.ListBuilder<CognitoUserAttributeKey>();
   set verificationMechanisms(
-          _i8.ListBuilder<_i2.CognitoUserAttributeKey>?
-              verificationMechanisms) =>
+          _i2.ListBuilder<CognitoUserAttributeKey>? verificationMechanisms) =>
       _$this._verificationMechanisms = verificationMechanisms;
 
-  _i4.AnalyticsPinpointConfigBuilder? _pinpointConfig;
-  _i4.AnalyticsPinpointConfigBuilder get pinpointConfig =>
-      _$this._pinpointConfig ??= new _i4.AnalyticsPinpointConfigBuilder();
-  set pinpointConfig(_i4.AnalyticsPinpointConfigBuilder? pinpointConfig) =>
+  AnalyticsPinpointConfigBuilder? _pinpointConfig;
+  AnalyticsPinpointConfigBuilder get pinpointConfig =>
+      _$this._pinpointConfig ??= new AnalyticsPinpointConfigBuilder();
+  set pinpointConfig(AnalyticsPinpointConfigBuilder? pinpointConfig) =>
       _$this._pinpointConfig = pinpointConfig;
 
-  _i5.AuthPasswordPolicyBuilder? _passwordPolicy;
-  _i5.AuthPasswordPolicyBuilder get passwordPolicy =>
-      _$this._passwordPolicy ??= new _i5.AuthPasswordPolicyBuilder();
-  set passwordPolicy(_i5.AuthPasswordPolicyBuilder? passwordPolicy) =>
+  AuthPasswordPolicyBuilder? _passwordPolicy;
+  AuthPasswordPolicyBuilder get passwordPolicy =>
+      _$this._passwordPolicy ??= new AuthPasswordPolicyBuilder();
+  set passwordPolicy(AuthPasswordPolicyBuilder? passwordPolicy) =>
       _$this._passwordPolicy = passwordPolicy;
 
-  _i6.AuthMfaConfigurationBuilder? _mfaConfiguration;
-  _i6.AuthMfaConfigurationBuilder get mfaConfiguration =>
-      _$this._mfaConfiguration ??= new _i6.AuthMfaConfigurationBuilder();
-  set mfaConfiguration(_i6.AuthMfaConfigurationBuilder? mfaConfiguration) =>
+  AuthMfaConfigurationBuilder? _mfaConfiguration;
+  AuthMfaConfigurationBuilder get mfaConfiguration =>
+      _$this._mfaConfiguration ??= new AuthMfaConfigurationBuilder();
+  set mfaConfiguration(AuthMfaConfigurationBuilder? mfaConfiguration) =>
       _$this._mfaConfiguration = mfaConfiguration;
 
-  _i7.AuthHostedUiConfigBuilder? _hostedUi;
-  _i7.AuthHostedUiConfigBuilder get hostedUi =>
-      _$this._hostedUi ??= new _i7.AuthHostedUiConfigBuilder();
-  set hostedUi(_i7.AuthHostedUiConfigBuilder? hostedUi) =>
+  AuthHostedUiConfigBuilder? _hostedUi;
+  AuthHostedUiConfigBuilder get hostedUi =>
+      _$this._hostedUi ??= new AuthHostedUiConfigBuilder();
+  set hostedUi(AuthHostedUiConfigBuilder? hostedUi) =>
       _$this._hostedUi = hostedUi;
 
   AuthUserPoolConfigBuilder();

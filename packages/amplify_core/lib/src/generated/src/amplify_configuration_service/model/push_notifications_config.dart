@@ -3,8 +3,7 @@
 
 library amplify_core.amplify_configuration_service.model.push_notifications_config; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/push_notifications_pinpoint_config.dart'
-    as _i2;
+import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/push_notifications_pinpoint_config.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:smithy/smithy.dart' as _i1;
@@ -18,7 +17,7 @@ sealed class PushNotificationsConfig
     required String appId,
     required String region,
   }) =>
-      PushNotificationsConfigPinpoint$(_i2.PushNotificationsPinpointConfig(
+      PushNotificationsConfigPinpoint$(PushNotificationsPinpointConfig(
         appId: appId,
         region: region,
       ));
@@ -32,7 +31,7 @@ sealed class PushNotificationsConfig
       [PushNotificationsConfigSerializer()];
 
   /// The Amplify Push Notifications Pinpoint plugin configuration.
-  _i2.PushNotificationsPinpointConfig? get pinpoint => null;
+  PushNotificationsPinpointConfig? get pinpoint => null;
   @override
   Object get value => (pinpoint)!;
   @override
@@ -52,7 +51,7 @@ final class PushNotificationsConfigPinpoint$ extends PushNotificationsConfig {
   const PushNotificationsConfigPinpoint$(this.pinpoint) : super._();
 
   @override
-  final _i2.PushNotificationsPinpointConfig pinpoint;
+  final PushNotificationsPinpointConfig pinpoint;
 
   @override
   String get name => 'pinpoint';
@@ -98,8 +97,8 @@ class PushNotificationsConfigSerializer
       case 'pinpoint':
         return PushNotificationsConfigPinpoint$((serializers.deserialize(
           value,
-          specifiedType: const FullType(_i2.PushNotificationsPinpointConfig),
-        ) as _i2.PushNotificationsPinpointConfig));
+          specifiedType: const FullType(PushNotificationsPinpointConfig),
+        ) as PushNotificationsPinpointConfig));
     }
     return PushNotificationsConfig.sdkUnknown(
       key,
@@ -118,7 +117,7 @@ class PushNotificationsConfigSerializer
       switch (object) {
         PushNotificationsConfigPinpoint$(:final value) => serializers.serialize(
             value,
-            specifiedType: const FullType(_i2.PushNotificationsPinpointConfig),
+            specifiedType: const FullType(PushNotificationsPinpointConfig),
           ),
         PushNotificationsConfigSdkUnknown$(:final value) => value,
       },

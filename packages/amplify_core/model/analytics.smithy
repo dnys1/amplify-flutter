@@ -17,6 +17,7 @@ structure AnalyticsPinpointConfig {
     @required
     region: AWSRegion
 
+    // TODO: Move to runtime config. Show code snippet vs. config obj.
     @documentation("The rate at which recorded events should be flushed to Pinpoint.")
     @required
     autoFlushEventsInterval: Seconds = 30

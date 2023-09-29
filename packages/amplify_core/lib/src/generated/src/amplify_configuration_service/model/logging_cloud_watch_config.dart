@@ -3,15 +3,13 @@
 
 library amplify_core.amplify_configuration_service.model.logging_cloud_watch_config; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:amplify_core/amplify_config.dart' as _i2;
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/amplify_logging_constraints.dart'
-    as _i4;
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/logging_remote_config.dart'
-    as _i3;
+import 'package:amplify_core/amplify_config.dart';
+import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/amplify_logging_constraints.dart';
+import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/logging_remote_config.dart';
 import 'package:aws_common/aws_common.dart' as _i1;
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:smithy/smithy.dart' as _i5;
+import 'package:smithy/smithy.dart' as _i2;
 
 part 'logging_cloud_watch_config.g.dart';
 
@@ -22,13 +20,13 @@ abstract class LoggingCloudWatchConfig
     required String logGroupName,
     required String region,
     bool? enable,
-    _i2.LocalStorageSize? localStoreMaxSize,
+    LocalStorageSize? localStoreMaxSize,
     Duration? flushInterval,
-    _i3.LoggingRemoteConfig? defaultRemoteConfiguration,
-    _i4.AmplifyLoggingConstraints? loggingConstraints,
+    LoggingRemoteConfig? defaultRemoteConfiguration,
+    AmplifyLoggingConstraints? loggingConstraints,
   }) {
     enable ??= true;
-    localStoreMaxSize ??= const _i2.LocalStorageSize.MB(5);
+    localStoreMaxSize ??= const LocalStorageSize.MB(5);
     flushInterval ??= const Duration(seconds: 60);
     return _$LoggingCloudWatchConfig._(
       logGroupName: logGroupName,
@@ -47,7 +45,7 @@ abstract class LoggingCloudWatchConfig
 
   const LoggingCloudWatchConfig._();
 
-  static const List<_i5.SmithySerializer<LoggingCloudWatchConfig>> serializers =
+  static const List<_i2.SmithySerializer<LoggingCloudWatchConfig>> serializers =
       [LoggingCloudWatchConfigSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
@@ -63,8 +61,8 @@ abstract class LoggingCloudWatchConfig
   bool get enable;
   int get localStoreMaxSize;
   int get flushInterval;
-  _i3.LoggingRemoteConfig? get defaultRemoteConfiguration;
-  _i4.AmplifyLoggingConstraints? get loggingConstraints;
+  LoggingRemoteConfig? get defaultRemoteConfiguration;
+  AmplifyLoggingConstraints? get loggingConstraints;
   @override
   List<Object?> get props => [
         logGroupName,
@@ -111,7 +109,7 @@ abstract class LoggingCloudWatchConfig
 }
 
 class LoggingCloudWatchConfigSerializer
-    extends _i5.StructuredSmithySerializer<LoggingCloudWatchConfig> {
+    extends _i2.StructuredSmithySerializer<LoggingCloudWatchConfig> {
   const LoggingCloudWatchConfigSerializer() : super('LoggingCloudWatchConfig');
 
   @override
@@ -120,8 +118,8 @@ class LoggingCloudWatchConfigSerializer
         _$LoggingCloudWatchConfig,
       ];
   @override
-  Iterable<_i5.ShapeId> get supportedProtocols => const [
-        _i5.ShapeId(
+  Iterable<_i2.ShapeId> get supportedProtocols => const [
+        _i2.ShapeId(
           namespace: 'smithy.dart',
           shape: 'genericProtocol',
         )
@@ -145,8 +143,8 @@ class LoggingCloudWatchConfigSerializer
         case 'defaultRemoteConfiguration':
           result.defaultRemoteConfiguration.replace((serializers.deserialize(
             value,
-            specifiedType: const FullType(_i3.LoggingRemoteConfig),
-          ) as _i3.LoggingRemoteConfig));
+            specifiedType: const FullType(LoggingRemoteConfig),
+          ) as LoggingRemoteConfig));
         case 'enable':
           result.enable = (serializers.deserialize(
             value,
@@ -170,8 +168,8 @@ class LoggingCloudWatchConfigSerializer
         case 'loggingConstraints':
           result.loggingConstraints.replace((serializers.deserialize(
             value,
-            specifiedType: const FullType(_i4.AmplifyLoggingConstraints),
-          ) as _i4.AmplifyLoggingConstraints));
+            specifiedType: const FullType(AmplifyLoggingConstraints),
+          ) as AmplifyLoggingConstraints));
         case 'region':
           result.region = (serializers.deserialize(
             value,
@@ -231,7 +229,7 @@ class LoggingCloudWatchConfigSerializer
         ..add('defaultRemoteConfiguration')
         ..add(serializers.serialize(
           defaultRemoteConfiguration,
-          specifiedType: const FullType(_i3.LoggingRemoteConfig),
+          specifiedType: const FullType(LoggingRemoteConfig),
         ));
     }
     if (loggingConstraints != null) {
@@ -239,7 +237,7 @@ class LoggingCloudWatchConfigSerializer
         ..add('loggingConstraints')
         ..add(serializers.serialize(
           loggingConstraints,
-          specifiedType: const FullType(_i4.AmplifyLoggingConstraints),
+          specifiedType: const FullType(AmplifyLoggingConstraints),
         ));
     }
     return result$;

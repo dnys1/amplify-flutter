@@ -8,7 +8,7 @@ part of 'auth_mfa_configuration.dart';
 
 class _$AuthMfaConfiguration extends AuthMfaConfiguration {
   @override
-  final _i2.MfaStatus enforcementLevel;
+  final MfaConfiguration enforcementLevel;
   @override
   final bool sms;
   @override
@@ -61,9 +61,9 @@ class AuthMfaConfigurationBuilder
     implements Builder<AuthMfaConfiguration, AuthMfaConfigurationBuilder> {
   _$AuthMfaConfiguration? _$v;
 
-  _i2.MfaStatus? _enforcementLevel;
-  _i2.MfaStatus? get enforcementLevel => _$this._enforcementLevel;
-  set enforcementLevel(_i2.MfaStatus? enforcementLevel) =>
+  MfaConfiguration? _enforcementLevel;
+  MfaConfiguration? get enforcementLevel => _$this._enforcementLevel;
+  set enforcementLevel(MfaConfiguration? enforcementLevel) =>
       _$this._enforcementLevel = enforcementLevel;
 
   bool? _sms;

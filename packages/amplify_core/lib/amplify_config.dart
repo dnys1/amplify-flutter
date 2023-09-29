@@ -19,7 +19,8 @@ export 'package:amplify_core/amplify_core.dart'
         LogLevel,
         MfaConfiguration,
         MfaType,
-        StorageAccessLevel;
+        StorageAccessLevel,
+        UserLogLevel;
 
 export 'src/config/aws_amplify_config.dart';
 export 'src/generated/src/amplify_configuration_service/model/amplify_logging_constraints.dart';
@@ -49,4 +50,3 @@ export 'src/generated/src/amplify_configuration_service/model/rest_endpoint_conf
 export 'src/generated/src/amplify_configuration_service/model/storage_config.dart';
 export 'src/generated/src/amplify_configuration_service/model/storage_s3_bucket.dart';
 export 'src/generated/src/amplify_configuration_service/model/storage_s3_config.dart';
-export 'src/generated/src/amplify_configuration_service/model/user_log_level.dart';

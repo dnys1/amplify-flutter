@@ -3,14 +3,12 @@
 
 library amplify_core.amplify_configuration_service.model.amplify_logging_constraints; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:amplify_core/amplify_core.dart' as _i2;
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/user_log_level.dart'
-    as _i3;
+import 'package:amplify_core/amplify_core.dart';
 import 'package:aws_common/aws_common.dart' as _i1;
-import 'package:built_collection/built_collection.dart' as _i4;
+import 'package:built_collection/built_collection.dart' as _i2;
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:smithy/smithy.dart' as _i5;
+import 'package:smithy/smithy.dart' as _i3;
 
 part 'amplify_logging_constraints.g.dart';
 
@@ -19,17 +17,17 @@ abstract class AmplifyLoggingConstraints
     implements
         Built<AmplifyLoggingConstraints, AmplifyLoggingConstraintsBuilder> {
   factory AmplifyLoggingConstraints({
-    _i2.LogLevel? defaultLogLevel,
-    Map<_i2.Category, _i2.LogLevel>? categoryLogLevel,
-    Map<String, _i3.UserLogLevel>? userLogLevel,
+    LogLevel? defaultLogLevel,
+    Map<Category, LogLevel>? categoryLogLevel,
+    Map<String, UserLogLevel>? userLogLevel,
   }) {
-    defaultLogLevel ??= _i2.LogLevel.error;
+    defaultLogLevel ??= LogLevel.error;
     categoryLogLevel ??= const {};
     userLogLevel ??= const {};
     return _$AmplifyLoggingConstraints._(
       defaultLogLevel: defaultLogLevel,
-      categoryLogLevel: _i4.BuiltMap(categoryLogLevel),
-      userLogLevel: _i4.BuiltMap(userLogLevel),
+      categoryLogLevel: _i2.BuiltMap(categoryLogLevel),
+      userLogLevel: _i2.BuiltMap(userLogLevel),
     );
   }
 
@@ -39,20 +37,20 @@ abstract class AmplifyLoggingConstraints
 
   const AmplifyLoggingConstraints._();
 
-  static const List<_i5.SmithySerializer<AmplifyLoggingConstraints>>
+  static const List<_i3.SmithySerializer<AmplifyLoggingConstraints>>
       serializers = [AmplifyLoggingConstraintsSerializer()];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(AmplifyLoggingConstraintsBuilder b) {
     b
-      ..defaultLogLevel = _i2.LogLevel.error
+      ..defaultLogLevel = LogLevel.error
       ..categoryLogLevel.addAll(const {})
       ..userLogLevel.addAll(const {});
   }
 
-  _i2.LogLevel get defaultLogLevel;
-  _i4.BuiltMap<_i2.Category, _i2.LogLevel> get categoryLogLevel;
-  _i4.BuiltMap<String, _i3.UserLogLevel> get userLogLevel;
+  LogLevel get defaultLogLevel;
+  _i2.BuiltMap<Category, LogLevel> get categoryLogLevel;
+  _i2.BuiltMap<String, UserLogLevel> get userLogLevel;
   @override
   List<Object?> get props => [
         defaultLogLevel,
@@ -79,7 +77,7 @@ abstract class AmplifyLoggingConstraints
 }
 
 class AmplifyLoggingConstraintsSerializer
-    extends _i5.StructuredSmithySerializer<AmplifyLoggingConstraints> {
+    extends _i3.StructuredSmithySerializer<AmplifyLoggingConstraints> {
   const AmplifyLoggingConstraintsSerializer()
       : super('AmplifyLoggingConstraints');
 
@@ -89,8 +87,8 @@ class AmplifyLoggingConstraintsSerializer
         _$AmplifyLoggingConstraints,
       ];
   @override
-  Iterable<_i5.ShapeId> get supportedProtocols => const [
-        _i5.ShapeId(
+  Iterable<_i3.ShapeId> get supportedProtocols => const [
+        _i3.ShapeId(
           namespace: 'smithy.dart',
           shape: 'genericProtocol',
         )
@@ -115,29 +113,29 @@ class AmplifyLoggingConstraintsSerializer
           result.categoryLogLevel.replace((serializers.deserialize(
             value,
             specifiedType: const FullType(
-              _i4.BuiltMap,
+              _i2.BuiltMap,
               [
-                FullType(_i2.Category),
-                FullType(_i2.LogLevel),
+                FullType(Category),
+                FullType(LogLevel),
               ],
             ),
-          ) as _i4.BuiltMap<_i2.Category, _i2.LogLevel>));
+          ) as _i2.BuiltMap<Category, LogLevel>));
         case 'defaultLogLevel':
           result.defaultLogLevel = (serializers.deserialize(
             value,
-            specifiedType: const FullType(_i2.LogLevel),
-          ) as _i2.LogLevel);
+            specifiedType: const FullType(LogLevel),
+          ) as LogLevel);
         case 'userLogLevel':
           result.userLogLevel.replace((serializers.deserialize(
             value,
             specifiedType: const FullType(
-              _i4.BuiltMap,
+              _i2.BuiltMap,
               [
                 FullType(String),
-                FullType(_i3.UserLogLevel),
+                FullType(UserLogLevel),
               ],
             ),
-          ) as _i4.BuiltMap<String, _i3.UserLogLevel>));
+          ) as _i2.BuiltMap<String, UserLogLevel>));
       }
     }
 
@@ -161,26 +159,26 @@ class AmplifyLoggingConstraintsSerializer
       serializers.serialize(
         categoryLogLevel,
         specifiedType: const FullType(
-          _i4.BuiltMap,
+          _i2.BuiltMap,
           [
-            FullType(_i2.Category),
-            FullType(_i2.LogLevel),
+            FullType(Category),
+            FullType(LogLevel),
           ],
         ),
       ),
       'defaultLogLevel',
       serializers.serialize(
         defaultLogLevel,
-        specifiedType: const FullType(_i2.LogLevel),
+        specifiedType: const FullType(LogLevel),
       ),
       'userLogLevel',
       serializers.serialize(
         userLogLevel,
         specifiedType: const FullType(
-          _i4.BuiltMap,
+          _i2.BuiltMap,
           [
             FullType(String),
-            FullType(_i3.UserLogLevel),
+            FullType(UserLogLevel),
           ],
         ),
       ),

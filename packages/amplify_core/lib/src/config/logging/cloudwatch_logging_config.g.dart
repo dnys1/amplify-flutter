@@ -63,10 +63,15 @@ Map<String, dynamic> _$DefaultRemoteConfigurationToJson(
 
 LoggingConstraints _$LoggingConstraintsFromJson(Map<String, dynamic> json) =>
     LoggingConstraints(
-      defaultLogLevel: json['DefaultLogLevel'] as String? ?? 'ERROR',
+      defaultLogLevel: json['DefaultLogLevel'] == null
+          ? LogLevel.error
+          : const _LogLevelSerializer()
+              .fromJson(json['DefaultLogLevel'] as String),
       categoryLogLevel:
           (json['CategoryLogLevel'] as Map<String, dynamic>?)?.map(
-                (k, e) => MapEntry(k, e as String),
+                (k, e) => MapEntry(
+                    const _CategorySerializer().fromJson(k as String),
+                    const _LogLevelSerializer().fromJson(e as String)),
               ) ??
               const {},
       userLogLevel: (json['UserLogLevel'] as Map<String, dynamic>?)?.map(
@@ -78,23 +83,34 @@ LoggingConstraints _$LoggingConstraintsFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$LoggingConstraintsToJson(LoggingConstraints instance) =>
     <String, dynamic>{
-      'DefaultLogLevel': instance.defaultLogLevel,
-      'CategoryLogLevel': instance.categoryLogLevel,
+      'DefaultLogLevel':
+          const _LogLevelSerializer().toJson(instance.defaultLogLevel),
+      'CategoryLogLevel': instance.categoryLogLevel.map((k, e) => MapEntry(
+          const _CategorySerializer().toJson(k),
+          const _LogLevelSerializer().toJson(e))),
       'UserLogLevel':
           instance.userLogLevel.map((k, e) => MapEntry(k, e.toJson())),
     };
 
 UserLogLevel _$UserLogLevelFromJson(Map<String, dynamic> json) => UserLogLevel(
-      defaultLogLevel: json['DefaultLogLevel'] as String? ?? 'ERROR',
+      defaultLogLevel: json['DefaultLogLevel'] == null
+          ? LogLevel.error
+          : const _LogLevelSerializer()
+              .fromJson(json['DefaultLogLevel'] as String),
       categoryLogLevel:
           (json['CategoryLogLevel'] as Map<String, dynamic>?)?.map(
-                (k, e) => MapEntry(k, e as String),
+                (k, e) => MapEntry(
+                    const _CategorySerializer().fromJson(k as String),
+                    const _LogLevelSerializer().fromJson(e as String)),
               ) ??
               const {},
     );
 
 Map<String, dynamic> _$UserLogLevelToJson(UserLogLevel instance) =>
     <String, dynamic>{
-      'DefaultLogLevel': instance.defaultLogLevel,
-      'CategoryLogLevel': instance.categoryLogLevel,
+      'DefaultLogLevel':
+          const _LogLevelSerializer().toJson(instance.defaultLogLevel),
+      'CategoryLogLevel': instance.categoryLogLevel.map((k, e) => MapEntry(
+          const _CategorySerializer().toJson(k),
+          const _LogLevelSerializer().toJson(e))),
     };

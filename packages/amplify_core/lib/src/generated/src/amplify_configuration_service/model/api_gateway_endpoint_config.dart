@@ -3,12 +3,11 @@
 
 library amplify_core.amplify_configuration_service.model.api_gateway_endpoint_config; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/api_authorization_mode.dart'
-    as _i2;
+import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/api_authorization_mode.dart';
 import 'package:aws_common/aws_common.dart' as _i1;
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:smithy/smithy.dart' as _i3;
+import 'package:smithy/smithy.dart' as _i2;
 
 part 'api_gateway_endpoint_config.g.dart';
 
@@ -22,7 +21,7 @@ abstract class ApiGatewayEndpointConfig
     required String name,
     required Uri endpoint,
     required String region,
-    required _i2.ApiAuthorizationMode authMode,
+    required ApiAuthorizationMode authMode,
   }) {
     return _$ApiGatewayEndpointConfig._(
       name: name,
@@ -39,7 +38,7 @@ abstract class ApiGatewayEndpointConfig
 
   const ApiGatewayEndpointConfig._();
 
-  static const List<_i3.SmithySerializer<ApiGatewayEndpointConfig>>
+  static const List<_i2.SmithySerializer<ApiGatewayEndpointConfig>>
       serializers = [ApiGatewayEndpointConfigSerializer()];
 
   /// A name which can be used to identify this API
@@ -52,7 +51,7 @@ abstract class ApiGatewayEndpointConfig
   String get region;
 
   /// An authorization mode of an AWS API. APIs may accept multiple authorization modes which must be configured independently.
-  _i2.ApiAuthorizationMode get authMode;
+  ApiAuthorizationMode get authMode;
   @override
   List<Object?> get props => [
         name,
@@ -84,7 +83,7 @@ abstract class ApiGatewayEndpointConfig
 }
 
 class ApiGatewayEndpointConfigSerializer
-    extends _i3.StructuredSmithySerializer<ApiGatewayEndpointConfig> {
+    extends _i2.StructuredSmithySerializer<ApiGatewayEndpointConfig> {
   const ApiGatewayEndpointConfigSerializer()
       : super('ApiGatewayEndpointConfig');
 
@@ -94,8 +93,8 @@ class ApiGatewayEndpointConfigSerializer
         _$ApiGatewayEndpointConfig,
       ];
   @override
-  Iterable<_i3.ShapeId> get supportedProtocols => const [
-        _i3.ShapeId(
+  Iterable<_i2.ShapeId> get supportedProtocols => const [
+        _i2.ShapeId(
           namespace: 'smithy.dart',
           shape: 'genericProtocol',
         )
@@ -119,8 +118,8 @@ class ApiGatewayEndpointConfigSerializer
         case 'authMode':
           result.authMode = (serializers.deserialize(
             value,
-            specifiedType: const FullType(_i2.ApiAuthorizationMode),
-          ) as _i2.ApiAuthorizationMode);
+            specifiedType: const FullType(ApiAuthorizationMode),
+          ) as ApiAuthorizationMode);
         case 'endpoint':
           result.endpoint = (serializers.deserialize(
             value,
@@ -155,7 +154,7 @@ class ApiGatewayEndpointConfigSerializer
       'authMode',
       serializers.serialize(
         authMode,
-        specifiedType: const FullType(_i2.ApiAuthorizationMode),
+        specifiedType: const FullType(ApiAuthorizationMode),
       ),
       'endpoint',
       serializers.serialize(

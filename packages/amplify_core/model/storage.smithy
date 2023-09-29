@@ -16,11 +16,12 @@ structure StorageS3Config {
 @documentation("The configuration for an AWS S3 bucket.")
 structure StorageS3Bucket {
     @required
-    bucketName: BucketName
+    bucket: String
 
     @required
     region: AWSRegion
 
+    // TODO: Move to runtime
     @required
     defaultAccessLevel: StorageAccessLevel = "guest"
 }
@@ -28,8 +29,6 @@ structure StorageS3Bucket {
 list StorageS3Buckets {
     member: StorageS3Bucket
 }
-
-string BucketName
 
 enum StorageAccessLevel {
     GUEST = "guest"

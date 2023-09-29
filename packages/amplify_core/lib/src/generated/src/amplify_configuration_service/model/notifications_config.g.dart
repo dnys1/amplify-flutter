@@ -8,7 +8,7 @@ part of 'notifications_config.dart';
 
 class _$NotificationsConfig extends NotificationsConfig {
   @override
-  final _i2.PushNotificationsConfig? push;
+  final PushNotificationsConfig? push;
 
   factory _$NotificationsConfig(
           [void Function(NotificationsConfigBuilder)? updates]) =>
@@ -44,9 +44,9 @@ class NotificationsConfigBuilder
     implements Builder<NotificationsConfig, NotificationsConfigBuilder> {
   _$NotificationsConfig? _$v;
 
-  _i2.PushNotificationsConfig? _push;
-  _i2.PushNotificationsConfig? get push => _$this._push;
-  set push(_i2.PushNotificationsConfig? push) => _$this._push = push;
+  PushNotificationsConfig? _push;
+  PushNotificationsConfig? get push => _$this._push;
+  set push(PushNotificationsConfig? push) => _$this._push = push;
 
   NotificationsConfigBuilder();
 

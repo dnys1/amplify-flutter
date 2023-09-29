@@ -18,9 +18,9 @@ class _$LoggingCloudWatchConfig extends LoggingCloudWatchConfig {
   @override
   final int flushInterval;
   @override
-  final _i3.LoggingRemoteConfig? defaultRemoteConfiguration;
+  final LoggingRemoteConfig? defaultRemoteConfiguration;
   @override
-  final _i4.AmplifyLoggingConstraints? loggingConstraints;
+  final AmplifyLoggingConstraints? loggingConstraints;
 
   factory _$LoggingCloudWatchConfig(
           [void Function(LoggingCloudWatchConfigBuilder)? updates]) =>
@@ -111,19 +111,18 @@ class LoggingCloudWatchConfigBuilder
   set flushInterval(int? flushInterval) =>
       _$this._flushInterval = flushInterval;
 
-  _i3.LoggingRemoteConfigBuilder? _defaultRemoteConfiguration;
-  _i3.LoggingRemoteConfigBuilder get defaultRemoteConfiguration =>
-      _$this._defaultRemoteConfiguration ??=
-          new _i3.LoggingRemoteConfigBuilder();
+  LoggingRemoteConfigBuilder? _defaultRemoteConfiguration;
+  LoggingRemoteConfigBuilder get defaultRemoteConfiguration =>
+      _$this._defaultRemoteConfiguration ??= new LoggingRemoteConfigBuilder();
   set defaultRemoteConfiguration(
-          _i3.LoggingRemoteConfigBuilder? defaultRemoteConfiguration) =>
+          LoggingRemoteConfigBuilder? defaultRemoteConfiguration) =>
       _$this._defaultRemoteConfiguration = defaultRemoteConfiguration;
 
-  _i4.AmplifyLoggingConstraintsBuilder? _loggingConstraints;
-  _i4.AmplifyLoggingConstraintsBuilder get loggingConstraints =>
-      _$this._loggingConstraints ??= new _i4.AmplifyLoggingConstraintsBuilder();
+  AmplifyLoggingConstraintsBuilder? _loggingConstraints;
+  AmplifyLoggingConstraintsBuilder get loggingConstraints =>
+      _$this._loggingConstraints ??= new AmplifyLoggingConstraintsBuilder();
   set loggingConstraints(
-          _i4.AmplifyLoggingConstraintsBuilder? loggingConstraints) =>
+          AmplifyLoggingConstraintsBuilder? loggingConstraints) =>
       _$this._loggingConstraints = loggingConstraints;
 
   LoggingCloudWatchConfigBuilder() {

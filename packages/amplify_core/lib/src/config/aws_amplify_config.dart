@@ -358,28 +358,9 @@ abstract class AWSAmplifyConfig
           ),
           loggingConstraints: loggingConfig.loggingConstraints?.let(
             (constraints) => AmplifyLoggingConstraints(
-              defaultLogLevel: LogLevel.parse(constraints.defaultLogLevel),
-              categoryLogLevel: constraints.categoryLogLevel.map(
-                (category, logLevel) => MapEntry(
-                  Category.parse(category),
-                  LogLevel.parse(logLevel),
-                ),
-              ),
-              userLogLevel: constraints.userLogLevel.map(
-                (userId, userLogLevel) => MapEntry(
-                  userId,
-                  UserLogLevel(
-                    defaultLogLevel:
-                        LogLevel.parse(userLogLevel.defaultLogLevel),
-                    categoryLogLevel: userLogLevel.categoryLogLevel.map(
-                      (category, logLevel) => MapEntry(
-                        Category.parse(category),
-                        LogLevel.parse(logLevel),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              defaultLogLevel: constraints.defaultLogLevel,
+              categoryLogLevel: constraints.categoryLogLevel,
+              userLogLevel: constraints.userLogLevel,
             ),
           ),
         );
@@ -1100,26 +1081,9 @@ abstract class AWSAmplifyConfig
             ),
             loggingConstraints: loggingConfig.loggingConstraints?.let(
               (constraints) => core.LoggingConstraints(
-                defaultLogLevel: constraints.defaultLogLevel.name.screamingCase,
-                categoryLogLevel: {
-                  for (final MapEntry(key: category, value: logLevel)
-                      in (constraints.categoryLogLevel.toMap()).entries)
-                    category.name.screamingCase: logLevel.name.screamingCase,
-                },
-                userLogLevel: {
-                  for (final MapEntry(key: userId, value: constraints)
-                      in constraints.userLogLevel.entries)
-                    userId: core.UserLogLevel(
-                      defaultLogLevel:
-                          constraints.defaultLogLevel.name.screamingCase,
-                      categoryLogLevel: {
-                        for (final MapEntry(key: category, value: logLevel)
-                            in constraints.categoryLogLevel.entries)
-                          category.name.screamingCase:
-                              logLevel.name.screamingCase,
-                      },
-                    ),
-                },
+                defaultLogLevel: constraints.defaultLogLevel,
+                categoryLogLevel: constraints.categoryLogLevel.toMap(),
+                userLogLevel: constraints.userLogLevel.toMap(),
               ),
             ),
           ),

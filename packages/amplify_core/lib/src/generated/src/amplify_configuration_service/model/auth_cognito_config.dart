@@ -3,14 +3,12 @@
 
 library amplify_core.amplify_configuration_service.model.auth_cognito_config; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/auth_identity_pool_config.dart'
-    as _i3;
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/auth_user_pool_config.dart'
-    as _i2;
+import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/auth_identity_pool_config.dart';
+import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/auth_user_pool_config.dart';
 import 'package:aws_common/aws_common.dart' as _i1;
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:smithy/smithy.dart' as _i4;
+import 'package:smithy/smithy.dart' as _i2;
 
 part 'auth_cognito_config.g.dart';
 
@@ -18,8 +16,8 @@ abstract class AuthCognitoConfig
     with _i1.AWSEquatable<AuthCognitoConfig>
     implements Built<AuthCognitoConfig, AuthCognitoConfigBuilder> {
   factory AuthCognitoConfig({
-    _i2.AuthUserPoolConfig? userPool,
-    _i3.AuthIdentityPoolConfig? identityPool,
+    AuthUserPoolConfig? userPool,
+    AuthIdentityPoolConfig? identityPool,
   }) {
     return _$AuthCognitoConfig._(
       userPool: userPool,
@@ -32,12 +30,12 @@ abstract class AuthCognitoConfig
 
   const AuthCognitoConfig._();
 
-  static const List<_i4.SmithySerializer<AuthCognitoConfig>> serializers = [
+  static const List<_i2.SmithySerializer<AuthCognitoConfig>> serializers = [
     AuthCognitoConfigSerializer()
   ];
 
-  _i2.AuthUserPoolConfig? get userPool;
-  _i3.AuthIdentityPoolConfig? get identityPool;
+  AuthUserPoolConfig? get userPool;
+  AuthIdentityPoolConfig? get identityPool;
   @override
   List<Object?> get props => [
         userPool,
@@ -59,7 +57,7 @@ abstract class AuthCognitoConfig
 }
 
 class AuthCognitoConfigSerializer
-    extends _i4.StructuredSmithySerializer<AuthCognitoConfig> {
+    extends _i2.StructuredSmithySerializer<AuthCognitoConfig> {
   const AuthCognitoConfigSerializer() : super('AuthCognitoConfig');
 
   @override
@@ -68,8 +66,8 @@ class AuthCognitoConfigSerializer
         _$AuthCognitoConfig,
       ];
   @override
-  Iterable<_i4.ShapeId> get supportedProtocols => const [
-        _i4.ShapeId(
+  Iterable<_i2.ShapeId> get supportedProtocols => const [
+        _i2.ShapeId(
           namespace: 'smithy.dart',
           shape: 'genericProtocol',
         )
@@ -93,13 +91,13 @@ class AuthCognitoConfigSerializer
         case 'identityPool':
           result.identityPool.replace((serializers.deserialize(
             value,
-            specifiedType: const FullType(_i3.AuthIdentityPoolConfig),
-          ) as _i3.AuthIdentityPoolConfig));
+            specifiedType: const FullType(AuthIdentityPoolConfig),
+          ) as AuthIdentityPoolConfig));
         case 'userPool':
           result.userPool.replace((serializers.deserialize(
             value,
-            specifiedType: const FullType(_i2.AuthUserPoolConfig),
-          ) as _i2.AuthUserPoolConfig));
+            specifiedType: const FullType(AuthUserPoolConfig),
+          ) as AuthUserPoolConfig));
       }
     }
 
@@ -119,7 +117,7 @@ class AuthCognitoConfigSerializer
         ..add('identityPool')
         ..add(serializers.serialize(
           identityPool,
-          specifiedType: const FullType(_i3.AuthIdentityPoolConfig),
+          specifiedType: const FullType(AuthIdentityPoolConfig),
         ));
     }
     if (userPool != null) {
@@ -127,7 +125,7 @@ class AuthCognitoConfigSerializer
         ..add('userPool')
         ..add(serializers.serialize(
           userPool,
-          specifiedType: const FullType(_i2.AuthUserPoolConfig),
+          specifiedType: const FullType(AuthUserPoolConfig),
         ));
     }
     return result$;

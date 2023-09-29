@@ -8,7 +8,7 @@ part of 'storage_s3_config.dart';
 
 class _$StorageS3Config extends StorageS3Config {
   @override
-  final _i3.BuiltList<_i2.StorageS3Bucket> buckets;
+  final _i2.BuiltList<StorageS3Bucket> buckets;
 
   factory _$StorageS3Config([void Function(StorageS3ConfigBuilder)? updates]) =>
       (new StorageS3ConfigBuilder()..update(updates))._build();
@@ -45,10 +45,10 @@ class StorageS3ConfigBuilder
     implements Builder<StorageS3Config, StorageS3ConfigBuilder> {
   _$StorageS3Config? _$v;
 
-  _i3.ListBuilder<_i2.StorageS3Bucket>? _buckets;
-  _i3.ListBuilder<_i2.StorageS3Bucket> get buckets =>
-      _$this._buckets ??= new _i3.ListBuilder<_i2.StorageS3Bucket>();
-  set buckets(_i3.ListBuilder<_i2.StorageS3Bucket>? buckets) =>
+  _i2.ListBuilder<StorageS3Bucket>? _buckets;
+  _i2.ListBuilder<StorageS3Bucket> get buckets =>
+      _$this._buckets ??= new _i2.ListBuilder<StorageS3Bucket>();
+  set buckets(_i2.ListBuilder<StorageS3Bucket>? buckets) =>
       _$this._buckets = buckets;
 
   StorageS3ConfigBuilder();

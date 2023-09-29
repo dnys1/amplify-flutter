@@ -3,21 +3,20 @@
 
 library amplify_core.amplify_configuration_service.model.api_config; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/api_endpoint_config.dart'
-    as _i2;
+import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/api_endpoint_config.dart';
 import 'package:aws_common/aws_common.dart' as _i1;
-import 'package:built_collection/built_collection.dart' as _i3;
+import 'package:built_collection/built_collection.dart' as _i2;
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:smithy/smithy.dart' as _i4;
+import 'package:smithy/smithy.dart' as _i3;
 
 part 'api_config.g.dart';
 
 abstract class ApiConfig
     with _i1.AWSEquatable<ApiConfig>
     implements Built<ApiConfig, ApiConfigBuilder> {
-  factory ApiConfig({required List<_i2.ApiEndpointConfig> endpoints}) {
-    return _$ApiConfig._(endpoints: _i3.BuiltList(endpoints));
+  factory ApiConfig({required List<ApiEndpointConfig> endpoints}) {
+    return _$ApiConfig._(endpoints: _i2.BuiltList(endpoints));
   }
 
   factory ApiConfig.build([void Function(ApiConfigBuilder) updates]) =
@@ -25,11 +24,11 @@ abstract class ApiConfig
 
   const ApiConfig._();
 
-  static const List<_i4.SmithySerializer<ApiConfig>> serializers = [
+  static const List<_i3.SmithySerializer<ApiConfig>> serializers = [
     ApiConfigSerializer()
   ];
 
-  _i3.BuiltList<_i2.ApiEndpointConfig> get endpoints;
+  _i2.BuiltList<ApiEndpointConfig> get endpoints;
   @override
   List<Object?> get props => [endpoints];
   @override
@@ -43,7 +42,7 @@ abstract class ApiConfig
   }
 }
 
-class ApiConfigSerializer extends _i4.StructuredSmithySerializer<ApiConfig> {
+class ApiConfigSerializer extends _i3.StructuredSmithySerializer<ApiConfig> {
   const ApiConfigSerializer() : super('ApiConfig');
 
   @override
@@ -52,8 +51,8 @@ class ApiConfigSerializer extends _i4.StructuredSmithySerializer<ApiConfig> {
         _$ApiConfig,
       ];
   @override
-  Iterable<_i4.ShapeId> get supportedProtocols => const [
-        _i4.ShapeId(
+  Iterable<_i3.ShapeId> get supportedProtocols => const [
+        _i3.ShapeId(
           namespace: 'smithy.dart',
           shape: 'genericProtocol',
         )
@@ -78,10 +77,10 @@ class ApiConfigSerializer extends _i4.StructuredSmithySerializer<ApiConfig> {
           result.endpoints.replace((serializers.deserialize(
             value,
             specifiedType: const FullType(
-              _i3.BuiltList,
-              [FullType(_i2.ApiEndpointConfig)],
+              _i2.BuiltList,
+              [FullType(ApiEndpointConfig)],
             ),
-          ) as _i3.BuiltList<_i2.ApiEndpointConfig>));
+          ) as _i2.BuiltList<ApiEndpointConfig>));
       }
     }
 
@@ -101,8 +100,8 @@ class ApiConfigSerializer extends _i4.StructuredSmithySerializer<ApiConfig> {
       serializers.serialize(
         endpoints,
         specifiedType: const FullType(
-          _i3.BuiltList,
-          [FullType(_i2.ApiEndpointConfig)],
+          _i2.BuiltList,
+          [FullType(ApiEndpointConfig)],
         ),
       ),
     ]);

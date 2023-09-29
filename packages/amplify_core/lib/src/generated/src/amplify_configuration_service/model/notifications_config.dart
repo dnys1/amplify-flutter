@@ -3,12 +3,11 @@
 
 library amplify_core.amplify_configuration_service.model.notifications_config; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/push_notifications_config.dart'
-    as _i2;
+import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/push_notifications_config.dart';
 import 'package:aws_common/aws_common.dart' as _i1;
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:smithy/smithy.dart' as _i3;
+import 'package:smithy/smithy.dart' as _i2;
 
 part 'notifications_config.g.dart';
 
@@ -17,7 +16,7 @@ abstract class NotificationsConfig
     with _i1.AWSEquatable<NotificationsConfig>
     implements Built<NotificationsConfig, NotificationsConfigBuilder> {
   /// The Amplify Notifications category configuration.
-  factory NotificationsConfig({_i2.PushNotificationsConfig? push}) {
+  factory NotificationsConfig({PushNotificationsConfig? push}) {
     return _$NotificationsConfig._(push: push);
   }
 
@@ -28,12 +27,12 @@ abstract class NotificationsConfig
 
   const NotificationsConfig._();
 
-  static const List<_i3.SmithySerializer<NotificationsConfig>> serializers = [
+  static const List<_i2.SmithySerializer<NotificationsConfig>> serializers = [
     NotificationsConfigSerializer()
   ];
 
   /// The Amplify Push Notifications subcategory configuration.
-  _i2.PushNotificationsConfig? get push;
+  PushNotificationsConfig? get push;
   @override
   List<Object?> get props => [push];
   @override
@@ -48,7 +47,7 @@ abstract class NotificationsConfig
 }
 
 class NotificationsConfigSerializer
-    extends _i3.StructuredSmithySerializer<NotificationsConfig> {
+    extends _i2.StructuredSmithySerializer<NotificationsConfig> {
   const NotificationsConfigSerializer() : super('NotificationsConfig');
 
   @override
@@ -57,8 +56,8 @@ class NotificationsConfigSerializer
         _$NotificationsConfig,
       ];
   @override
-  Iterable<_i3.ShapeId> get supportedProtocols => const [
-        _i3.ShapeId(
+  Iterable<_i2.ShapeId> get supportedProtocols => const [
+        _i2.ShapeId(
           namespace: 'smithy.dart',
           shape: 'genericProtocol',
         )
@@ -82,8 +81,8 @@ class NotificationsConfigSerializer
         case 'push':
           result.push = (serializers.deserialize(
             value,
-            specifiedType: const FullType(_i2.PushNotificationsConfig),
-          ) as _i2.PushNotificationsConfig);
+            specifiedType: const FullType(PushNotificationsConfig),
+          ) as PushNotificationsConfig);
       }
     }
 
@@ -103,7 +102,7 @@ class NotificationsConfigSerializer
         ..add('push')
         ..add(serializers.serialize(
           push,
-          specifiedType: const FullType(_i2.PushNotificationsConfig),
+          specifiedType: const FullType(PushNotificationsConfig),
         ));
     }
     return result$;

@@ -3,13 +3,12 @@
 
 library amplify_core.amplify_configuration_service.model.app_sync_endpoint_config; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/api_authorization_mode.dart'
-    as _i2;
+import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/api_authorization_mode.dart';
 import 'package:aws_common/aws_common.dart' as _i1;
-import 'package:built_collection/built_collection.dart' as _i3;
+import 'package:built_collection/built_collection.dart' as _i2;
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:smithy/smithy.dart' as _i4;
+import 'package:smithy/smithy.dart' as _i3;
 
 part 'app_sync_endpoint_config.g.dart';
 
@@ -22,8 +21,8 @@ abstract class AppSyncEndpointConfig
     required String name,
     required Uri endpoint,
     required String region,
-    required _i2.ApiAuthorizationMode authMode,
-    List<_i2.ApiAuthorizationMode>? additionalAuthModes,
+    required ApiAuthorizationMode authMode,
+    List<ApiAuthorizationMode>? additionalAuthModes,
   }) {
     additionalAuthModes ??= const [];
     return _$AppSyncEndpointConfig._(
@@ -31,7 +30,7 @@ abstract class AppSyncEndpointConfig
       endpoint: endpoint,
       region: region,
       authMode: authMode,
-      additionalAuthModes: _i3.BuiltList(additionalAuthModes),
+      additionalAuthModes: _i2.BuiltList(additionalAuthModes),
     );
   }
 
@@ -42,7 +41,7 @@ abstract class AppSyncEndpointConfig
 
   const AppSyncEndpointConfig._();
 
-  static const List<_i4.SmithySerializer<AppSyncEndpointConfig>> serializers = [
+  static const List<_i3.SmithySerializer<AppSyncEndpointConfig>> serializers = [
     AppSyncEndpointConfigSerializer()
   ];
 
@@ -61,10 +60,10 @@ abstract class AppSyncEndpointConfig
   String get region;
 
   /// An authorization mode of an AWS API. APIs may accept multiple authorization modes which must be configured independently.
-  _i2.ApiAuthorizationMode get authMode;
+  ApiAuthorizationMode get authMode;
 
   /// Additional authorization modes supported by the API. Used by the API/DataStore categories for multi-auth decisions.
-  _i3.BuiltList<_i2.ApiAuthorizationMode> get additionalAuthModes;
+  _i2.BuiltList<ApiAuthorizationMode> get additionalAuthModes;
   @override
   List<Object?> get props => [
         name,
@@ -101,7 +100,7 @@ abstract class AppSyncEndpointConfig
 }
 
 class AppSyncEndpointConfigSerializer
-    extends _i4.StructuredSmithySerializer<AppSyncEndpointConfig> {
+    extends _i3.StructuredSmithySerializer<AppSyncEndpointConfig> {
   const AppSyncEndpointConfigSerializer() : super('AppSyncEndpointConfig');
 
   @override
@@ -110,8 +109,8 @@ class AppSyncEndpointConfigSerializer
         _$AppSyncEndpointConfig,
       ];
   @override
-  Iterable<_i4.ShapeId> get supportedProtocols => const [
-        _i4.ShapeId(
+  Iterable<_i3.ShapeId> get supportedProtocols => const [
+        _i3.ShapeId(
           namespace: 'smithy.dart',
           shape: 'genericProtocol',
         )
@@ -136,15 +135,15 @@ class AppSyncEndpointConfigSerializer
           result.additionalAuthModes.replace((serializers.deserialize(
             value,
             specifiedType: const FullType(
-              _i3.BuiltList,
-              [FullType(_i2.ApiAuthorizationMode)],
+              _i2.BuiltList,
+              [FullType(ApiAuthorizationMode)],
             ),
-          ) as _i3.BuiltList<_i2.ApiAuthorizationMode>));
+          ) as _i2.BuiltList<ApiAuthorizationMode>));
         case 'authMode':
           result.authMode = (serializers.deserialize(
             value,
-            specifiedType: const FullType(_i2.ApiAuthorizationMode),
-          ) as _i2.ApiAuthorizationMode);
+            specifiedType: const FullType(ApiAuthorizationMode),
+          ) as ApiAuthorizationMode);
         case 'endpoint':
           result.endpoint = (serializers.deserialize(
             value,
@@ -185,14 +184,14 @@ class AppSyncEndpointConfigSerializer
       serializers.serialize(
         additionalAuthModes,
         specifiedType: const FullType(
-          _i3.BuiltList,
-          [FullType(_i2.ApiAuthorizationMode)],
+          _i2.BuiltList,
+          [FullType(ApiAuthorizationMode)],
         ),
       ),
       'authMode',
       serializers.serialize(
         authMode,
-        specifiedType: const FullType(_i2.ApiAuthorizationMode),
+        specifiedType: const FullType(ApiAuthorizationMode),
       ),
       'endpoint',
       serializers.serialize(

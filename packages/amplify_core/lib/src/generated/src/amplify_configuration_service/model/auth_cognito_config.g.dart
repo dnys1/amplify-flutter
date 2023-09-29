@@ -8,9 +8,9 @@ part of 'auth_cognito_config.dart';
 
 class _$AuthCognitoConfig extends AuthCognitoConfig {
   @override
-  final _i2.AuthUserPoolConfig? userPool;
+  final AuthUserPoolConfig? userPool;
   @override
-  final _i3.AuthIdentityPoolConfig? identityPool;
+  final AuthIdentityPoolConfig? identityPool;
 
   factory _$AuthCognitoConfig(
           [void Function(AuthCognitoConfigBuilder)? updates]) =>
@@ -48,16 +48,16 @@ class AuthCognitoConfigBuilder
     implements Builder<AuthCognitoConfig, AuthCognitoConfigBuilder> {
   _$AuthCognitoConfig? _$v;
 
-  _i2.AuthUserPoolConfigBuilder? _userPool;
-  _i2.AuthUserPoolConfigBuilder get userPool =>
-      _$this._userPool ??= new _i2.AuthUserPoolConfigBuilder();
-  set userPool(_i2.AuthUserPoolConfigBuilder? userPool) =>
+  AuthUserPoolConfigBuilder? _userPool;
+  AuthUserPoolConfigBuilder get userPool =>
+      _$this._userPool ??= new AuthUserPoolConfigBuilder();
+  set userPool(AuthUserPoolConfigBuilder? userPool) =>
       _$this._userPool = userPool;
 
-  _i3.AuthIdentityPoolConfigBuilder? _identityPool;
-  _i3.AuthIdentityPoolConfigBuilder get identityPool =>
-      _$this._identityPool ??= new _i3.AuthIdentityPoolConfigBuilder();
-  set identityPool(_i3.AuthIdentityPoolConfigBuilder? identityPool) =>
+  AuthIdentityPoolConfigBuilder? _identityPool;
+  AuthIdentityPoolConfigBuilder get identityPool =>
+      _$this._identityPool ??= new AuthIdentityPoolConfigBuilder();
+  set identityPool(AuthIdentityPoolConfigBuilder? identityPool) =>
       _$this._identityPool = identityPool;
 
   AuthCognitoConfigBuilder();

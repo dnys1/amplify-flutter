@@ -127,6 +127,10 @@ Future<void> _generateFor({
           const ShapeOverrides(
         Reference('LogLevel', 'package:amplify_core/amplify_core.dart'),
       ),
+      ShapeId.parse('com.amazonaws.amplify.core#UserLogLevel'):
+          const ShapeOverrides(
+        Reference('UserLogLevel', 'package:amplify_core/amplify_core.dart'),
+      ),
       ShapeId.parse('com.amazonaws.amplify.core#AmplifyCategory'):
           const ShapeOverrides(
         Reference('Category', 'package:amplify_core/amplify_core.dart'),

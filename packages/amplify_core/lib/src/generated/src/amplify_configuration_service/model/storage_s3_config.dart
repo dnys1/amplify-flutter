@@ -3,13 +3,12 @@
 
 library amplify_core.amplify_configuration_service.model.storage_s3_config; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/storage_s3_bucket.dart'
-    as _i2;
+import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/storage_s3_bucket.dart';
 import 'package:aws_common/aws_common.dart' as _i1;
-import 'package:built_collection/built_collection.dart' as _i3;
+import 'package:built_collection/built_collection.dart' as _i2;
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:smithy/smithy.dart' as _i4;
+import 'package:smithy/smithy.dart' as _i3;
 
 part 'storage_s3_config.g.dart';
 
@@ -18,8 +17,8 @@ abstract class StorageS3Config
     with _i1.AWSEquatable<StorageS3Config>
     implements Built<StorageS3Config, StorageS3ConfigBuilder> {
   /// The Amplify Storage S3 plugin configuration.
-  factory StorageS3Config({required List<_i2.StorageS3Bucket> buckets}) {
-    return _$StorageS3Config._(buckets: _i3.BuiltList(buckets));
+  factory StorageS3Config({required List<StorageS3Bucket> buckets}) {
+    return _$StorageS3Config._(buckets: _i2.BuiltList(buckets));
   }
 
   /// The Amplify Storage S3 plugin configuration.
@@ -28,11 +27,11 @@ abstract class StorageS3Config
 
   const StorageS3Config._();
 
-  static const List<_i4.SmithySerializer<StorageS3Config>> serializers = [
+  static const List<_i3.SmithySerializer<StorageS3Config>> serializers = [
     StorageS3ConfigSerializer()
   ];
 
-  _i3.BuiltList<_i2.StorageS3Bucket> get buckets;
+  _i2.BuiltList<StorageS3Bucket> get buckets;
   @override
   List<Object?> get props => [buckets];
   @override
@@ -47,7 +46,7 @@ abstract class StorageS3Config
 }
 
 class StorageS3ConfigSerializer
-    extends _i4.StructuredSmithySerializer<StorageS3Config> {
+    extends _i3.StructuredSmithySerializer<StorageS3Config> {
   const StorageS3ConfigSerializer() : super('StorageS3Config');
 
   @override
@@ -56,8 +55,8 @@ class StorageS3ConfigSerializer
         _$StorageS3Config,
       ];
   @override
-  Iterable<_i4.ShapeId> get supportedProtocols => const [
-        _i4.ShapeId(
+  Iterable<_i3.ShapeId> get supportedProtocols => const [
+        _i3.ShapeId(
           namespace: 'smithy.dart',
           shape: 'genericProtocol',
         )
@@ -82,10 +81,10 @@ class StorageS3ConfigSerializer
           result.buckets.replace((serializers.deserialize(
             value,
             specifiedType: const FullType(
-              _i3.BuiltList,
-              [FullType(_i2.StorageS3Bucket)],
+              _i2.BuiltList,
+              [FullType(StorageS3Bucket)],
             ),
-          ) as _i3.BuiltList<_i2.StorageS3Bucket>));
+          ) as _i2.BuiltList<StorageS3Bucket>));
       }
     }
 
@@ -105,8 +104,8 @@ class StorageS3ConfigSerializer
       serializers.serialize(
         buckets,
         specifiedType: const FullType(
-          _i3.BuiltList,
-          [FullType(_i2.StorageS3Bucket)],
+          _i2.BuiltList,
+          [FullType(StorageS3Bucket)],
         ),
       ),
     ]);

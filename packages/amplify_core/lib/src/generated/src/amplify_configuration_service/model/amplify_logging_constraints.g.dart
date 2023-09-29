@@ -8,11 +8,11 @@ part of 'amplify_logging_constraints.dart';
 
 class _$AmplifyLoggingConstraints extends AmplifyLoggingConstraints {
   @override
-  final _i2.LogLevel defaultLogLevel;
+  final LogLevel defaultLogLevel;
   @override
-  final _i4.BuiltMap<_i2.Category, _i2.LogLevel> categoryLogLevel;
+  final _i2.BuiltMap<Category, LogLevel> categoryLogLevel;
   @override
-  final _i4.BuiltMap<String, _i3.UserLogLevel> userLogLevel;
+  final _i2.BuiltMap<String, UserLogLevel> userLogLevel;
 
   factory _$AmplifyLoggingConstraints(
           [void Function(AmplifyLoggingConstraintsBuilder)? updates]) =>
@@ -65,23 +65,21 @@ class AmplifyLoggingConstraintsBuilder
         Builder<AmplifyLoggingConstraints, AmplifyLoggingConstraintsBuilder> {
   _$AmplifyLoggingConstraints? _$v;
 
-  _i2.LogLevel? _defaultLogLevel;
-  _i2.LogLevel? get defaultLogLevel => _$this._defaultLogLevel;
-  set defaultLogLevel(_i2.LogLevel? defaultLogLevel) =>
+  LogLevel? _defaultLogLevel;
+  LogLevel? get defaultLogLevel => _$this._defaultLogLevel;
+  set defaultLogLevel(LogLevel? defaultLogLevel) =>
       _$this._defaultLogLevel = defaultLogLevel;
 
-  _i4.MapBuilder<_i2.Category, _i2.LogLevel>? _categoryLogLevel;
-  _i4.MapBuilder<_i2.Category, _i2.LogLevel> get categoryLogLevel =>
-      _$this._categoryLogLevel ??=
-          new _i4.MapBuilder<_i2.Category, _i2.LogLevel>();
-  set categoryLogLevel(
-          _i4.MapBuilder<_i2.Category, _i2.LogLevel>? categoryLogLevel) =>
+  _i2.MapBuilder<Category, LogLevel>? _categoryLogLevel;
+  _i2.MapBuilder<Category, LogLevel> get categoryLogLevel =>
+      _$this._categoryLogLevel ??= new _i2.MapBuilder<Category, LogLevel>();
+  set categoryLogLevel(_i2.MapBuilder<Category, LogLevel>? categoryLogLevel) =>
       _$this._categoryLogLevel = categoryLogLevel;
 
-  _i4.MapBuilder<String, _i3.UserLogLevel>? _userLogLevel;
-  _i4.MapBuilder<String, _i3.UserLogLevel> get userLogLevel =>
-      _$this._userLogLevel ??= new _i4.MapBuilder<String, _i3.UserLogLevel>();
-  set userLogLevel(_i4.MapBuilder<String, _i3.UserLogLevel>? userLogLevel) =>
+  _i2.MapBuilder<String, UserLogLevel>? _userLogLevel;
+  _i2.MapBuilder<String, UserLogLevel> get userLogLevel =>
+      _$this._userLogLevel ??= new _i2.MapBuilder<String, UserLogLevel>();
+  set userLogLevel(_i2.MapBuilder<String, UserLogLevel>? userLogLevel) =>
       _$this._userLogLevel = userLogLevel;
 
   AmplifyLoggingConstraintsBuilder() {

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'package:amplify_core/amplify_core.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
 part 'cloudwatch_logging_config.g.dart';
@@ -113,12 +114,14 @@ class DefaultRemoteConfiguration
 }
 
 @zAwsSerializable
+@_LogLevelSerializer()
+@_CategorySerializer()
 class LoggingConstraints
     with
         AWSEquatable<LoggingConstraints>,
         AWSSerializable<Map<String, Object?>> {
   const LoggingConstraints({
-    this.defaultLogLevel = 'ERROR',
+    this.defaultLogLevel = LogLevel.error,
     this.categoryLogLevel = const {},
     this.userLogLevel = const {},
   });
@@ -126,8 +129,8 @@ class LoggingConstraints
   factory LoggingConstraints.fromJson(Map<String, Object?> json) =>
       _$LoggingConstraintsFromJson(json);
 
-  final String defaultLogLevel;
-  final Map<String, String> categoryLogLevel;
+  final LogLevel defaultLogLevel;
+  final Map<Category, LogLevel> categoryLogLevel;
   final Map<String, UserLogLevel> userLogLevel;
 
   @override
@@ -142,22 +145,44 @@ class LoggingConstraints
 }
 
 @zAwsSerializable
+@_LogLevelSerializer()
+@_CategorySerializer()
 class UserLogLevel
     with AWSEquatable<UserLogLevel>, AWSSerializable<Map<String, Object?>> {
   const UserLogLevel({
-    this.defaultLogLevel = 'ERROR',
+    this.defaultLogLevel = LogLevel.error,
     this.categoryLogLevel = const {},
   });
 
   factory UserLogLevel.fromJson(Map<String, Object?> json) =>
       _$UserLogLevelFromJson(json);
 
-  final String defaultLogLevel;
-  final Map<String, String> categoryLogLevel;
+  final LogLevel defaultLogLevel;
+  final Map<Category, LogLevel> categoryLogLevel;
 
   @override
   List<Object?> get props => [defaultLogLevel, categoryLogLevel];
 
   @override
   Map<String, Object?> toJson() => _$UserLogLevelToJson(this);
+}
+
+final class _CategorySerializer implements JsonConverter<Category, String> {
+  const _CategorySerializer();
+
+  @override
+  Category fromJson(String json) => Category.parse(json);
+
+  @override
+  String toJson(Category object) => object.name.screamingCase;
+}
+
+final class _LogLevelSerializer implements JsonConverter<LogLevel, String> {
+  const _LogLevelSerializer();
+
+  @override
+  LogLevel fromJson(String json) => LogLevel.parse(json);
+
+  @override
+  String toJson(LogLevel object) => object.name.toUpperCase();
 }

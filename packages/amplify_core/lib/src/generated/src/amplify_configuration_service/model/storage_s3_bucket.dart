@@ -3,11 +3,11 @@
 
 library amplify_core.amplify_configuration_service.model.storage_s3_bucket; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:amplify_core/amplify_core.dart' as _i2;
+import 'package:amplify_core/amplify_core.dart';
 import 'package:aws_common/aws_common.dart' as _i1;
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:smithy/smithy.dart' as _i3;
+import 'package:smithy/smithy.dart' as _i2;
 
 part 'storage_s3_bucket.g.dart';
 
@@ -19,9 +19,9 @@ abstract class StorageS3Bucket
   factory StorageS3Bucket({
     required String bucketName,
     required String region,
-    _i2.StorageAccessLevel? defaultAccessLevel,
+    StorageAccessLevel? defaultAccessLevel,
   }) {
-    defaultAccessLevel ??= _i2.StorageAccessLevel.guest;
+    defaultAccessLevel ??= StorageAccessLevel.guest;
     return _$StorageS3Bucket._(
       bucketName: bucketName,
       region: region,
@@ -35,18 +35,18 @@ abstract class StorageS3Bucket
 
   const StorageS3Bucket._();
 
-  static const List<_i3.SmithySerializer<StorageS3Bucket>> serializers = [
+  static const List<_i2.SmithySerializer<StorageS3Bucket>> serializers = [
     StorageS3BucketSerializer()
   ];
 
   @BuiltValueHook(initializeBuilder: true)
   static void _init(StorageS3BucketBuilder b) {
-    b.defaultAccessLevel = _i2.StorageAccessLevel.guest;
+    b.defaultAccessLevel = StorageAccessLevel.guest;
   }
 
   String get bucketName;
   String get region;
-  _i2.StorageAccessLevel get defaultAccessLevel;
+  StorageAccessLevel get defaultAccessLevel;
   @override
   List<Object?> get props => [
         bucketName,
@@ -73,7 +73,7 @@ abstract class StorageS3Bucket
 }
 
 class StorageS3BucketSerializer
-    extends _i3.StructuredSmithySerializer<StorageS3Bucket> {
+    extends _i2.StructuredSmithySerializer<StorageS3Bucket> {
   const StorageS3BucketSerializer() : super('StorageS3Bucket');
 
   @override
@@ -82,8 +82,8 @@ class StorageS3BucketSerializer
         _$StorageS3Bucket,
       ];
   @override
-  Iterable<_i3.ShapeId> get supportedProtocols => const [
-        _i3.ShapeId(
+  Iterable<_i2.ShapeId> get supportedProtocols => const [
+        _i2.ShapeId(
           namespace: 'smithy.dart',
           shape: 'genericProtocol',
         )
@@ -112,8 +112,8 @@ class StorageS3BucketSerializer
         case 'defaultAccessLevel':
           result.defaultAccessLevel = (serializers.deserialize(
             value,
-            specifiedType: const FullType(_i2.StorageAccessLevel),
-          ) as _i2.StorageAccessLevel);
+            specifiedType: const FullType(StorageAccessLevel),
+          ) as StorageAccessLevel);
         case 'region':
           result.region = (serializers.deserialize(
             value,
@@ -142,7 +142,7 @@ class StorageS3BucketSerializer
       'defaultAccessLevel',
       serializers.serialize(
         defaultAccessLevel,
-        specifiedType: const FullType(_i2.StorageAccessLevel),
+        specifiedType: const FullType(StorageAccessLevel),
       ),
       'region',
       serializers.serialize(

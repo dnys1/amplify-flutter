@@ -30,6 +30,7 @@ structure AuthUserPoolConfig {
     pinpointConfig: AnalyticsPinpointConfig
     passwordPolicy: AuthPasswordPolicy
     mfaConfiguration: AuthMfaConfiguration
+
     hostedUi: AuthHostedUiConfig
 }
 
@@ -187,5 +188,5 @@ structure AuthIdentityPoolConfig {
     // The use case would be better control over authenticated calls.
     // Knowing whether an identity pool supports unauthenticated identities
     // or not allows saving needless API calls in the case they're not allowed.
-    allowUnauthenticatedIdentities: Boolean
+    guestAccess: Boolean
 }

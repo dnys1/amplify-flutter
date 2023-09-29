@@ -12,7 +12,7 @@ class _$StorageS3Bucket extends StorageS3Bucket {
   @override
   final String region;
   @override
-  final _i2.StorageAccessLevel defaultAccessLevel;
+  final StorageAccessLevel defaultAccessLevel;
 
   factory _$StorageS3Bucket([void Function(StorageS3BucketBuilder)? updates]) =>
       (new StorageS3BucketBuilder()..update(updates))._build();
@@ -69,9 +69,9 @@ class StorageS3BucketBuilder
   String? get region => _$this._region;
   set region(String? region) => _$this._region = region;
 
-  _i2.StorageAccessLevel? _defaultAccessLevel;
-  _i2.StorageAccessLevel? get defaultAccessLevel => _$this._defaultAccessLevel;
-  set defaultAccessLevel(_i2.StorageAccessLevel? defaultAccessLevel) =>
+  StorageAccessLevel? _defaultAccessLevel;
+  StorageAccessLevel? get defaultAccessLevel => _$this._defaultAccessLevel;
+  set defaultAccessLevel(StorageAccessLevel? defaultAccessLevel) =>
       _$this._defaultAccessLevel = defaultAccessLevel;
 
   StorageS3BucketBuilder() {

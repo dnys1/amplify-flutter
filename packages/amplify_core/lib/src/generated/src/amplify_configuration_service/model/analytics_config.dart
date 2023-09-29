@@ -3,8 +3,7 @@
 
 library amplify_core.amplify_configuration_service.model.analytics_config; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/analytics_pinpoint_config.dart'
-    as _i2;
+import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/analytics_pinpoint_config.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:smithy/smithy.dart' as _i1;
@@ -18,7 +17,7 @@ sealed class AnalyticsConfig extends _i1.SmithyUnion<AnalyticsConfig> {
     required String region,
     Duration? autoFlushEventsInterval,
   }) =>
-      AnalyticsConfigPinpoint$(_i2.AnalyticsPinpointConfig(
+      AnalyticsConfigPinpoint$(AnalyticsPinpointConfig(
         appId: appId,
         region: region,
         autoFlushEventsInterval: autoFlushEventsInterval,
@@ -34,7 +33,7 @@ sealed class AnalyticsConfig extends _i1.SmithyUnion<AnalyticsConfig> {
   ];
 
   /// The Amplify Analytics Pinpoint plugin configuration.
-  _i2.AnalyticsPinpointConfig? get pinpoint => null;
+  AnalyticsPinpointConfig? get pinpoint => null;
   @override
   Object get value => (pinpoint)!;
   @override
@@ -54,7 +53,7 @@ final class AnalyticsConfigPinpoint$ extends AnalyticsConfig {
   const AnalyticsConfigPinpoint$(this.pinpoint) : super._();
 
   @override
-  final _i2.AnalyticsPinpointConfig pinpoint;
+  final AnalyticsPinpointConfig pinpoint;
 
   @override
   String get name => 'pinpoint';
@@ -100,8 +99,8 @@ class AnalyticsConfigSerializer
       case 'pinpoint':
         return AnalyticsConfigPinpoint$((serializers.deserialize(
           value,
-          specifiedType: const FullType(_i2.AnalyticsPinpointConfig),
-        ) as _i2.AnalyticsPinpointConfig));
+          specifiedType: const FullType(AnalyticsPinpointConfig),
+        ) as AnalyticsPinpointConfig));
     }
     return AnalyticsConfig.sdkUnknown(
       key,
@@ -120,7 +119,7 @@ class AnalyticsConfigSerializer
       switch (object) {
         AnalyticsConfigPinpoint$(:final value) => serializers.serialize(
             value,
-            specifiedType: const FullType(_i2.AnalyticsPinpointConfig),
+            specifiedType: const FullType(AnalyticsPinpointConfig),
           ),
         AnalyticsConfigSdkUnknown$(:final value) => value,
       },

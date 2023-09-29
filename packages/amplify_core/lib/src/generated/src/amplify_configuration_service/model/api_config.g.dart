@@ -8,7 +8,7 @@ part of 'api_config.dart';
 
 class _$ApiConfig extends ApiConfig {
   @override
-  final _i3.BuiltList<_i2.ApiEndpointConfig> endpoints;
+  final _i2.BuiltList<ApiEndpointConfig> endpoints;
 
   factory _$ApiConfig([void Function(ApiConfigBuilder)? updates]) =>
       (new ApiConfigBuilder()..update(updates))._build();
@@ -42,10 +42,10 @@ class _$ApiConfig extends ApiConfig {
 class ApiConfigBuilder implements Builder<ApiConfig, ApiConfigBuilder> {
   _$ApiConfig? _$v;
 
-  _i3.ListBuilder<_i2.ApiEndpointConfig>? _endpoints;
-  _i3.ListBuilder<_i2.ApiEndpointConfig> get endpoints =>
-      _$this._endpoints ??= new _i3.ListBuilder<_i2.ApiEndpointConfig>();
-  set endpoints(_i3.ListBuilder<_i2.ApiEndpointConfig>? endpoints) =>
+  _i2.ListBuilder<ApiEndpointConfig>? _endpoints;
+  _i2.ListBuilder<ApiEndpointConfig> get endpoints =>
+      _$this._endpoints ??= new _i2.ListBuilder<ApiEndpointConfig>();
+  set endpoints(_i2.ListBuilder<ApiEndpointConfig>? endpoints) =>
       _$this._endpoints = endpoints;
 
   ApiConfigBuilder();

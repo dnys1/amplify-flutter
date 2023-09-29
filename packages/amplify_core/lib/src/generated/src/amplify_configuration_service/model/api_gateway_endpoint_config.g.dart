@@ -14,7 +14,7 @@ class _$ApiGatewayEndpointConfig extends ApiGatewayEndpointConfig {
   @override
   final String region;
   @override
-  final _i2.ApiAuthorizationMode authMode;
+  final ApiAuthorizationMode authMode;
 
   factory _$ApiGatewayEndpointConfig(
           [void Function(ApiGatewayEndpointConfigBuilder)? updates]) =>
@@ -84,10 +84,9 @@ class ApiGatewayEndpointConfigBuilder
   String? get region => _$this._region;
   set region(String? region) => _$this._region = region;
 
-  _i2.ApiAuthorizationMode? _authMode;
-  _i2.ApiAuthorizationMode? get authMode => _$this._authMode;
-  set authMode(_i2.ApiAuthorizationMode? authMode) =>
-      _$this._authMode = authMode;
+  ApiAuthorizationMode? _authMode;
+  ApiAuthorizationMode? get authMode => _$this._authMode;
+  set authMode(ApiAuthorizationMode? authMode) => _$this._authMode = authMode;
 
   ApiGatewayEndpointConfigBuilder();
 

@@ -3,11 +3,11 @@
 
 library amplify_core.amplify_configuration_service.model.auth_mfa_configuration; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:amplify_core/amplify_config.dart' as _i2;
+import 'package:amplify_core/amplify_config.dart';
 import 'package:aws_common/aws_common.dart' as _i1;
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:smithy/smithy.dart' as _i3;
+import 'package:smithy/smithy.dart' as _i2;
 
 part 'auth_mfa_configuration.g.dart';
 
@@ -15,7 +15,7 @@ abstract class AuthMfaConfiguration
     with _i1.AWSEquatable<AuthMfaConfiguration>
     implements Built<AuthMfaConfiguration, AuthMfaConfigurationBuilder> {
   factory AuthMfaConfiguration({
-    required _i2.MfaStatus enforcementLevel,
+    required MfaStatus enforcementLevel,
     bool? sms,
     bool? totp,
   }) {
@@ -34,7 +34,7 @@ abstract class AuthMfaConfiguration
 
   const AuthMfaConfiguration._();
 
-  static const List<_i3.SmithySerializer<AuthMfaConfiguration>> serializers = [
+  static const List<_i2.SmithySerializer<AuthMfaConfiguration>> serializers = [
     AuthMfaConfigurationSerializer()
   ];
 
@@ -45,7 +45,7 @@ abstract class AuthMfaConfiguration
       ..totp = false;
   }
 
-  _i2.MfaStatus get enforcementLevel;
+  MfaStatus get enforcementLevel;
   bool get sms;
   bool get totp;
   @override
@@ -74,7 +74,7 @@ abstract class AuthMfaConfiguration
 }
 
 class AuthMfaConfigurationSerializer
-    extends _i3.StructuredSmithySerializer<AuthMfaConfiguration> {
+    extends _i2.StructuredSmithySerializer<AuthMfaConfiguration> {
   const AuthMfaConfigurationSerializer() : super('AuthMfaConfiguration');
 
   @override
@@ -83,8 +83,8 @@ class AuthMfaConfigurationSerializer
         _$AuthMfaConfiguration,
       ];
   @override
-  Iterable<_i3.ShapeId> get supportedProtocols => const [
-        _i3.ShapeId(
+  Iterable<_i2.ShapeId> get supportedProtocols => const [
+        _i2.ShapeId(
           namespace: 'smithy.dart',
           shape: 'genericProtocol',
         )
@@ -108,8 +108,8 @@ class AuthMfaConfigurationSerializer
         case 'enforcementLevel':
           result.enforcementLevel = (serializers.deserialize(
             value,
-            specifiedType: const FullType(_i2.MfaStatus),
-          ) as _i2.MfaStatus);
+            specifiedType: const FullType(MfaStatus),
+          ) as MfaStatus);
         case 'sms':
           result.sms = (serializers.deserialize(
             value,
@@ -138,7 +138,7 @@ class AuthMfaConfigurationSerializer
       'enforcementLevel',
       serializers.serialize(
         enforcementLevel,
-        specifiedType: const FullType(_i2.MfaStatus),
+        specifiedType: const FullType(MfaStatus),
       ),
       'sms',
       serializers.serialize(

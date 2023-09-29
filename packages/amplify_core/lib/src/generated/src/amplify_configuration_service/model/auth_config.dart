@@ -3,12 +3,9 @@
 
 library amplify_core.amplify_configuration_service.model.auth_config; // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/auth_cognito_config.dart'
-    as _i4;
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/auth_identity_pool_config.dart'
-    as _i3;
-import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/auth_user_pool_config.dart'
-    as _i2;
+import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/auth_cognito_config.dart';
+import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/auth_identity_pool_config.dart';
+import 'package:amplify_core/src/generated/src/amplify_configuration_service/model/auth_user_pool_config.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:smithy/smithy.dart' as _i1;
@@ -17,10 +14,10 @@ sealed class AuthConfig extends _i1.SmithyUnion<AuthConfig> {
   const AuthConfig._();
 
   factory AuthConfig.cognito({
-    _i2.AuthUserPoolConfig? userPool,
-    _i3.AuthIdentityPoolConfig? identityPool,
+    AuthUserPoolConfig? userPool,
+    AuthIdentityPoolConfig? identityPool,
   }) =>
-      AuthConfigCognito$(_i4.AuthCognitoConfig(
+      AuthConfigCognito$(AuthCognitoConfig(
         userPool: userPool,
         identityPool: identityPool,
       ));
@@ -34,7 +31,7 @@ sealed class AuthConfig extends _i1.SmithyUnion<AuthConfig> {
     AuthConfigSerializer()
   ];
 
-  _i4.AuthCognitoConfig? get cognito => null;
+  AuthCognitoConfig? get cognito => null;
   @override
   Object get value => (cognito)!;
   @override
@@ -54,7 +51,7 @@ final class AuthConfigCognito$ extends AuthConfig {
   const AuthConfigCognito$(this.cognito) : super._();
 
   @override
-  final _i4.AuthCognitoConfig cognito;
+  final AuthCognitoConfig cognito;
 
   @override
   String get name => 'cognito';
@@ -99,8 +96,8 @@ class AuthConfigSerializer extends _i1.StructuredSmithySerializer<AuthConfig> {
       case 'cognito':
         return AuthConfigCognito$((serializers.deserialize(
           value,
-          specifiedType: const FullType(_i4.AuthCognitoConfig),
-        ) as _i4.AuthCognitoConfig));
+          specifiedType: const FullType(AuthCognitoConfig),
+        ) as AuthCognitoConfig));
     }
     return AuthConfig.sdkUnknown(
       key,
@@ -119,7 +116,7 @@ class AuthConfigSerializer extends _i1.StructuredSmithySerializer<AuthConfig> {
       switch (object) {
         AuthConfigCognito$(:final value) => serializers.serialize(
             value,
-            specifiedType: const FullType(_i4.AuthCognitoConfig),
+            specifiedType: const FullType(AuthCognitoConfig),
           ),
         AuthConfigSdkUnknown$(:final value) => value,
       },

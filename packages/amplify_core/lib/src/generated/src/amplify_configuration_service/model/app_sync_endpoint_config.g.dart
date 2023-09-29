@@ -14,9 +14,9 @@ class _$AppSyncEndpointConfig extends AppSyncEndpointConfig {
   @override
   final String region;
   @override
-  final _i2.ApiAuthorizationMode authMode;
+  final ApiAuthorizationMode authMode;
   @override
-  final _i3.BuiltList<_i2.ApiAuthorizationMode> additionalAuthModes;
+  final _i2.BuiltList<ApiAuthorizationMode> additionalAuthModes;
 
   factory _$AppSyncEndpointConfig(
           [void Function(AppSyncEndpointConfigBuilder)? updates]) =>
@@ -90,17 +90,16 @@ class AppSyncEndpointConfigBuilder
   String? get region => _$this._region;
   set region(String? region) => _$this._region = region;
 
-  _i2.ApiAuthorizationMode? _authMode;
-  _i2.ApiAuthorizationMode? get authMode => _$this._authMode;
-  set authMode(_i2.ApiAuthorizationMode? authMode) =>
-      _$this._authMode = authMode;
+  ApiAuthorizationMode? _authMode;
+  ApiAuthorizationMode? get authMode => _$this._authMode;
+  set authMode(ApiAuthorizationMode? authMode) => _$this._authMode = authMode;
 
-  _i3.ListBuilder<_i2.ApiAuthorizationMode>? _additionalAuthModes;
-  _i3.ListBuilder<_i2.ApiAuthorizationMode> get additionalAuthModes =>
+  _i2.ListBuilder<ApiAuthorizationMode>? _additionalAuthModes;
+  _i2.ListBuilder<ApiAuthorizationMode> get additionalAuthModes =>
       _$this._additionalAuthModes ??=
-          new _i3.ListBuilder<_i2.ApiAuthorizationMode>();
+          new _i2.ListBuilder<ApiAuthorizationMode>();
   set additionalAuthModes(
-          _i3.ListBuilder<_i2.ApiAuthorizationMode>? additionalAuthModes) =>
+          _i2.ListBuilder<ApiAuthorizationMode>? additionalAuthModes) =>
       _$this._additionalAuthModes = additionalAuthModes;
 
   AppSyncEndpointConfigBuilder() {

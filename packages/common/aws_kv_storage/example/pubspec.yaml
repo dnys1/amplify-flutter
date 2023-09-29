@@ -1,0 +1,16 @@
+name: aws_kv_storage_example
+description: An example app showcasing the aws_kv_storage package.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: "^3.0.0"
+
+dependencies:
+  aws_kv_storage:
+    path: ../
+
+dev_dependencies:
+  amplify_lints: ^2.0.0
+  build_runner: ^2.4.0
+  build_web_compilers: ^4.0.0
